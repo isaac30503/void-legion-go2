@@ -1,0 +1,16 @@
+[Desktop Entry]
+# Steam in the background when entering the desktop (Xfce Wayland or X11), like SteamOS's desktop
+# mode: that way the controller (InputPlumber's Valve controller) handles the desktop with Steam's
+# desktop configuration. -steamdeck = same client as Game Mode (otherwise, Steam
+# changes branch and reinstalls the client when alternating); -silent = without opening a window.
+# It closes cleanly on logout (wrapper /usr/local/bin/xfce4-session), when going to Game Mode
+# (steamos-session-select) and when switching Wayland/X11 (switch-mode-root). Legion recipe, step 14.
+# It goes in ~/.config/autostart/ (xfce4-session launches it in both sessions). Remove: delete it.
+# Previous (Spanish) name: steam-segundo-plano.desktop. @TARGET_HOME@ is filled in when it is installed.
+Type=Application
+Name=Steam (background)
+Name[es]=Steam (segundo plano)
+Exec=env LD_PRELOAD=@TARGET_HOME@/.local/lib/extest/libextest.so /usr/bin/steam -steamdeck -pipewire -silent
+Icon=steam
+Terminal=false
+X-GNOME-Autostart-enabled=true

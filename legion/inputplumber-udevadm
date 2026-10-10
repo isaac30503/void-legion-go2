@@ -1,0 +1,18 @@
+#!/bin/sh
+# udevadm for InputPlumber on Void (installed by legion/install-inputplumber.sh; it is only in the PATH of
+# its service). InputPlumber reads "udevadm info <device>" and looks for the M: (name) and U:
+# (subsystem) lines of systemd's udevadm; eudev's does not print them, and without them it cannot hide the
+# controller's original devices ("Failed to hide device … Unable to create match rule").
+# Here they are added (and T:, the DEVTYPE) from P: and from E:. Everything else goes to the real udevadm.
+# Previous name: inputplumber-udevadm (unchanged).
+if [ "$1" = info ] && [ $# -eq 2 ] && [ "${2#-}" = "$2" ]; then
+    out=$(/usr/bin/udevadm info "$2"); st=$?
+    printf '%s\n' "$out"
+    [ $st -eq 0 ] || exit $st
+    p=$(printf '%s\n' "$out" | sed -n 's/^P: //p' | head -n1)
+    printf '%s\n' "$out" | grep -q '^M: ' || { [ -n "$p" ] && echo "M: ${p##*/}"; }
+    printf '%s\n' "$out" | grep -q '^U: ' || printf '%s\n' "$out" | sed -n 's/^E: SUBSYSTEM=/U: /p'
+    printf '%s\n' "$out" | grep -q '^T: ' || printf '%s\n' "$out" | sed -n 's/^E: DEVTYPE=/T: /p'
+    exit 0
+fi
+exec /usr/bin/udevadm "$@"

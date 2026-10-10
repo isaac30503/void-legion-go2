@@ -1,0 +1,323 @@
+#!/usr/bin/python3
+# "What to share" chooser with previews, in the style of Discord, for xdg-desktop-portal-wlr
+# (Legion, 2026-10-06; recipe, step 14, "Discord (Vesktop)"). It goes in ~/.local/bin/screen-share and the
+# portal calls it (~/.config/xdg-desktop-portal-wlr/config: chooser_type=dmenu, chooser_cmd=this).
+# Previous (Spanish) name: compartir-pantalla (log ~/.cache/compartir-pantalla.log, window identifier
+# "compartir-pantalla"). Its texts follow the system's language (locale/<lang>/messages.po).
+# Protocol (src/screencast/chooser.c of xdpw 0.8.4): one line per source arrives on stdin,
+#   "Monitor: <output> <description>"  and  "Window: <title> (<identifier>)";
+# the chosen line is returned on stdout, identical; no output = canceled. Never exit with 127 (the
+# portal takes it as "does not exist" and tries the next chooser).
+# Thumbnails with grim (-o <output> / -T <identifier>, labwc's ext-image-copy-capture protocol),
+# in threads and with a 3 s cap each: meanwhile, or if it fails, the card shows an icon.
+# Windows that give no image while they are not visible (2026-10-07: Steam's, a Chromium through Xwayland, on
+# another workspace; and Thunar too, again, although other times it did give an image without being seen: it
+# does not depend on the app): shared like that, Vesktop does not open its configuration window until the window
+# is seen. There is no reliable signal to know it beforehand (Steam redraws from time to time: sometimes it gives a
+# thumbnail and even so Vesktop keeps waiting), so no guessing is attempted: a fixed note at the bottom of
+# "Applications" says what to do (the user's decision: the explicit thing rather than a detection that fails).
+# Double (or triple) request: Chromium (Vesktop, Chrome…) asks to choose several times on purpose: one session
+# for the preview of its configuration window and another one to stream (issues.chromium.org/354537406,
+# Vencord/Vesktop#583); it skips the follow-up ones with the portal's "restore token", which Chromium
+# keeps per source and only sends in those (not when starting a new stream or changing source).
+# The PORTAL solves it, not this chooser: xdg-desktop-portal-wlr with XDPW_PERSIST_MODE (user D-Bus
+# service, set by install.sh) and, for WINDOWS, with the patch of legion/portal-wlr-patch/ (by default
+# it only restores screens). That way a follow-up request does not even get here. (Until 2026-10-07 this
+# chooser remembered the choice for a few seconds; it depended on timings and failed when reconfiguring: removed.)
+# Who is asking: with the patched portal (portal-wlr-patch/0003) the chooser receives XDPW_REQUEST_HANDLE,
+# /org/freedesktop/portal/desktop/request/<connection>/<token> of THIS request (e.g. 1_104 = D-Bus
+# connection :1.104): from the connection, D-Bus gives the PID (GetConnectionUnixProcessID) and from there the
+# program (/proc/PID/comm; in Flatpak apps the connection is their xdg-dbus-proxy and the app's name comes from
+# /proc/PID/root/.flatpak-info). Without that variable (portal without 0003), it looks at all the pending
+# requests of the main portal, which may belong to any portal and app (on 2026-10-07 a stuck one from
+# Firefox showed up together with Vesktop): hence 0003.
+# RULES decides per program: "cancel" = answer "no" without a dialog, "screen" = the first screen
+# without a dialog; whatever is not in RULES, the normal chooser. Steam: the desktop one runs with -pipewire
+# (like SteamOS, it uses it in Game Mode) and on start it asks for a screen for Remote Play/recording, and it
+# does not keep the token (it would ask on every start). "screen" = grant it without a dialog, like KDE with
+# "remember" in SteamOS: Steam keeps Remote Play and recording on the desktop. "cancel" would
+# leave it as before the portals (without desktop capture). (The old Spanish actions "pantalla" and
+# "cancelar" are still accepted.)
+# The log (~/.cache/screen-share.log) is in English: the documentation and the checks read it.
+# Test by hand: printf 'Monitor: eDP-1 x\n' | screen-share
+import os, re, subprocess, sys, threading
+for _d in (os.path.expanduser("~/.local/share/void-legion/lib"), "/usr/local/share/void-legion/lib",
+           os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "lib")):
+    if os.path.isfile(os.path.join(_d, "void_legion_i18n.py")):
+        sys.path.insert(0, _d)
+        break
+try:
+    from void_legion_i18n import _
+except ImportError:
+    def _(s):
+        return s
+import gi
+for _m, _v in (("Gtk", "3.0"), ("Gdk", "3.0"), ("GdkPixbuf", "2.0"), ("Pango", "1.0")):
+    gi.require_version(_m, _v)
+from gi.repository import Gdk, GdkPixbuf, GLib, Gtk, Pango
+
+WIDTH, HEIGHT = 320, 180
+
+CSS = b"""
+window { background: transparent; color: #dbdee1; }
+.background { background: #313338; border: 1px solid #3f4147; border-radius: 12px; }
+.title { font-size: 16pt; font-weight: bold; color: #ffffff; }
+.tab { background: #2b2d31; background-image: none; border: 1px solid #3f4147; box-shadow: none;
+       text-shadow: none; color: #b5bac1; padding: 6px 14px; border-radius: 6px; font-weight: bold; }
+.tab:hover { background: #393c41; color: #dbdee1; }
+.tab:checked { background: #5865f2; border-color: #5865f2; color: #ffffff; }
+.card { background: #2b2d31; border: 2px solid transparent; border-radius: 8px; padding: 8px; }
+.card:hover { border-color: #5865f2; background: #2e3035; }
+.card label { color: #dbdee1; }
+.thumbnail { background: #1e1f22; border-radius: 4px; }
+.cancel { background: #4e5058; background-image: none; border: none; box-shadow: none; text-shadow: none;
+          color: #ffffff; padding: 6px 16px; border-radius: 6px; font-weight: bold; }
+.cancel:hover { background: #6d6f78; }
+.empty { color: #949ba4; }
+.notice { color: #f0b232; font-size: 9pt; }
+scrolledwindow, viewport, flowbox, flowboxchild { background: transparent; }
+flowboxchild { padding: 0; }
+"""
+
+
+def sources(lines):
+    """[(kind, name, id, line, description)] from what the portal sends."""
+    out = []
+    for l in lines:
+        if l.startswith("Monitor: "):
+            rest = l[len("Monitor: "):]
+            name, _sep, desc = rest.partition(" ")
+            out.append(("screen", name, name, l, desc))
+        elif l.startswith("Window: "):
+            m = re.match(r"Window: (.*) \(([^()]*)\)$", l)
+            if m:
+                out.append(("window", m.group(1) or _("(untitled)"), m.group(2), l, ""))
+    return out
+
+
+def capture(kind, ident):
+    cmd = ["grim", "-s", "0.25", "-t", "ppm"]
+    cmd += ["-o", ident] if kind == "screen" else ["-T", ident]
+    try:
+        r = subprocess.run(cmd + ["-"], capture_output=True, timeout=3)
+        if r.returncode != 0 or not r.stdout:
+            return None
+        loader = GdkPixbuf.PixbufLoader.new_with_type("pnm")
+        loader.write(r.stdout); loader.close()
+        pb = loader.get_pixbuf()
+        f = min(WIDTH / pb.get_width(), HEIGHT / pb.get_height())
+        return pb.scale_simple(max(1, int(pb.get_width() * f)), max(1, int(pb.get_height() * f)),
+                               GdkPixbuf.InterpType.BILINEAR)
+    except Exception:
+        return None
+
+
+class Chooser(Gtk.Window):
+    def __init__(self, items_list):
+        super().__init__(title=_("Share screen"))
+        self.chosen = None
+        self.set_default_size(3 * (WIDTH + 40) + 40, 560)
+        self.set_resizable(False)        # fixed size: labwc treats it as a dialog (centered, not snapped)
+        self.set_keep_above(True)
+        self.connect("key-press-event", self.key)
+        self.connect("destroy", Gtk.main_quit)
+
+        # Rounded corners: transparent window (RGBA visual; labwc gives it no frame) and the
+        # content inside a background with border-radius.
+        visual = self.get_screen().get_rgba_visual()
+        if visual is not None:
+            self.set_visual(visual)
+            self.set_app_paintable(True)
+        background = Gtk.Box(); background.get_style_context().add_class("background")
+        self.add(background)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12, margin=20)
+        background.pack_start(box, True, True, 0)
+        t = Gtk.Label(label=_("Share screen"), xalign=0); t.get_style_context().add_class("title")
+        box.pack_start(t, False, False, 0)
+
+        self.stack = Gtk.Stack(transition_type=Gtk.StackTransitionType.CROSSFADE)
+        # Fixed note in Applications: labwc does not draw the windows that are not visible and does not say which
+        # workspace each one is on (grim does take the last saved image, so it cannot be detected per window).
+        self.note = Gtk.Label(xalign=0, wrap=True, max_width_chars=70,
+                              label=_("If after choosing a window the Vesktop window does not appear, open that "
+                                      "window for a moment and come back."))
+        self.note.get_style_context().add_class("notice")
+        self.note.set_no_show_all(True)
+        bar = Gtk.Box(spacing=6)
+        box.pack_start(bar, False, False, 0)
+        box.pack_start(self.stack, True, True, 0)
+
+        groups = [("window", _("Applications")), ("screen", _("Screens"))]
+        buttons = []
+        for kind, text in groups:
+            items = [f for f in items_list if f[0] == kind]
+            if not items:
+                continue
+            self.stack.add_named(self.grid(items, kind), kind)
+            b = Gtk.ToggleButton(label=f"{text} ({len(items)})")
+            b.get_style_context().add_class("tab")
+            b.connect("toggled", self.tab, kind, buttons)
+            buttons.append((b, kind))
+            bar.pack_start(b, False, False, 0)
+        if not buttons:
+            v = Gtk.Label(label=_("There is nothing to share.")); v.get_style_context().add_class("empty")
+            self.stack.add_named(v, "empty")
+        else:
+            # Like Discord: it starts in Applications (or in Screens if there are no windows to share).
+            buttons[0][0].set_active(True)
+
+        foot = Gtk.Box(spacing=12)
+        foot.pack_start(self.note, True, True, 0)
+        c = Gtk.Button(label=_("Cancel")); c.get_style_context().add_class("cancel")
+        c.connect("clicked", lambda *_a: self.destroy())
+        foot.pack_end(c, False, False, 0)
+        box.pack_start(foot, False, False, 0)
+
+    def tab(self, button, kind, buttons):
+        if not button.get_active():
+            if not any(b.get_active() for b, _k in buttons):
+                button.set_active(True)
+            return
+        for b, k in buttons:
+            if b is not button:
+                b.set_active(False)
+        self.stack.set_visible_child_name(kind)
+        self.note.set_visible(kind == "window")
+
+    def grid(self, items, kind):
+        fb = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, homogeneous=True,
+                         max_children_per_line=3, min_children_per_line=1,
+                         row_spacing=12, column_spacing=12, valign=Gtk.Align.START)
+        for _k, name, ident, line, desc in items:
+            button = Gtk.Button(); button.get_style_context().add_class("card")
+            button.set_relief(Gtk.ReliefStyle.NONE)
+            v = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+            img = Gtk.Image.new_from_icon_name(
+                "video-display" if kind == "screen" else "window-new", Gtk.IconSize.DIALOG)
+            frame = Gtk.Box(); frame.set_size_request(WIDTH, HEIGHT)
+            frame.get_style_context().add_class("thumbnail")
+            frame.set_center_widget(img)
+            v.pack_start(frame, False, False, 0)
+            text = name if kind == "window" else f"{name}  {desc}".strip()
+            lb = Gtk.Label(label=text, xalign=0, ellipsize=Pango.EllipsizeMode.END, max_width_chars=34)
+            v.pack_start(lb, False, False, 0)
+            button.add(v)
+            button.set_tooltip_text(text)
+            button.connect("clicked", self.choose, line)
+            fb.add(button)
+            threading.Thread(target=self.thumbnail, args=(img, kind, ident), daemon=True).start()
+        sw = Gtk.ScrolledWindow(hscrollbar_policy=Gtk.PolicyType.NEVER)
+        sw.add(fb)
+        return sw
+
+    def thumbnail(self, img, kind, ident):
+        pb = capture(kind, ident)
+        if pb is not None:
+            GLib.idle_add(img.set_from_pixbuf, pb)
+
+    def choose(self, _button, line):
+        self.chosen = line
+        self.destroy()
+
+    def key(self, _w, ev):
+        if ev.keyval == Gdk.KEY_Escape:
+            self.destroy()
+
+
+LOG = os.path.expanduser("~/.cache/screen-share.log")
+RULES = {"steam": "screen"}
+ALIASES = {"pantalla": "screen", "cancelar": "cancel"}   # the old Spanish actions
+
+
+def who_asks():
+    """Programs (comm) of the pending requests in the portal; [] if it cannot be known."""
+    try:
+        gi.require_version("Gio", "2.0")
+        from gi.repository import Gio
+        bus = Gio.bus_get_sync(Gio.BusType.SESSION)
+
+        def children(path):
+            x = bus.call_sync("org.freedesktop.portal.Desktop", path, "org.freedesktop.DBus.Introspectable",
+                              "Introspect", None, None, 0, 2000, None).unpack()[0]
+            return re.findall(r'<node name="([^"]+)"', x)
+
+        def program(sender):
+            name = ":" + sender.replace("_", ".")
+            pid = bus.call_sync("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus",
+                                "GetConnectionUnixProcessID", GLib.Variant("(s)", (name,)),
+                                None, 0, 2000, None).unpack()[0]
+            comm = open(f"/proc/{pid}/comm").read().strip()
+            if comm == "xdg-dbus-proxy":               # Flatpak app: its name
+                try:
+                    for l in open(f"/proc/{pid}/root/.flatpak-info"):
+                        if l.startswith("name="):
+                            return l.strip()[5:]
+                except OSError:
+                    pass
+            return comm
+
+        m = re.match(r"/org/freedesktop/portal/desktop/request/([^/]+)/",
+                     os.environ.get("XDPW_REQUEST_HANDLE", ""))
+        if m:                                           # the exact request (portal with 0003)
+            return [program(m.group(1))]
+        programs = []
+        for sender in children("/org/freedesktop/portal/desktop/request"):
+            if not children("/org/freedesktop/portal/desktop/request/" + sender):
+                continue
+            programs.append(program(sender))
+        return programs
+    except Exception as e:
+        record(f"could not find out who is asking: {e}")
+        return []
+
+
+def record(text):
+    """One line per portal call (how many sources, what was chosen): it shows whether an app
+    asks to choose twice. It is trimmed to the last 200 lines."""
+    import time
+    try:
+        lines = open(LOG).read().splitlines()[-199:] if os.path.exists(LOG) else []
+        lines.append(f"{time.strftime('%F %T')} pid {os.getpid()} (parent {os.getppid()}): {text}")
+        open(LOG, "w").write("\n".join(lines) + "\n")
+    except OSError:
+        pass
+
+
+def main():
+    items_list = sources([l.rstrip("\n") for l in sys.stdin if l.strip()])
+    programs = who_asks()
+    actions = {ALIASES.get(RULES.get(p), RULES.get(p)) for p in programs}
+    if programs and len(actions) == 1 and None not in actions:
+        action = actions.pop()
+        screens = [f[3] for f in items_list if f[0] == "screen"]
+        if action == "screen" and screens:
+            record(f"{', '.join(programs)}: rule 'screen', no dialog: {screens[0]}")
+            print(screens[0], flush=True)
+        else:
+            record(f"{', '.join(programs)}: rule '{action}', no dialog")
+        os._exit(0)
+    record(f"opened with {len(items_list)} sources (asks: {', '.join(programs) or '?'})")
+    # Fixed app_id for labwc: its rc.xml puts it always on top (otherwise, with focus without raising, it stayed
+    # behind Vesktop and the portal kept waiting for it).
+    GLib.set_prgname("screen-share")
+    prov = Gtk.CssProvider(); prov.load_from_data(CSS)
+    Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), prov,
+                                             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+    Gtk.Settings.get_default().set_property("gtk-application-prefer-dark-theme", True)
+    w = Chooser(items_list)
+    w.show_all()
+    w.present()
+    Gtk.main()
+    if w.chosen:
+        print(w.chosen, flush=True)
+    record(f"chosen: {w.chosen}" if w.chosen else "canceled")
+    sys.stdout.close()
+    os._exit(0)                            # without waiting for the grim captures still running
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as e:                 # never 127: the portal would try another chooser
+        print(f"screen-share: {e}", file=sys.stderr)
+        sys.exit(1)

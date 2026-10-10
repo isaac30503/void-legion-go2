@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Exit
+Name[es]=Salir
+Comment=Log out, restart, shut down or suspend
+Comment[es]=Cerrar sesión, reiniciar, apagar o suspender
+Exec=xfce4-session-logout
+Icon=system-shutdown-symbolic
+Terminal=false
+StartupNotify=false

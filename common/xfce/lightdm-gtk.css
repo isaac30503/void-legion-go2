@@ -1,0 +1,11 @@
+/* Top bar of the greeter: solid black, like the session's panel-1 */
+#panel_window {
+    background-color: #000000;
+}
+
+/* Texts of the bar (machine, clock, menus) with the font of the panel's clock */
+#panel_window label {
+    font-family: "JetBrainsMono NFM Blocks";
+    font-weight: bold;
+    font-size: 10pt;
+}

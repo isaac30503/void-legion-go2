@@ -1,0 +1,167 @@
+From 08aab98f03fde1d64f74a8a1f7e6c9fb660d4366 Mon Sep 17 00:00:00 2001
+From: Isaac <240406679+isaac30503@users.noreply.github.com>
+Date: Fri, 9 Oct 2026 15:02:38 -0600
+Subject: [PATCH] wallpaper: Use the monitor connector name on Wayland
+
+xfdesktop stores its per-monitor backdrop settings under
+/backdrop/screen0/monitor<connector>/..., where <connector> is the name
+of the output connector (e.g. "eDP-1").
+
+The wallpaper plugin used gdk_monitor_get_model() to build that name.
+On X11, GDK sets the model to the RandR output name, which is the
+connector, so it works. On Wayland, the model is the monitor's model
+string (often "Unknown"), so "Set as wallpaper" wrote to
+monitorUnknown/... and the wallpaper never changed.
+
+Ask libxfce4windowing for the connector of the monitor the Thunar window
+is on, the same way xfdesktop's backdrop settings do (xfdesktop commit
+ed26b06a, "Use XfwMonitor in backdrop settings instead of GdkMonitor").
+On X11 this returns the same name as before. libxfce4windowing is an
+optional dependency; without it, or if the monitor can't be matched, the
+previous behaviour is kept.
+---
+ configure.ac                            | 12 +++++++
+ plugins/thunar-wallpaper/Makefile.am    |  2 ++
+ plugins/thunar-wallpaper/twp-provider.c | 43 +++++++++++++++++++++++--
+ 3 files changed, 55 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index e6cb9db..b9324ab 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -202,6 +202,13 @@ dnl **************************************
+ XDT_CHECK_OPTIONAL_PACKAGE([LIBNOTIFY], [libnotify], [0.4.0], [notifications],
+                            [Mount notification support], [yes])
+ 
++dnl *******************************************************************
++dnl *** Optional support for libxfce4windowing (wallpaper on Wayland) ***
++dnl *******************************************************************
++XDT_CHECK_OPTIONAL_PACKAGE([LIBXFCE4WINDOWING], [libxfce4windowing-0], [4.20.6],
++                           [libxfce4windowing],
++                           [Monitor connector names for the wallpaper plugin], [yes])
++
+ dnl ***********************************
+ dnl *** Check for debugging support ***
+ dnl ***********************************
+@@ -293,6 +300,11 @@ echo "* Mount notification support:         yes"
+ else
+ echo "* Mount notification support:         no"
+ fi
++if test x"$LIBXFCE4WINDOWING_FOUND" = x"yes"; then
++echo "* libxfce4windowing (wallpaper):      yes"
++else
++echo "* libxfce4windowing (wallpaper):      no"
++fi
+ echo "* Debug Support:                      $enable_debug"
+ echo "* GObject Instrospection support:     $enable_introspection"
+ echo
+diff --git a/plugins/thunar-wallpaper/Makefile.am b/plugins/thunar-wallpaper/Makefile.am
+index 70b92d5..023d799 100644
+--- a/plugins/thunar-wallpaper/Makefile.am
++++ b/plugins/thunar-wallpaper/Makefile.am
+@@ -20,6 +20,7 @@ thunar_wallpaper_plugin_la_CFLAGS =					\
+ 	$(GLIB_CFLAGS)							\
+ 	$(GTK_CFLAGS)							\
+ 	$(LIBX11_CFLAGS)						\
++	$(LIBXFCE4WINDOWING_CFLAGS)					\
+ 	$(XFCONF_CFLAGS)						\
+ 	$(PLATFORM_CFLAGS)
+ 
+@@ -37,6 +38,7 @@ thunar_wallpaper_plugin_la_LIBADD =					\
+ 	$(GLIB_LIBS)							\
+ 	$(GTK_LIBS)							\
+ 	$(XFCONF_LIBS)						\
++	$(LIBXFCE4WINDOWING_LIBS)					\
+ 	$(LIBX11_LIBS)
+ 
+ thunar_wallpaper_plugin_la_DEPENDENCIES =				\
+diff --git a/plugins/thunar-wallpaper/twp-provider.c b/plugins/thunar-wallpaper/twp-provider.c
+index 0ffaddc..80489e9 100644
+--- a/plugins/thunar-wallpaper/twp-provider.c
++++ b/plugins/thunar-wallpaper/twp-provider.c
+@@ -32,6 +32,10 @@
+ #include <glib/gi18n-lib.h>
+ #include <xfconf/xfconf.h>
+ 
++#ifdef HAVE_LIBXFCE4WINDOWING
++#include <libxfce4windowing/libxfce4windowing.h>
++#endif
++
+ 
+ #define XFDESKTOP_SELECTION_FMT "XFDESKTOP_SELECTION_%d"
+ #define NAUTILUS_SELECTION_FMT "NAUTILUS_DESKTOP_WINDOW_ID"
+@@ -51,6 +55,8 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
+                           gpointer         user_data);
+ static gint
+ twp_get_active_workspace_number (GdkScreen *screen);
++static gchar *
++twp_get_monitor_name (GdkMonitor *monitor);
+ 
+ static gboolean   _has_gsettings = FALSE;
+ static GtkWidget *main_window = NULL;
+@@ -178,7 +184,7 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
+   gchar           *image_path_prop;
+   gchar           *image_show_prop;
+   gchar           *image_style_prop;
+-  const char      *monitor_name;
++  gchar           *monitor_name;
+   gchar           *file_uri;
+   gchar           *escaped_file_name;
+   gchar           *file_name = NULL;
+@@ -221,7 +227,7 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
+       monitor = gdk_display_get_monitor (display, monitor_nr);
+     }
+ 
+-  monitor_name = gdk_monitor_get_model (monitor);
++  monitor_name = twp_get_monitor_name (monitor);
+   escaped_file_name = g_shell_quote (file_name);
+ 
+   if (g_strcmp0 (desktop_type, "XFCE") == 0)
+@@ -316,11 +322,44 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
+       g_warning (("Failed to set wallpaper: $XDG_CURRENT_DESKTOP Desktop type '%s' not supported by thunar wallpaper plugin."), desktop_type);
+     }
+ 
++  g_free (monitor_name);
+   g_free (escaped_file_name);
+   g_free (file_name);
+   g_free (file_uri);
+ }
+ 
++
++
++/* xfdesktop names its per-monitor settings after the monitor's connector
++ * (e.g. "eDP-1").  On X11 that is what gdk_monitor_get_model() returns, but
++ * on Wayland it returns the monitor's model (often "Unknown"), so the
++ * wallpaper ends up in a property xfdesktop never reads.  Ask
++ * libxfce4windowing for the connector, as xfdesktop does. */
++static gchar *
++twp_get_monitor_name (GdkMonitor *monitor)
++{
++  gchar *name = NULL;
++
++#ifdef HAVE_LIBXFCE4WINDOWING
++  XfwScreen *xfw_screen = xfw_screen_get_default ();
++
++  if (xfw_screen != NULL)
++    {
++      XfwMonitor *xfw_monitor = xfw_screen_get_monitor_from_gdk_monitor (xfw_screen, monitor);
++
++      if (xfw_monitor != NULL)
++        name = g_strdup (xfw_monitor_get_connector (xfw_monitor));
++
++      g_object_unref (xfw_screen);
++    }
++#endif
++
++  if (name == NULL)
++    name = g_strdup (gdk_monitor_get_model (monitor));
++
++  return name;
++}
++
+ /* Taken from xfce_spawn_get_active_workspace_number in xfce-spawn.c apart of
+  * the libxfce4ui library.
+  * https://git.xfce.org/xfce/libxfce4ui/tree/libxfce4ui/xfce-spawn.c#n193
+-- 
+2.55.0
+

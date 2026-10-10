@@ -1,0 +1,26 @@
+Subject: [PATCH] screencast: pass the request handle and app id to the chooser
+
+Applies on top of 0001 and 0002.
+
+A chooser has no way to know which app it is choosing for. Export
+XDPW_REQUEST_HANDLE (/org/freedesktop/portal/desktop/request/<sender>/<token>,
+whose <sender> is the caller's D-Bus connection) and XDPW_APP_ID (empty for
+host apps) to the chooser's environment before it runs. A chooser can then
+apply per-app rules exactly, instead of guessing among every pending portal
+request (any portal, any app).
+---
+diff --git a/src/screencast/screencast.c b/src/screencast/screencast.c
+--- a/src/screencast/screencast.c
++++ b/src/screencast/screencast.c
+@@ -547,6 +547,11 @@
+ 
+ 	free(sess->screencast_data.app_id);
+ 	sess->screencast_data.app_id = strdup(app_id);
++	// Tell the chooser which request it is answering: the request handle carries the D-Bus sender of
++	// the app (/org/freedesktop/portal/desktop/request/<sender>/<token>), so a chooser can identify
++	// the caller exactly instead of guessing among all pending portal requests.
++	setenv("XDPW_REQUEST_HANDLE", request_handle, 1);
++	setenv("XDPW_APP_ID", app_id, 1);
+ 	bool use_aborted = false;
+ 	if (aborted_app_id && strcmp(aborted_app_id, app_id) == 0) {
+ 		if (restore_data.version == 0) {

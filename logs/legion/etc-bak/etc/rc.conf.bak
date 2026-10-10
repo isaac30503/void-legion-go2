@@ -1,0 +1,74 @@
+# /etc/rc.conf - system configuration for void
+
+# Set the host name.
+#
+# NOTE: it's preferred to declare the hostname in /etc/hostname instead:
+# 	- echo myhost > /etc/hostname
+#
+#HOSTNAME="void-live"
+
+# Set RTC to UTC or localtime.
+#HARDWARECLOCK="UTC"
+
+# Set timezone, availables timezones can be found at /usr/share/zoneinfo.
+#
+# NOTE: it's preferred to set the timezone in /etc/localtime instead:
+#  - ln -sf /usr/share/zoneinfo/<timezone> /etc/localtime
+# Setting the timezone here requires a reboot to apply any changes/fixes
+# and read-write access to the filesystem.
+#
+#TIMEZONE="Europe/Madrid"
+
+# Keymap to load, see loadkeys(8).
+KEYMAP=us-acentos
+
+# Console font to load, see setfont(8).
+#FONT="lat9w-16"
+
+# Console map to load, see setfont(8).
+#FONT_MAP=
+
+# Font unimap to load, see setfont(8).
+#FONT_UNIMAP=
+
+# Amount of ttys which should be setup.
+#TTYS=
+
+# Set the mode for cgroup mounts.
+# hybrid: mount cgroup v1 under /sys/fs/cgroup and
+#         cgroup v2 under /sys/fs/cgroup/unified
+# legacy: mount cgroup v1 /sys/fs/cgroup
+# unified: mount cgroup v2 under /sys/fs/cgroup
+#CGROUP_MODE=hybrid
+
+# Set this to true only if you do not want seed files to actually credit the
+# RNG, for example if you plan to replicate this file system image and do not
+# have the wherewithal to first delete the contents of /var/lib/seedrng.
+#SEEDRNG_SKIP_CREDIT=false
+# >>> arranque silencioso (receta, paso 8; quitar: sudo sh arranque-silencioso.sh --quitar)
+# Calla las líneas "=> …" y el "OK" de runit; los avisos y errores siguen saliendo.
+msg() { :; }
+msg_ok() { :; }
+# Solo al arrancar (/etc/runit/1) y al apagar (/etc/runit/3), que son los que cargan este
+# fichero: la salida NORMAL de lo que ejecutan (btrfs, fsck, seedrng, sysctl, modules-load…) va a
+# ningún sitio; los errores (stderr) siguen en pantalla, y los avisos/errores de runit también
+# (por el descriptor 3, que apunta a la pantalla). La consola de emergencia la recupera.
+# Con Plymouth (instalar-plymouth.sh): los avisos y errores también salen sobre el logo y el
+# logo se quita si salta la consola de emergencia. Sin logo al apagar: la etapa 3 carga esto con
+# X aún abierto (le disputaría la pantalla) y 70-pkill.sh lo mataría a medio camino.
+case "$0" in
+    */runit/1|*/runit/3)
+        exec 3>&1 1>/dev/null
+        plymsg() { command -v plymouth >/dev/null && plymouth display-message --text="$*" 2>/dev/null; true; }
+        msg_warn() { printf "\033[1m\033[33mWARNING: $@\033[m\n" >&3; plymsg "AVISO: $*"; }
+        msg_error() { printf "\033[1m\033[31mERROR: $@\033[m\n" >&3; plymsg "ERROR: $*"; }
+        emergency_shell() {
+            command -v plymouth >/dev/null && plymouth quit 2>/dev/null
+            exec 1>&3
+            echo; echo "Cannot continue due to errors above, starting emergency shell."
+            echo "When ready type exit to continue booting."
+            /bin/sh -l
+        }
+        ;;
+esac
+# <<< arranque silencioso

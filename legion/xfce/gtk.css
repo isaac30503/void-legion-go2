@@ -1,0 +1,58 @@
+/* Bottom panel (the launchers one, panel-2; the Docklike is on the top one) with rounded corners.
+   xfce4-panel 4.20 names each panel #XfcePanelWindow with the class .panel-N.
+   It needs xfwm4's compositor active and the panel using the theme's style. */
+#XfcePanelWindow.panel-2 {
+    border-radius: 14px;
+}
+/* And the highlight of its buttons (launchers, show desktop, folders menu) when hovering
+   or pressing: rounded and 2 px away from the edge, so that its curve (12 px) stays
+   concentric with the panel's (14 - 2 = 12). Without the margin, the buttons at the ends
+   reached the edge and their corner stuck out square outside the panel's curve.
+   (Before 4 px / 10 px; the highlight was enlarged at the user's request.) */
+#XfcePanelWindow.panel-2 button {
+    border-radius: 12px;
+    margin: 2px;
+}
+
+/* Workspaces ("pager" plugin, plugin-20 of the top panel, in buttons mode):
+   the active workspace is a white circle with the number in black; the others, without background.
+   xfce4-panel 4.20 names each plugin #<name>-<id> and the active workspace is the :checked button. */
+#pager-20 button {
+    min-width: 20px;
+    min-height: 20px;
+    padding: 0;
+    margin: 2px 1px;
+    border-radius: 999px;
+}
+#pager-20 button:checked {
+    background-color: #ffffff;
+    background-image: none;
+    border-color: transparent;
+    box-shadow: none;
+}
+#pager-20 button:checked label {
+    color: #000000;
+}
+
+/* Top bar of xfce4-screensaver's unlock screen (after suspending or
+   locking): it imitates the greeter (#panel_window) and runs as the user, so it reads this
+   file, not lightdm's. Solid black like panel-1 and like the greeter. */
+#panel_window {
+    background-color: #000000;
+}
+
+/* Battery percentage (power plugin, plugin-19) with the same font as the clock
+   (its digital-time-font: JetBrainsMono NFM Blocks Bold 10). Without this it inherits the weight 500
+   that Orchis gives to the panel's texts and looks thinner. */
+#power-manager-plugin-19 label {
+    font-family: "JetBrainsMono NFM Blocks";
+    font-weight: bold;
+    font-size: 10pt;
+}
+
+/* Texts of that bar (machine name, date and time) with the font of the panel's clock. */
+#panel_window label {
+    font-family: "JetBrainsMono NFM Blocks";
+    font-weight: bold;
+    font-size: 10pt;
+}

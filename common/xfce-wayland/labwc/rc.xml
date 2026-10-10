@@ -1,0 +1,364 @@
+<?xml version="1.0"?>
+<!--
+  labwc for the session "Xfce (Wayland)" (~/.config/xfce4/labwc/rc.xml; installed by
+  common/xfce-wayland/install-xfce-wayland.sh; Void recipe, step 15). On Wayland windows are handled by labwc, not
+  xfwm4: this translates xfwm4's things and the Omarchy-style shortcuts (recipe, step 13).
+  window-focus and window-snap (xdotool, X11) are redone with labwc actions: Super+arrows gives
+  the focus to the SNAPPED window on that side (labwc has no focus by direction; if there is none,
+  it goes to the previous/next one) and Super+Shift+arrows snaps to a half, chaining to a quarter,
+  and repeating the arrow, almost maximized. New windows open almost maximized (region
+  "full"); dialogs and fixed-size ones, centered.
+  After editing it: labwc -r (or log out).
+  (Previous names in the Spanish original: region "llena", commands ventana-foco/ventana-acoplar, brillo,
+  and the identifier "compartir-pantalla".)
+-->
+<labwc_config>
+
+  <core>
+    <gap>8</gap>                       <!-- window-snap's 8 px gap -->
+    <!-- Xwayland always alive (2026-10-06): by default labwc starts it on demand and closes it 10 s
+         after the last X program (-terminate 10). That way what the autostart loads with
+         xrdb (~/.Xresources) was lost and xterm came out without a theme on the IdeaPad (on the Legion, Steam in the
+         background kept it alive). It requires restarting labwc (new session). -->
+    <xwaylandPersistence>yes</xwaylandPersistence>
+  </core>
+
+  <placement>
+    <policy>center</policy>            <!-- xfwm4 placement_ratio = 100: new ones, centered -->
+  </placement>
+
+  <focus>
+    <followMouse>yes</followMouse>     <!-- xfwm4 click_to_focus = false -->
+    <followMouseRequiresMovement>yes</followMouseRequiresMovement>
+    <raiseOnFocus>no</raiseOnFocus>    <!-- focuses without raising; raise = click (mousebinds of <default/>). xfwm4 raise_on_focus = false (2026-10-06) -->
+  </focus>
+
+  <!-- Window borders: Orchis-Teal-Dark-Compact, made for labwc by labwc-theme.sh from the
+       xfwm4 one (~/.local/share/themes/…/labwc). Buttons like xfwm4 button_layout "O|SHMC": menu on the
+       left; shade, minimize, maximize and close on the right. Font: xfwm4's title one
+       (JetBrainsMono NFM Blocks Bold 9); menus and notices, the session's (Bold 10). -->
+  <theme>
+    <name>Orchis-Teal-Dark-Compact</name>
+    <icon>Papirus-Dark</icon>
+    <titlebar>
+      <layout>menu:shade,iconify,max,close</layout>
+      <showTitle>yes</showTitle>
+    </titlebar>
+    <cornerRadius>8</cornerRadius>
+    <dropShadows>yes</dropShadows>
+    <font place="ActiveWindow" name="JetBrainsMono NFM Blocks" size="9" weight="bold"/>
+    <font place="InactiveWindow" name="JetBrainsMono NFM Blocks" size="9" weight="bold"/>
+    <font place="MenuHeader" name="JetBrainsMono NFM Blocks" size="10" weight="bold"/>
+    <font place="MenuItem" name="JetBrainsMono NFM Blocks" size="10" weight="bold"/>
+    <font place="OnScreenDisplay" name="JetBrainsMono NFM Blocks" size="10" weight="bold"/>
+  </theme>
+
+  <!-- Only the number, as in X11 (with number="5" they were called "Workspace 1"…) -->
+  <!-- Alt+Tab like xfwm4 (cycle_tabwin_mode 0 + cycle_preview): grid with the thumbnail of
+       each window and its title below; Orchis colors in the theme (labwc-theme.sh). preview: the
+       chosen window is seen in its place; outlines: its outline, like cycle_draw_frame. -->
+  <windowSwitcher preview="yes" outlines="yes" unshade="yes">
+    <osd show="yes" style="thumbnail" output="all" thumbnailLabelFormat="%T"/>
+  </windowSwitcher>
+
+  <desktops>
+    <!-- No on-screen notice when switching workspace (0 = not shown): the top panel already says it -->
+    <popupTime>0</popupTime>
+    <names>
+      <name>1</name><name>2</name><name>3</name><name>4</name><name>5</name>
+    </names>
+  </desktops>
+
+  <keyboard>
+    <default/>
+    <numlock>on</numlock>
+
+    <!-- Applications (Omarchy) -->
+    <keybind key="W-Return"><action name="Execute" command="exo-open --launch TerminalEmulator"/></keybind>
+    <keybind key="C-A-t"><action name="Execute" command="exo-open --launch TerminalEmulator"/></keybind>
+    <keybind key="W-C-t"><action name="Execute" command="exo-open --launch TerminalEmulator btop"/></keybind>
+    <keybind key="W-S-Return"><action name="Execute" command="exo-open --launch WebBrowser"/></keybind>
+    <keybind key="W-S-b"><action name="Execute" command="exo-open --launch WebBrowser"/></keybind>
+    <keybind key="W-S-A-b"><action name="Execute" command="firefox --private-window"/></keybind>
+    <keybind key="W-e"><action name="Execute" command="thunar"/></keybind>
+    <keybind key="W-S-f"><action name="Execute" command="exo-open --launch FileManager"/></keybind>
+    <keybind key="C-A-f"><action name="Execute" command="thunar"/></keybind>
+    <keybind key="W-S-n"><action name="Execute" command="mousepad"/></keybind>
+    <keybind key="W-space"><action name="Execute" command="xfce4-appfinder"/></keybind>
+    <keybind key="W-r"><action name="Execute" command="xfce4-appfinder -c"/></keybind>
+    <keybind key="A-F2"><action name="Execute" command="xfce4-appfinder --collapsed"/></keybind>
+    <keybind key="A-F3"><action name="Execute" command="xfce4-appfinder"/></keybind>
+    <keybind key="W-A-space"><action name="Execute" command="xfce4-popup-applicationsmenu"/></keybind>
+    <keybind key="A-F1"><action name="Execute" command="xfce4-popup-applicationsmenu"/></keybind>
+    <keybind key="W-C-a"><action name="Execute" command="pavucontrol"/></keybind>
+    <keybind key="W-C-b"><action name="Execute" command="blueman-manager"/></keybind>
+    <keybind key="W-C-d"><action name="Execute" command="xfce4-display-settings"/></keybind>
+    <keybind key="W-p"><action name="Execute" command="xfce4-display-settings --minimal"/></keybind>
+    <keybind key="W-C-p"><action name="Execute" command="xfce4-power-manager-settings"/></keybind>
+    <keybind key="W-C-v"><action name="Execute" command="xfce4-popup-clipman"/></keybind>
+    <keybind key="W-C-w"><action name="Execute" command="nm-connection-editor"/></keybind>
+    <keybind key="C-S-Escape"><action name="Execute" command="xfce4-taskmanager"/></keybind>
+    <keybind key="W-Escape"><action name="Execute" command="xfce4-session-logout"/></keybind>
+    <keybind key="C-A-Delete"><action name="Execute" command="xfce4-session-logout"/></keybind>
+    <keybind key="Print"><action name="Execute" command="xfce4-screenshooter"/></keybind>
+    <keybind key="S-Print"><action name="Execute" command="xfce4-screenshooter -r"/></keybind>
+    <keybind key="A-Print"><action name="Execute" command="xfce4-screenshooter -w"/></keybind>
+
+    <!-- Windows (in X11 they were xdotool and xfwm4) -->
+    <keybind key="W-q"><action name="Close"/></keybind>
+    <keybind key="W-w"><action name="Close"/></keybind>
+    <keybind key="A-F4"><action name="Close"/></keybind>
+    <keybind key="W-f"><action name="ToggleFullscreen"/></keybind>
+    <keybind key="A-F11"><action name="ToggleFullscreen"/></keybind>
+    <keybind key="W-A-f"><action name="ToggleMaximize"/></keybind>
+    <keybind key="A-F10"><action name="ToggleMaximize"/></keybind>
+    <keybind key="W-o"><action name="ToggleAlwaysOnTop"/></keybind>
+    <keybind key="A-F12"><action name="ToggleAlwaysOnTop"/></keybind>
+    <keybind key="A-F9"><action name="Iconify"/></keybind>
+    <keybind key="A-Tab"><action name="NextWindow"/></keybind>
+    <keybind key="A-S-Tab"><action name="PreviousWindow"/></keybind>
+    <keybind key="A-space"><action name="ShowMenu" menu="client-menu"/></keybind>
+    <!-- Super+Shift+arrows, like window-snap in X11 (the user's request, 2026-10-03): the region
+         "full" (almost maximized) is the INTERMEDIATE STEP between the two halves, inside the monitor:
+         left half + → = full; full + → = right half (same with ↑/↓). Towards the edge (←
+         on the left half, or outwards from a quarter) it does nothing (None); quarters never
+         go to full with arrows: inwards they grow to the half (up-right + ← = top
+         half), set by hand and not with combine. From floating or full: the half; from a half,
+         the perpendicular arrow gives the quarter (SnapToEdge combine="yes").
+         Fixed-size ones (and those with a parent window) labwc counts as type="dialog":
+         they are not resized, only stuck to that edge (MoveToEdge); chaining, to the corner. -->
+    <keybind key="W-S-Left">
+      <action name="If"><query type="dialog"/>
+        <then><action name="MoveToEdge" direction="left" snapWindows="no"/></then>
+        <else>
+          <action name="If"><query tiled="left"/><query tiled="up-left"/><query tiled="down-left"/>
+            <then><action name="None"/></then>
+            <else>
+              <action name="If"><query tiled="right"/>
+                <then><action name="SnapToRegion" region="full"/></then>
+                <else>
+                  <action name="If"><query tiled="up-right"/>
+                    <then><action name="SnapToEdge" direction="up" combine="no"/></then>
+                    <else>
+                      <action name="If"><query tiled="down-right"/>
+                        <then><action name="SnapToEdge" direction="down" combine="no"/></then>
+                        <else><action name="SnapToEdge" direction="left" combine="yes"/></else>
+                      </action>
+                    </else>
+                  </action>
+                </else>
+              </action>
+            </else>
+          </action>
+        </else>
+      </action>
+    </keybind>
+    <keybind key="W-S-Right">
+      <action name="If"><query type="dialog"/>
+        <then><action name="MoveToEdge" direction="right" snapWindows="no"/></then>
+        <else>
+          <action name="If"><query tiled="right"/><query tiled="up-right"/><query tiled="down-right"/>
+            <then><action name="None"/></then>
+            <else>
+              <action name="If"><query tiled="left"/>
+                <then><action name="SnapToRegion" region="full"/></then>
+                <else>
+                  <action name="If"><query tiled="up-left"/>
+                    <then><action name="SnapToEdge" direction="up" combine="no"/></then>
+                    <else>
+                      <action name="If"><query tiled="down-left"/>
+                        <then><action name="SnapToEdge" direction="down" combine="no"/></then>
+                        <else><action name="SnapToEdge" direction="right" combine="yes"/></else>
+                      </action>
+                    </else>
+                  </action>
+                </else>
+              </action>
+            </else>
+          </action>
+        </else>
+      </action>
+    </keybind>
+    <keybind key="W-S-Up">
+      <action name="If"><query type="dialog"/>
+        <then><action name="MoveToEdge" direction="up" snapWindows="no"/></then>
+        <else>
+          <action name="If"><query tiled="up"/><query tiled="up-left"/><query tiled="up-right"/>
+            <then><action name="None"/></then>
+            <else>
+              <action name="If"><query tiled="down"/>
+                <then><action name="SnapToRegion" region="full"/></then>
+                <else>
+                  <action name="If"><query tiled="down-left"/>
+                    <then><action name="SnapToEdge" direction="left" combine="no"/></then>
+                    <else>
+                      <action name="If"><query tiled="down-right"/>
+                        <then><action name="SnapToEdge" direction="right" combine="no"/></then>
+                        <else><action name="SnapToEdge" direction="up" combine="yes"/></else>
+                      </action>
+                    </else>
+                  </action>
+                </else>
+              </action>
+            </else>
+          </action>
+        </else>
+      </action>
+    </keybind>
+    <keybind key="W-S-Down">
+      <action name="If"><query type="dialog"/>
+        <then><action name="MoveToEdge" direction="down" snapWindows="no"/></then>
+        <else>
+          <action name="If"><query tiled="down"/><query tiled="down-left"/><query tiled="down-right"/>
+            <then><action name="None"/></then>
+            <else>
+              <action name="If"><query tiled="up"/>
+                <then><action name="SnapToRegion" region="full"/></then>
+                <else>
+                  <action name="If"><query tiled="up-left"/>
+                    <then><action name="SnapToEdge" direction="left" combine="no"/></then>
+                    <else>
+                      <action name="If"><query tiled="up-right"/>
+                        <then><action name="SnapToEdge" direction="right" combine="no"/></then>
+                        <else><action name="SnapToEdge" direction="down" combine="yes"/></else>
+                      </action>
+                    </else>
+                  </action>
+                </else>
+              </action>
+            </else>
+          </action>
+        </else>
+      </action>
+    </keybind>
+    <!-- Super+Shift+Space: back to the starting position. Resizable ones,
+         to the almost maximized size with which they open (region "full", 8 px gap); fixed-size
+         ones, dialogs and the finder, to the center (in X11, repeating the arrow put the window back
+         in its place; labwc cannot do it with fixed-size ones). -->
+    <keybind key="W-S-space">
+      <action name="If"><query type="dialog"/><query identifier="xfce4-appfinder"/>
+        <then><action name="UnSnap"/><action name="AutoPlace" policy="center"/></then>
+        <else><action name="SnapToRegion" region="full"/></else>
+      </action>
+    </keybind>
+    <!-- Super+arrows (window-focus): labwc's <default/> uses them to snap; here they give the focus
+         to the window snapped on that side, on the current workspace. If on that side there is no
+         snapped one (floating windows: labwc does not let you know where they are), plan B: ←/↑ the
+         previous window and →/↓ the next one, in Alt+Tab order, without its menu. -->
+    <keybind key="W-Left">
+      <action name="ForEach"><query tiled="left" desktop="current" focused="no"/><query tiled="up-left" desktop="current" focused="no"/><query tiled="down-left" desktop="current" focused="no"/>
+        <then><action name="Focus"/><action name="Raise"/></then>
+        <none><action name="PreviousWindowImmediate"/></none>
+      </action>
+    </keybind>
+    <keybind key="W-Right">
+      <action name="ForEach"><query tiled="right" desktop="current" focused="no"/><query tiled="up-right" desktop="current" focused="no"/><query tiled="down-right" desktop="current" focused="no"/>
+        <then><action name="Focus"/><action name="Raise"/></then>
+        <none><action name="NextWindowImmediate"/></none>
+      </action>
+    </keybind>
+    <keybind key="W-Up">
+      <action name="ForEach"><query tiled="up" desktop="current" focused="no"/><query tiled="up-left" desktop="current" focused="no"/><query tiled="up-right" desktop="current" focused="no"/>
+        <then><action name="Focus"/><action name="Raise"/></then>
+        <none><action name="PreviousWindowImmediate"/></none>
+      </action>
+    </keybind>
+    <keybind key="W-Down">
+      <action name="ForEach"><query tiled="down" desktop="current" focused="no"/><query tiled="down-left" desktop="current" focused="no"/><query tiled="down-right" desktop="current" focused="no"/>
+        <then><action name="Focus"/><action name="Raise"/></then>
+        <none><action name="NextWindowImmediate"/></none>
+      </action>
+    </keybind>
+
+    <!-- Workspaces: Super+number goes to it; Super+Shift+number takes the window and goes -->
+    <keybind key="W-1"><action name="GoToDesktop" to="1"/></keybind>
+    <keybind key="W-2"><action name="GoToDesktop" to="2"/></keybind>
+    <keybind key="W-3"><action name="GoToDesktop" to="3"/></keybind>
+    <keybind key="W-4"><action name="GoToDesktop" to="4"/></keybind>
+    <keybind key="W-5"><action name="GoToDesktop" to="5"/></keybind>
+    <keybind key="W-S-1"><action name="SendToDesktop" to="1" follow="yes"/></keybind>
+    <keybind key="W-S-2"><action name="SendToDesktop" to="2" follow="yes"/></keybind>
+    <keybind key="W-S-3"><action name="SendToDesktop" to="3" follow="yes"/></keybind>
+    <keybind key="W-S-4"><action name="SendToDesktop" to="4" follow="yes"/></keybind>
+    <keybind key="W-S-5"><action name="SendToDesktop" to="5" follow="yes"/></keybind>
+    <keybind key="W-Tab"><action name="GoToDesktop" to="right" wrap="yes"/></keybind>
+    <keybind key="W-S-Tab"><action name="GoToDesktop" to="left" wrap="yes"/></keybind>
+    <keybind key="C-A-Left"><action name="GoToDesktop" to="left"/></keybind>
+    <keybind key="C-A-Right"><action name="GoToDesktop" to="right"/></keybind>
+
+    <!-- Laptop keys: in X11 the volume plugin and xfce4-power-manager caught them;
+         on Wayland they cannot, so they go here. Brightness, through elogind (without root), with `brightness`. -->
+    <keybind key="XF86_AudioRaiseVolume"><action name="Execute" command="wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+"/></keybind>
+    <keybind key="XF86_AudioLowerVolume"><action name="Execute" command="wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"/></keybind>
+    <keybind key="XF86_AudioMute"><action name="Execute" command="wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"/></keybind>
+    <keybind key="XF86_AudioMicMute"><action name="Execute" command="wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"/></keybind>
+    <keybind key="XF86_MonBrightnessUp"><action name="Execute" command="brightness +10"/></keybind>
+    <keybind key="XF86_MonBrightnessDown"><action name="Execute" command="brightness -10"/></keybind>
+  </keyboard>
+
+  <mouse>
+    <default/>
+    <!-- Drag with Super (xfwm4 easy_click) -->
+    <context name="Frame">
+      <mousebind button="W-Left" action="Drag"><action name="Move"/></mousebind>
+      <mousebind button="W-Right" action="Drag"><action name="Resize"/></mousebind>
+    </context>
+  </mouse>
+
+  <!-- New windows almost full screen, with the 8 px gap (<core><gap>) on all the
+       edges and below the top panel (the user's request, 2026-10-03): each normal window
+       snaps when it opens to the region "full" (the whole usable area). Dialogs and fixed-size ones
+       (type="dialog") do not: they stay centered. Super+Shift+Space releases it (at the size the
+       application asked for, centered). The application finder is left as it was. -->
+  <regions>
+    <region name="full" x="0%" y="0%" width="100%" height="100%"/>
+  </regions>
+  <windowRules>
+    <!-- identifier="*" and not type="normal": XWayland ones without _NET_WM_WINDOW_TYPE (xterm) do not
+         count as "normal". Then dialogs (and fixed-size ones) and the finder are released. -->
+    <windowRule identifier="*"><action name="SnapToRegion" region="full"/></windowRule>
+    <windowRule type="dialog"><action name="UnSnap"/></windowRule>
+    <windowRule identifier="xfce4-appfinder"><action name="UnSnap"/></windowRule>
+    <!-- Firefox draws its own bar (tabs and buttons, CSD) and labwc did not give it a frame or the
+         teal focus border. Like Steam: ONLY the border (SetDecorations border, forced with
+         forceSSD), without labwc's bar, and in Firefox the option "Title Bar" UNCHECKED
+         (Customize toolbar): with labwc's bar + Firefox's the buttons came out
+         repeated. Until 2026-10-03 it was serverDecoration="yes" with "Title Bar"
+         checked; the user preferred this. It applies when the window opens. -->
+    <windowRule identifier="firefox">
+      <action name="SetDecorations" decorations="border" forceSSD="yes"/>
+    </windowRule>
+    <!-- Steam (Xwayland, WM_CLASS "steamwebhelper", "steam") asks not to carry decoration
+         (_MOTIF_WM_HINTS 0x2, 0…) and draws its own bar with its buttons: with nothing, its windows
+         had no frame or the teal focus border. ONLY the border (SetDecorations border, forced
+         with forceSSD even if the window asks the opposite), without labwc's bar: with
+         serverDecoration="yes" two bars came out with the buttons repeated. 2026-10-03. -->
+    <windowRule identifier="steam">
+      <action name="SetDecorations" decorations="border" forceSSD="yes"/>
+    </windowRule>
+    <!-- Exception: Steam's on-screen keyboard ("Teclado en pantalla de Steam Input" / "Steam Input On-Screen
+         Keyboard", RT+X; type _NET_WM_WINDOW_TYPE_UTILITY, the main window is NORMAL) comes in as it wants: the
+         two rules above that apply to it are undone (the region "full" of identifier="*" and Steam's
+         forced border). By type and not by title, which changes with the language. 2026-10-04. -->
+    <windowRule identifier="steam" type="utility">
+      <action name="UnSnap"/>
+      <action name="SetDecorations" decorations="none"/>
+    </windowRule>
+    <!-- The screen-share chooser (~/.local/bin/screen-share, app_id set in the script):
+         always on top. With focus without raising (raiseOnFocus no), if the app that asked to share
+         (Vesktop) got the focus, the chooser stayed behind without being noticed, and while it is still
+         open the portal does not attend another request (it looked like you could not share again).
+         2026-10-07, Legion; harmless where there is no chooser. -->
+    <windowRule identifier="screen-share">
+      <action name="ToggleAlwaysOnTop"/>
+      <!-- Without bar or buttons (minimize, maximize, close), like Discord's chooser: it closes
+           with its "Cancel" button or Esc. 2026-10-07, the user's request. -->
+      <action name="SetDecorations" decorations="none"/>
+    </windowRule>
+  </windowRules>
+
+  <snapping>
+    <range inner="10" outer="10"/>
+  </snapping>
+
+</labwc_config>

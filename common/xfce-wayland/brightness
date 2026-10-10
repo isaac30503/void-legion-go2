@@ -1,0 +1,14 @@
+#!/bin/sh
+# brightness +N | -N — raises or lowers the brightness N % of the maximum (brightness keys in Xfce Wayland, where
+# xfce4-power-manager cannot catch them). Through elogind's SetBrightness: without root or new
+# permissions, only for the session on screen (the same as Game Mode's brightness).
+# Installed by common/xfce-wayland/install-xfce-wayland.sh in ~/.local/bin. Void recipe, step 15.
+# Previous (Spanish) name: brillo (install/aliases.sh can create it as an alias).
+d=$(ls /sys/class/backlight | head -1); [ -n "$d" ] || exit 1
+max=$(cat "/sys/class/backlight/$d/max_brightness"); cur=$(cat "/sys/class/backlight/$d/brightness")
+case "$1" in +[0-9]*|-[0-9]*) ;; *) echo "usage: brightness +N|-N (in %)" >&2; exit 2 ;; esac
+n=$((cur + max * $1 / 100))
+[ "$n" -gt "$max" ] && n=$max
+[ "$n" -lt $((max / 20)) ] && n=$((max / 20))     # never completely black (5 %)
+exec busctl call org.freedesktop.login1 /org/freedesktop/login1/session/auto \
+    org.freedesktop.login1.Session SetBrightness ssu backlight "$d" "$n"

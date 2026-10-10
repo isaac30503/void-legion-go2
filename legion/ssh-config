@@ -1,0 +1,22 @@
+# ~/.ssh/config of the Legion (Legion recipe, step 4).
+# IdeaPad 100 (Void Linux + Xfce) — the network's debugging station.
+# By mDNS name and not by IP: the router changes its address. It resolves because
+# this console has nss-mdns in nsswitch.conf (step 3).
+Host ideapad
+    HostName ideapad-100.local
+    User isaac
+    IdentityFile ~/.ssh/id_ed25519
+
+# MSI Thin 15. Careful: its sshd is disabled by default, it has to be started
+# there before this works.
+Host msi
+    HostName 192.168.0.115
+    User isaac
+    IdentityFile ~/.ssh/id_ed25519
+
+# Steam Deck (SteamOS, user deck). sshd enabled by hand on the Deck on 2026-10-05
+# (passwd + sudo systemctl enable --now sshd). By mDNS name.
+Host deck
+    HostName steamdeck.local
+    User deck
+    IdentityFile ~/.ssh/id_ed25519

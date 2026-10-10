@@ -1,0 +1,58 @@
+diff --git a/steamos-manager/src/gpu.rs b/steamos-manager/src/gpu.rs
+index 8057c84..c82ad06 100644
+--- a/steamos-manager/src/gpu.rs
++++ b/steamos-manager/src/gpu.rs
+@@ -362,7 +362,18 @@ impl GpuPerformanceLevelDriver for AmdgpuPerformanceLevelDriver {
+ 
+     async fn set_clocks(&self, clocks: u32) -> Result<()> {
+         // Set GPU clocks to given value valid
+-        // Only used when GPU Performance Level is manual, but write whenever called.
++        // Only write the clock when the GPU Performance Level is manual. Some
++        // SMUs (e.g. SMU 14.0.0 on the Legion Go 2) reject OD_SCLK edits outside
++        // manual mode with EINVAL, and Steam resends its saved clock on every
++        // performance update even when the manual GPU clock is disabled. When
++        // the manual clock is enabled, Steam sets the level to manual before
++        // sending the clock, so nothing is lost by skipping it here.
++        if self.get_performance_level().await?
++            != GpuPerformanceLevel::Amdgpu(AmdgpuPerformanceLevel::Manual)
++        {
++            debug!("Not setting GPU clock to {clocks}: performance level is not manual");
++            return Ok(());
++        }
+         let base = find_hwmon(AMDGPU_HWMON_NAME).await?;
+         let mut myfile = File::create(base.join(Self::CLOCKS_SUFFIX))
+             .await
+@@ -854,6 +865,18 @@ CCLK_RANGE in Core0:
+         assert!(driver.set_clocks(1600).await.is_err());
+         setup_amdgpu().await.expect("setup_amdgpu");
+ 
++        // Outside manual mode the clock is not written
++        driver
++            .set_performance_level(GpuPerformanceLevel::Amdgpu(AmdgpuPerformanceLevel::Auto))
++            .await
++            .expect("auto");
++        assert!(driver.set_clocks(200).await.is_ok());
++        assert!(read_clocks().await.is_err());
++
++        driver
++            .set_performance_level(GpuPerformanceLevel::Amdgpu(AmdgpuPerformanceLevel::Manual))
++            .await
++            .expect("manual");
+         assert!(driver.set_clocks(200).await.is_ok());
+ 
+         assert_eq!(read_clocks().await.unwrap(), format_clocks(200));
+diff --git a/steamos-manager/src/manager/root.rs b/steamos-manager/src/manager/root.rs
+index 4fe59ed..57a248c 100644
+--- a/steamos-manager/src/manager/root.rs
++++ b/steamos-manager/src/manager/root.rs
+@@ -1065,6 +1065,10 @@ mod test {
+             .await
+             .unwrap();
+ 
++        AmdgpuPerformanceLevelDriver {}
++            .set_performance_level(GpuPerformanceLevel::Amdgpu(AmdgpuPerformanceLevel::Manual))
++            .await
++            .expect("manual");
+         proxy.set_manual_gpu_clock(200).await.expect("proxy_set");
+         assert_eq!(read_clocks().await.unwrap(), format_clocks(200));
+ 

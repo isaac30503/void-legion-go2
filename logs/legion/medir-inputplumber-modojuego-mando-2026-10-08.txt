@@ -1,0 +1,138 @@
+== diag-inputplumber-cpu: modojuego-mando — 2026-10-08 21:56:53 — PID 911 — DUR 20 s
+inputplumber: inputplumber 0.81.0
+kernel 6.18.55_1; arrancado hace 4261 s
+Sesión: gamescope-wl=1 labwc=0 steam=1 extest=0 xfce4-session=0
+CPU media desde que arrancó el proceso: 9.6 %
+
+-- IIO
+iio:device0 als: buffer=0 in_chromaticity_sampling_frequency=0.000000 in_colortemp_sampling_frequency=0.000000 in_illuminance_sampling_frequency=0.000000 in_intensity_sampling_frequency=0.000000 
+iio:device1 gyro_3d: buffer=0 in_anglvel_sampling_frequency=200.000000 
+iio:device2 accel_3d: buffer=0 in_accel_sampling_frequency=200.000000 
+
+-- Descriptores abiertos (fd -> ruta)
+0 -> /dev/console
+1 -> pipe:[3266]
+10 -> anon_inode:inotify
+11 -> socket:[11692]
+12 -> anon_inode:inotify
+13 -> /dev/hidraw0
+15 -> anon_inode:[eventpoll]
+16 -> /dev/uinput
+17 -> /dev/uinput
+18 -> /dev/hidraw1
+19 -> /dev/input/event10
+2 -> pipe:[3266]
+20 -> /dev/input/event2
+21 -> /dev/input/event3
+22 -> /dev/input/event4
+23 -> /dev/uhid
+3 -> anon_inode:[eventpoll]
+4 -> anon_inode:[eventfd]
+5 -> anon_inode:[eventpoll]
+6 -> socket:[9311]
+7 -> socket:[9312]
+8 -> socket:[9311]
+9 -> socket:[6519]
+
+== 1. SIN strace (20.1 s)
+CPU sin strace: 3.28 % de un núcleo
+syscr/s (lecturas): 6197   syscw/s (escrituras): 1895
+Por hilo (tid nombre: %CPU, cambios de contexto voluntarios/s, involuntarios/s):
+  1014 tokio-runtime-w: 0.00 %, 0 vol/s, 0 invol/s
+  1023 tokio-runtime-w: 0.00 %, 0 vol/s, 0 invol/s
+  1024 tokio-runtime-w: 0.00 %, 0 vol/s, 0 invol/s
+  1035 tokio-runtime-w: 0.05 %, 246 vol/s, 0 invol/s
+  1091 tokio-runtime-w: 0.20 %, 127 vol/s, 0 invol/s
+  1166 tokio-runtime-w: 0.05 %, 392 vol/s, 0 invol/s
+  1202 tokio-runtime-w: 0.00 %, 5 vol/s, 0 invol/s
+  1241 tokio-runtime-w: 0.00 %, 5 vol/s, 0 invol/s
+  1288 tokio-runtime-w: 0.00 %, 5 vol/s, 0 invol/s
+  1307 tokio-runtime-w: 0.94 %, 1027 vol/s, 1158 invol/s
+  1320 tokio-runtime-w: 0.89 %, 1040 vol/s, 1152 invol/s
+  911 inputplumber: 0.00 %, 0 vol/s, 0 invol/s
+  977 tokio-runtime-w: 0.00 %, 0 vol/s, 0 invol/s
+  978 tokio-runtime-w: 0.00 %, 0 vol/s, 0 invol/s
+  979 tokio-runtime-w: 0.00 %, 0 vol/s, 0 invol/s
+  980 tokio-runtime-w: 0.00 %, 0 vol/s, 0 invol/s
+  981 tokio-runtime-w: 0.00 %, 0 vol/s, 0 invol/s
+  982 tokio-runtime-w: 0.00 %, 0 vol/s, 0 invol/s
+  983 tokio-runtime-w: 0.00 %, 0 vol/s, 0 invol/s
+  984 tokio-runtime-w: 0.00 %, 0 vol/s, 0 invol/s
+  985 tokio-runtime-w: 0.00 %, 0 vol/s, 0 invol/s
+  986 tokio-runtime-w: 0.00 %, 0 vol/s, 0 invol/s
+  987 tokio-runtime-w: 0.15 %, 147 vol/s, 0 invol/s
+  988 tokio-runtime-w: 0.30 %, 665 vol/s, 0 invol/s
+  989 tokio-runtime-w: 0.00 %, 0 vol/s, 0 invol/s
+  990 tokio-runtime-w: 0.30 %, 582 vol/s, 0 invol/s
+  991 tokio-runtime-w: 0.40 %, 648 vol/s, 1 invol/s
+  992 tokio-runtime-w: 0.00 %, 0 vol/s, 0 invol/s
+  TOTAL despertares: 7202/s
+
+== 2. strace -f -c (20.0 s; CPU del proceso CON strace: 10.00 %)
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 44.52    7.875054         332     23682           clock_nanosleep
+ 23.94    4.234960          91     46204       371 futex
+ 17.81    3.151083         423      7432           poll
+  7.65    1.353800          86     15581           epoll_wait
+  2.61    0.462270           3    119622     21038 read
+  1.27    0.223912           4     46776           openat
+  0.68    0.119558           2     46777           close
+  0.67    0.118894           4     26401           write
+  0.62    0.109864           2     46776           fstat
+  0.20    0.035818        5116         7           restart_syscall
+  0.02    0.004372           6       635           sched_yield
+------ ----------- ----------- --------- --------- ----------------
+100.00   17.689585          46    379893     21409 total
+
+== 3. strace por descriptor (20.0 s; 551807 líneas)
+Llamadas/s:
+    6031.2  read
+    2462.0  futex
+    2337.7  openat
+    2337.7  close
+    1394.6  write
+    1183.7  clock_nanosleep
+     803.4  epoll_wait
+     371.5  poll
+Por descriptor (veces/s, llamada, ruta):
+    1871.0  read fd 14 (cerrado)
+    1392.3  read fd 14 <unfinished ...> (cerrado)
+    1208.5  read fd 24 <unfinished ...> (cerrado)
+    1000.3  close fd 14 (cerrado)
+     924.6  write /dev/uhid
+     631.3  close fd 14 <unfinished ...> (cerrado)
+     548.1  read fd 23 <unfinished ...> (cerrado)
+     491.5  close fd 24 <unfinished ...> (cerrado)
+     470.0  write anon_inode:[eventfd]
+     389.6  openat /sys/bus/iio/devices/iio:device2/in_accel_z_raw
+     389.6  openat /sys/bus/iio/devices/iio:device2/in_accel_y_raw
+     389.6  openat /sys/bus/iio/devices/iio:device2/in_accel_x_raw
+     389.6  openat /sys/bus/iio/devices/iio:device1/in_anglvel_z_raw
+     389.6  openat /sys/bus/iio/devices/iio:device1/in_anglvel_y_raw
+     389.6  openat /sys/bus/iio/devices/iio:device1/in_anglvel_x_raw
+     376.4  read /dev/uhid
+     214.6  close fd 24 (cerrado)
+     203.5  read fd 24 (cerrado)
+     201.2  read fd 19 <unfinished ...> (cerrado)
+     188.4  read /dev/input/event10
+      33.3  read /dev/hidraw1
+       8.3  read fd 18 <unfinished ...> (cerrado)
+       0.0  read fd 12 <unfinished ...> (cerrado)
+       0.0  read fd 10 <unfinished ...> (cerrado)
+Esperas (veces/s, llamada y plazo):
+     559.5  clock_nanosleep 2.3 ms
+     389.6  clock_nanosleep 2.4 ms
+     244.9  epoll_wait plazo 1 ms
+     212.4  clock_nanosleep 2.2 ms
+     199.9  epoll_wait plazo 3 ms
+     127.6  epoll_wait plazo 4 ms
+     104.2  epoll_wait plazo 5 ms
+      98.5  epoll_wait plazo 2 ms
+      28.2  epoll_wait plazo 0 ms
+      14.9  clock_nanosleep 199.9 ms
+       6.7  clock_nanosleep 2.1 ms
+       0.4  clock_nanosleep 2 ms
+       0.1  clock_nanosleep 1.2 ms
+       0.0  poll plazo 8 ms
+       0.0  clock_nanosleep 1.9 ms

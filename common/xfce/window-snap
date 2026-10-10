@@ -1,0 +1,204 @@
+#!/bin/bash
+# window-snap left|right|up|down|full|home [window] — Super+Shift+arrows and Super+Shift+Space,
+# as in the Wayland session (labwc, step 15):
+# - Arrow: snaps the window to that half; chaining another arrow, to a corner (↓ and then → =
+#   bottom-right corner); from a corner, the "opposite" arrow makes it grow to the
+#   half. **Almost maximized (region "full": the whole usable area with the 8 px gap) is the
+#   intermediate step between the two halves**: from the left half, → leaves it full, and again →, on
+#   the right half (same with ↑/↓). Towards the edge (← on the left half, or outwards from
+#   a quarter) it does nothing, and quarters never go to full with arrows (the user's request,
+#   2026-10-03: before it was repeating the arrow outwards, "as if leaving the monitor").
+# - full: almost maximized. new-windows uses it with each window that opens.
+# - home (Super+Shift+Space): back to the starting position: resizable ones, to "full";
+#   dialogs, fixed-size ones and the application finder, centered.
+# Fixed-size ones (minimum = maximum) are never resized: they are stuck to the side or corner.
+# With two screens it works only on the monitor where the window is.
+# It looks at where the window is and places it itself with xdotool (asking xfwm4 by simulating
+# keys does not work with the real keys pressed: the shortcut has the keyboard grabbed).
+# With [window] (new-windows uses it) it does not move the pointer or activate the window.
+# Void recipe, step 13 (shortcuts).
+# Previous (Spanish) name: ventana-acoplar izq|der|arr|abj|llena|inicio (those arguments still work;
+# its state folder was $XDG_RUNTIME_DIR/ventana-acoplar).
+
+GAP=8      # px between windows and between window and edge: the same everywhere
+dir=$1
+case "$dir" in izq) dir=left ;; der) dir=right ;; arr) dir=up ;; abj) dir=down ;; llena) dir=full ;; inicio) dir=home ;; esac
+case "$dir" in left|right|up|down|full|home) ;; *) echo "usage: window-snap left|right|up|down|full|home [window]" >&2; exit 1 ;; esac
+if [ -n "$2" ]; then w=$2; interactive=0; else w=$(xdotool getactivewindow 2>/dev/null) || exit 0; interactive=1; fi
+
+# --- Monitors (2026-10-03, Legion with an external monitor) ---------------------------------
+# In X11, _NET_WORKAREA is ONE rectangle for the whole desktop (with two screens, both
+# together: 3840x1200), so "half screen" ended up split between the two monitors. It
+# works on the monitor where the window is: its rectangle comes from `xrandr
+# --listactivemonitors` and the panels (_NET_WM_STRUT_PARTIAL of the DOCK windows)
+# that fall on it are subtracted. Without xrandr, the whole desktop, as before.
+monitors() {         # one line "x y w h" per active monitor
+    command -v xrandr >/dev/null || return 1
+    xrandr --listactivemonitors 2>/dev/null | awk 'NR>1 { g=$3; gsub(/\/[0-9]+/, "", g)
+        split(g, a, /[x+]/); print a[3], a[4], a[1], a[2] }'
+}
+monitor_of() {       # monitor "x y w h" that contains the point $1,$2 (or the closest)
+    monitors | awk -v px="$1" -v py="$2" '
+        { if (px >= $1 && px < $1+$3 && py >= $2 && py < $2+$4) { print; f=1; exit }
+          dx = px - ($1+$3/2); dy = py - ($2+$4/2); d = dx*dx + dy*dy
+          if (m == "" || d < md) { m = $0; md = d } }
+        END { if (!f && m != "") print m }'
+}
+usable_area() {      # usable area "x y w h" of the monitor that contains $1,$2, without panels
+    local m mx my mw mh sw sh l t r b w s
+    m=$(monitor_of "$1" "$2")
+    if [ -z "$m" ]; then xprop -root _NET_WORKAREA | sed 's/.*= //; s/,//g' | awk '{print $1, $2, $3, $4}'; return; fi
+    read -r mx my mw mh <<<"$m"; read -r sw sh < <(xdotool getdisplaygeometry)
+    l=$mx; t=$my; r=$((mx + mw)); b=$((my + mh))
+    for w in $(xprop -root _NET_CLIENT_LIST | sed 's/.*# //; s/,//g'); do
+        xprop -id "$w" _NET_WM_WINDOW_TYPE 2>/dev/null | grep -q _NET_WM_WINDOW_TYPE_DOCK || continue
+        s=$(xprop -id "$w" _NET_WM_STRUT_PARTIAL 2>/dev/null | sed -n 's/.*= //p' | tr -d ,)
+        [ -n "$s" ] || continue
+        # left right top bottom, and for each one the stretch it occupies (start end)
+        read -r L R T B ly1 ly2 ry1 ry2 tx1 tx2 bx1 bx2 <<<"$s"
+        [ "$L" -gt 0 ] && [ "$ly2" -ge "$my" ] && [ "$ly1" -lt $((my + mh)) ] && [ "$L" -gt "$l" ] && l=$L
+        [ "$R" -gt 0 ] && [ "$ry2" -ge "$my" ] && [ "$ry1" -lt $((my + mh)) ] && [ $((sw - R)) -lt "$r" ] && r=$((sw - R))
+        [ "$T" -gt 0 ] && [ "$tx2" -ge "$mx" ] && [ "$tx1" -lt $((mx + mw)) ] && [ "$T" -gt "$t" ] && t=$T
+        [ "$B" -gt 0 ] && [ "$bx2" -ge "$mx" ] && [ "$bx1" -lt $((mx + mw)) ] && [ $((sh - B)) -lt "$b" ] && b=$((sh - B))
+    done
+    echo "$l $t $((r - l)) $((b - t))"
+}
+# -----------------------------------------------------------------------------------------
+
+# The window's geometry. It works with the VISIBLE part: + xfwm4's frame if it has one
+# (xterm: _NET_FRAME_EXTENTS) and − the invisible shadow if it draws it itself (Firefox and other GTK ones with
+# their own bar: _GTK_FRAME_EXTENTS, e.g. 56,56,50,63). Order: left, right, top, bottom.
+eval "$(xdotool getwindowgeometry --shell "$w")"
+read -r fl fr ft fb < <(xprop -id "$w" _NET_FRAME_EXTENTS | sed -n 's/.*= //p' | tr -d ,)
+read -r gl gr gt gb < <(xprop -id "$w" _GTK_FRAME_EXTENTS | sed -n 's/.*= //p' | tr -d ,)
+fl=${fl:-0}; fr=${fr:-0}; ft=${ft:-0}; fb=${fb:-0}; gl=${gl:-0}; gr=${gr:-0}; gt=${gt:-0}; gb=${gb:-0}
+VX=$((X - fl + gl)); VY=$((Y - ft + gt))
+VW=$((WIDTH + fl + fr - gl - gr)); VH=$((HEIGHT + ft + fb - gt - gb))
+read -r ax ay aw ah < <(usable_area $((VX + VW / 2)) $((VY + VH / 2)))
+cx=$((VX + VW / 2 - ax)); cy=$((VY + VH / 2 - ay))
+G=$GAP
+
+# Window type: fixed size (minimum = maximum, e.g. the screenshot one), dialog
+# (_NET_WM_WINDOW_TYPE_DIALOG or with a parent window, as labwc counts it) and application finder
+hints=$(xprop -id "$w" WM_NORMAL_HINTS 2>/dev/null)
+tmin=$(sed -n 's/.*minimum size: //p' <<<"$hints"); tmax=$(sed -n 's/.*maximum size: //p' <<<"$hints")
+fixed=0; [ -n "$tmin" ] && [ "$tmin" = "$tmax" ] && fixed=1
+# Minimum size that the program asks for (e.g. Panel Preferences, 562x625), in visible size
+minw=0; minh=0
+if [ -n "$tmin" ]; then read -r minw minh <<<"${tmin/ by / }"
+    minw=$((minw + fl + fr - gl - gr)); minh=$((minh + ft + fb - gt - gb)); fi
+props=$(xprop -id "$w" _NET_WM_WINDOW_TYPE WM_TRANSIENT_FOR WM_CLASS 2>/dev/null)
+dialog=0
+grep -q '_NET_WM_WINDOW_TYPE_DIALOG' <<<"$props" && dialog=1
+grep -q '^WM_TRANSIENT_FOR(WINDOW): window id' <<<"$props" && dialog=1
+grep -q '^WM_CLASS.*"xfce4-appfinder"' <<<"$props" && dialog=1
+
+# What state is it in? (with a margin: xterm grows character by character)
+pct_w=$((100 * VW / aw)); pct_h=$((100 * VH / ah))
+half_w=0; half_h=0; whole_w=0; whole_h=0
+[ "$pct_w" -ge 35 ] && [ "$pct_w" -le 60 ] && half_w=1
+[ "$pct_h" -ge 35 ] && [ "$pct_h" -le 60 ] && half_h=1
+[ "$pct_w" -ge 90 ] && whole_w=1
+[ "$pct_h" -ge 85 ] && whole_h=1
+side=$([ "$cx" -lt $((aw / 2)) ] && echo left || echo right)
+height=$([ "$cy" -lt $((ah / 2)) ] && echo up || echo down)
+state=floating
+if   [ $whole_w = 1 ] && [ $whole_h = 1 ]; then state=full
+elif [ $half_w = 1 ] && [ $whole_h = 1 ]; then state=$side             # left/right half
+elif [ $whole_w = 1 ] && [ $half_h = 1 ]; then state=$height           # top/bottom half
+elif [ $half_w = 1 ] && [ $half_h = 1 ]; then state=$height-$side      # corner
+fi
+if [ $fixed = 1 ]; then     # fixed size: the state comes from the edges it touches (with the gap)
+    near() { [ $(( $1 - $2 )) -ge -3 ] && [ $(( $1 - $2 )) -le 3 ]; }
+    el=0; er=0; eu=0; ed=0
+    near "$VX" "$((ax + G))" && el=1;   near "$((VX + VW))" "$((ax + aw - G))" && er=1
+    near "$VY" "$((ay + G))" && eu=1;   near "$((VY + VH))" "$((ay + ah - G))" && ed=1
+    v=; h=; [ $eu = 1 ] && v=up; [ $ed = 1 ] && v=down; [ $el = 1 ] && h=left; [ $er = 1 ] && h=right
+    if [ -n "$v" ] && [ -n "$h" ]; then state=$v-$h
+    elif [ -n "$v" ]; then state=$v
+    elif [ -n "$h" ]; then state=$h
+    else state=floating; fi
+fi
+
+# Remembered state (per window, while the session lasts): if it is still where this script left it
+# (±20 px: xterm rounds to its character grid), what was recorded counts and not what was measured. With a
+# big minimum size the window does not reach the requested size and the measurement confused the state.
+STATE=${XDG_RUNTIME_DIR:-/tmp}/window-snap; mkdir -p "$STATE"
+if [ -r "$STATE/$w" ]; then
+    read -r e ex ey ew eh < "$STATE/$w"
+    d() { local x=$(( $1 - $2 )); [ "${x#-}" -le 20 ]; }
+    if d "$X" "$ex" && d "$Y" "$ey" && d "$WIDTH" "$ew" && d "$HEIGHT" "$eh"; then state=$e; fi
+fi
+
+opposite() { case $1 in left) echo right ;; right) echo left ;; up) echo down ;; down) echo up ;; esac; }
+
+# Where it goes. "full" is the intermediate step between the two halves (left → full → right),
+# inside the monitor; towards the edge nothing happens, and quarters never go to full with arrows.
+case "$dir" in
+    full)  target=full; [ $fixed = 1 ] && target=center ;;
+    home)  target=full; { [ $fixed = 1 ] || [ $dialog = 1 ]; } && target=center ;;
+    *)
+        case "$state" in
+            floating|full) target=$dir ;;                        # full: ← left half, → right half
+            left|right|up|down)                                    # half
+                case $dir in
+                    "$state") exit 0 ;;                            # outwards: nothing
+                    $(opposite "$state")) target=full ;;           # inwards: almost maximized
+                    up|down) target=$dir-$state ;;                 # perpendicular: corner
+                    *)       target=$state-$dir ;;
+                esac ;;
+            *-*)          v=${state%-*}; h=${state#*-}            # corner (quarter)
+                          [ "$dir" = "$v" ] || [ "$dir" = "$h" ] && exit 0   # outwards: nothing
+                          case $dir in                             # inwards: grows to the half
+                              up|down) target=$h ;;
+                              left|right) target=$v ;;
+                          esac ;;
+        esac
+        # Fixed-size ones are not maximized: inwards from a half, they stay where they are
+        [ "$target" = full ] && [ $fixed = 1 ] && exit 0 ;;
+esac
+
+# Visible target rectangle, relative to the usable area. Columns and rows with the same gap G
+# on the edges and between windows: | G | A | G | B | G |, A + B = total − 3G; whole = total − 2G
+w1=$(( (aw - 3*G) / 2 )); w2=$(( aw - 3*G - w1 )); wt=$(( aw - 2*G ))
+h1=$(( (ah - 3*G) / 2 )); h2=$(( ah - 3*G - h1 )); ht=$(( ah - 2*G ))
+xl=$G; xr=$(( 2*G + w1 )); yu=$G; yd=$(( 2*G + h1 ))
+case "$target" in
+    left)       fx=$xl; fy=$yu; fw=$w1; fh=$ht ;;
+    right)      fx=$xr; fy=$yu; fw=$w2; fh=$ht ;;
+    up)         fx=$xl; fy=$yu; fw=$wt; fh=$h1 ;;
+    down)       fx=$xl; fy=$yd; fw=$wt; fh=$h2 ;;
+    up-left)    fx=$xl; fy=$yu; fw=$w1; fh=$h1 ;;
+    up-right)   fx=$xr; fy=$yu; fw=$w2; fh=$h1 ;;
+    down-left)  fx=$xl; fy=$yd; fw=$w1; fh=$h2 ;;
+    down-right) fx=$xr; fy=$yd; fw=$w2; fh=$h2 ;;
+    full)       fx=$xl; fy=$yu; fw=$wt; fh=$ht ;;
+    center)     fx=$(( (aw - VW) / 2 )); fy=$(( (ah - VH) / 2 )); fw=$VW; fh=$VH ;;
+esac
+if [ $fixed = 1 ] && [ "$target" != center ]; then     # same size; stuck to the side/corner
+    fx=$(( (aw - VW) / 2 )); fy=$(( (ah - VH) / 2 )); fw=$VW; fh=$VH
+    case "$target" in *left) fx=$G ;; *right) fx=$(( aw - G - VW )) ;; esac
+    case "$target" in up*) fy=$G ;; down*) fy=$(( ah - G - VH )) ;; esac
+fi
+# If the program does not let it be that small, its minimum, stuck to the edge it touches (right/bottom)
+if [ "$fw" -lt "$minw" ]; then fw=$minw; case "$target" in *right) fx=$(( aw - G - fw )) ;; esac; fi
+if [ "$fh" -lt "$minh" ]; then fh=$minh; case "$target" in down*) fy=$(( ah - G - fh )) ;; esac; fi
+# From visible rectangle to what windowmove asks for (corner of xfwm4's frame, or of the window
+# with its shadow) and windowsize (content, without frame but with shadow)
+nx=$((ax + fx - gl)); ny=$((ay + fy - gt))
+nw=$((fw - fl - fr + gl + gr)); nh=$((fh - ft - fb + gt + gb))
+
+xdotool windowstate --remove MAXIMIZED_VERT --remove MAXIMIZED_HORZ "$w" 2>/dev/null
+if [ $fixed = 1 ] || [ "$target" = center ]; then xdotool windowmove "$w" "$nx" "$ny"
+else xdotool windowmove "$w" "$nx" "$ny" windowsize "$w" "$nw" "$nh"; fi
+
+[ "$target" = center ] && rm -f "$STATE/$w" || echo "$target $((nx + fl)) $((ny + ft)) $nw $nh" > "$STATE/$w"   # as getwindowgeometry gives it (without frame)
+[ $fixed = 1 ] && rm -f "$STATE/$w"          # fixed-size ones are deduced from the edges
+
+# Focus follows the mouse: when it moves, the window stops being under the pointer and the focus
+# would jump to the one underneath (and the next arrow would act on another window). The pointer goes to the
+# center of the target just computed (without waiting for xfwm4 to move the window).
+if [ $interactive = 1 ]; then
+    xdotool mousemove $((nx + nw / 2)) $((ny + nh / 2))
+    xdotool windowactivate "$w" 2>/dev/null
+fi

@@ -1,0 +1,2 @@
+[greeter]
+indicators = ~host;~spacer;~clock;~spacer;~layout;~session;~a11y;~power
