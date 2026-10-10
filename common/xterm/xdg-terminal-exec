@@ -1,0 +1,6 @@
+#!/bin/sh
+# Minimal substitute of xdg-terminal-exec (Void does not package it). GLib tries it
+# before its fixed list of terminals, in which xfce4-terminal goes before
+# xterm. Without arguments it opens a terminal; with arguments, it runs the command in it.
+[ $# -eq 0 ] && exec xterm
+exec xterm -e "$@"

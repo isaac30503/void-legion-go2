@@ -1,0 +1,9 @@
+# labwc's environment for "Xfce (Wayland)" (~/.config/xfce4/labwc/environment; installed by
+# common/xfce-wayland/install-xfce-wayland.sh; Void recipe, step 15). With the "lock" file next to it, startxfce4 does not
+# touch it (without /etc/vconsole.conf, Void, it left it at XKB_DEFAULT_LAYOUT=en, which does not exist).
+# The installer replaces the layout below with the one in /etc/X11/xorg.conf.d/00-keyboard.conf (and adds
+# XKB_DEFAULT_VARIANT if there is one): us + intl on the Legion; latam on the IdeaPad.
+XKB_DEFAULT_LAYOUT=latam
+XKB_DEFAULT_MODEL=pc105
+XCURSOR_THEME=volantes_cursors
+XCURSOR_SIZE=24

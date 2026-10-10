@@ -1,0 +1,79 @@
+2026-10-04 03:13:44
+== allow_edp_hotplug_detection: 0 
+== amdgpu_current_backlight_pwm: 0xfa00 
+== amdgpu_target_backlight_pwm: 0xfa00 
+== disallow_edp_enter_psr: 1 
+== dp_dsc_fec_support: FEC_Sink_Support: no DSC_Sink_Support: no 
+== dsc_bits_per_pixel: 0 
+== dsc_chunk_size: 0 
+== dsc_clock_en: 0 
+== dsc_disable_passthrough: cat: '/sys/kernel/debug/dri/0000:c2:00.0/eDP-1/dsc_disable_passthrough': Argumento inválido 
+== dsc_pic_height: 0 
+== dsc_pic_width: 0 
+== dsc_slice_bpg: 0 
+== dsc_slice_height: 0 
+== dsc_slice_width: 0 
+== force_yuv420_output: 0 
+== hdcp_sink_capability: eDP-1:100 HDCP version: None  
+== ilr_setting: [0] 1620000 kHz [1] 2700000 kHz [2] 5400000 kHz [3] 8100000 kHz [4] 0 kHz [5] 0 kHz [6] 0 kHz [7] 0 kHz 
+== internal_display: Internal: 0 
+== is_dpia_link: no 
+== is_mst_connector: no 
+== link_settings: Current:  2  0x1e  0  Verified:  2  0x1e  16  Reported:  2  0x1e  16  Preferred:  0  0x0  0 
+== lttpr_status: phy repeater count: 0 (raw: 0x0) phy repeater mode: non lttpr 
+== max_bpc: 8 
+== mst_link_settings: cat: '/sys/kernel/debug/dri/0000:c2:00.0/eDP-1/mst_link_settings': Argumento inválido 
+== mst_progress_status: disabled 
+== odm_combine_segments: -95 
+== output_bpc: Maximum: 10 
+== phy_settings:   2  0  0 
+== psr_capability: Sink support: yes [0x01] Driver support: no 
+== psr_residency: 0 
+== psr_state: 0 
+== replay_capability: Sink support: no Driver support: yes Config support: no 
+== replay_residency: 0 
+== replay_state: 0 
+== vrr_range: Min: 30 Max: 144 
+== backlight amdgpu_bl0: brightness=231280 actual=139529 bl_power=0
+== sysfs eDP-1: status=connected enabled=enabled dpms=On
+== dmesg (últimas 40 de amdgpu/drm)
+[    2.101155] amdgpu 0000:c2:00.0: amdgpu: RAP: optional rap ta ucode is not available
+[    2.101156] amdgpu 0000:c2:00.0: amdgpu: SECUREDISPLAY: optional securedisplay ta ucode is not available
+[    2.119424] amdgpu 0000:c2:00.0: amdgpu: SMU is initialized successfully!
+[    2.120635] amdgpu 0000:c2:00.0: amdgpu: [drm] Display Core v3.2.351 initialized on DCN 3.5
+[    2.120636] amdgpu 0000:c2:00.0: amdgpu: [drm] DP-HDMI FRL PCON supported
+[    2.124895] amdgpu 0000:c2:00.0: amdgpu: [drm] DMUB hardware initialized: version=0x09004E00
+[    2.196982] amdgpu 0000:c2:00.0: amdgpu: [drm] eDP-1: PSR support 1, DC PSR ver 0, sink PSR ver 1 DPCD caps 0x3a su_y_granularity 4
+[    2.336674] amdgpu 0000:c2:00.0: amdgpu: [drm] DP-1: PSR support 0, DC PSR ver -1, sink PSR ver 0 DPCD caps 0x0 su_y_granularity 0
+[    2.336861] amdgpu 0000:c2:00.0: amdgpu: [drm] DP-2: PSR support 0, DC PSR ver -1, sink PSR ver 0 DPCD caps 0x0 su_y_granularity 0
+[    2.336907] amdgpu 0000:c2:00.0: amdgpu: [drm] DP-3: PSR support 0, DC PSR ver -1, sink PSR ver 0 DPCD caps 0x0 su_y_granularity 0
+[    2.336937] amdgpu 0000:c2:00.0: amdgpu: [drm] DP-4: PSR support 0, DC PSR ver -1, sink PSR ver 0 DPCD caps 0x0 su_y_granularity 0
+[    2.336967] amdgpu 0000:c2:00.0: amdgpu: [drm] DP-5: PSR support 0, DC PSR ver -1, sink PSR ver 0 DPCD caps 0x0 su_y_granularity 0
+[    2.336996] amdgpu 0000:c2:00.0: amdgpu: [drm] DP-6: PSR support 0, DC PSR ver -1, sink PSR ver 0 DPCD caps 0x0 su_y_granularity 0
+[    2.344028] kfd kfd: amdgpu: Allocated 3969056 bytes on gart
+[    2.344047] kfd kfd: amdgpu: Total number of KFD nodes to be created: 1
+[    2.344300] amdgpu: Virtual CRAT table created for GPU
+[    2.344417] amdgpu: Topology: Add dGPU node [0x150e:0x1002]
+[    2.344419] kfd kfd: amdgpu: added device 1002:150e
+[    2.344427] amdgpu 0000:c2:00.0: amdgpu: SE 1, SH per SE 2, CU per SH 8, active_cu_number 16
+[    2.344430] amdgpu 0000:c2:00.0: amdgpu: ring gfx_0.0.0 uses VM inv eng 0 on hub 0
+[    2.344432] amdgpu 0000:c2:00.0: amdgpu: ring comp_1.0.0 uses VM inv eng 1 on hub 0
+[    2.344432] amdgpu 0000:c2:00.0: amdgpu: ring comp_1.1.0 uses VM inv eng 4 on hub 0
+[    2.344432] amdgpu 0000:c2:00.0: amdgpu: ring comp_1.2.0 uses VM inv eng 6 on hub 0
+[    2.344433] amdgpu 0000:c2:00.0: amdgpu: ring comp_1.3.0 uses VM inv eng 7 on hub 0
+[    2.344433] amdgpu 0000:c2:00.0: amdgpu: ring comp_1.0.1 uses VM inv eng 8 on hub 0
+[    2.344434] amdgpu 0000:c2:00.0: amdgpu: ring comp_1.1.1 uses VM inv eng 9 on hub 0
+[    2.344434] amdgpu 0000:c2:00.0: amdgpu: ring comp_1.2.1 uses VM inv eng 10 on hub 0
+[    2.344434] amdgpu 0000:c2:00.0: amdgpu: ring comp_1.3.1 uses VM inv eng 11 on hub 0
+[    2.344435] amdgpu 0000:c2:00.0: amdgpu: ring sdma0 uses VM inv eng 12 on hub 0
+[    2.344435] amdgpu 0000:c2:00.0: amdgpu: ring vcn_unified_0 uses VM inv eng 0 on hub 8
+[    2.344436] amdgpu 0000:c2:00.0: amdgpu: ring jpeg_dec_0 uses VM inv eng 1 on hub 8
+[    2.344436] amdgpu 0000:c2:00.0: amdgpu: ring mes_kiq_3.1.0 uses VM inv eng 13 on hub 0
+[    2.344437] amdgpu 0000:c2:00.0: amdgpu: ring vpe uses VM inv eng 4 on hub 8
+[    2.345731] amdgpu 0000:c2:00.0: amdgpu: Runtime PM not available
+[    2.345883] amdgpu 0000:c2:00.0: amdgpu: [drm] Using custom brightness curve
+[    2.346662] [drm] Initialized amdgpu 3.64.0 for 0000:c2:00.0 on minor 0
+[    2.352419] fbcon: amdgpudrmfb (fb0) is primary device
+[    2.352422] amdgpu 0000:c2:00.0: [drm] fb0: amdgpudrmfb frame buffer device
+[    2.378666] [drm] pre_validate_dsc:1667 MST_DSC dsc precompute is not needed
+[    4.021821] snd_hda_intel 0000:c2:00.1: bound 0000:c2:00.0 (ops amdgpu_dm_audio_component_bind_ops [amdgpu])

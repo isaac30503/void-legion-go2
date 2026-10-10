@@ -1,0 +1,84 @@
+===== tal cual
+2026-10-04T15:46:20.291235Z  INFO steamos_manager::daemon::config: No state file found, reloading default state
+2026-10-04T15:46:20.291236Z  INFO steamos_manager: Starting SLS log receiver
+2026-10-04T15:46:20.291276Z DEBUG steamos_manager: No config fragment directory /usr/share/steamos-manager/system.d/config.toml.d found
+2026-10-04T15:46:20.291288Z DEBUG steamos_manager: No config fragment directory /etc/steamos-manager/config.toml.d found
+2026-10-04T15:46:20.291298Z  INFO steamos_manager: No config file /usr/share/steamos-manager/system.d/config.toml found
+2026-10-04T15:46:20.291304Z  INFO steamos_manager: No config file /etc/steamos-manager/config.toml found
+2026-10-04T15:46:20.291309Z DEBUG steamos_manager::daemon: Starting daemon with state: RootState {
+    services: RootServicesState {
+        ds_inhibit: DsInhibit {
+            enabled: true,
+        },
+    },
+}, config: RootConfig {
+    services: RootServicesConfig,
+}
+Error: No such file or directory (os error 2)
+salida: 1
+== tracefs montado
+===== con tracefs
+2026-10-04T15:46:20.298216Z  INFO steamos_manager: Starting SLS log receiver
+2026-10-04T15:46:20.298242Z  INFO steamos_manager::daemon::config: No state file found, reloading default state
+2026-10-04T15:46:20.298260Z DEBUG steamos_manager: No config fragment directory /usr/share/steamos-manager/system.d/config.toml.d found
+2026-10-04T15:46:20.298271Z DEBUG steamos_manager: No config fragment directory /etc/steamos-manager/config.toml.d found
+2026-10-04T15:46:20.298280Z  INFO steamos_manager: No config file /usr/share/steamos-manager/system.d/config.toml found
+2026-10-04T15:46:20.298289Z  INFO steamos_manager: No config file /etc/steamos-manager/config.toml found
+2026-10-04T15:46:20.298292Z DEBUG steamos_manager::daemon: Starting daemon with state: RootState {
+    services: RootServicesState {
+        ds_inhibit: DsInhibit {
+            enabled: true,
+        },
+    },
+}, config: RootConfig {
+    services: RootServicesConfig,
+}
+2026-10-04T15:46:20.301215Z  INFO steamos_manager: Starting ftrace
+2026-10-04T15:46:20.301219Z  INFO steamos_manager: Starting inputplumber
+2026-10-04T15:46:20.301226Z  INFO steamos_manager: Starting sysfs-writer
+2026-10-04T15:46:20.301314Z DEBUG steamos_manager::ds_inhibit: Checking if hidraw17 can be inhibited
+2026-10-04T15:46:20.301341Z DEBUG steamos_manager::ds_inhibit: Not a PlayStation controller
+2026-10-04T15:46:20.301344Z DEBUG steamos_manager::ds_inhibit: Checking if hidraw16 can be inhibited
+2026-10-04T15:46:20.301356Z DEBUG steamos_manager::ds_inhibit: Not a PlayStation controller
+2026-10-04T15:46:20.301362Z DEBUG steamos_manager::ds_inhibit: Checking if hidraw14 can be inhibited
+2026-10-04T15:46:20.301374Z DEBUG steamos_manager::ds_inhibit: Not a PlayStation controller
+2026-10-04T15:46:20.301377Z DEBUG steamos_manager::ds_inhibit: Checking if hidraw13 can be inhibited
+2026-10-04T15:46:20.301389Z DEBUG steamos_manager::ds_inhibit: Not a PlayStation controller
+2026-10-04T15:46:20.301391Z DEBUG steamos_manager::ds_inhibit: Checking if hidraw12 can be inhibited
+2026-10-04T15:46:20.301403Z DEBUG steamos_manager::ds_inhibit: Not a PlayStation controller
+2026-10-04T15:46:20.301422Z DEBUG steamos_manager::ds_inhibit: Checking if hidraw11 can be inhibited
+2026-10-04T15:46:20.301437Z DEBUG steamos_manager::ds_inhibit: Not a PlayStation controller
+2026-10-04T15:46:20.301469Z DEBUG steamos_manager::ds_inhibit: Checking if hidraw10 can be inhibited
+2026-10-04T15:46:20.301487Z DEBUG steamos_manager::ds_inhibit: Not a PlayStation controller
+2026-10-04T15:46:20.301490Z DEBUG steamos_manager::ds_inhibit: Checking if hidraw9 can be inhibited
+2026-10-04T15:46:20.301504Z DEBUG steamos_manager::ds_inhibit: Not a PlayStation controller
+2026-10-04T15:46:20.301507Z DEBUG steamos_manager::ds_inhibit: Checking if hidraw8 can be inhibited
+2026-10-04T15:46:20.301520Z DEBUG steamos_manager::ds_inhibit: Not a PlayStation controller
+2026-10-04T15:46:20.301523Z DEBUG steamos_manager::ds_inhibit: Checking if hidraw7 can be inhibited
+2026-10-04T15:46:20.301535Z DEBUG steamos_manager::ds_inhibit: Not a PlayStation controller
+2026-10-04T15:46:20.301548Z DEBUG steamos_manager::ds_inhibit: Checking if hidraw6 can be inhibited
+2026-10-04T15:46:20.301573Z DEBUG steamos_manager::ds_inhibit: Not a PlayStation controller
+2026-10-04T15:46:20.301576Z DEBUG steamos_manager::ds_inhibit: Checking if hidraw5 can be inhibited
+2026-10-04T15:46:20.301590Z DEBUG steamos_manager::ds_inhibit: Not a PlayStation controller
+2026-10-04T15:46:20.301593Z DEBUG steamos_manager::ds_inhibit: Checking if hidraw4 can be inhibited
+2026-10-04T15:46:20.301608Z DEBUG steamos_manager::ds_inhibit: Not a PlayStation controller
+2026-10-04T15:46:20.301625Z DEBUG steamos_manager::ds_inhibit: Checking if hidraw3 can be inhibited
+2026-10-04T15:46:20.301642Z DEBUG steamos_manager::ds_inhibit: Not a PlayStation controller
+2026-10-04T15:46:20.301644Z DEBUG steamos_manager::ds_inhibit: Checking if hidraw0 can be inhibited
+2026-10-04T15:46:20.301662Z DEBUG steamos_manager::ds_inhibit: Not a PlayStation controller
+2026-10-04T15:46:20.301664Z DEBUG steamos_manager::ds_inhibit: Checking if hidraw2 can be inhibited
+2026-10-04T15:46:20.301679Z DEBUG steamos_manager::ds_inhibit: Not a PlayStation controller
+2026-10-04T15:46:20.301681Z DEBUG steamos_manager::ds_inhibit: Checking if hidraw1 can be inhibited
+2026-10-04T15:46:20.301697Z DEBUG steamos_manager::ds_inhibit: Not a PlayStation controller
+2026-10-04T15:46:20.301874Z  INFO steamos_manager: Starting ds-inhibitor
+2026-10-04T15:46:20.302185Z DEBUG {}{task_name="org.freedesktop.systemd1.Unit proxy caching"}: zbus::proxy: Failed to get owner of org.freedesktop.systemd1: org.freedesktop.DBus.Error.NameHasNoOwner: Could not get owner of name 'org.freedesktop.systemd1': no such name
+2026-10-04T15:46:20.302377Z  WARN {}{task_name="org.freedesktop.systemd1.Unit proxy caching"}: zbus::proxy: Failed to populate properties cache via GetAll: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.systemd1 was not provided by any .service files. Property change streams will not produce values.
+2026-10-04T15:46:20.762473Z DEBUG steamos_manager::inputplumber: Changing CompositeDevice /org/shadowblip/InputPlumber/CompositeDevice0 into ["deck-uhid", "keyboard", "mouse"] type
+2026-10-04T15:46:24.294638Z  INFO steamos_manager::daemon: Got SIGTERM, shutting down
+2026-10-04T15:46:24.294687Z  INFO steamos_manager::daemon: Shutting down
+2026-10-04T15:46:24.294715Z  INFO steamos_manager: Shutting down ds-inhibitor
+2026-10-04T15:46:24.294812Z  INFO steamos_manager: Shutting down sysfs-writer
+2026-10-04T15:46:24.294844Z  INFO steamos_manager: Shutting down inputplumber
+2026-10-04T15:46:24.294882Z  INFO steamos_manager: Shutting down ftrace
+2026-10-04T15:46:24.294927Z  INFO steamos_manager: Shutting down SLS log receiver
+salida: 124

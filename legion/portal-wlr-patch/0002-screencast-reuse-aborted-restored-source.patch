@@ -1,0 +1,163 @@
+Subject: [PATCH] screencast: reuse the source of a restored session closed before Start
+
+Applies on top of 0001-screencast-restore-window-sessions.patch.
+
+Chromium-based apps restore a session with the token returned by the
+previous Start, and a token is single use. When Vesktop switches the shared
+source while streaming ("change stream"), it restores the new source three
+times; the third restored session is closed before Start, so no new token is
+issued, and the very next request comes without restore_data: the chooser
+runs again for the source that was just picked (cancelling it ends the
+stream; picking another source streams that one instead).
+
+Remember the target of a restored session that is closed before Start and
+reuse it for the next SelectSources of the same app that comes without
+restore_data (if the output/window still exists; otherwise the chooser runs).
+Forget it when a started session of that app is closed (the stream ended) or
+when the app sends its own restore_data. No timing involved.
+---
+diff --git a/include/screencast.h b/include/screencast.h
+--- a/include/screencast.h
++++ b/include/screencast.h
+@@ -3,7 +3,10 @@
+ 
+ #include "screencast_common.h"
+ 
++struct xdpw_session;
++
+ void xdpw_screencast_instance_destroy(struct xdpw_screencast_instance *cast);
++void xdpw_screencast_session_closing(struct xdpw_session *sess);
+ void xdpw_screencast_instance_teardown(struct xdpw_screencast_instance *cast);
+ 
+ #endif
+diff --git a/include/screencast_common.h b/include/screencast_common.h
+--- a/include/screencast_common.h
++++ b/include/screencast_common.h
+@@ -222,6 +222,9 @@
+ 	struct xdpw_screencast_instance *screencast_instance;
+ 	uint32_t cursor_mode;
+ 	uint32_t persist_mode;
++	char *app_id;
++	bool restored; // target came from restore_data
++	bool started;  // Start was called
+ };
+ 
+ struct xdpw_wlr_output {
+diff --git a/src/core/session.c b/src/core/session.c
+--- a/src/core/session.c
++++ b/src/core/session.c
+@@ -63,6 +63,8 @@
+ 		return;
+ 	}
+ 
++	xdpw_screencast_session_closing(sess);
++
+ 	if (!sess->closed) {
+ 		sd_bus_emit_signal(sd_bus_slot_get_bus(sess->slot), sess->session_handle,
+ 			"org.freedesktop.impl.portal.Session", "Closed", "");
+diff --git a/src/screencast/screencast.c b/src/screencast/screencast.c
+--- a/src/screencast/screencast.c
++++ b/src/screencast/screencast.c
+@@ -129,6 +129,56 @@
+ 	free(cast);
+ }
+ 
++/*
++ * Chromium-based apps (Vesktop, Chrome...) restore a session with the token returned by the previous
++ * Start, and a token is single use. When an app switches the shared source while streaming, it may close
++ * a restored session before calling Start (so it never gets a new token) and immediately ask again
++ * without restore_data, which would run the chooser a second time for the source just picked.
++ * Remember the source of a restored session that is closed before starting, and reuse it for the next
++ * request of the same app that comes without restore_data. Forget it when a started session of that app
++ * is closed (the stream ended) or when the app sends its own restore_data.
++ */
++static char *aborted_app_id = NULL;
++static enum source_types aborted_type = MONITOR;
++static char *aborted_name = NULL;
++
++static void forget_aborted(void) {
++	free(aborted_app_id);
++	free(aborted_name);
++	aborted_app_id = NULL;
++	aborted_name = NULL;
++}
++
++void xdpw_screencast_session_closing(struct xdpw_session *sess) {
++	struct xdpw_screencast_session_data *data = &sess->screencast_data;
++	if (!data->app_id) {
++		return;
++	}
++	struct xdpw_screencast_instance *cast = data->screencast_instance;
++	if (data->started) {
++		if (aborted_app_id && strcmp(aborted_app_id, data->app_id) == 0) {
++			forget_aborted();
++		}
++	} else if (data->restored && cast && cast->target) {
++		const char *name = NULL;
++		if (cast->target->type == MONITOR && cast->target->output) {
++			name = cast->target->output->name;
++		} else if (cast->target->type == WINDOW && cast->target->toplevel) {
++			name = cast->target->toplevel->identifier;
++		}
++		if (name) {
++			forget_aborted();
++			aborted_app_id = strdup(data->app_id);
++			aborted_type = cast->target->type;
++			aborted_name = strdup(name);
++			logprint(INFO, "dbus: restored session of %s closed before starting; remembering %s",
++				aborted_app_id, aborted_name);
++		}
++	}
++	free(data->app_id);
++	data->app_id = NULL;
++}
++
+ bool setup_target(struct xdpw_screencast_context *ctx, struct xdpw_session *sess, struct xdpw_screencast_restore_data *data, uint32_t type_mask) {
+ 	bool target_initialized = false;
+ 
+@@ -161,6 +211,7 @@
+ 	target->with_cursor = sess->screencast_data.cursor_mode == EMBEDDED;
+ 	if (data) {
+ 		target_initialized = xdpw_wlr_target_from_data(ctx, target, data);
++		sess->screencast_data.restored = target_initialized;
+ 	}
+ 	if (!target_initialized) {
+ 		target_initialized = xdpw_wlr_target_chooser(ctx, target, type_mask);
+@@ -494,7 +545,29 @@
+ 		return ret;
+ 	}
+ 
++	free(sess->screencast_data.app_id);
++	sess->screencast_data.app_id = strdup(app_id);
++	bool use_aborted = false;
++	if (aborted_app_id && strcmp(aborted_app_id, app_id) == 0) {
++		if (restore_data.version == 0) {
++			restore_data.version = 1;
++			if (aborted_type == MONITOR) {
++				restore_data.output_name = aborted_name;
++			} else {
++				restore_data.toplevel_identifier = aborted_name;
++			}
++			use_aborted = true;
++			logprint(INFO, "dbus: no restore data; reusing the source of the restored session "
++				"that was closed before starting: %s", aborted_name);
++		} else {
++			forget_aborted();
++		}
++	}
++
+ 	bool selection_canceled = !setup_target(ctx, sess, restore_data.version > 0 ? &restore_data : NULL, type_mask);
++	if (use_aborted) {
++		forget_aborted();
++	}
+ 
+ 	ret = sd_bus_message_new_method_return(msg, &reply);
+ 	if (ret < 0) {
+@@ -587,6 +660,7 @@
+ 		if (strcmp(sess->session_handle, session_handle) == 0) {
+ 				logprint(DEBUG, "dbus: start: found matching session %s", sess->session_handle);
+ 				cast = sess->screencast_data.screencast_instance;
++				sess->screencast_data.started = true;
+ 		}
+ 	}
+ 	if (!cast) {

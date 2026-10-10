@@ -1,0 +1,64 @@
+#!/usr/bin/python3
+# Wrapper of xdg-desktop-portal-gamescope (SteamOS's) for Void (2026-10-06; installed by
+# install-portal-gamescope.sh in /usr/local/lib/ and started by D-Bus).
+# Why: Valve's binary writes its log to systemd's journal (it carries the crate
+# systemd-journal-logger 2.2.2) and, without /run/systemd/journal/socket (Void has no systemd), it crashes on
+# start: panic at src/main.rs:22 ("No such file or directory"), code 101; the main portal does not
+# find it and does not offer ScreenCast. Tested: with a fake journal socket it starts and works.
+# How: it relaunches itself inside bwrap (without root; own namespace, the whole system
+# visible the same) with an empty /run/systemd only for it, creates the journal socket there, starts the
+# portal as a child and stays reading that socket: it passes each MESSAGE= to
+# ~/.local/state/portal-gamescope.log (emptied when it passes 1 MB; English). It exits with the portal's code.
+# No fake journal is created for the whole system: other programs would change where they log.
+# Previous name: xdg-desktop-portal-gamescope-void (unchanged; its environment variable was
+# _PORTAL_GAMESCOPE_AISLADO, now _PORTAL_GAMESCOPE_ISOLATED).
+import os, socket, sys, time
+
+BIN = "/usr/local/lib/xdg-desktop-portal-gamescope"
+LOG = os.path.join(os.environ.get("XDG_STATE_HOME") or os.path.expanduser("~/.local/state"),
+                   "portal-gamescope.log")
+
+if os.environ.get("_PORTAL_GAMESCOPE_ISOLATED") != "1":
+    os.environ["_PORTAL_GAMESCOPE_ISOLATED"] = "1"
+    os.execvp("bwrap", ["bwrap", "--dev-bind", "/", "/", "--tmpfs", "/run/systemd",
+                        "--die-with-parent", sys.executable, os.path.abspath(__file__)])
+
+os.makedirs("/run/systemd/journal", exist_ok=True)
+sock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+sock.bind("/run/systemd/journal/socket")
+sock.settimeout(1)
+child = os.fork()
+if child == 0:
+    os.execv(BIN, [BIN])
+
+os.makedirs(os.path.dirname(LOG), exist_ok=True)
+
+
+def record(text):
+    try:
+        if os.path.exists(LOG) and os.path.getsize(LOG) > 1_000_000:
+            open(LOG, "w").close()
+        with open(LOG, "a") as f:
+            f.write(time.strftime("%F %T ") + text + "\n")
+    except OSError:
+        pass
+
+
+record(f"started (pid {child})")
+while True:
+    try:
+        data = sock.recv(65536)
+        # The journal's native protocol: FIELD=value lines (values with newlines go in
+        # binary; MESSAGE= is enough).
+        for line in data.split(b"\n"):
+            if line.startswith(b"MESSAGE="):
+                record(line[8:].decode("utf-8", "replace"))
+    except socket.timeout:
+        pass
+    except OSError:
+        time.sleep(1)
+    pid, status = os.waitpid(child, os.WNOHANG)
+    if pid:
+        code = os.waitstatus_to_exitcode(status)
+        record(f"ended (code {code})")
+        sys.exit(code if code >= 0 else 1)

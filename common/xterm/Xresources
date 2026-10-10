@@ -1,0 +1,67 @@
+! Super Game Bro (same palette as foot and the Legion's Neovim colorscheme)
+! translated into X resources format for xterm. Copied from the console's recipe
+! (§13.4), without what was only for gamescope/Steam.
+!
+! lightdm loads it on login: /etc/lightdm/Xsession does
+! xrdb -nocpp -merge ~/.Xresources (it needs the xrdb package). No need for an
+! autostart like in Plasma.
+
+! Patched copy of JetBrainsMono Nerd Font Mono: box blocks/lines
+! (U+2500-U+259F) extended beyond the cell so that the 1px line between rows
+! does not remain (xterm rounds the row height up and the original glyph
+! measures exactly ascent+descent). See ~/.local/share/fonts/jetbrains-blocks/
+XTerm*faceName: JetBrainsMono NFM Blocks
+XTerm*faceSize: 10
+
+! It starts a login bash: .bash_profile -> .bashrc -> exec fish (~/.bashrc.d/)
+XTerm*loginShell: true
+
+! 108x35 = 868x634px, at the user's request (2026-10-01; before 137x39 = 1100x706,
+! as on the Legion). With Xft.dpi 96 (Xfce's) the cell measures 8x18px and the border
+! 4px: width 108*8+4, height 35*18+4.
+XTerm*geometry: 108x35
+
+XTerm*background: #214130
+XTerm*foreground: #88A827
+XTerm*cursorColor: #D4F060
+
+XTerm*color0: #0D2A1A
+XTerm*color1: #396840
+XTerm*color2: #4A7828
+XTerm*color3: #648820
+XTerm*color4: #7AAE20
+XTerm*color5: #88A827
+XTerm*color6: #9CB827
+XTerm*color7: #B8D432
+
+XTerm*color8: #2E5B38
+XTerm*color9: #468050
+XTerm*color10: #5A9030
+XTerm*color11: #78A020
+XTerm*color12: #88A827
+XTerm*color13: #9CB827
+XTerm*color14: #B8D432
+XTerm*color15: #D4F060
+
+! Clipboard. xterm has no shortcuts for copying: the selection only goes to
+! PRIMARY (middle click / Shift+Insert, which stay the same). Without this, Ctrl+Shift+C
+! and Ctrl+Insert reach the program as sequences (^[[2;5~...) and fish may
+! write them as they are. On a single line on purpose: the Legion loads this
+! file with cpp (xrdb -merge) and the ideapad without it (-nocpp).
+XTerm*VT100.translations: #override Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n Ctrl <Key>Insert: copy-selection(CLIPBOARD) \n Ctrl Shift <Key>V: insert-selection(CLIPBOARD) \n Shift <Key>Insert: insert-selection(CLIPBOARD)
+! OSC 52: lets programs (Claude Code over SSH, tmux, nvim) PUT text in the clipboard;
+! reading it (GetSelection) is still forbidden. It is xterm 411's factory list without SetSelection.
+XTerm*disallowedWindowOps: GetChecksum,GetIconTitle,GetSelection,GetWinTitle,SetXprop
+
+! Backspace sends ^? (DEL), the same character the terminal uses to erase
+! (stty erase = ^?). Without this xterm sent ^H: fish understands it, but the
+! line-mode questions ([Y/n] of xbps, sudo's password, read) do not, and
+! they wrote "^H" instead of erasing -- also over SSH, which inherits the local erase.
+XTerm*backarrowKey: false
+
+! Window icon (title bar, alt-tab): Papirus's, the same one the menu and the dock
+! use (xterm-color -> utilities-x-terminal.svg). xterm only reads it
+! in XPM (iconHint); xfwm4, unlike Plasma, does not take it from the .desktop.
+! Generated from Papirus-Dark/48x48 with rsvg-convert + an XPM converter
+! (1-bit transparency). Recipe void-ideapad-100, step 8. @TARGET_HOME@ is filled in when it is installed.
+XTerm*iconHint: @TARGET_HOME@/.local/share/icons/xterm-papirus.xpm

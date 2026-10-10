@@ -1,0 +1,2980 @@
+# Spanish translations of the messages of the void-legion-go2 scripts (see docs/i18n.md).
+# msgid = the English text in the script (a printf/Python %-format); msgstr = the Spanish text.
+# The Spanish texts are the original messages of the scripts, which were written in Spanish first.
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: es\n"
+
+#: lib/common.sh
+msgid "Run it with sudo."
+msgstr "Correr con sudo."
+
+#: lib/common.sh
+msgid "Run it without sudo, as your normal user."
+msgstr "Correr sin sudo, como tu usuario normal."
+
+#: lib/common.sh
+msgid "Missing %s in %s (copy local.env.example to local.env and fill it in)."
+msgstr "Falta %s en %s (copiar local.env.example a local.env y rellenarlo)."
+
+#: lib/common.sh
+msgid "Placeholders without a value in local.env, in %s:"
+msgstr "Marcadores sin valor en local.env, en %s:"
+
+#: common/agent/audit-void.sh
+msgid "unknown option: %s"
+msgstr "opción desconocida: %s"
+
+#: common/agent/audit-void.sh
+msgid "Audit of %s — %s — kernel %s, up since %s"
+msgstr "Auditoría de %s — %s — kernel %s, arriba desde %s"
+
+#: common/agent/audit-void.sh
+msgid "1. runit services"
+msgstr "1. Servicios de runit"
+
+#: common/agent/audit-void.sh
+msgid "%s: 'down' on purpose (only with sv once)"
+msgstr "%s: 'down' a propósito (solo con sv once)"
+
+#: common/agent/audit-void.sh
+msgid "%s: there is no 'runsv %s' (link just created or runsvdir down?)"
+msgstr "%s: no hay 'runsv %s' (¿enlace recién creado o runsvdir caído?)"
+
+#: common/agent/audit-void.sh
+msgid "%s: DOWN or RELAUNCHING IN A LOOP (runsv without the service's process in both looks)"
+msgstr "%s: CAÍDO o RELANZÁNDOSE EN BUCLE (runsv sin proceso del servicio en las dos miradas)"
+
+#: common/agent/audit-void.sh
+msgid "%s: its process disappeared between the two looks (loop?)"
+msgstr "%s: su proceso desapareció entre las dos miradas (¿bucle?)"
+
+#: common/agent/audit-void.sh
+msgid "%s: the process changed PID in 2 s (%s → %s): RELAUNCHING"
+msgstr "%s: el proceso cambió de PID en 2 s (%s → %s): RELANZÁNDOSE"
+
+#: common/agent/audit-void.sh
+msgid "%s: %s is also started by D-Bus (%s)"
+msgstr "%s: %s también lo arranca D-Bus (%s)"
+
+#: common/agent/audit-void.sh
+msgid "%s: there is %s running OUTSIDE runsv (PID %s, started by D-Bus) → clash with runit"
+msgstr "%s: hay %s corriendo FUERA de runsv (PID %s, lo arrancó D-Bus) → choque con runit"
+
+#: common/agent/audit-void.sh
+msgid "(%d services; warnings: %d)"
+msgstr "(%d servicios; avisos: %d)"
+
+#: common/agent/audit-void.sh
+msgid "2. Packages"
+msgstr "2. Paquetes"
+
+#: common/agent/audit-void.sh legion/diag-controller-gyros.sh legion/steps-1-to-3.sh
+msgid "none"
+msgstr "ninguno"
+
+#: common/agent/audit-void.sh
+msgid "installed: %d; by hand: %d"
+msgstr "instalados: %d; a mano: %d"
+
+#: common/agent/audit-void.sh
+msgid "held (hold): %s"
+msgstr "retenidos (hold): %s"
+
+#: common/agent/audit-void.sh
+msgid "from local repositories (built here; update-system warns if Void replaces them):"
+msgstr "de repositorios locales (compilados aquí; update-system avisa si Void los reemplaza):"
+
+#: common/agent/audit-void.sh
+msgid "orphans: %s  (a backup linuxX.Y is on purpose)"
+msgstr "huérfanos: %s  (un linuxX.Y de respaldo es a propósito)"
+
+#: common/agent/audit-void.sh
+msgid "pending updates (repodata of the last sync): %d"
+msgstr "actualizaciones pendientes (repodata del último sync): %d"
+
+#: common/agent/audit-void.sh
+msgid "kernels: %s; in use %s; vmlinuz: %s"
+msgstr "kernels: %s; en uso %s; vmlinuz: %s"
+
+#: common/agent/audit-void.sh
+msgid "list of those installed by hand (to cross-check with the recipe):"
+msgstr "lista de los instalados a mano (para cruzar con la receta):"
+
+#: common/agent/audit-void.sh
+msgid ".new-* in /etc: %s (do not apply them: the good one is the current one)"
+msgstr ".new-* en /etc: %s (no aplicarlos: el bueno es el actual)"
+
+#: common/agent/audit-void.sh
+msgid "WITHOUT cap_sys_nice"
+msgstr "SIN cap_sys_nice"
+
+#: common/agent/audit-void.sh
+msgid "%s: libraries missing: %s"
+msgstr "%s: le faltan bibliotecas: %s"
+
+#: common/agent/audit-void.sh
+msgid "3. Fidelity with the repository"
+msgstr "3. Fidelidad con el repositorio"
+
+#: common/agent/audit-void.sh
+msgid "(without the repository's index: --repo DIR or --index FILE)"
+msgstr "(sin índice del repositorio: --repo DIR o --index FICHERO)"
+
+#: common/agent/audit-void.sh
+msgid "NO TRACE in the repository"
+msgstr "SIN RASTRO en el repositorio"
+
+#: common/agent/audit-void.sh
+msgid "unreadable without root"
+msgstr "ilegible sin root"
+
+#: common/agent/audit-void.sh
+msgid "generated (the repository mentions it)"
+msgstr "generado (el repositorio lo menciona)"
+
+#: common/agent/audit-void.sh
+msgid "system (files that belong to no package; and those of packages that were modified):"
+msgstr "sistema (ficheros que no son de ningún paquete; y los de paquetes modificados):"
+
+#: common/agent/audit-void.sh
+msgid "modified; the repository mentions it"
+msgstr "modificado; el repositorio lo menciona"
+
+#: common/agent/audit-void.sh
+msgid "modified, NO TRACE in the repository"
+msgstr "modificado SIN RASTRO en el repositorio"
+
+#: common/agent/audit-void.sh
+msgid "user:"
+msgstr "usuario:"
+
+#: common/agent/audit-void.sh
+msgid "(%d files looked at; with no trace: %d. 'Generated' = the agent must confirm which script writes it)"
+msgstr "(%d ficheros mirados; sin rastro: %d. 'Generado' = el agente debe confirmar qué script lo escribe)"
+
+#: common/agent/audit-void.sh
+msgid "4. Consumption (sample of %s s)"
+msgstr "4. Consumo (muestra de %s s)"
+
+#: common/agent/audit-void.sh
+msgid "CPU (%% of one core):  %s"
+msgstr "CPU (%% de un núcleo):  %s"
+
+#: common/agent/audit-void.sh
+msgid "everything idle"
+msgstr "todo en reposo"
+
+#: common/agent/audit-void.sh
+msgid "memory (MiB):  %s"
+msgstr "memoria (MiB):  %s"
+
+#: common/agent/audit-void.sh
+msgid "processes created in %.0f s: %d"
+msgstr "procesos creados en %.0f s: %d"
+
+#: common/agent/audit-void.sh
+msgid "~1 per second or more: check whether something relaunches in a loop (idle, the IdeaPad creates ~1 every 5 s)"
+msgstr "~1 por segundo o más: mirar si algo se relanza en bucle (en reposo, la IdeaPad crea ~1 cada 5 s)"
+
+#: common/agent/audit-void.sh
+msgid "end"
+msgstr "fin"
+
+#: common/steam/art-xterm/generate.py
+msgid "shortcuts.vdf: unknown type %s"
+msgstr "shortcuts.vdf: tipo %s desconocido"
+
+#: common/steam/art-xterm/generate.py
+msgid "art: %s/%s* (user %s, %s)"
+msgstr "arte: %s/%s* (usuario %s, %s)"
+
+#: common/steam/art-xterm/generate.py
+msgid "quick menu icon: already set"
+msgstr "ícono del menú rápido: ya puesto"
+
+#: common/steam/art-xterm/generate.py
+msgid "!! quick menu icon NOT set: Steam is open (close it and repeat)"
+msgstr "!! ícono del menú rápido SIN poner: Steam está abierto (cerrarlo y repetir)"
+
+#: common/steam/art-xterm/generate.py
+msgid "quick menu icon: %s (copy in shortcuts.vdf.bak)"
+msgstr "ícono del menú rápido: %s (copia en shortcuts.vdf.bak)"
+
+#: common/steam/art-vesktop/generate.py
+msgid "no Vesktop launcher from the Flatpak: the desktop is not touched"
+msgstr "sin lanzador de Vesktop del Flatpak: no se toca el escritorio"
+
+#: common/steam/art-vesktop/generate.py
+msgid "desktop: %s → Icon=%s"
+msgstr "escritorio: %s → Icon=%s"
+
+#: common/steam/art-vesktop/generate.py
+msgid "tray: no Flatpak Vesktop"
+msgstr "bandeja: sin Vesktop de Flatpak"
+
+#: common/steam/art-vesktop/generate.py
+msgid "tray: %s/tray and trayUnread (they show when opening Vesktop again)"
+msgstr "bandeja: %s/tray y trayUnread (se ven al volver a abrir Vesktop)"
+
+#: common/steam/art-vesktop/generate.py
+msgid "art: %s/%s* (%s); the previous one, in %s; icon: %s/discord-256.png"
+msgstr "arte: %s/%s* (%s); el anterior, en %s; ícono: %s/discord-256.png"
+
+#: common/steam/art-vesktop/generate.py
+msgid "I cannot find Vesktop's shortcut in shortcuts.vdf"
+msgstr "no encuentro el acceso directo de Vesktop en shortcuts.vdf"
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "Error: pactl is needed."
+msgstr "Error: hace falta pactl."
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "Error: fzf is needed."
+msgstr "Error: hace falta fzf."
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "Error: audio-ctrl needs an interactive terminal."
+msgstr "Error: audio-ctrl necesita una terminal interactiva."
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "Output"
+msgstr "Salida"
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "Input"
+msgstr "Entrada"
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "Choose what to control: Output or Input"
+msgstr "Elegir que controlar: Salida o Entrada"
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "Canceled, nothing was touched."
+msgstr "Cancelado, no se toco nada."
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "audio input"
+msgstr "entrada de audio"
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "audio output"
+msgstr "salida de audio"
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "(default)"
+msgstr "(por defecto)"
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "%s (no active %s -- profile: %s)"
+msgstr "%s (sin %s activa -- perfil: %s)"
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "Error: no %s was detected."
+msgstr "Error: no se detecto ninguna %s."
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "Choose which %s to edit"
+msgstr "Elegir que %s editar"
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "(current)"
+msgstr "(actual)"
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "Error: '%s' has no profiles with %s."
+msgstr "Error: '%s' no tiene perfiles con %s."
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "profile > "
+msgstr "perfil > "
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "Choose profile for %s"
+msgstr "Elegir perfil para %s"
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "Canceled -- '%s' is still without %s."
+msgstr "Cancelado -- '%s' sigue sin %s."
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "Error: that is the current profile and it has no %s -- choose another one."
+msgstr "Error: ese es el perfil actual y no tiene %s -- elegi otro."
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "'%s' now on '%s' -- without %s for now."
+msgstr "'%s' ahora en '%s' -- sin %s por ahora."
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "Error: there is no other profile with %s to choose."
+msgstr "Error: no hay otro perfil con %s para elegir."
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "Error: no %s could be determined."
+msgstr "Error: no se pudo determinar una %s."
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "text:"
+msgstr "texto:"
+
+#: common/fish/functions/audio-ctrl.fish
+msgid "← → adjust   ↕ bar/text   ↵ confirm   ^C/q cancel"
+msgstr "← → ajustar   ↕ barra/texto   ↵ confirmar   ^C/q cancelar"
+
+#: common/fish/functions/audio-priority.fish
+msgid "Error: pw-dump, python3 and wireplumber are needed."
+msgstr "Error: hace falta pw-dump, python3 y wireplumber."
+
+#: common/fish/functions/audio-priority.fish
+msgid "(connected)"
+msgstr "(conectado)"
+
+#: common/fish/functions/audio-priority.fish
+msgid "(not connected now)"
+msgstr "(no conectado ahora)"
+
+#: common/fish/functions/audio-priority.fish
+msgid "audio priority > "
+msgstr "prioridad de audio > "
+
+#: common/fish/functions/audio-priority.fish
+msgid "Choose what to reorder: Output or Input"
+msgstr "Elegir que reordenar: Salida o Entrada"
+
+#: common/fish/functions/audio-priority.fish
+msgid "No %s device was detected (neither connected now, nor saved before)."
+msgstr "No se detecto ningun dispositivo de %s (ni conectado ahora, ni guardado antes)."
+
+#: common/fish/functions/audio-priority.fish
+msgid "%s -- current order (lowest to highest priority):"
+msgstr "%s -- orden actual (menor a mayor prioridad):"
+
+#: common/fish/functions/audio-priority.fish
+msgid "Tab = mark in the order you want, from LOWEST to HIGHEST priority | Enter = confirm | Esc = cancel"
+msgstr "Tab = marcar en el orden que quieres, de MENOR a MAYOR prioridad | Enter = confirmar | Esc = cancelar"
+
+#: common/fish/functions/audio-priority.fish
+msgid "Canceled or incomplete -- nothing was touched."
+msgstr "Cancelado o incompleto -- no se toco nada."
+
+#: common/fish/functions/audio-priority.fish
+msgid "Session priority (which device is chosen by default) for audio output and"
+msgstr "Prioridad de sesion (que dispositivo se elige por defecto) para salida y"
+
+#: common/fish/functions/audio-priority.fish
+msgid "input. Higher priority.session/priority.driver = more preferred."
+msgstr "entrada de audio. Mayor priority.session/priority.driver = mas preferido."
+
+#: common/fish/functions/audio-priority.fish
+msgid "Generated by the fish function audio-priority -- dynamic detection via"
+msgstr "Generado por la funcion fish audio-priority -- deteccion dinamica via"
+
+#: common/fish/functions/audio-priority.fish
+msgid "pw-dump (python3), see the function's header comment for the detail."
+msgstr "pw-dump (python3), ver comentario de cabecera de la funcion para el detalle."
+
+#: common/fish/functions/audio-priority.fish
+msgid "Requires node.restore-default-targets=false so that the priority always rules"
+msgstr "Requiere node.restore-default-targets=false para que la prioridad mande"
+
+#: common/fish/functions/audio-priority.fish
+msgid "instead of remembering the last device used -- this function"
+msgstr "siempre en vez de recordar el ultimo dispositivo usado -- esta funcion lo"
+
+#: common/fish/functions/audio-priority.fish
+msgid "reaffirms it every time it runs, in case something resets it."
+msgstr "reafirma cada vez que corre, por si algo lo resetea."
+
+#: common/fish/functions/audio-priority.fish
+msgid "Restarting wireplumber to apply (Bluetooth disconnects for a moment and comes back by itself)..."
+msgstr "Reiniciando wireplumber para aplicar (Bluetooth se desconecta un momento y vuelve solo)..."
+
+#: common/fish/functions/audio-priority.fish
+msgid "%s -- new order (lowest to highest priority):"
+msgstr "%s -- nuevo orden (menor a mayor prioridad):"
+
+#: common/fish/functions/audio-priority.fish
+msgid "%s -- unchanged."
+msgstr "%s -- sin cambios."
+
+#: common/boot/silent-boot.sh
+msgid "== %s restored"
+msgstr "== %s restaurado"
+
+#: common/boot/silent-boot.sh
+msgid "== %s disabled (.disabled)"
+msgstr "== %s desactivado (.disabled)"
+
+#: common/boot/silent-boot.sh
+msgid "== syntax of %s: fine"
+msgstr "== sintaxis de %s: bien"
+
+#: common/boot/silent-boot.sh
+msgid "== test (as runit's scripts load it):"
+msgstr "== prueba (como lo cargan los scripts de runit):"
+
+#: common/boot/silent-boot.sh
+msgid "this should NOT come out"
+msgstr "esto NO debería salir"
+
+#: common/boot/silent-boot.sh
+msgid "normal output: should NOT come out"
+msgstr "salida normal: NO debería salir"
+
+#: common/boot/silent-boot.sh
+msgid "a warning DOES come out"
+msgstr "un aviso SÍ sale"
+
+#: common/boot/silent-boot.sh
+msgid "an error DOES come out"
+msgstr "un error SÍ sale"
+
+#: common/boot/silent-boot.sh
+msgid "an error of a program DOES come out"
+msgstr "un error de un programa SÍ sale"
+
+#: common/boot/remove-loading.py
+msgid "== %s: %d lines changed"
+msgstr "== %s: %d líneas cambiadas"
+
+#: common/boot/install-plymouth.sh
+msgid "   theme bgrt-void removed"
+msgstr "   tema bgrt-void quitado"
+
+#: common/boot/install-plymouth.sh
+msgid "   text login of console 1 given back"
+msgstr "   login de texto de la consola 1 devuelto"
+
+#: common/boot/install-plymouth.sh
+msgid "== 1. package and theme"
+msgstr "== 1. paquete y tema"
+
+#: common/boot/install-plymouth.sh
+msgid "   panel %s px high: scale %s"
+msgstr "   panel de %s px de alto: escala %s"
+
+#: common/boot/install-plymouth.sh
+msgid "   theme: %s"
+msgstr "   tema: %s"
+
+#: common/boot/install-plymouth.sh
+msgid "!! Plymouth does not see the theme bgrt-void: the initramfs is NOT rebuilt"
+msgstr "!! Plymouth no ve el tema bgrt-void: NO se rehace el initramfs"
+
+#: common/boot/install-plymouth.sh
+msgid "== 2. kernel line: splash"
+msgstr "== 2. línea del kernel: splash"
+
+#: common/boot/install-plymouth.sh
+msgid "== 3. console 1 for X (lightdm closes Plymouth): without text login on it"
+msgstr "== 3. consola 1 para X (lightdm cierra Plymouth): sin login de texto en ella"
+
+#: common/boot/install-plymouth.sh
+msgid "== 4. /etc/rc.conf block (warnings on the logo and emergency console)"
+msgstr "== 4. bloque de /etc/rc.conf (avisos sobre el logo y consola de emergencia)"
+
+#: common/boot/install-plymouth.sh
+msgid "   redone"
+msgstr "   rehecho"
+
+#: common/boot/install-plymouth.sh
+msgid "== 5. initramfs and menu"
+msgstr "== 5. initramfs y menú"
+
+#: common/boot/install-plymouth.sh
+msgid "with Plymouth"
+msgstr "con Plymouth"
+
+#: common/boot/install-plymouth.sh
+msgid "without Plymouth"
+msgstr "sin Plymouth"
+
+#: common/bluetooth/bluetooth-at-boot.sh
+msgid "== state:"
+msgstr "== estado:"
+
+#: common/fish/functions/disk-ops.fish
+msgid "DEVICE"
+msgstr "DISPOSITIVO"
+
+#: common/fish/functions/disk-ops.fish
+msgid "SIZE"
+msgstr "TAMAÑO"
+
+#: common/fish/functions/disk-ops.fish
+msgid "TYPE"
+msgstr "TIPO"
+
+#: common/fish/functions/disk-ops.fish
+msgid "LABEL"
+msgstr "ETIQUETA"
+
+#: common/fish/functions/disk-ops.fish
+msgid "MOUNTPOINT"
+msgstr "MONTAJE"
+
+#: common/fish/functions/disk-ops.fish
+msgid "Select > "
+msgstr "Selecciona > "
+
+#: common/fish/functions/disk-ops.fish
+msgid "▶️  Mount (udisksctl)"
+msgstr "▶️  Montar (udisksctl)"
+
+#: common/fish/functions/disk-ops.fish
+msgid "⏏️  Unmount (udisksctl)"
+msgstr "⏏️  Desmontar (udisksctl)"
+
+#: common/fish/functions/disk-ops.fish
+msgid "🚑 Repair NTFS (ntfsfix)"
+msgstr "🚑 Reparar NTFS (ntfsfix)"
+
+#: common/fish/functions/disk-ops.fish
+msgid "❌ Cancel"
+msgstr "❌ Cancelar"
+
+#: common/fish/functions/disk-ops.fish
+msgid "Managing: %s (%s)"
+msgstr "Gestionando: %s (%s)"
+
+#: common/fish/functions/disk-ops.fish
+msgid "ℹ️  Already mounted on: %s"
+msgstr "ℹ️  Ya montado en: %s"
+
+#: common/fish/functions/disk-ops.fish
+msgid "📂 Mounting %s..."
+msgstr "📂 Montando %s..."
+
+#: common/fish/functions/disk-ops.fish
+msgid "✅ Done."
+msgstr "✅ Listo."
+
+#: common/fish/functions/disk-ops.fish
+msgid "⏏️  Unmounting %s..."
+msgstr "⏏️  Desmontando %s..."
+
+#: common/fish/functions/disk-ops.fish
+msgid "👋 Done."
+msgstr "👋 Hecho."
+
+#: common/fish/functions/disk-ops.fish
+msgid "🩹 Running ntfsfix on %s..."
+msgstr "🩹 Ejecutando ntfsfix en %s..."
+
+#: common/fish/functions/disk-ops.fish
+msgid "⛔ Error: only for NTFS."
+msgstr "⛔ Error: Solo para NTFS."
+
+#: common/fastfetch/gen-config.py
+msgid "1 day ago"
+msgstr "hace 1 día"
+
+#: common/fastfetch/gen-config.py
+msgid "%s days ago"
+msgstr "hace %s días"
+
+#: common/fastfetch/gen-config.py
+msgid "Host"
+msgstr "Equipo"
+
+#: common/fastfetch/gen-config.py
+msgid "OS"
+msgstr "SO"
+
+#: common/fastfetch/gen-config.py
+msgid "Palette"
+msgstr "Paleta"
+
+#: common/fastfetch/gen-config.py
+msgid "Installed / Powered on / Updated"
+msgstr "Instalado / Encendido / Actualizado"
+
+#: common/fastfetch/gen-config.py
+msgid "Installed"
+msgstr "Instalado"
+
+#: common/fastfetch/gen-config.py
+msgid "Powered on"
+msgstr "Encendido"
+
+#: common/fastfetch/gen-config.py
+msgid "Updated"
+msgstr "Actualizado"
+
+#: common/fastfetch/gen-config.py
+msgid "Pending"
+msgstr "Pendiente"
+
+#: common/fastfetch/gen-config.py
+msgid "nothing (according to the last sync)"
+msgstr "nada (según el último sync)"
+
+#: common/fastfetch/gen-config.py
+msgid "%s packages (according to the last sync)"
+msgstr "%s paquetes (según el último sync)"
+
+#: common/steam/install-game-mode.sh
+msgid "== removed %s, %s, %s, %s, %s and gamescope's cap_sys_nice"
+msgstr "== quitados %s, %s, %s, %s, %s y el cap_sys_nice de gamescope"
+
+#: common/steam/install-game-mode.sh
+msgid "gamescope or steam is missing: first, install-steam.sh"
+msgstr "Falta gamescope o steam: antes, install-steam.sh"
+
+#: common/steam/install-game-mode.sh
+msgid "!! mangoapp is missing (MangoHud-mangoapp): without performance overlay. Repeat install-steam.sh"
+msgstr "!! Falta mangoapp (MangoHud-mangoapp): sin indicador de rendimiento. Repetir install-steam.sh"
+
+#: common/steam/install-game-mode.sh
+msgid "== without loading screen (steam-loading removed)"
+msgstr "== sin pantalla de carga (steam-loading quitado)"
+
+#: common/steam/install-game-mode.sh
+msgid "== installed:"
+msgstr "== instalado:"
+
+#: common/steam/install-game-mode.sh
+msgid "   (without loading screen)"
+msgstr "   (sin pantalla de carga)"
+
+#: common/steam/install-game-mode.sh
+msgid "   keyboard in gamescope: %s"
+msgstr "   teclado en gamescope: %s"
+
+#: common/steam/install-game-mode.sh
+msgid "== From Xfce: 'Game Mode' launcher (with install-passwordless-switch.sh, without password)."
+msgstr "== Desde Xfce: lanzador 'Modo Juego' (con install-passwordless-switch.sh, sin contraseña)."
+
+#: common/grub-theme/build.py
+msgid "there is a submenu in grub.cfg (its entries would come out invisible)"
+msgstr "hay un submenú en grub.cfg (sus entradas saldrían invisibles)"
+
+#: common/grub-theme/build.py
+msgid "GRUB has %d entries and %d were going to be painted"
+msgstr "GRUB tiene %d entradas y se iban a pintar %d"
+
+#: common/grub-theme/build.py
+msgid "THEME DISABLED (text menu): %s"
+msgstr "TEMA DESACTIVADO (menú de texto): %s"
+
+#: common/grub-theme/build.py
+msgid " Boot "
+msgstr " Arranque "
+
+#: common/grub-theme/build.py
+msgid "↑↓ choose · Enter boot · e edit · c console"
+msgstr "↑↓ elegir · Enter arrancar · e editar · c consola"
+
+#: common/grub-theme/build.py
+msgid "no entry could be read from /boot/grub/grub.cfg"
+msgstr "no se pudo leer ninguna entrada de /boot/grub/grub.cfg"
+
+#: common/grub-theme/build.py
+msgid "theme generated in %s: %d entries:"
+msgstr "tema generado en %s: %d entradas:"
+
+#: common/grub-theme/install-theme.sh
+msgid "== theme, hooks and scripts removed"
+msgstr "== tema, ganchos y scripts quitados"
+
+#: common/grub-theme/install-theme.sh common/steam/install-decky.sh
+msgid "== 1. packages"
+msgstr "== 1. paquetes"
+
+#: common/grub-theme/install-theme.sh
+msgid "%s is missing (copy of the font of step 10 of the recipe)"
+msgstr "Falta %s (copia de la fuente del paso 10 de la receta)"
+
+#: common/grub-theme/install-theme.sh
+msgid "== 2. scripts in %s"
+msgstr "== 2. scripts en %s"
+
+#: common/grub-theme/install-theme.sh
+msgid "   screen: %s"
+msgstr "   pantalla: %s"
+
+#: common/grub-theme/install-theme.sh
+msgid "== 4. kernel hooks"
+msgstr "== 4. ganchos del kernel"
+
+#: common/grub-theme/install-theme.sh
+msgid "== 5. theme and menu"
+msgstr "== 5. tema y menú"
+
+#: common/grub-theme/install-theme.sh
+msgid "!! The theme was left DISABLED: GRUB will show the normal text menu (see the reason above)."
+msgstr "!! El tema quedó DESACTIVADO: GRUB mostrará el menú de texto normal (ver el motivo arriba)."
+
+#: common/grub-theme/install-theme.sh
+msgid "== entries painted in the background (they must be those of the menu, in this order):"
+msgstr "== entradas pintadas en el fondo (deben ser las del menú, en este orden):"
+
+#: common/grub-theme/install-theme.sh
+msgid "   syntax of grub.cfg: fine"
+msgstr "   sintaxis de grub.cfg: bien"
+
+#: common/grub-theme/install-theme.sh
+msgid "   CAREFUL: there is still a submenu!"
+msgstr "   ¡OJO: sigue habiendo un submenú!"
+
+#: common/grub-theme/install-theme.sh
+msgid "   no submenus: fine"
+msgstr "   sin submenús: bien"
+
+#: common/grub-theme/install-theme.sh
+msgid "   theme files: %s"
+msgstr "   ficheros del tema: %s"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "the patch %s does not exist"
+msgstr "no existe el parche %s"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "cache"
+msgstr "caché"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "without network or without access to void-packages"
+msgstr "sin red o sin acceso a void-packages"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "void-packages has no srcpkgs/%s/template"
+msgstr "void-packages no tiene srcpkgs/%s/template"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "the template of %s cannot be read without running code"
+msgstr "la plantilla de %s no se puede leer sin ejecutar código"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "template without version/distfiles/checksum"
+msgstr "plantilla sin version/distfiles/checksum"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "%s could not be downloaded"
+msgstr "no se pudo descargar %s"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "the checksum of %s does not match the template"
+msgstr "el checksum de %s no coincide con la plantilla"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "%s could not be unpacked"
+msgstr "no se pudo descomprimir %s"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "the patch of Void's template %s does not apply"
+msgstr "no aplica el parche de la plantilla de Void %s"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "without network or without access to %s"
+msgstr "sin red o sin acceso a %s"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "%s does not have %s"
+msgstr "%s no tiene %s"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "%s could not be cloned (%s)"
+msgstr "no se pudo clonar %s (%s)"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "applies neither forwards nor in reverse: %s (upstream rewrote that part: review by hand)"
+msgstr "no aplica ni al derecho ni al revés: %s (upstream reescribió esa parte: revisar a mano)"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "the code already brings all the patches: one can go back to Void's"
+msgstr "el código ya trae todos los parches: se puede volver al de Void"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "the code brings none: rebuild with the patches"
+msgstr "el código no trae ninguno: recompilar con los parches"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "already included: %s; still needed: %s (remove the included ones and rebuild with the rest)"
+msgstr "ya incluidos: %s; hacen falta: %s (quitar los incluidos y recompilar con el resto)"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh common/steam/steamos-manager/build-steamos-manager.sh
+msgid "without root"
+msgstr "sin root"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "!! no patches in %s"
+msgstr "!! sin parches en %s"
+
+#: common/patch-test/install-patch-test.sh common/patch-test/patch-still-needed.sh
+msgid "installed:"
+msgstr "instalado:"
+
+#: common/fish/functions/install-pkg.fish common/fish/functions/remove-pkg.fish
+msgid "alt-i: info, alt-f: files, alt-p: toggle, alt-j/k: scroll, tab: multi-select"
+msgstr "alt-i: info, alt-f: archivos, alt-p: toggle, alt-j/k: scroll, tab: multi-select"
+
+#: common/fish/functions/install-pkg.fish common/fish/functions/remove-pkg.fish
+msgid "📦 Installing: %s"
+msgstr "📦 Instalando: %s"
+
+#: common/fish/functions/install-pkg.fish common/fish/functions/remove-pkg.fish
+msgid "✓ Completed"
+msgstr "✓ Completado"
+
+#: common/fish/functions/install-pkg.fish common/fish/functions/remove-pkg.fish
+msgid "Press Enter to continue..."
+msgstr "Presiona Enter para continuar..."
+
+#: common/fish/functions/install-pkg.fish common/fish/functions/remove-pkg.fish
+msgid "alt-i: info, alt-f: files, alt-x: who depends, alt-j/k: scroll, tab: multi-select"
+msgstr "alt-i: info, alt-f: archivos, alt-x: quién depende, alt-j/k: scroll, tab: multi-select"
+
+#: common/fish/functions/install-pkg.fish common/fish/functions/remove-pkg.fish
+msgid "Packages that depend on this one:"
+msgstr "Dependen de este paquete:"
+
+#: common/fish/functions/install-pkg.fish common/fish/functions/remove-pkg.fish
+msgid "(none)"
+msgstr "(ninguno)"
+
+#: common/fish/functions/install-pkg.fish common/fish/functions/remove-pkg.fish
+msgid "🔒 Not removed from here (base system, kernel, boot, login or desktop): %s"
+msgstr "🔒 No se quitan desde aquí (sistema base, kernel, arranque, login o escritorio): %s"
+
+#: common/fish/functions/install-pkg.fish common/fish/functions/remove-pkg.fish
+msgid "🗑 Packages to remove: %s"
+msgstr "🗑 Paquetes a remover: %s"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "sweeping %s ..."
+msgstr "barriendo %s ..."
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "no machine answers the ping"
+msgstr "ningún equipo responde al ping"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "several machines with port 22 open: %s"
+msgstr "varios equipos con el 22 abierto: %s"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "choose with: %s"
+msgstr "elige con: %s"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "alive but without port 22 open: %s"
+msgstr "vivos pero sin el 22 abierto: %s"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "none accepts SSH yet; look at the diagnosis with %s"
+msgstr "ninguno acepta SSH todavía; mira el diagnóstico con %s"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "22 open, but there is a firewall with a targeted rule (port 9999 stays silent)"
+msgstr "22 abierto, pero hay un cortafuegos con regla dirigida (el 9999 calla)"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "22 open; the control port refuses instantly"
+msgstr "22 abierto; el puerto de control rechaza al instante"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "(without a firewall, or with one that rejects instead of dropping)"
+msgstr "(sin cortafuegos, o con uno que rechaza en vez de descartar)"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "FIREWALL: ports 22 and 9999 are both silent"
+msgstr "CORTAFUEGOS: el 22 y el 9999 callan los dos"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "on the machine's console, type it by hand (do not paste it):"
+msgstr "en la consola del equipo, escríbelo a mano (no lo pegues):"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "or, if the active one is firewalld:"
+msgstr "o, si el activo es firewalld:"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "SSHD STOPPED: port 22 refuses instantly, nothing filters"
+msgstr "SSHD PARADO: el 22 rechaza al instante, nada filtra"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "on the machine's console, the one that applies:"
+msgstr "en la consola del equipo, la que corresponda:"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "block '%s' created"
+msgstr "bloque '%s' creado"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "the key already gets in, no password needed"
+msgstr "la clave ya entra, no hace falta contraseña"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "you had no ed25519 key, I generate it"
+msgstr "no tenías clave ed25519, la genero"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "password of %s: "
+msgstr "contraseña de %s: "
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "[password file destroyed]"
+msgstr "[fichero de contraseña destruido]"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "Sets up or redoes SSH access to a machine of the local network."
+msgstr "Da de alta o rehace el acceso SSH a un equipo de la red local."
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "It looks for the machine, diagnoses the port, fixes known_hosts, installs"
+msgstr "Busca el equipo, diagnostica el puerto, arregla known_hosts, instala"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "the key, writes the block in ~/.ssh/config, installs Claude Code and"
+msgstr "la clave, escribe el bloque en ~/.ssh/config, instala Claude Code y"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "shows an x-ray of the system."
+msgstr "enseña una radiografía del sistema."
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "The alias is the first argument. Without it, %s is used"
+msgstr "El alias es el primer argumento. Sin el, se usa %s"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "(set with: %s), and if that is not there either,"
+msgstr "(fijado con: %s), y si tampoco esta,"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "'lego'. The user and the IP come from ~/.ssh/config if the alias already exists."
+msgstr "'lego'. El usuario y la IP salen de ~/.ssh/config si el alias ya existe."
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "(The old Spanish options also work: --usuario, --diagnostico, --sin-claude.)"
+msgstr "(También valen las opciones en español: --usuario, --diagnostico, --sin-claude.)"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "the Legion Go 2"
+msgstr "la Legion Go 2"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "setting up a new machine"
+msgstr "alta de un equipo nuevo"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "only looks, touches nothing"
+msgstr "solo mira, no toca nada"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "1. Locating the console"
+msgstr "1. Localizando la consola"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "using the IP you gave me: %s"
+msgstr "usando la IP que me diste: %s"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "the usual one answers: %s"
+msgstr "responde la de siempre: %s"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "%s no longer answers, time to sweep"
+msgstr "%s ya no responde, toca barrer"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "found: %s"
+msgstr "encontrada: %s"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "2. Port diagnosis"
+msgstr "2. Diagnóstico del puerto"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "3. X-ray (I touch nothing else)"
+msgstr "3. Radiografía (no toco nada más)"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "%s does not accept the key yet"
+msgstr "%s no acepta la clave todavía"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "the port is fine; the key still has to be installed. Run: %s"
+msgstr "el puerto está bien; falta instalar la clave. Lanza: %s"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "3. Host key"
+msgstr "3. Clave de host"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "the host hands over no key; is sshd still alive?"
+msgstr "el host no entrega clave; ¿sigue vivo el sshd?"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "new fingerprint: %s"
+msgstr "huella nueva: %s"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "4. Route and access key"
+msgstr "4. Ruta y clave de acceso"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "the key does not get in; check the password"
+msgstr "la clave no entra; revisa la contraseña"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "'%s' gets in with the key"
+msgstr "'%s' entra con clave"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "it was already installed"
+msgstr "ya estaba instalado"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "fish's PATH: %s"
+msgstr "PATH de fish: %s"
+
+#: common/ssh-setup/ssh-setup.fish
+msgid "6. X-ray"
+msgstr "6. Radiografía"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "System"
+msgstr "Sistema"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "distribution"
+msgstr "distribución"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "not known"
+msgstr "desconocida"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "packages"
+msgstr "paquetes"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "Edition"
+msgstr "Edición"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "graphical environment"
+msgstr "entorno gráfico"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "looks like"
+msgstr "parece"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "%s — atomic (ostree)"
+msgstr "%s — atómica (ostree)"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "deployment"
+msgstr "despliegue"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "layered packages"
+msgstr "paquetes en capa"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "generic"
+msgstr "genérica"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "root"
+msgstr "raíz"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "READ-ONLY (%s for pacman)"
+msgstr "SOLO LECTURA (%s para pacman)"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "WRITING ENABLED (it is reverted when the OS updates)"
+msgstr "ESCRITURA HABILITADA (se revierte al actualizar el SO)"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "undetermined state: %s"
+msgstr "estado indeterminado: %s"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "Access"
+msgstr "Acceso"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "sshd enabled"
+msgstr "sshd habilitado"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "yes (link in /var/service)"
+msgstr "sí (enlace en /var/service)"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "NO — %s"
+msgstr "NO — %s"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "sshd active"
+msgstr "sshd activo"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "running"
+msgstr "corriendo"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "stopped"
+msgstr "parado"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "ACTIVE (runit)"
+msgstr "ACTIVO (runit)"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "installed — not enabled"
+msgstr "instalado — no activado"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "not installed"
+msgstr "no instalado"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "ACTIVE — zone %s, allows: %s"
+msgstr "ACTIVO — zona %s, permite: %s"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "I could not read it"
+msgstr "no he podido leerlo"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "installed — active: %s"
+msgstr "instalado — activo: %s"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "Network"
+msgstr "Red"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "gateway"
+msgstr "puerta de enlace"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "Health"
+msgstr "Salud"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "root's files in HOME"
+msgstr "ficheros de root en HOME"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "%s  <-- careful: installer run as root"
+msgstr "%s  <-- ojo: instalador corrido como root"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "0 outside what is expected"
+msgstr "0 fuera de lo esperado"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "of them, Decky"
+msgstr "de ellos, Decky"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "%s in ~/homebrew (normal, do not touch)"
+msgstr "%s en ~/homebrew (normal, no tocar)"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "updates"
+msgstr "actualizaciones"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "there is a staged deployment — a reboot is missing"
+msgstr "hay un despliegue preparado — falta reiniciar"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "no pending deployment (%s to check)"
+msgstr "sin despliegue pendiente (%s para mirar)"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "%s according to the last sync (%s to refresh)"
+msgstr "%s según el último sync (%s para refrescar)"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "SteamOS — check with: %s"
+msgstr "SteamOS — consultar con: %s"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "I do not know how to check it on this distro"
+msgstr "no sé mirarlo en esta distro"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "binary"
+msgstr "binario"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "version"
+msgstr "versión"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "session"
+msgstr "sesión"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "logged in"
+msgstr "iniciada"
+
+#: common/ssh-setup/ssh-survey.sh
+msgid "NOT LOGGED IN — run claude and log in"
+msgstr "SIN INICIAR — ejecuta claude y haz el login"
+
+#: common/steam/install-steam.sh
+msgid "There is no %s: nothing to remove"
+msgstr "No hay %s: nada que quitar"
+
+#: common/steam/install-steam.sh
+msgid "== removing: %s"
+msgstr "== quitando: %s"
+
+#: common/steam/install-steam.sh
+msgid "== removed %s and %s (valid on reboot)"
+msgstr "== quitados %s y %s (vale al reiniciar)"
+
+#: common/steam/install-steam.sh
+msgid "== done (the games library in ~/.local/share/Steam is not deleted)"
+msgstr "== listo (la biblioteca de juegos de ~/.local/share/Steam no se borra)"
+
+#: common/steam/install-steam.sh
+msgid "== 1. repositories"
+msgstr "== 1. repositorios"
+
+#: common/steam/install-steam.sh
+msgid "== 2. packages"
+msgstr "== 2. paquetes"
+
+#: common/steam/install-steam.sh
+msgid "   Vulkan: %s (GPU %s)"
+msgstr "   Vulkan: %s (GPU %s)"
+
+#: common/steam/install-steam.sh
+msgid "   (not in the repo, skipped: %s)"
+msgstr "   (no existe en el repo, se salta: %s)"
+
+#: common/steam/install-steam.sh
+msgid "   everything already installed"
+msgstr "   todo instalado ya"
+
+#: common/steam/install-steam.sh
+msgid "   installed by hand (for --remove): %s"
+msgstr "   instalados a mano (para --remove): %s"
+
+#: common/steam/install-steam.sh
+msgid "== 3. limits (valid from the next login / boot)"
+msgstr "== 3. límites (valen desde el próximo inicio de sesión / arranque)"
+
+#: common/steam/install-steam.sh
+msgid "   vm.max_map_count = %s"
+msgstr "   vm.max_map_count = %s"
+
+#: common/steam/install-steam.sh
+msgid "   nofile: 524288 from the next login (log out and back in)"
+msgstr "   nofile: 524288 desde el próximo inicio de sesión (cerrar sesión y entrar)"
+
+#: common/steam/install-steam.sh
+msgid "== 4. Vulkan (gamescope does not work without it)"
+msgstr "== 4. Vulkan (gamescope no funciona sin él)"
+
+#: common/steam/install-steam.sh
+msgid "== 5. Void's documentation for Steam"
+msgstr "== 5. documentación de Void para Steam"
+
+#: common/steam/install-decky.sh
+msgid "== removed (the plugins stay in %s/plugins; restart Steam)"
+msgstr "== quitado (quedan los plugins en %s/plugins; reiniciar Steam)"
+
+#: common/steam/install-decky.sh
+msgid "== 2. folders and Steam's remote debugging"
+msgstr "== 2. carpetas y depuración remota de Steam"
+
+#: common/steam/install-decky.sh
+msgid "== 3. PluginLoader (latest stable version)"
+msgstr "== 3. PluginLoader (última versión estable)"
+
+#: common/steam/install-decky.sh
+msgid "== 4. runit service"
+msgstr "== 4. servicio de runit"
+
+#: common/steam/install-decky.sh
+msgid "== 5. check"
+msgstr "== 5. comprobación"
+
+#: common/steam/install-decky.sh
+msgid "!! PluginLoader is not running"
+msgstr "!! PluginLoader no corre"
+
+#: common/steam/install-decky.sh
+msgid "   Close Steam and open it again (or enter Game Mode) so that it reads %s."
+msgstr "   Cerrar y volver a abrir Steam (o entrar en el Modo Juego) para que lea %s."
+
+#: common/steam/install-decky.sh
+msgid "   In Game Mode: quick menu (Ctrl+Shift+Tab) → plug icon = Decky."
+msgstr "   En el Modo Juego: menú rápido (Ctrl+Shift+Tab) → ícono del enchufe = Decky."
+
+#: common/steam/greeter-without-atspi.sh common/steam/test-autologin.sh common/steam/test-direct-session.sh
+msgid "== Reboot so that lightdm stops using the wrapper."
+msgstr "== Reiniciar para que lightdm deje de usar el envoltorio."
+
+#: common/steam/greeter-without-atspi.sh common/steam/test-autologin.sh common/steam/test-direct-session.sh
+msgid "!! /usr/local/bin/steam-game-mode is an old one: run install-game-mode.sh first"
+msgstr "!! /usr/local/bin/steam-game-mode es de antes: correr primero install-game-mode.sh"
+
+#: common/steam/greeter-without-atspi.sh common/steam/test-autologin.sh common/steam/test-direct-session.sh
+msgid "== differences in %s:"
+msgstr "== diferencias en %s:"
+
+#: common/steam/greeter-without-atspi.sh common/steam/test-autologin.sh common/steam/test-direct-session.sh
+msgid "== Reboot and, at the login screen, choose 'Steam (Game Mode, direct screen)'."
+msgstr "== Reiniciar y, en la pantalla de inicio, elegir 'Steam (Modo Juego, pantalla directa)'."
+
+#: common/steam/greeter-without-atspi.sh common/steam/test-autologin.sh common/steam/test-direct-session.sh
+msgid "== Reboot to test it."
+msgstr "== Reiniciar para probarlo."
+
+#: common/steam/greeter-without-atspi.sh common/steam/test-autologin.sh common/steam/test-direct-session.sh
+msgid "== differences:"
+msgstr "== diferencias:"
+
+#: common/steam/greeter-without-atspi.sh common/steam/test-autologin.sh common/steam/test-direct-session.sh
+msgid "== Reboot so that no old login screen is left hanging (there is one from before)."
+msgstr "== Reiniciar para que no quede ninguna pantalla de inicio vieja colgada (hay una de antes)."
+
+#: common/steam/capture-syslog.sh
+msgid "== stopped. Log:"
+msgstr "== parado. Registro:"
+
+#: common/steam/capture-syslog.sh
+msgid "!! it is already running"
+msgstr "!! ya corre"
+
+#: common/steam/capture-syslog.sh
+msgid "== Listening. Switch mode (there and back) and then: sudo sh %s --stop"
+msgstr "== Escuchando. Cambia de modo (ida y vuelta) y luego: sudo sh %s --stop"
+
+#: common/steam/diag-lightdm.sh
+msgid "saved in %s (%s lines)"
+msgstr "guardado en %s (%s líneas)"
+
+#: common/steam/portal-gamescope/install-portal-gamescope.sh common/steam/steamos-manager/install-steamos-manager.sh
+msgid "removed (logs in /var/log/steamos-manager)"
+msgstr "quitado (registros en /var/log/steamos-manager)"
+
+#: common/steam/portal-gamescope/install-portal-gamescope.sh common/steam/steamos-manager/install-steamos-manager.sh
+msgid "reference in %s/sha256 and package %s"
+msgstr "referencia en %s/sha256 y paquete %s"
+
+#: common/steam/portal-gamescope/install-portal-gamescope.sh common/steam/steamos-manager/install-steamos-manager.sh
+msgid "== without pp_power_profile_mode: [gpu_power_profile] removed from the profiles"
+msgstr "== sin pp_power_profile_mode: quitado [gpu_power_profile] de los perfiles"
+
+#: common/steam/portal-gamescope/install-portal-gamescope.sh common/steam/steamos-manager/install-steamos-manager.sh
+msgid "--- on the system bus:"
+msgstr "--- en el bus del sistema:"
+
+#: common/steam/portal-gamescope/install-portal-gamescope.sh common/steam/steamos-manager/install-steamos-manager.sh
+msgid "!! Game Mode's launcher does not start the user process: repeat install-game-mode.sh"
+msgstr "!! El lanzador del Modo Juego no arranca el proceso del usuario: repetir install-game-mode.sh"
+
+#: common/steam/portal-gamescope/install-portal-gamescope.sh common/steam/steamos-manager/install-steamos-manager.sh
+msgid "Done: enter Game Mode and look at the quick menu → Performance."
+msgstr "Listo: entrar en el Modo Juego y mirar el menú rápido → Rendimiento."
+
+#: common/steam/portal-gamescope/install-portal-gamescope.sh common/steam/steamos-manager/install-steamos-manager.sh
+msgid "removed (Game Mode goes back to having no capture portal from the next entry)"
+msgstr "quitado (el Modo Juego vuelve a no tener portal de captura desde la siguiente entrada)"
+
+#: common/steam/portal-gamescope/install-portal-gamescope.sh common/steam/steamos-manager/install-steamos-manager.sh
+msgid "!! bwrap is missing (package bubblewrap; it comes with flatpak)"
+msgstr "!! falta bwrap (paquete bubblewrap; viene con flatpak)"
+
+#: common/steam/portal-gamescope/install-portal-gamescope.sh common/steam/steamos-manager/install-steamos-manager.sh
+msgid "!! libraries are missing:"
+msgstr "!! faltan bibliotecas:"
+
+#: common/steam/portal-gamescope/install-portal-gamescope.sh common/steam/steamos-manager/install-steamos-manager.sh
+msgid "Done. Valid from the next entry into Game Mode (with install-game-mode.sh already up to date):"
+msgstr "Listo. Vale desde la siguiente entrada al Modo Juego (con install-game-mode.sh ya puesto al día):"
+
+#: common/steam/portal-gamescope/install-portal-gamescope.sh common/steam/steamos-manager/install-steamos-manager.sh
+msgid "the main portal looks for its own on start, so if you are in Game Mode, leave and come back."
+msgstr "el portal principal busca los suyos al arrancar, así que si se está en el Modo Juego, salir y volver."
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "%s already has the patch's change: build without patch (or use the official one)."
+msgstr "%s ya trae el cambio del parche: compilar sin parche (o usar el oficial)."
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "missing %s: sudo xbps-install -S %s"
+msgstr "falta %s: sudo xbps-install -S %s"
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "cargo is missing (rustup, ~/.cargo/bin)"
+msgstr "falta cargo (rustup, ~/.cargo/bin)"
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "dbus-run-session is missing"
+msgstr "falta dbus-run-session"
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "%s already exists: delete it or move it first"
+msgstr "ya existe %s: bórralo o muévelo antes"
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "== clone %s"
+msgstr "== clonar %s"
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "!! the tag %s does not point to %s"
+msgstr "!! el tag %s no apunta a %s"
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "== patches"
+msgstr "== parches"
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "== build (make build)"
+msgstr "== compilar (make build)"
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "!! cargo changed Cargo.lock"
+msgstr "!! cargo cambió Cargo.lock"
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "== tests (make test, with its own session bus)"
+msgstr "== pruebas (make test, con bus de sesión propio)"
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "!! tests fail (log: %s)"
+msgstr "!! fallan pruebas (registro: %s)"
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "== make install DESTDIR=%s"
+msgstr "== make install DESTDIR=%s"
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "== checks"
+msgstr "== comprobaciones"
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "same files, permissions and owners as %s"
+msgstr "mismos ficheros, permisos y dueños que %s"
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "!! the file list differs from %s"
+msgstr "!! la lista de ficheros difiere de %s"
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "code in %s"
+msgstr "código en %s"
+
+#: common/steam/steamos-manager/build-steamos-manager.sh
+msgid "Done: %s (cargo cache in ~/.cargo/registry: %s)"
+msgstr "Listo: %s (caché de cargo en ~/.cargo/registry: %s)"
+
+#: common/steam/install-passwordless-switch.sh
+msgid "Run it with sudo from the user's account (or set TARGET_USER in local.env)."
+msgstr "Correr con sudo desde la cuenta del usuario (o poner TARGET_USER en local.env)."
+
+#: common/steam/install-passwordless-switch.sh
+msgid "== removed; differences in %s:"
+msgstr "== quitado; diferencias en %s:"
+
+#: common/steam/install-passwordless-switch.sh
+msgid "== Reboot: the login screen with password comes back."
+msgstr "== Reiniciar: vuelve la pantalla de inicio con contraseña."
+
+#: common/steam/install-passwordless-switch.sh
+msgid "!! The direct session is missing: run test-direct-session.sh first"
+msgstr "!! Falta la sesión directa: correr antes test-direct-session.sh"
+
+#: common/steam/install-passwordless-switch.sh
+msgid "!! steamos-session-select is an old one: run install-game-mode.sh first"
+msgstr "!! steamos-session-select es de antes: correr antes install-game-mode.sh"
+
+#: common/steam/install-passwordless-switch.sh
+msgid "== 1. lightdm.conf: comment out autologin-user/autologin-session (the separate file sets them)"
+msgstr "== 1. lightdm.conf: comentar autologin-user/autologin-session (los pone el fichero aparte)"
+
+#: common/steam/install-passwordless-switch.sh
+msgid "== 2. %s (session: %s)"
+msgstr "== 2. %s (sesión: %s)"
+
+#: common/steam/install-passwordless-switch.sh
+msgid "== 3. %s"
+msgstr "== 3. %s"
+
+#: common/steam/install-passwordless-switch.sh
+msgid "== 3a. %s"
+msgstr "== 3a. %s"
+
+#: common/steam/install-passwordless-switch.sh
+msgid "== 3b. %s"
+msgstr "== 3b. %s"
+
+#: common/steam/install-passwordless-switch.sh
+msgid "== 3c. %s"
+msgstr "== 3c. %s"
+
+#: common/steam/install-passwordless-switch.sh
+msgid "== 4. %s (validated with visudo)"
+msgstr "== 4. %s (validado con visudo)"
+
+#: common/steam/install-passwordless-switch.sh
+msgid "!! the sudoers rule is not valid: it is not installed"
+msgstr "!! la regla de sudoers no es válida: no se instala"
+
+#: common/steam/install-passwordless-switch.sh
+msgid "== check"
+msgstr "== comprobación"
+
+#: common/steam/install-passwordless-switch.sh
+msgid "   %s can use %s without password"
+msgstr "   %s puede usar %s sin contraseña"
+
+#: common/steam/install-passwordless-switch.sh
+msgid "!! %s can NOT use %s without password: the switch will ask for it again"
+msgstr "!! %s NO puede usar %s sin contraseña: el cambio volverá a pedirla"
+
+#: common/steam/install-passwordless-switch.sh
+msgid "== Reboot: it enters Game Mode by itself. 'Switch to Desktop' → Xfce without password;"
+msgstr "== Reiniciar: entra solo en el Modo Juego. 'Cambiar a escritorio' → Xfce sin contraseña;"
+
+#: common/steam/install-passwordless-switch.sh
+msgid "   from Xfce, the 'Game Mode' launcher → Game Mode without password."
+msgstr "   desde Xfce, el lanzador 'Modo Juego' → Modo Juego sin contraseña."
+
+#: common/fish/functions/update-system.fish
+msgid "Syncing repositories"
+msgstr "Sincronizando repositorios"
+
+#: common/fish/functions/update-system.fish
+msgid "Packages up to date"
+msgstr "Paquetes al día"
+
+#: common/fish/functions/update-system.fish
+msgid "Update %s packages (%s MiB to download)? [Y/n] "
+msgstr "¿Actualizar %s paquetes (%s MiB de descarga)? [S/n] "
+
+#: common/fish/functions/update-system.fish
+msgid "Canceled."
+msgstr "Cancelado."
+
+#: common/fish/functions/update-system.fish
+msgid "Updating xbps first"
+msgstr "Actualizando xbps primero"
+
+#: common/fish/functions/update-system.fish
+msgid "Updating the system"
+msgstr "Actualizando el sistema"
+
+#: common/fish/functions/update-system.fish
+msgid "OpenSSH changed: restarting sshd (the open sessions go on)"
+msgstr "OpenSSH cambió: reiniciando sshd (las sesiones abiertas siguen)"
+
+#: common/fish/functions/update-system.fish
+msgid "Removing orphans (dependencies nobody uses anymore)"
+msgstr "Quitando huérfanos (dependencias que ya nadie usa)"
+
+#: common/fish/functions/update-system.fish
+msgid "Orphan backup kernel, kept: %s"
+msgstr "Kernel de respaldo huérfano, se conserva: %s"
+
+#: common/fish/functions/update-system.fish
+msgid "To remove it once the current one has been fine for a while: %s"
+msgstr "Para quitarlo cuando el actual lleve tiempo bien: %s"
+
+#: common/fish/functions/update-system.fish
+msgid "Cleaning the package cache"
+msgstr "Limpiando la caché de paquetes"
+
+#: common/fish/functions/update-system.fish
+msgid "Removing loose kernels: %s"
+msgstr "Quitando kernels sueltos: %s"
+
+#: common/fish/functions/update-system.fish
+msgid "New configuration templates (do NOT apply them without comparing them; the current file is the good one):"
+msgstr "Plantillas nuevas de configuración (NO aplicarlas sin compararlas; el fichero actual es el bueno):"
+
+#: common/fish/functions/update-system.fish
+msgid "Compare: %s   ·   Careful with passwd: the template has no users."
+msgstr "Comparar: %s   ·   Ojo con passwd: la plantilla no tiene usuarios."
+
+#: common/fish/functions/update-system.fish
+msgid "LazyVim: syncing Neovim's plugins"
+msgstr "LazyVim: sincronizando plugins de Neovim"
+
+#: common/fish/functions/update-system.fish
+msgid "kernel %s installed, %s is running"
+msgstr "kernel %s instalado, corre %s"
+
+#: common/fish/functions/update-system.fish
+msgid "glibc updated"
+msgstr "glibc actualizada"
+
+#: common/fish/functions/update-system.fish
+msgid "A reboot is advisable: %s"
+msgstr "Conviene reiniciar: %s"
+
+#: common/fish/functions/update-system.fish
+msgid "Completed"
+msgstr "Completado"
+
+#: common/fish/functions/update-system.fish
+msgid "%s, install and %s (Legion recipe, step 14, \"Screen sharing in Game Mode\")"
+msgstr "%s, instalar y %s (receta de la Legion, paso 14, \"Compartir pantalla en el Modo Juego\")"
+
+#: common/fish/functions/update-system.fish
+msgid "%s, install and restart the portal (Legion recipe, step 14, \"Portals\", point 4)"
+msgstr "%s, instalar y reiniciar el portal (receta de la Legion, paso 14, \"Portales\", punto 4)"
+
+#: common/fish/functions/update-system.fish
+msgid "%s (installs the Thunar-*.xbps of that folder) and, as the user, %s; if Void already has an equal or higher version or revision, first %s (same folder; it tests the patch first and does not build if Void already brings it) and copy the new .xbps there (step 15 of each machine's recipe, \"Desktop wallpaper on Wayland\")"
+msgstr "%s (instala el Thunar-*.xbps de esa carpeta) y, como usuario, %s; si Void ya tiene una versión o revisión igual o mayor, antes %s (misma carpeta; prueba antes el parche y no compila si Void ya lo trae) y copiar allí el .xbps nuevo (paso 15 de la receta de cada máquina, \"Fondo de escritorio en Wayland\")"
+
+#: common/fish/functions/update-system.fish
+msgid "%s (installs the .xbps of that folder); if Void already has an equal or higher version or revision, first %s (same folder; it tests the patch first and does not build if Void already brings it) and copy the new .xbps there (step 15 of each machine's recipe, \"Desktop wallpaper on Wayland\")"
+msgstr "%s (instala el .xbps de esa carpeta); si Void ya tiene una versión o revisión igual o mayor, antes %s (misma carpeta; prueba antes el parche y no compila si Void ya lo trae) y copiar allí el .xbps nuevo (paso 15 de la receta de cada máquina, \"Fondo de escritorio en Wayland\")"
+
+#: common/fish/functions/update-system.fish
+msgid "it is not known with which script %s was built: look for it in the recipe (and add it to __update_system_how_to_rebuild)"
+msgstr "no se sabe con qué script se compiló %s: buscarlo en la receta (y añadirlo a __update_system_how_to_rebuild)"
+
+#: common/fish/functions/update-system.fish
+msgid "; careful: ~/src/void-packages already exists and the script does not update it (delete it first)"
+msgstr "; ojo: ~/src/void-packages ya existe y el script no la actualiza (borrarla antes)"
+
+#: common/fish/functions/update-system.fish
+msgid "the patch test is not installed (%s, recipe step 6)"
+msgstr "no está instalada la prueba de parches (%s, receta paso 6)"
+
+#: common/fish/functions/update-system.fish
+msgid "the test did not finish"
+msgstr "la prueba no terminó"
+
+#: common/fish/functions/update-system.fish
+msgid "Void will replace the patched %s %s and its code (%s) ALREADY BRINGS the patch (tested): it can be updated without losing anything."
+msgstr "Void reemplazará %s parcheado %s y su código (%s) YA TRAE el parche (probado): se puede actualizar sin perder nada."
+
+#: common/fish/functions/update-system.fish
+msgid "Void will replace the patched %s %s: Void's does not carry the patch (tested on its code, %s)."
+msgstr "Void reemplazará %s parcheado %s: el de Void no lleva el parche (probado en su código, %s)."
+
+#: common/fish/functions/update-system.fish
+msgid "After updating, rebuild: %s"
+msgstr "Tras actualizar, recompilar: %s"
+
+#: common/fish/functions/update-system.fish
+msgid "Void will replace the patched %s %s and the patch can NOT be used as it is on its code (%s): %s."
+msgstr "Void reemplazará %s parcheado %s y el parche NO se puede usar tal cual en su código (%s): %s."
+
+#: common/fish/functions/update-system.fish
+msgid "Review the patch before rebuilding: %s"
+msgstr "Revisar el parche antes de recompilar: %s"
+
+#: common/fish/functions/update-system.fish
+msgid "Void will replace the patched %s %s; unchecked whether its code already brings it (%s)."
+msgstr "Void reemplazará %s parcheado %s; sin comprobar si su código ya lo trae (%s)."
+
+#: common/fish/functions/update-system.fish
+msgid "To keep the patched one (without Void's fixes): answer n and %s"
+msgstr "Para conservar el parcheado (sin las correcciones de Void): responder n y %s"
+
+#: common/fish/functions/update-system.fish
+msgid "; the patch is still needed (tested on Void's code %s)"
+msgstr "; el parche sigue haciendo falta (probado en el código de Void %s)"
+
+#: common/fish/functions/update-system.fish
+msgid "(tested on Void's code %s)"
+msgstr "(probado en el código de Void %s)"
+
+#: common/fish/functions/update-system.fish
+msgid "(on Void's code %s, the patch cannot be used as it is: %s)"
+msgstr "(en el código de Void %s, el parche no se puede usar tal cual: %s)"
+
+#: common/fish/functions/update-system.fish
+msgid "(patch unchecked on Void's code: %s)"
+msgstr "(sin comprobar el parche en el código de Void: %s)"
+
+#: common/fish/functions/update-system.fish
+msgid "%s is Void's, which already brings %s%s"
+msgstr "%s es el de Void, que ya trae %s%s"
+
+#: common/fish/functions/update-system.fish
+msgid "%s is Void's, WITHOUT %s: %s. Review the patch before rebuilding%s. Then: %s"
+msgstr "%s es el de Void, SIN %s: %s. Revisar el parche antes de recompilar%s. Después: %s"
+
+#: common/fish/functions/update-system.fish
+msgid "%s is Void's, WITHOUT %s: %s. Rebuild: %s%s"
+msgstr "%s es el de Void, SIN %s: %s. Recompilar: %s%s"
+
+#: common/fish/functions/update-system.fish
+msgid "%s with %s (built here; Void does not have it)"
+msgstr "%s con %s (compilado aquí; Void no lo tiene)"
+
+#: common/fish/functions/update-system.fish
+msgid "%s with %s (built here). NOTE: Void has %s, which already brings it%s: the next update replaces it without losing anything"
+msgstr "%s con %s (compilado aquí). NOTA: Void tiene %s, que ya lo trae%s: la próxima actualización lo reemplaza sin perder nada"
+
+#: common/fish/functions/update-system.fish
+msgid "%s with %s (built here). NOTE: Void already brings it%s: one can go back to Void's (%s) with %s"
+msgstr "%s con %s (compilado aquí). NOTA: Void ya lo trae%s: se puede volver al de Void (%s) con %s"
+
+#: common/fish/functions/update-system.fish
+msgid "%s with %s (built here; in Void, %s)%s. Review the patch before the next rebuild: %s"
+msgstr "%s con %s (compilado aquí; en Void, %s)%s. Revisar el parche antes de la próxima recompilación: %s"
+
+#: common/fish/functions/update-system.fish
+msgid "%s with %s (built here; in Void, %s)%s"
+msgstr "%s con %s (compilado aquí; en Void, %s)%s"
+
+#: common/fish/functions/update-system.fish
+msgid "Void published %s, the same version and revision as the patched one here: xbps does not install it, but it brings changes from Void that are missing here. Rebuild to have them with %s: %s%s"
+msgstr "Void publicó %s, la misma versión y revisión que la parcheada de aquí: xbps no la instala, pero trae cambios de Void que aquí faltan. Recompilar para tenerlos con %s: %s%s"
+
+#: common/fish/functions/update-system.fish
+msgid "Void has %s, newer than the patched %s: the next update replaces it WITHOUT %s (unless it is held). Rebuild afterwards: %s%s"
+msgstr "Void tiene %s, más nuevo que %s parcheado: la próxima actualización lo reemplaza SIN %s (salvo que esté retenido). Recompilar después: %s%s"
+
+#: common/fish/functions/update-system.fish
+msgid "glibc updated after booting"
+msgstr "glibc actualizada después de arrancar"
+
+#: common/fish/functions/update-system.fish
+msgid "TDP (lenovo-wmi-tdp) built for %s"
+msgstr "TDP (lenovo-wmi-tdp) compilado para %s"
+
+#: common/fish/functions/update-system.fish
+msgid "TDP (lenovo-wmi-tdp) not built for %s: %s (update-system does it by itself)"
+msgstr "TDP (lenovo-wmi-tdp) sin compilar para %s: %s (update-system lo hace solo)"
+
+#: common/fish/functions/update-system.fish
+msgid "TDP (lenovo-wmi-tdp) rebuilt for %s"
+msgstr "TDP (lenovo-wmi-tdp) recompilado para %s"
+
+#: common/fish/functions/update-system.fish
+msgid "TDP (lenovo-wmi-tdp) does NOT build for %s: the error is in %s. Until it is fixed, that kernel (the one the hidden GRUB boots) has no fine TDP; to boot the previous one, %s (Legion recipe, step 8). Fix: Legion recipe, step 14, TDP, \"Updates\""
+msgstr "TDP (lenovo-wmi-tdp) NO compila para %s: el error está en %s. Hasta arreglarlo, ese kernel (el que arranca el GRUB oculto) no tiene TDP fino; para arrancar el anterior, %s (receta de la Legion, paso 8). Arreglo: receta de la Legion, paso 14, TDP, \"Actualizaciones\""
+
+#: common/fish/functions/update-system.fish
+msgid "the newest kernel (%s) is not of the 6.18 series: on it the Legion has no fine TDP control (the modules are only for 6.18). Boot the 6.18 one or bring its sources (Legion recipe, step 14)"
+msgstr "el kernel más nuevo (%s) no es de la serie 6.18: en él la Legion no tiene control fino de TDP (los módulos solo son para 6.18). Arrancar el 6.18 o traer sus fuentes (receta de la Legion, paso 14)"
+
+#: common/fish/functions/update-system.fish
+msgid "kernel held in its series: it will not change series by itself"
+msgstr "kernel retenido en su serie: no cambiará de serie solo"
+
+#: common/fish/functions/update-system.fish
+msgid "the kernel could move to another series in an update and the Legion would lose the fine TDP control. To avoid it: %s"
+msgstr "el kernel podría pasar a otra serie en una actualización y la Legion perdería el control fino de TDP. Para evitarlo: %s"
+
+#: common/fish/functions/update-system.fish
+msgid "kernel of the %s series, the one Void recommends"
+msgstr "kernel de la serie %s, la que recomienda Void"
+
+#: common/fish/functions/update-system.fish
+msgid "Void already recommends the %s series of the kernel; here it is still %s. Changing is your decision (on the Legion: release the hold and bring the TDP modules of that series)"
+msgstr "Void ya recomienda la serie %s del kernel; aquí sigue la %s. Cambiar es decisión tuya (en la Legion: soltar la retención y traer los módulos de TDP de esa serie)"
+
+#: common/fish/functions/update-system.fish
+msgid "gamescope with cap_sys_nice"
+msgstr "gamescope con cap_sys_nice"
+
+#: common/fish/functions/update-system.fish
+msgid "gamescope without cap_sys_nice: %s (update-system does it by itself)"
+msgstr "gamescope sin cap_sys_nice: %s (update-system lo hace solo)"
+
+#: common/fish/functions/update-system.fish
+msgid "gamescope: cap_sys_nice given back"
+msgstr "gamescope: cap_sys_nice repuesta"
+
+#: common/fish/functions/update-system.fish
+msgid "gamescope without cap_sys_nice (%s)"
+msgstr "gamescope sin cap_sys_nice (%s)"
+
+#: common/fish/functions/update-system.fish
+msgid "the PipeWire patch"
+msgstr "el parche de PipeWire"
+
+#: common/fish/functions/update-system.fish
+msgid "Game Mode may crash when sharing the screen"
+msgstr "el Modo Juego puede caerse al compartir pantalla"
+
+#: common/fish/functions/update-system.fish
+msgid "the windows patch"
+msgstr "el parche de ventanas"
+
+#: common/fish/functions/update-system.fish
+msgid "Vesktop will ask again several times when sharing a window"
+msgstr "Vesktop volverá a preguntar varias veces al compartir una ventana"
+
+#: common/fish/functions/update-system.fish
+msgid "the fix of the wallpaper dialog on Wayland"
+msgstr "el arreglo del diálogo de fondo en Wayland"
+
+#: common/fish/functions/update-system.fish
+msgid "on Xfce Wayland, choosing a wallpaper in the dialog does nothing"
+msgstr "en Xfce Wayland, elegir un fondo en el diálogo no hace nada"
+
+#: common/fish/functions/update-system.fish
+msgid "the fix of \"Set as wallpaper\" on Wayland"
+msgstr "el arreglo de \"Establecer como fondo de pantalla\" en Wayland"
+
+#: common/fish/functions/update-system.fish
+msgid "on Xfce Wayland, that Thunar menu does not change the wallpaper"
+msgstr "en Xfce Wayland, ese menú de Thunar no cambia el fondo"
+
+#: common/fish/functions/update-system.fish
+msgid "its patch"
+msgstr "su parche"
+
+#: common/fish/functions/update-system.fish
+msgid "what it fixed is lost"
+msgstr "se pierde lo que arreglaba"
+
+#: common/fish/functions/update-system.fish
+msgid "InputPlumber finds its libraries"
+msgstr "InputPlumber encuentra sus bibliotecas"
+
+#: common/fish/functions/update-system.fish
+msgid "InputPlumber (official binary) does NOT find: %s. Install the Void package that provides it (%s) or move to a version of InputPlumber that uses the current one and repeat %s (Legion recipe, step 14)"
+msgstr "InputPlumber (binario oficial) NO encuentra: %s. Instalar el paquete de Void que la da (%s) o pasar a una versión de InputPlumber que use la de ahora y repetir %s (receta de la Legion, paso 14)"
+
+#: common/fish/functions/update-system.fish
+msgid "gamescope portal finds its libraries"
+msgstr "portal de gamescope encuentra sus bibliotecas"
+
+#: common/fish/functions/update-system.fish
+msgid "gamescope portal (Valve's binary) does NOT find: %s. It only depends on glibc: install what is missing, or bring the one of a new SteamOS version and repeat %s (Legion recipe, step 14, \"Screen sharing in Game Mode\")"
+msgstr "portal de gamescope (binario de Valve) NO encuentra: %s. Solo depende de glibc: instalar lo que falte, o traer el de una versión nueva de SteamOS y repetir %s (receta de la Legion, paso 14, \"Compartir pantalla en el Modo Juego\")"
+
+#: common/fish/functions/update-system.fish
+msgid "unknown package (repeat %s to record it)"
+msgstr "paquete desconocido (repetir %s para registrarlo)"
+
+#: common/fish/functions/update-system.fish
+msgid "package %s (the official one, WITHOUT the set_clocks patch: \"Error setting manual GPU clock\" in the log with the manual clock disabled; the patched one is …-void-2)"
+msgstr "paquete %s (el oficial, SIN el parche de set_clocks: \"Error setting manual GPU clock\" en el registro con el reloj manual desactivado; el parcheado es …-void-2)"
+
+#: common/fish/functions/update-system.fish
+msgid "package %s"
+msgstr "paquete %s"
+
+#: common/fish/functions/update-system.fish
+msgid "does NOT find %s: rebuild with %s and install with %s (the build dependencies are installed on purpose; Legion recipe, step 14, steamos-manager)"
+msgstr "NO encuentra %s: recompilar con %s e instalar con %s (las dependencias de compilación están instaladas a propósito; receta de la Legion, paso 14, steamos-manager)"
+
+#: common/fish/functions/update-system.fish
+msgid "without reference sha256 (%s): it cannot be known whether it is the patched one (repeat %s)"
+msgstr "sin sha256 de referencia (%s): no se puede saber si es el parcheado (repetir %s)"
+
+#: common/fish/functions/update-system.fish
+msgid "the installed one is NOT the reference one (sha256 different from that of %s): repeat %s"
+msgstr "el instalado NO es el de referencia (sha256 distinto del de %s): repetir %s"
+
+#: common/fish/functions/update-system.fish
+msgid "to rebuild it, missing: %s"
+msgstr "para recompilarlo falta: %s"
+
+#: common/fish/functions/update-system.fish
+msgid "to rebuild it, missing Rust from rustup (~/.cargo/bin/cargo; Legion recipe, step 14, \"Controller on the desktop\", extest)"
+msgstr "para recompilarlo falta Rust de rustup (~/.cargo/bin/cargo; receta de la Legion, paso 14, \"Mando en el escritorio\", extest)"
+
+#: common/fish/functions/update-system.fish
+msgid "; unchecked whether there is a new version (without network)"
+msgstr "; sin comprobar si hay versión nueva (sin red)"
+
+#: common/fish/functions/update-system.fish
+msgid "; NOTE: upstream published %s and the patch is still needed (tested): to move to it, rebuild with %s changing VER and COMMIT"
+msgstr "; NOTA: upstream publicó %s y el parche sigue haciendo falta (probado): para pasar a ella, recompilar con %s cambiando VER y COMMIT"
+
+#: common/fish/functions/update-system.fish
+msgid "; NOTE: upstream published %s and it already brings the patch's change (tested): one can move to it without the patch"
+msgstr "; NOTA: upstream publicó %s y ya trae el cambio del parche (probado): se puede pasar a ella sin parche"
+
+#: common/fish/functions/update-system.fish
+msgid "; NOTE: upstream published %s and the patch cannot be used as it is (%s): review it before moving to it"
+msgstr "; NOTA: upstream publicó %s y el parche no se puede usar tal cual (%s): revisarlo antes de pasar a ella"
+
+#: common/fish/functions/update-system.fish
+msgid "; NOTE: upstream published %s (patch unchecked)"
+msgstr "; NOTA: upstream publicó %s (sin comprobar el parche)"
+
+#: common/fish/functions/update-system.fish
+msgid "; NOTE: upstream published %s (without the patch test installed)"
+msgstr "; NOTA: upstream publicó %s (sin la prueba de parches instalada)"
+
+#: common/fish/functions/update-system.fish
+msgid "steamos-manager, %s: finds its libraries, is the reference one (sha256 %s…) and its build dependencies are there%s"
+msgstr "steamos-manager, %s: encuentra sus bibliotecas, es el de referencia (sha256 %s…) y están sus dependencias de compilación%s"
+
+#: common/fish/functions/update-system.fish
+msgid "does NOT find %s: rebuild with %s (Legion recipe, step 14, \"Controller on the desktop\")"
+msgstr "NO encuentra %s: recompilar con %s (receta de la Legion, paso 14, \"Mando en el escritorio\")"
+
+#: common/fish/functions/update-system.fish
+msgid "to rebuild it, missing Rust from rustup (~/.cargo, ~/.rustup)"
+msgstr "para recompilarlo falta Rust de rustup (~/.cargo, ~/.rustup)"
+
+#: common/fish/functions/update-system.fish
+msgid "to rebuild it, missing the 32-bit target: %s"
+msgstr "para recompilarlo falta el destino de 32 bits: %s"
+
+#: common/fish/functions/update-system.fish
+msgid "to rebuild it, missing ~/src/extest (its code, 1.0.3: copy in %s)"
+msgstr "para recompilarlo falta ~/src/extest (su código, 1.0.3: copia en %s)"
+
+#: common/fish/functions/update-system.fish
+msgid "extest finds its libraries and can be rebuilt (~/.rustup, ~/.cargo, ~/src/extest, gcc-multilib)"
+msgstr "extest encuentra sus bibliotecas y se puede recompilar (~/.rustup, ~/.cargo, ~/src/extest, gcc-multilib)"
+
+#: common/fish/functions/update-system.fish
+msgid "%s .new-* template(s) in /etc: compare, do not apply"
+msgstr "%s plantilla(s) .new-* en /etc: comparar, no aplicar"
+
+#: common/fish/functions/update-system.fish
+msgid "no .new-* templates in /etc"
+msgstr "sin plantillas .new-* en /etc"
+
+#: common/fish/functions/update-system.fish
+msgid "a reboot is advisable: %s"
+msgstr "conviene reiniciar: %s"
+
+#: common/fish/functions/update-system.fish
+msgid "no reboot needed"
+msgstr "no hace falta reiniciar"
+
+#: common/fish/functions/update-system.fish
+msgid "Summary"
+msgstr "Resumen"
+
+#: common/fish/functions/update-system.fish
+msgid "REPAIRED"
+msgstr "REPARADO"
+
+#: common/fish/functions/update-system.fish
+msgid "WARNING"
+msgstr "AVISO"
+
+#: common/fish/functions/update-system.fish
+msgid "All in order"
+msgstr "Todo en orden"
+
+#: common/fish/functions/update-system.fish
+msgid "%s warning(s): check above"
+msgstr "%s aviso(s): revisar arriba"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "there is no xfdesktop-*.x86_64.xbps in %s (build-xfdesktop.sh or install/fetch-assets.sh)"
+msgstr "no hay xfdesktop-*.x86_64.xbps en %s (build-xfdesktop.sh o install/fetch-assets.sh)"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "package: %s   installed now: %s"
+msgstr "paquete: %s   instalado ahora: %s"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "!! the patch needs libxfce4windowing >= 4.20.6 (there is %s): update first (update-system)"
+msgstr "!! el parche pide libxfce4windowing >= 4.20.6 (hay %s): actualizar primero (update-system)"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "OK: installed %s"
+msgstr "OK: instalado %s"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "!! %s was not left installed"
+msgstr "!! no quedó %s"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "Now, in the Xfce Wayland session: close the wallpaper dialog if it was open, open in a terminal"
+msgstr "Ahora, en la sesión Xfce Wayland: cerrar el diálogo de fondo si estaba abierto, abrir en una terminal"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "  xfconf-query -c xfce4-desktop -m      (it watches the changes)"
+msgstr "  xfconf-query -c xfce4-desktop -m      (vigila los cambios)"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "open the dialog (right click on the desktop → Desktop Settings) on the screen you"
+msgstr "abrir el diálogo (clic derecho en el escritorio → Configuración del escritorio) en la pantalla que se"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "want and choose a wallpaper: /backdrop/screen0/monitor<connector>/workspace<N>/last-image must show up with the"
+msgstr "quiera y elegir un fondo: debe salir /backdrop/screen0/monitor<conector>/workspace<N>/last-image con el"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "connector of THAT screen (eDP-1 on the IdeaPad; on the Legion, that of the screen where the dialog is),"
+msgstr "conector de ESA pantalla (eDP-1 en la IdeaPad; en la Legion, el de la pantalla donde está el diálogo),"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "not monitorUnknown, and the wallpaper must change instantly."
+msgstr "no monitorUnknown, y el fondo debe cambiar al instante."
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "there is no Thunar-*.x86_64.xbps in %s (build-thunar.sh or install/fetch-assets.sh)"
+msgstr "no hay Thunar-*.x86_64.xbps en %s (build-thunar.sh o install/fetch-assets.sh)"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "OK: installed %s (the wallpaper plugin uses libxfce4windowing)"
+msgstr "OK: instalado %s (el complemento de fondo usa libxfce4windowing)"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "!! the wallpaper plugin does not link libxfce4windowing"
+msgstr "!! el complemento de fondo no enlaza libxfce4windowing"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "Now, AS THE USER (without sudo): thunar -q ; then, in Xfce Wayland, in an xterm:"
+msgstr "Ahora, COMO USUARIO (sin sudo): thunar -q ; luego, en Xfce Wayland, en un xterm:"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "open Thunar on the screen you want, right click on an image → Set as wallpaper:"
+msgstr "abrir Thunar en la pantalla que se quiera, clic derecho en una imagen → Establecer como fondo de pantalla:"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "/backdrop/screen0/monitor<connector>/workspace<N>/last-image must show up with the connector of the screen"
+msgstr "debe salir /backdrop/screen0/monitor<conector>/workspace<N>/last-image con el conector de la pantalla"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "where Thunar's window is (eDP-1 on the IdeaPad; eDP-1 or DP-1 on the Legion), not monitorUnknown,"
+msgstr "donde está la ventana de Thunar (eDP-1 en la IdeaPad; eDP-1 o DP-1 en la Legion), no monitorUnknown,"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "and the wallpaper must change instantly. (It also keeps writing monitor0/image-path: it is xfdesktop's"
+msgstr "y el fondo debe cambiar al instante. (Sigue escribiendo también monitor0/image-path: es el formato"
+
+#: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
+msgid "old format, harmless.)"
+msgstr "viejo de xfdesktop, inofensivo.)"
+
+#: common/xfce-wayland/labwc-theme.sh
+msgid "!! %s is missing (recipe, step 10)"
+msgstr "!! falta %s (receta, paso 10)"
+
+#: common/xfce-wayland/labwc-theme.sh
+msgid "== labwc reloaded"
+msgstr "== labwc recargado"
+
+#: common/xfce-wayland/labwc-theme.sh
+msgid "== theme in %s"
+msgstr "== tema en %s"
+
+#: common/xfce-wayland/install-xfce-wayland.sh
+msgid "== removed the launchers, %s and ~/.local/bin/brightness (labwc stays installed:"
+msgstr "== quitados los lanzadores, %s y ~/.local/bin/brightness (labwc sigue instalado:"
+
+#: common/xfce-wayland/install-xfce-wayland.sh
+msgid "   sudo xbps-remove labwc). CAREFUL: \"desktop\" is still Wayland in switch-mode-root;"
+msgstr "   sudo xbps-remove labwc). OJO: \"desktop\" (escritorio) sigue siendo Wayland en switch-mode-root;"
+
+#: common/xfce-wayland/install-xfce-wayland.sh
+msgid "   to go back to X11: sudo /usr/local/bin/switch-mode-root desktop-x11"
+msgstr "   para volver a X11: sudo /usr/local/bin/switch-mode-root desktop-x11"
+
+#: common/xfce-wayland/install-xfce-wayland.sh
+msgid "!! switch-mode-root is missing or old (without desktop-x11): first, install-passwordless-switch.sh"
+msgstr "!! switch-mode-root falta o es de antes (sin desktop-x11): antes, install-passwordless-switch.sh"
+
+#: common/xfce-wayland/install-xfce-wayland.sh
+msgid "== 1. labwc"
+msgstr "== 1. labwc"
+
+#: common/xfce-wayland/install-xfce-wayland.sh
+msgid "== 2. labwc's configuration for Xfce (%s)"
+msgstr "== 2. configuración de labwc para Xfce (%s)"
+
+#: common/xfce-wayland/install-xfce-wayland.sh
+msgid "== 2b. Orchis theme for labwc's borders (labwc-theme.sh, from the xfwm4 one)"
+msgstr "== 2b. tema Orchis para los bordes de labwc (labwc-theme.sh, desde el de xfwm4)"
+
+#: common/xfce-wayland/install-xfce-wayland.sh
+msgid "== 3. launchers"
+msgstr "== 3. lanzadores"
+
+#: common/xfce-wayland/install-xfce-wayland.sh
+msgid "   %s can switch mode without password"
+msgstr "   %s puede cambiar de modo sin contraseña"
+
+#: common/xfce-wayland/install-xfce-wayland.sh
+msgid "== Done. Finder (Super+Space) → 'Wayland Desktop' (it closes the current session: save"
+msgstr "== Listo. Buscador (Super+Espacio) → 'Escritorio Wayland' (cierra la sesión actual: guardar"
+
+#: common/xfce-wayland/install-xfce-wayland.sh
+msgid "   first). X11, as the fallback: 'X11 Desktop'. Game Mode's 'Switch to Desktop' → Wayland."
+msgstr "   antes). X11, de respaldo: 'Escritorio X11'. 'Cambiar a escritorio' del Modo Juego → Wayland."
+
+#: legion/desktop-1-root.sh legion/desktop-2-root.sh legion/grub-root.sh
+msgid "=== %s DONE OK"
+msgstr "=== %s FIN OK"
+
+#: legion/desktop-1-root.sh legion/desktop-2-root.sh legion/grub-root.sh
+msgid "--- step 1: .new-* of /etc (templates; the good one is the current one)"
+msgstr "--- paso 1: .new-* de /etc (plantillas; el bueno es el actual)"
+
+#: legion/desktop-1-root.sh legion/desktop-2-root.sh legion/grub-root.sh
+msgid "--- steps 5-7 and 9: packages"
+msgstr "--- pasos 5-7 y 9: paquetes"
+
+#: legion/desktop-1-root.sh legion/desktop-2-root.sh legion/grub-root.sh
+msgid "--- Papirus-Dark with teal folders"
+msgstr "--- Papirus-Dark con carpetas teal"
+
+#: legion/desktop-1-root.sh legion/desktop-2-root.sh legion/grub-root.sh
+msgid "--- Bluetooth"
+msgstr "--- Bluetooth"
+
+#: legion/desktop-1-root.sh legion/desktop-2-root.sh legion/grub-root.sh
+msgid "--- check"
+msgstr "--- comprobación"
+
+#: legion/desktop-1-root.sh legion/desktop-2-root.sh legion/grub-root.sh
+msgid "--- 1. Windows loader on the XS1000's EFI (read-only)"
+msgstr "--- 1. cargador de Windows en la EFI del XS1000 (solo lectura)"
+
+#: legion/desktop-1-root.sh legion/desktop-2-root.sh legion/grub-root.sh
+msgid "   the XS1000 is not connected (UUID %s)"
+msgstr "   el XS1000 no está conectado (UUID %s)"
+
+#: legion/desktop-1-root.sh legion/desktop-2-root.sh legion/grub-root.sh
+msgid "--- 2. Windows entry in /boot/grub/custom.cfg"
+msgstr "--- 2. entrada de Windows en /boot/grub/custom.cfg"
+
+#: legion/desktop-1-root.sh legion/desktop-2-root.sh legion/grub-root.sh
+msgid "Windows (external disk Kingston XS1000)"
+msgstr "Windows (disco externo Kingston XS1000)"
+
+#: legion/desktop-1-root.sh legion/desktop-2-root.sh legion/grub-root.sh
+msgid "   syntax: fine"
+msgstr "   sintaxis: bien"
+
+#: legion/desktop-1-root.sh legion/desktop-2-root.sh legion/grub-root.sh
+msgid "   the entry is NOT added: %s was not found"
+msgstr "   NO se pone la entrada: no se encontró %s"
+
+#: legion/desktop-1-root.sh legion/desktop-2-root.sh legion/grub-root.sh
+msgid "--- 3. the ISO's kernel (6.12.11): 6.12.111 stays as the fallback"
+msgstr "--- 3. kernel de la ISO (6.12.11): el 6.12.111 se queda de respaldo"
+
+#: legion/desktop-1-root.sh legion/desktop-2-root.sh legion/grub-root.sh
+msgid "--- 4. silent boot"
+msgstr "--- 4. arranque silencioso"
+
+#: legion/desktop-1-root.sh legion/desktop-2-root.sh legion/grub-root.sh
+msgid "--- 5. GRUB theme (regenerates the menu)"
+msgstr "--- 5. tema de GRUB (regenera el menú)"
+
+#: legion/desktop-1-root.sh legion/desktop-2-root.sh legion/grub-root.sh
+msgid "=== %s DONE OK. Unmount Common before trying Windows: udisksctl unmount -b /dev/sda4"
+msgstr "=== %s FIN OK. Desmontar Common antes de probar Windows: udisksctl unmount -b /dev/sda4"
+
+#: legion/grub-hidden.sh
+msgid "== %s (what this script sets):"
+msgstr "== %s (lo de este script):"
+
+#: legion/grub-hidden.sh
+msgid "== in grub.cfg:"
+msgstr "== en grub.cfg:"
+
+#: legion/grub-hidden.sh
+msgid "== it will boot: %s"
+msgstr "== arrancará: %s"
+
+#: legion/diag-inputplumber-cpu.sh
+msgid "It has to be run with sudo."
+msgstr "Hay que correrlo con sudo."
+
+#: legion/diag-inputplumber-cpu.sh
+msgid "InputPlumber is not running."
+msgstr "InputPlumber no está corriendo."
+
+#: legion/diag-inputplumber-cpu.sh
+msgid ">> Measuring InputPlumber (PID %s), label '%s', 3 passes of %s s."
+msgstr ">> Midiendo InputPlumber (PID %s), etiqueta '%s', 3 pasadas de %s s."
+
+#: legion/diag-inputplumber-cpu.sh
+msgid ">> Do not touch the controller (unless the label is the 'moving the controller' one)."
+msgstr ">> No toques el mando (salvo si la etiqueta es la de 'moviendo el mando')."
+
+#: legion/diag-inputplumber-cpu.sh
+msgid ">> 1/3: without strace (%s s)…"
+msgstr ">> 1/3: sin strace (%s s)…"
+
+#: legion/diag-inputplumber-cpu.sh
+msgid ">> strace is not there: only pass 1 done. Result in %s"
+msgstr ">> strace no está: hecha solo la pasada 1. Resultado en %s"
+
+#: legion/diag-inputplumber-cpu.sh
+msgid ">> 2/3: strace -c (%s s; the input may be somewhat slower)…"
+msgstr ">> 2/3: strace -c (%s s; la entrada puede ir algo más lenta)…"
+
+#: legion/diag-inputplumber-cpu.sh
+msgid ">> 3/3: strace per descriptor (%s s)…"
+msgstr ">> 3/3: strace por descriptor (%s s)…"
+
+#: legion/diag-inputplumber-cpu.sh
+msgid ">> Done. Result: %s"
+msgstr ">> Hecho. Resultado: %s"
+
+#: legion/diag-edp.sh legion/diag-monitor.sh
+msgid "done: %s"
+msgstr "listo: %s"
+
+#: legion/diag-gamescope-pipewire.sh
+msgid "gdb is missing: sudo xbps-install -S gdb"
+msgstr "falta gdb: sudo xbps-install -S gdb"
+
+#: legion/diag-gamescope-pipewire.sh
+msgid "!! without gamescope-dbg: the trace will come out without function names or lines"
+msgstr "!! sin gamescope-dbg: la traza saldrá sin nombres de función ni líneas"
+
+#: legion/diag-gamescope-pipewire.sh
+msgid "gamescope is not running: enter Game Mode first"
+msgstr "gamescope no está en marcha: entrar antes al Modo Juego"
+
+#: legion/diag-gamescope-pipewire.sh
+msgid "gdb waiting (pid %s). Now: stream in Vesktop and change a setting."
+msgstr "gdb esperando (pid %s). Ahora: transmitir en Vesktop y cambiar un ajuste."
+
+#: legion/diag-gamescope-pipewire.sh
+msgid "Trace: %s"
+msgstr "Traza: %s"
+
+#: legion/diag-gamescope-pipewire.sh
+msgid "gdb did not stay attached:"
+msgstr "gdb no se quedó enganchado:"
+
+#: legion/diag-gyro.sh
+msgid "== capabilities (Gamepad:Gyro and Gamepad:Accelerometer must show)"
+msgstr "== capacidades (deben salir Gamepad:Gyro y Gamepad:Accelerometer)"
+
+#: legion/diag-gyro.sh
+msgid "  NONE: imu sources with blocked: true in the profile?"
+msgstr "  NINGUNA: ¿fuentes imu con blocked: true en el perfil?"
+
+#: legion/diag-gyro.sh
+msgid "there is no gyro_3d (amd_sfh)"
+msgstr "no hay gyro_3d (amd_sfh)"
+
+#: legion/diag-gyro.sh
+msgid "== sensor: %s, declared scale %s"
+msgstr "== sensor: %s, escala declarada %s"
+
+#: legion/diag-gyro.sh
+msgid "the virtual controller 28DE:12FB is not there (InputPlumber stopped?)"
+msgstr "no está el mando virtual 28DE:12FB (¿InputPlumber parado?)"
+
+#: legion/diag-gyro.sh
+msgid "== virtual controller: %s. TURN THE CONSOLE for 20 s"
+msgstr "== mando virtual: %s. GIRA LA CONSOLA durante 20 s"
+
+#: legion/diag-gyro.sh
+msgid "s%02d  to Steam: max rotation %s  acceleration %s  | sensor (°/s): %s"
+msgstr "s%02d  a Steam: giro máx %s  aceleración %s  | sensor (°/s): %s"
+
+#: legion/diag-gyro.sh
+msgid "Fine: when turning, 'max rotation' from hundreds to ~1500; acceleration with magnitude ~16384 (1 g)."
+msgstr "Bien: al girar, 'giro máx' de cientos a ~1500; aceleración con módulo ~16384 (1 g)."
+
+#: legion/diag-gyro.sh
+msgid "If the rotation stays at ~15: the profile's ×100 mount_matrix is missing (the kernel's scale)."
+msgstr "Si el giro se queda en ~15: falta la mount_matrix ×100 del perfil (escala del kernel)."
+
+#: legion/diag-controller-gyros.sh
+msgid "I cannot find the controller (17ef:61eb…61ee)"
+msgstr "no encuentro el mando (17ef:61eb…61ee)"
+
+#: legion/diag-controller-gyros.sh
+msgid "%s (interface %s)"
+msgstr "%s (interfaz %s)"
+
+#: legion/diag-controller-gyros.sh
+msgid "leave BOTH controllers detached and still on the table, and the tablet still"
+msgstr "deja los DOS mandos separados y quietos sobre la mesa, y la tableta quieta"
+
+#: legion/diag-controller-gyros.sh
+msgid "turn the LEFT controller in all directions (the right one and the tablet, still)"
+msgstr "gira el mando IZQUIERDO en todas direcciones (el derecho y la tableta, quietos)"
+
+#: legion/diag-controller-gyros.sh
+msgid "turn the RIGHT controller in all directions (the left one and the tablet, still)"
+msgstr "gira el mando DERECHO en todas direcciones (el izquierdo y la tableta, quietos)"
+
+#: legion/diag-controller-gyros.sh
+msgid "turn the TABLET (the controllers, still on the table)"
+msgstr "gira la TABLETA (los mandos, quietos sobre la mesa)"
+
+#: legion/diag-controller-gyros.sh
+msgid "Interfaces: %s. %.0f s per phase. Read-only."
+msgstr "Interfaces: %s. %.0f s por fase. Solo lectura."
+
+#: legion/diag-controller-gyros.sh
+msgid "Starting in %d…  (detach both controllers)   "
+msgstr "Empieza en %d…  (separa los dos mandos)   "
+
+#: legion/diag-controller-gyros.sh
+msgid "NOW: %s"
+msgstr "AHORA: %s"
+
+#: legion/diag-controller-gyros.sh
+msgid "%4.1f s left "
+msgstr "quedan %4.1f s "
+
+#: legion/diag-controller-gyros.sh
+msgid "done."
+msgstr "hecho."
+
+#: legion/diag-controller-gyros.sh
+msgid "Finished: you can leave everything now."
+msgstr "Terminado: ya puedes dejar todo."
+
+#: legion/diag-controller-gyros.sh
+msgid "== %s: %d messages of %d bytes, starting with %s"
+msgstr "== %s: %d mensajes de %d bytes, empiezan por %s"
+
+#: legion/diag-controller-gyros.sh
+msgid "example: "
+msgstr "ejemplo: "
+
+#: legion/diag-controller-gyros.sh
+msgid "(none arrived)"
+msgstr "(no llegó ninguno)"
+
+#: legion/diag-controller-gyros.sh
+msgid "byte %d (±%d)"
+msgstr "byte %d (±%d)"
+
+#: legion/diag-controller-gyros.sh
+msgid "nothing"
+msgstr "nada"
+
+#: legion/diag-controller-gyros.sh
+msgid "change more than at rest → %s"
+msgstr "cambian más que en reposo → %s"
+
+#: legion/diag-controller-gyros.sh
+msgid "bytes that already change when still → %s"
+msgstr "bytes que ya cambian quietos → %s"
+
+#: legion/diag-controller-gyros.sh
+msgid "== XInput report (InputPlumber's format), variation per phase:"
+msgstr "== Informe XInput (formato de InputPlumber), variación por fase:"
+
+#: legion/diag-controller-gyros.sh
+msgid "(No report with InputPlumber's XInput format: id 0x04, command 0x74, 60 bytes.)"
+msgstr "(Ningún informe con el formato XInput de InputPlumber: id 0x04, orden 0x74, 60 bytes.)"
+
+#: legion/diag-controller-gyros.sh
+msgid "Reading: if in the 'left' phase bytes change that do not change in 'right' (and the other way round), each\ncontroller sends its IMU. If nothing changes when turning a controller, its IMU is off."
+msgstr "Lectura: si en la fase 'left' (izquierdo) cambian bytes que no cambian en 'right' (derecho) (y al revés), cada\nmando manda su IMU. Si al girar un mando no cambia nada, su IMU está apagado."
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "I cannot find the controller's configuration interface (endpoint 0x83)"
+msgstr "no encuentro la interfaz de configuración del mando (endpoint 0x83)"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "yes"
+msgstr "sí"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "no"
+msgstr "no"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "no answer (%s)"
+msgstr "sin respuesta (%s)"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "InputPlumber's filter before:"
+msgstr "Filtro de InputPlumber antes:"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "Right controller, IMU bypass →"
+msgstr "Mando derecho, IMU bypass →"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "The filter could not be set:"
+msgstr "No se pudo poner el filtro:"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "InputPlumber 0.81 fails when changing filters (\"failed to send command to device\") and may"
+msgstr "InputPlumber 0.81 falla al cambiar filtros (\"failed to send command to device\") y puede"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "leave something half done: rebooting the Legion leaves everything as from the factory."
+msgstr "dejar algo a medias: reiniciar la Legion lo deja todo de fábrica."
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "InputPlumber does not have the controller's source with Gyroscope:Right: nothing is changed"
+msgstr "InputPlumber no tiene la fuente del mando con Gyroscope:Right: no se cambia nada"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "InputPlumber's filter now:"
+msgstr "Filtro de InputPlumber ahora:"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "Done."
+msgstr "Listo."
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "Test: sh legion/diag-gyro.sh turning the right controller detached."
+msgstr "Prueba: sh legion/diag-gyro.sh girando el mando derecho separado."
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "I cannot find the controller's configuration interface (17ef:61eb…61ee, endpoint 0x83)"
+msgstr "no encuentro la interfaz de configuración del mando (17ef:61eb…61ee, endpoint 0x83)"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "IMU on"
+msgstr "IMU encendido"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "IMU bypass"
+msgstr "IMU bypass"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "left"
+msgstr "izquierdo"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "right"
+msgstr "derecho"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "unknown"
+msgstr "desconocido"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "   → %s … (%d bytes)"
+msgstr "   → %s … (%d bytes)"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "NOW: turn the RIGHT controller in all directions (%.0f s) — %s"
+msgstr "AHORA: gira el mando DERECHO en todas direcciones (%.0f s) — %s"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "no report from the controller arrived"
+msgstr "no llegó ningún informe del mando"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "%d reports. Variation of the right IMU (bytes 48–59: accel ×3, gyro ×3): %s"
+msgstr "%d informes. Variación IMU derecho (bytes 48–59: accel ×3, giro ×3): %s"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "Variation of the low-resolution rotation (bytes 30–33: left x,y · right x,y): %s"
+msgstr "Variación giro de baja resolución (bytes 30–33: izq x,y · der x,y): %s"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "Configuration interface: %s. Only the RIGHT controller is changed."
+msgstr "Interfaz de configuración: %s. Solo se cambia el mando DERECHO."
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "== Current state"
+msgstr "== Estado actual"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "controller %-9s %-13s: %s"
+msgstr "mando %-9s %-13s: %s"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "no answer"
+msgstr "sin respuesta"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "as is"
+msgstr "tal cual"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "== Right controller: %s → yes"
+msgstr "== Mando derecho: %s → sí"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "now: %s"
+msgstr "ahora: %s"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "with %s"
+msgstr "con %s"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "and IMU on"
+msgstr "y IMU encendido"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "== Result: "
+msgstr "== Resultado: "
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "the right controller's IMU MOVES (bytes 48–59)."
+msgstr "el IMU del mando derecho SE MUEVE (bytes 48–59)."
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "the right controller's IMU does NOT move with either of the two commands."
+msgstr "el IMU del mando derecho NO se mueve con ninguna de las dos órdenes."
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "--keep: the right controller stays as it is now."
+msgstr "--keep (--dejar): el mando derecho se queda como está ahora."
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "== Putting the right controller back as it was"
+msgstr "== Devolviendo el mando derecho a como estaba"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "%s: %s → now %s"
+msgstr "%s: %s → ahora %s"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "%s: the original state could not be read; it is left as is (to turn it off: value 02)"
+msgstr "%s: no se pudo leer el estado original; se deja como está (para apagarlo: valor 02)"
+
+#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+msgid "Log: ~/test-controller-imu.log"
+msgstr "Registro: ~/test-controller-imu.log"
+
+#: legion/diag-steam-keyboard.sh
+msgid "Stopped. Results in %s/"
+msgstr "Parada. Resultados en %s/"
+
+#: legion/diag-steam-keyboard.sh
+msgid "Capturing in %s/ (stop: bash %s --stop)"
+msgstr "Capturando en %s/ (parar: bash %s --stop)"
+
+#: legion/install-inputplumber.sh
+msgid "removed (libiio stays; the logs, in /var/log/inputplumber)"
+msgstr "quitado (libiio se queda; los registros, en /var/log/inputplumber)"
+
+#: legion/install-inputplumber.sh
+msgid "missing %s (install/fetch-assets.sh downloads it)"
+msgstr "falta %s (lo descarga install/fetch-assets.sh)"
+
+#: legion/install-inputplumber.sh
+msgid "missing %s"
+msgstr "falta %s"
+
+#: legion/install-inputplumber.sh
+msgid "installed %s files (list in %s)"
+msgstr "instalados %s ficheros (lista en %s)"
+
+#: legion/install-inputplumber.sh
+msgid "--- sensor in the profile (without blocked):"
+msgstr "--- sensor en el perfil (sin blocked):"
+
+#: legion/install-inputplumber.sh
+msgid "--- log"
+msgstr "--- registro"
+
+#: legion/install-inputplumber.sh
+msgid "--- warnings when hiding since this start (it must say 0)"
+msgstr "--- avisos al ocultar desde este arranque (debe salir 0)"
+
+#: legion/install-inputplumber.sh
+msgid "--- gyroscope capabilities (Gyro and Accelerometer must show):"
+msgstr "--- capacidades de giroscopio (deben salir Gyro y Accelerometer):"
+
+#: legion/install-inputplumber.sh
+msgid "(none yet)"
+msgstr "(ninguna todavía)"
+
+#: legion/install-inputplumber.sh
+msgid "--- virtual devices"
+msgstr "--- dispositivos virtuales"
+
+#: legion/install-inputplumber.sh
+msgid "Done. Close Steam and open it again so it sees the new controller."
+msgstr "Listo. Cierra y vuelve a abrir Steam para que vea el mando nuevo."
+
+#: legion/brightness-on-wake.sh
+msgid "Check after hibernating or suspending: cat /run/brightness-on-wake.log"
+msgstr "Comprobar tras hibernar o suspender: cat /run/brightness-on-wake.log"
+
+#: legion/like-steamos.sh
+msgid "removed (rtkit, earlyoom, gamemode, libgamemode-32bit and gamescope-32bit stay installed)"
+msgstr "quitado (rtkit, earlyoom, gamemode, libgamemode-32bit y gamescope-32bit siguen instalados)"
+
+#: legion/like-steamos.sh
+msgid "== closing Steam (steam -shutdown)"
+msgstr "== cerrando Steam (steam -shutdown)"
+
+#: legion/like-steamos.sh
+msgid "Steam did not close: close it by hand and repeat."
+msgstr "Steam no se cerró: ciérralo a mano y repite."
+
+#: legion/like-steamos.sh
+msgid "   Steam closed (it starts again by itself in the next session, or open it from the menu)"
+msgstr "   Steam cerrado (vuelve a arrancar solo en la siguiente sesión, o ábrelo desde el menú)"
+
+#: legion/like-steamos.sh
+msgid "== 1. sysctl"
+msgstr "== 1. sysctl"
+
+#: legion/like-steamos.sh
+msgid "== 2. transparent huge pages: always"
+msgstr "== 2. huge pages transparentes: always"
+
+#: legion/like-steamos.sh
+msgid "== 3-5. packages (only the missing ones)"
+msgstr "== 3-5. paquetes (solo los que faltan)"
+
+#: legion/like-steamos.sh
+msgid "   removed /var/service/rtkit (D-Bus starts it)"
+msgstr "   quitado /var/service/rtkit (lo arranca D-Bus)"
+
+#: legion/like-steamos.sh
+msgid "== 6. desktop Steam with -pipewire"
+msgstr "== 6. Steam del escritorio con -pipewire"
+
+#: legion/like-steamos.sh
+msgid "   (%s is not there)"
+msgstr "   (no está %s)"
+
+#: legion/like-steamos.sh
+msgid "   %s: %s commands with -pipewire"
+msgstr "   %s: %s órdenes con -pipewire"
+
+#: legion/like-steamos.sh
+msgid "== 7. kernel: preempt=full (from the next boot)"
+msgstr "== 7. kernel: preempt=full (desde el siguiente arranque)"
+
+#: legion/like-steamos.sh
+msgid "== 8. memlock 8 MiB (from the next session)"
+msgstr "== 8. memlock 8 MiB (desde la siguiente sesión)"
+
+#: legion/like-steamos.sh
+msgid "== check (runit takes up to 5 s to start the services)"
+msgstr "== comprobación (runit tarda hasta 5 s en arrancar los servicios)"
+
+#: legion/like-steamos.sh
+msgid "Done. Still to do, if not done: sudo sh common/steam/install-game-mode.sh --no-loading-screen. And reboot."
+msgstr "Listo. Falta, si no se hizo: sudo sh common/steam/install-game-mode.sh --no-loading-screen. Y reiniciar."
+
+#: legion/gpu-overdrive.sh
+msgid "== initramfs of %s"
+msgstr "== initramfs de %s"
+
+#: legion/gpu-overdrive.sh
+msgid "   it carries amdgpu-overdrive.conf"
+msgstr "   lleva amdgpu-overdrive.conf"
+
+#: legion/gpu-overdrive.sh
+msgid "   without amdgpu-overdrive.conf"
+msgstr "   sin amdgpu-overdrive.conf"
+
+#: legion/gpu-overdrive.sh
+msgid "done; reboot. Check: cat /sys/module/amdgpu/parameters/ppfeaturemask"
+msgstr "listo; reiniciar. Comprobar: cat /sys/module/amdgpu/parameters/ppfeaturemask"
+
+#: legion/gpu-overdrive.sh
+msgid "  → 0xfff7bfff (factory, no overdrive) or 0xfff7ffff (with overdrive)"
+msgstr "  → 0xfff7bfff (de fábrica, sin overdrive) o 0xfff7ffff (con overdrive)"
+
+#: legion/microsd-at-boot.sh
+msgid "Steam is open: close it (Steam menu → Exit) and repeat."
+msgstr "Steam está abierto: ciérralo (menú de Steam → Salir) y repite."
+
+#: legion/microsd-at-boot.sh
+msgid "removed: the desktop session will mount it again in %s"
+msgstr "quitado: la sesión de escritorio la volverá a montar en %s"
+
+#: legion/microsd-at-boot.sh
+msgid "I cannot find the microSD (%s, ext4): is it in?"
+msgstr "no encuentro la microSD (%s, ext4): ¿está puesta?"
+
+#: legion/microsd-at-boot.sh
+msgid "fstab already has it"
+msgstr "fstab ya la tiene"
+
+#: legion/microsd-at-boot.sh
+msgid "unmounting %s"
+msgstr "desmontando %s"
+
+#: legion/microsd-at-boot.sh
+msgid "Done. Open Steam: Storage must show the microSD with its games."
+msgstr "Listo. Abre Steam: Almacenamiento debe mostrar la microSD con sus juegos."
+
+#: legion/avahi-wifi-only.sh
+msgid "   avahi restarted; check the name with: pgrep -a avahi-daemon"
+msgstr "   avahi reiniciado; comprobar el nombre con: pgrep -a avahi-daemon"
+
+#: legion/wifi-no-powersave.sh
+msgid "removed (it comes back when the next Wi-Fi connection starts)"
+msgstr "quitado (vuelve al iniciar la próxima conexión Wi-Fi)"
+
+#: legion/udev-net.sh
+msgid "removed"
+msgstr "quitado"
+
+#: legion/udev-net.sh
+msgid "Log (it only writes if it had to act): /var/log/udev-net/current"
+msgstr "Registro (solo escribe si tuvo que actuar): /var/log/udev-net/current"
+
+#: legion/screen-share/screen-share
+msgid "(untitled)"
+msgstr "(sin título)"
+
+#: legion/screen-share/screen-share
+msgid "Share screen"
+msgstr "Compartir pantalla"
+
+#: legion/screen-share/screen-share
+msgid "If after choosing a window the Vesktop window does not appear, open that window for a moment and come back."
+msgstr "Si tras elegir una ventana no aparece la ventana de Vesktop, abre esa ventana un momento y vuelve."
+
+#: legion/screen-share/screen-share
+msgid "Applications"
+msgstr "Aplicaciones"
+
+#: legion/screen-share/screen-share
+msgid "Screens"
+msgstr "Pantallas"
+
+#: legion/screen-share/screen-share
+msgid "There is nothing to share."
+msgstr "No hay nada que compartir."
+
+#: legion/screen-share/screen-share
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: legion/screen-share/install.sh
+msgid "removed: the portal goes back to using fuzzel"
+msgstr "quitado: el portal vuelve a usar fuzzel"
+
+#: legion/screen-share/install.sh
+msgid "installed: ~/.local/bin/screen-share, %s and %s"
+msgstr "instalado: ~/.local/bin/screen-share, %s y %s"
+
+#: legion/screen-share/install.sh
+msgid "xdg-desktop-portal-wlr restarted (it comes back by itself when sharing)"
+msgstr "xdg-desktop-portal-wlr reiniciado (vuelve solo al compartir)"
+
+#: common/steam/gamescope-patch/build-gamescope.sh legion/portal-wlr-patch/build-portal-wlr.sh
+msgid "!! patch-still-needed is missing (common/patch-test/ or ~/.local/bin)"
+msgstr "!! falta patch-still-needed (common/patch-test/ o ~/.local/bin)"
+
+#: common/steam/gamescope-patch/build-gamescope.sh legion/portal-wlr-patch/build-portal-wlr.sh
+msgid "The code already has the patch: no need to build (you can go back to Void's)."
+msgstr "El código ya trae el parche: no hace falta compilar (se puede volver al de Void)."
+
+#: common/steam/gamescope-patch/build-gamescope.sh legion/portal-wlr-patch/build-portal-wlr.sh
+msgid "!! Not building: review the result above."
+msgstr "!! No se compila: revisar el resultado de arriba."
+
+#: common/steam/gamescope-patch/build-gamescope.sh legion/portal-wlr-patch/build-portal-wlr.sh
+msgid "Void template: %s_%s → built with revision=%s"
+msgstr "plantilla de Void: %s_%s → se compila con revision=%s"
+
+#: legion/steps-1-to-3.sh
+msgid "=== %s start"
+msgstr "=== %s inicio"
+
+#: legion/steps-1-to-3.sh
+msgid "--- 1. mirror: %s"
+msgstr "--- 1. mirror: %s"
+
+#: legion/steps-1-to-3.sh
+msgid "--- 2. keyboard: %s%s (X) and %s (console)"
+msgstr "--- 2. teclado: %s%s (X) y %s (consola)"
+
+#: legion/steps-1-to-3.sh
+msgid "--- 3. ssh + mDNS"
+msgstr "--- 3. ssh + mDNS"
+
+#: legion/steps-1-to-3.sh
+msgid "--- .new-* of /etc (do NOT apply):"
+msgstr "--- .new-* de /etc (NO aplicar):"
+
+#: legion/steps-1-to-3.sh
+msgid "=== %s DONE OK. Reboot: sudo reboot"
+msgstr "=== %s FIN OK. Reiniciar: sudo reboot"
+
+#: legion/tdp/install-tdp.sh
+msgid "removed (dkms and the headers stay)"
+msgstr "quitado (dkms y los headers se quedan)"
+
+#: legion/tdp/install-tdp.sh
+msgid "boot the 6.18 kernel first (now: %s)"
+msgstr "arranca primero el kernel 6.18 (ahora: %s)"
+
+#: legion/tdp/install-tdp.sh
+msgid "there is NO %s"
+msgstr "NO hay %s"
+
+#: install/install.sh
+msgid "A. Installation with void-installer (steps 0–1)"
+msgstr "A. Instalación con void-installer (pasos 0–1)"
+
+#: install/install.sh
+msgid "B. The repository: binaries, local.env, build/"
+msgstr "B. El repositorio: binarios, local.env, build/"
+
+#: install/install.sh
+msgid "C1. System, keyboard and SSH (steps 2–3)"
+msgstr "C1. Sistema, teclado y SSH (pasos 2–3)"
+
+#: install/install.sh
+msgid "C2. avahi only over Wi-Fi, Wi-Fi without power saving, udev-net (steps 2–3)"
+msgstr "C2. avahi solo por el Wi-Fi, Wi-Fi sin ahorro de energía, udev-net (pasos 2–3)"
+
+#: install/install.sh
+msgid "D. SSH in both directions (step 4)"
+msgstr "D. SSH en las dos direcciones (paso 4)"
+
+#: install/install.sh
+msgid "E1. X11 desktop, root part 1 (steps 5–12)"
+msgstr "E1. Escritorio X11, parte root 1 (pasos 5–12)"
+
+#: install/install.sh
+msgid "E2. X11 desktop, user part (steps 5–12)"
+msgstr "E2. Escritorio X11, parte de usuario (pasos 5–12)"
+
+#: install/install.sh
+msgid "E3. X11 desktop, root part 2: login screen (step 10)"
+msgstr "E3. Escritorio X11, parte root 2: pantalla de inicio (paso 10)"
+
+#: install/install.sh
+msgid "F. Xfce configuration (step 13) — WITH THE SESSION CLOSED: run this stage from a text console (Ctrl+Alt+F2)"
+msgstr "F. Configuración de Xfce (paso 13) — CON LA SESIÓN CERRADA: correr esta etapa desde una consola de texto (Ctrl+Alt+F2)"
+
+#: install/install.sh
+msgid "G. Claude Code (step 7)"
+msgstr "G. Claude Code (paso 7)"
+
+#: install/install.sh
+msgid "H. GRUB without Plymouth (step 8): XS1000 connected"
+msgstr "H. GRUB sin Plymouth (paso 8): con el XS1000 conectado"
+
+#: install/install.sh
+msgid "I1. Steam (step 14)"
+msgstr "I1. Steam (paso 14)"
+
+#: install/install.sh
+msgid "I2. By hand: log out and back in; open Steam FROM THE MENU, let it update, log in, close it"
+msgstr "I2. A mano: cerrar sesión y volver a entrar; abrir Steam DESDE EL MENÚ, dejar que se actualice, iniciar sesión, cerrarlo"
+
+#: install/install.sh
+msgid "I3. Game Mode and Xfce Wayland (steps 14–15)"
+msgstr "I3. Modo Juego y Xfce Wayland (pasos 14–15)"
+
+#: install/install.sh
+msgid "J. The Legion's own things (step 14)"
+msgstr "J. Lo propio de la Legion (paso 14)"
+
+#: install/install.sh
+msgid "J2. microSD (step 14) — with Steam CLOSED"
+msgstr "J2. microSD (paso 14) — con Steam CERRADO"
+
+#: install/install.sh
+msgid "K. By hand in Steam and on the desktop (list, point K: developer mode and Wi-Fi power management, keyboard, xterm and Firefox as games, Decky, art, controller layout, Bluetooth, VRR, Vesktop and portals, audio order)"
+msgstr "K. A mano en Steam y en el escritorio (lista, punto K: modo desarrollador y ahorro de energía del Wi-Fi, teclado, xterm y Firefox como juegos, Decky, arte, disposición del mando, Bluetooth, VRR, Vesktop y portales, orden del audio)"
+
+#: install/install.sh
+msgid "L. Check (Verification block of the recipe and update-system)"
+msgstr "L. Comprobación (bloque de Comprobación de la receta y update-system)"
+
+#: install/install.sh
+msgid "M. Clean up: archive the logs of ~ in logs/legion/ (check them for private values) and delete them"
+msgstr "M. Limpieza: archivar los registros de ~ en logs/legion/ (revisar que no lleven valores privados) y borrarlos"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "   removed %s"
+msgstr "   quitado %s"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "   %s → %s"
+msgstr "   %s → %s"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "!! neither gh (gh auth login) nor GH_TOKEN: the private release cannot be downloaded"
+msgstr "!! ni gh (gh auth login) ni GH_TOKEN: no se puede descargar la release privada"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "   ok        %s"
+msgstr "   bien      %s"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "!! missing   %s"
+msgstr "!! falta     %s"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "!! unknown repository: set VOID_LEGION_GITHUB=<owner>/<name>"
+msgstr "!! repositorio desconocido: poner VOID_LEGION_GITHUB=<dueño>/<nombre>"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "!! wrong sha256: %s"
+msgstr "!! sha256 incorrecto: %s"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "   fetched   %s"
+msgstr "   traído    %s"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "translations installed for the system"
+msgstr "traducciones instaladas para el sistema"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "translations installed for %s"
+msgstr "traducciones instaladas para %s"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "==== %s/%s %s"
+msgstr "==== %s/%s %s"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "Done? Enter to go on, Ctrl+C to stop: "
+msgstr "¿Hecho? Enter para seguir, Ctrl+C para parar: "
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "Run it? [Y/n] "
+msgstr "¿Ejecutarlo? [S/n] "
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "stopped; to go on: bash install/install.sh --from %s"
+msgstr "parado; para seguir: bash install/install.sh --from %s"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "!! stage %s failed; fix it and: bash install/install.sh --from %s"
+msgstr "!! falló la etapa %s; arreglarlo y: bash install/install.sh --from %s"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "-> reboot now (sudo reboot); afterwards: bash install/install.sh   (it goes on at stage %s)"
+msgstr "-> reiniciar ahora (sudo reboot); después: bash install/install.sh   (sigue en la etapa %s)"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "all stages done"
+msgstr "todas las etapas hechas"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "Missing %s (copy local.env.example to local.env and fill it in)."
+msgstr "Falta %s (copiar local.env.example a local.env y rellenarlo)."
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "   ok    %s"
+msgstr "   bien  %s"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "!! FAIL  %s"
+msgstr "!! FALLA %s"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "== private values (local.env) in the clone"
+msgstr "== valores privados (local.env) en el clon"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "== syntax"
+msgstr "== sintaxis"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "== catalogs"
+msgstr "== catálogos"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "== paths cited by the recipe"
+msgstr "== rutas que cita la receta"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "== binaries of the Release"
+msgstr "== binarios de la Release"
+
+#: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
+msgid "   note: some binaries are not here yet (bash install/fetch-assets.sh)"
+msgstr "   nota: aún faltan binarios (bash install/fetch-assets.sh)"
+

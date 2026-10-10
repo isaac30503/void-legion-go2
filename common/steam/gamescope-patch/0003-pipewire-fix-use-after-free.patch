@@ -1,0 +1,63 @@
+Subject: [PATCH] pipewire: fix use-after-free between request_buffer and remove_buffer
+
+request_buffer() runs on the steamcompmgr thread: it dequeues a pw_buffer
+and only afterwards marks the matching pipewire_buffer as copying. If the
+PipeWire thread handles stream_handle_remove_buffer() for that pw_buffer in
+between (a consumer connecting or renegotiating, usually right after
+"warning: out of buffers"), it sees copying == false and frees the
+pipewire_buffer. steamcompmgr then keeps the dangling pointer, pushes it back
+and dispatch_nudge() -> copy_buffer() dereferences freed memory:
+
+  Thread "gamescope-pw" received signal SIGSEGV
+  #0 copy_buffer (buffer=...) at src/pipewire.cpp:196   (pw_buffer = 0x1f0000000a)
+  #1 dispatch_nudge () at src/pipewire.cpp:308
+  #2 run_pipewire () at src/pipewire.cpp:660
+
+Seen on gamescope 3.16.30 (Void Linux) when Vesktop starts or changes a
+screen share through xdg-desktop-portal-gamescope. Serialize "dequeue + mark
+copying" against "remove" with a mutex; pw_stream_dequeue_buffer() takes no
+lock, so this cannot deadlock with the PipeWire loop.
+---
+--- a/src/pipewire.cpp
++++ b/src/pipewire.cpp
+@@ -7,6 +7,7 @@
+ #include <unistd.h>
+ 
+ #include <atomic>
++#include <mutex>
+ #include <thread>
+ #include <vector>
+ 
+@@ -26,6 +27,14 @@
+ // Pending buffer for steamcompmgr → PipeWire
+ static std::atomic<struct pipewire_buffer *> in_buffer;
+ 
++// request_buffer() runs on the steamcompmgr thread: it dequeues a pw_buffer and only then marks
++// its pipewire_buffer as copying. If the PipeWire thread runs stream_handle_remove_buffer() for
++// that same pw_buffer in between (e.g. while a consumer connects or renegotiates the format),
++// it sees copying == false and frees the pipewire_buffer, and steamcompmgr keeps using the freed
++// pointer until dispatch_nudge() -> copy_buffer() crashes on it. Make "dequeue + mark copying"
++// and "remove" mutually exclusive. pw_stream_dequeue_buffer() itself takes no lock.
++static std::mutex buffer_handoff_mutex;
++
+ // Requested capture size
+ static uint32_t s_nRequestedWidth;
+ static uint32_t s_nRequestedHeight;
+@@ -172,6 +181,8 @@
+ 
+ static void request_buffer(struct pipewire_state *state)
+ {
++	std::lock_guard<std::mutex> lock(buffer_handoff_mutex);
++
+ 	struct pw_buffer *pw_buffer = pw_stream_dequeue_buffer(state->stream);
+ 	if (!pw_buffer) {
+ 		pwr_log.errorf("warning: out of buffers");
+@@ -595,6 +606,8 @@
+ {
+ 	struct pipewire_buffer *buffer = (struct pipewire_buffer *) pw_buffer->user_data;
+ 
++	std::lock_guard<std::mutex> lock(buffer_handoff_mutex);
++
+ 	buffer->buffer = nullptr;
+ 
+ 	if (!buffer->copying) {

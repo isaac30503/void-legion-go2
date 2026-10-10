@@ -1,0 +1,101 @@
+#!/bin/bash
+# window-focus left|right|up|down — gives the focus to the closest window in that direction
+# (Super+arrows, in the style of a tiling WM). Only normal windows of the current workspace
+# and not minimized. It takes the pointer to the center of the chosen window, because the focus
+# follows the mouse (otherwise, when moving the mouse it would go back to the window underneath).
+# With two screens, it only jumps between windows of the active window's monitor.
+# Void recipe, step 13 (shortcuts).
+# Previous (Spanish) name: ventana-foco izq|der|arr|abj (those arguments still work).
+
+dir=$1
+case "$dir" in izq) dir=left ;; der) dir=right ;; arr) dir=up ;; abj) dir=down ;; esac
+case "$dir" in left|right|up|down) ;; *) echo "usage: window-focus left|right|up|down" >&2; exit 1 ;; esac
+
+active=$(xdotool getactivewindow 2>/dev/null) || exit 0
+workspace=$(xdotool get_desktop)
+
+# --- Monitors (2026-10-03, Legion with an external monitor) ---------------------------------
+# In X11, _NET_WORKAREA is ONE rectangle for the whole desktop (with two screens, both
+# together: 3840x1200), so "half screen" ended up split between the two monitors. It
+# works on the monitor where the window is: its rectangle comes from `xrandr
+# --listactivemonitors` and the panels (_NET_WM_STRUT_PARTIAL of the DOCK windows)
+# that fall on it are subtracted. Without xrandr, the whole desktop, as before.
+monitors() {         # one line "x y w h" per active monitor
+    command -v xrandr >/dev/null || return 1
+    xrandr --listactivemonitors 2>/dev/null | awk 'NR>1 { g=$3; gsub(/\/[0-9]+/, "", g)
+        split(g, a, /[x+]/); print a[3], a[4], a[1], a[2] }'
+}
+monitor_of() {       # monitor "x y w h" that contains the point $1,$2 (or the closest)
+    monitors | awk -v px="$1" -v py="$2" '
+        { if (px >= $1 && px < $1+$3 && py >= $2 && py < $2+$4) { print; f=1; exit }
+          dx = px - ($1+$3/2); dy = py - ($2+$4/2); d = dx*dx + dy*dy
+          if (m == "" || d < md) { m = $0; md = d } }
+        END { if (!f && m != "") print m }'
+}
+usable_area() {      # usable area "x y w h" of the monitor that contains $1,$2, without panels
+    local m mx my mw mh sw sh l t r b w s
+    m=$(monitor_of "$1" "$2")
+    if [ -z "$m" ]; then xprop -root _NET_WORKAREA | sed 's/.*= //; s/,//g' | awk '{print $1, $2, $3, $4}'; return; fi
+    read -r mx my mw mh <<<"$m"; read -r sw sh < <(xdotool getdisplaygeometry)
+    l=$mx; t=$my; r=$((mx + mw)); b=$((my + mh))
+    for w in $(xprop -root _NET_CLIENT_LIST | sed 's/.*# //; s/,//g'); do
+        xprop -id "$w" _NET_WM_WINDOW_TYPE 2>/dev/null | grep -q _NET_WM_WINDOW_TYPE_DOCK || continue
+        s=$(xprop -id "$w" _NET_WM_STRUT_PARTIAL 2>/dev/null | sed -n 's/.*= //p' | tr -d ,)
+        [ -n "$s" ] || continue
+        # left right top bottom, and for each one the stretch it occupies (start end)
+        read -r L R T B ly1 ly2 ry1 ry2 tx1 tx2 bx1 bx2 <<<"$s"
+        [ "$L" -gt 0 ] && [ "$ly2" -ge "$my" ] && [ "$ly1" -lt $((my + mh)) ] && [ "$L" -gt "$l" ] && l=$L
+        [ "$R" -gt 0 ] && [ "$ry2" -ge "$my" ] && [ "$ry1" -lt $((my + mh)) ] && [ $((sw - R)) -lt "$r" ] && r=$((sw - R))
+        [ "$T" -gt 0 ] && [ "$tx2" -ge "$mx" ] && [ "$tx1" -lt $((mx + mw)) ] && [ "$T" -gt "$t" ] && t=$T
+        [ "$B" -gt 0 ] && [ "$bx2" -ge "$mx" ] && [ "$bx1" -lt $((mx + mw)) ] && [ $((sh - B)) -lt "$b" ] && b=$((sh - B))
+    done
+    echo "$l $t $((r - l)) $((b - t))"
+}
+# -----------------------------------------------------------------------------------------
+
+center() {   # prints "cx cy" of the frame of window $1
+    eval "$(xdotool getwindowgeometry --shell "$1")"
+    echo $((X + WIDTH / 2)) $((Y + HEIGHT / 2))
+}
+
+valid() {    # normal window, on this workspace (or on all) and not minimized
+    local p
+    p=$(xprop -id "$1" _NET_WM_WINDOW_TYPE _NET_WM_STATE _NET_WM_DESKTOP 2>/dev/null)
+    # without a declared type (xterm does not set it) it counts as normal, according to the EWMH standard
+    if grep -q '^_NET_WM_WINDOW_TYPE(ATOM)' <<<"$p"; then
+        grep -q '_NET_WM_WINDOW_TYPE_NORMAL\|_NET_WM_WINDOW_TYPE_DIALOG' <<<"$p" || return 1
+    fi
+    grep -q '_NET_WM_STATE_HIDDEN' <<<"$p" && return 1
+    local d; d=$(sed -n 's/^_NET_WM_DESKTOP(CARDINAL) = //p' <<<"$p")
+    [ "$d" = "$workspace" ] || [ "$d" = 4294967295 ]
+}
+
+read -r ax ay < <(center "$active")
+mon=$(monitor_of "$ax" "$ay")      # only windows of this monitor (empty without xrandr: all)
+best=; best_p=
+for w in $(xprop -root _NET_CLIENT_LIST_STACKING | sed 's/.*# //; s/,//g'); do
+    w=$((w))
+    [ "$w" = "$active" ] && continue
+    valid "$w" || continue
+    read -r cx cy < <(center "$w")
+    [ -z "$mon" ] || [ "$(monitor_of "$cx" "$cy")" = "$mon" ] || continue
+    dx=$((cx - ax)); dy=$((cy - ay))
+    case "$dir" in      # main: distance in the direction; lateral: deviation
+        left)  p=$((-dx)); l=${dy#-} ;;
+        right) p=$dx;      l=${dy#-} ;;
+        up)    p=$((-dy)); l=${dx#-} ;;
+        down)  p=$dy;      l=${dx#-} ;;
+    esac
+    [ "$p" -le 0 ] && continue                   # it is not on that side
+    points=$((p + 2 * l))                        # the one more "in line" is preferred
+    if [ -z "$best" ] || [ "$points" -lt "$best_p" ]; then best=$w; best_p=$points; fi
+done
+
+[ -n "$best" ] || exit 0
+# First the pointer: with focus following the mouse, xfwm4 gives the focus when entering the window.
+# Launched from the shortcut, an activation request alone is not enough (the Super key is still
+# pressed and xfwm4 ignores it). Afterwards activating and raising are requested anyway.
+read -r cx cy < <(center "$best")
+xdotool mousemove "$cx" "$cy"
+xdotool windowactivate "$best" 2>/dev/null
+xdotool windowraise "$best" 2>/dev/null

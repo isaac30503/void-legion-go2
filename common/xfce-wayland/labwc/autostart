@@ -1,0 +1,8 @@
+# labwc's autostart in "Xfce (Wayland)" (~/.config/xfce4/labwc/autostart; installed by
+# common/xfce-wayland/install-xfce-wayland.sh). xfce4-session starts the rest, as in X11.
+# xterm goes through Xwayland, which does not load ~/.Xresources by itself (in X11 /etc/lightdm/Xsession does):
+# without this, xterm comes out without the palette, the font or the copy/paste shortcuts.
+[ -n "$DISPLAY" ] && xrdb -nocpp -merge "$HOME/.Xresources" &
+# xfdesktop's wallpaper: it is lost on the internal screen when xfsettingsd reconfigures the screens
+# after painting it (when coming from Game Mode); wallpaper-watcher asks for it again, event-driven.
+GDK_BACKEND=wayland "$HOME/.local/bin/wallpaper-watcher" &

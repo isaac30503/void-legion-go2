@@ -1,0 +1,9 @@
+# The five modules that Void does not enable (CONFIG_LENOVO_WMI_GAMEZONE/_TUNING and their dependencies),
+# with the same names as in the kernel (drivers/platform/x86/lenovo/Makefile of 6.18.55).
+obj-m += lenovo-wmi-helpers.o lenovo-wmi-events.o lenovo-wmi-capdata01.o \
+         lenovo-wmi-other.o lenovo-wmi-gamezone.o
+lenovo-wmi-helpers-y   := wmi-helpers.o
+lenovo-wmi-events-y    := wmi-events.o
+lenovo-wmi-capdata01-y := wmi-capdata01.o
+lenovo-wmi-other-y     := wmi-other.o
+lenovo-wmi-gamezone-y  := wmi-gamezone.o

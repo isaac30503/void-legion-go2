@@ -1,0 +1,49 @@
+#!/bin/bash
+# new-windows — opens each new window almost full screen (region "full": the whole
+# usable area of its monitor with the 8 px gap), like the labwc rule of the Wayland session
+# (step 15). xfwm4 has no window rules, so this session watcher does it
+# (~/.config/autostart/new-windows.desktop). Event-driven: `xprop -spy` prints the list of
+# windows every time it changes; it does not query anything periodically.
+# It does not touch: the windows that were already there at start, those that are not normal (panels, desktop,
+# menus, notifications; without a declared type, like xterm, it counts as normal), dialogs and those
+# that have a parent window, fixed-size ones, the application finder (xfce4-appfinder) and
+# those that open in full screen (games). Void recipe, step 13.
+# Previous (Spanish) name: ventanas-nuevas (autostart ventanas-nuevas.desktop).
+
+# Only in Xfce X11: the Wayland session (labwc, step 15) also declares itself XFCE and would start
+# this autostart, but there labwc's rules do it; here it would only see the Xwayland windows.
+[ -n "$WAYLAND_DISPLAY" ] && exit 0
+
+exec 9>"${XDG_RUNTIME_DIR:-/tmp}/new-windows.lock"
+flock -n 9 || exit 0                      # a single copy per session
+
+eligible() {
+    local p
+    p=$(xprop -id "$1" _NET_WM_WINDOW_TYPE WM_TRANSIENT_FOR WM_CLASS _NET_WM_STATE WM_NORMAL_HINTS 2>/dev/null) || return 1
+    if grep -q '^_NET_WM_WINDOW_TYPE(ATOM)' <<<"$p"; then
+        grep -q '_NET_WM_WINDOW_TYPE_NORMAL' <<<"$p" || return 1
+        grep -q '_NET_WM_WINDOW_TYPE_DIALOG' <<<"$p" && return 1
+    fi
+    grep -q '^WM_TRANSIENT_FOR(WINDOW): window id' <<<"$p" && return 1
+    grep -q '^WM_CLASS.*"xfce4-appfinder"' <<<"$p" && return 1
+    grep -q '_NET_WM_STATE_FULLSCREEN' <<<"$p" && return 1
+    local tmin tmax
+    tmin=$(sed -n 's/.*minimum size: //p' <<<"$p"); tmax=$(sed -n 's/.*maximum size: //p' <<<"$p")
+    [ -n "$tmin" ] && [ "$tmin" = "$tmax" ] && return 1
+    return 0
+}
+
+declare -A seen; first=1
+xprop -spy -root _NET_CLIENT_LIST | while read -r line; do
+    ids=$(sed -n 's/.*# //p' <<<"$line" | tr -d ,)
+    declare -A now=()
+    for id in $ids; do
+        id=$((id)); now[$id]=1
+        [ -n "${seen[$id]}" ] && continue
+        seen[$id]=1
+        [ $first = 1 ] && continue                       # it was already open at start
+        eligible "$id" && ~/.local/bin/window-snap full "$id"
+    done
+    for id in "${!seen[@]}"; do [ -n "${now[$id]}" ] || unset "seen[$id]"; done
+    unset now; first=0
+done

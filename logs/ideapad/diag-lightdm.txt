@@ -1,0 +1,257 @@
+===== /var/log/lightdm/lightdm.log.old
+1:[+0.02s] DEBUG: Logging to /var/log/lightdm/lightdm.log
+2:[+0.02s] DEBUG: Starting Light Display Manager 1.32.0, UID=0 PID=854
+9:[+0.02s] DEBUG: Using D-Bus name org.freedesktop.DisplayManager
+11:[+0.13s] DEBUG: Monitoring logind for seats
+12:[+0.13s] DEBUG: New seat added from logind: seat0
+13:[+0.13s] DEBUG: Seat seat0: Loading properties from config section Seat:*
+15:[+0.13s] DEBUG: Seat seat0: Starting
+16:[+0.13s] DEBUG: Seat seat0: Creating user session
+17:[+0.96s] DEBUG: Loading users from org.freedesktop.Accounts
+18:[+0.96s] DEBUG: User /org/freedesktop/Accounts/User1000 added
+19:[+1.12s] DEBUG: Seat seat0: Can't login unknown user 'anon'
+20:[+1.12s] DEBUG: Seat seat0: Creating greeter session
+21:[+1.13s] DEBUG: Seat seat0: Creating display server of type x
+22:[+1.15s] DEBUG: Seat seat0: Plymouth is running on VT 1, but this is less than the configured minimum of 7 so not replacing it
+23:[+1.15s] DEBUG: Quitting Plymouth
+24:[+1.18s] DEBUG: Using VT 7
+25:[+1.18s] DEBUG: Seat seat0: Starting local X display on VT 7
+26:[+1.18s] DEBUG: XServer 0: Logging to /var/log/lightdm/x-0.log
+27:[+1.20s] DEBUG: XServer 0: Writing X server authority to /var/run/lightdm/root/:0
+28:[+1.20s] DEBUG: XServer 0: Launching X Server
+29:[+1.21s] DEBUG: Launching process 894: /usr/bin/X :0 -seat seat0 -auth /var/run/lightdm/root/:0 -nolisten tcp vt7 -novtswitch
+30:[+1.21s] DEBUG: XServer 0: Waiting for ready signal from X server :0
+31:[+1.21s] DEBUG: Acquired bus name org.freedesktop.DisplayManager
+32:[+1.21s] DEBUG: Registering seat with bus path /org/freedesktop/DisplayManager/Seat0
+33:[+5.65s] DEBUG: Got signal 10 from process 894
+34:[+5.65s] DEBUG: XServer 0: Got signal from X server :0
+35:[+5.65s] DEBUG: XServer 0: Connecting to XServer :0
+36:[+5.70s] DEBUG: Seat seat0: Display server ready, starting session authentication
+37:[+5.70s] DEBUG: Session pid=962: Started with service 'lightdm-greeter', username 'lightdm'
+38:[+5.78s] DEBUG: Session pid=962: Authentication complete with return value 0: Success
+39:[+5.78s] DEBUG: Seat seat0: Session authenticated, running command
+40:[+5.78s] DEBUG: Session pid=962: Running command /usr/bin/lightdm-gtk-greeter
+41:[+5.78s] DEBUG: Creating shared data directory /var/lib/lightdm-data/lightdm
+42:[+5.78s] DEBUG: Session pid=962: Logging to /var/log/lightdm/seat0-greeter.log
+43:[+5.82s] DEBUG: Activating VT 7
+44:[+5.82s] DEBUG: Activating login1 session c1
+45:[+5.82s] DEBUG: Seat seat0 changes active session to c1
+46:[+5.82s] DEBUG: Session c1 is already active
+47:[+7.22s] DEBUG: Greeter connected version=1.32.0 api=1 resettable=false
+48:[+9.08s] DEBUG: Greeter start authentication for isaac
+49:[+9.08s] DEBUG: Session pid=996: Started with service 'lightdm', username 'isaac'
+50:[+9.10s] DEBUG: Session pid=996: Got 1 message(s) from PAM
+51:[+9.10s] DEBUG: Prompt greeter with 1 message(s)
+52:[+24.19s] DEBUG: Continue authentication
+53:[+24.22s] DEBUG: Session pid=996: Authentication complete with return value 0: Success
+54:[+24.22s] DEBUG: Authenticate result for user isaac: Success
+55:[+24.22s] DEBUG: User isaac authorized
+56:[+24.74s] DEBUG: Greeter requests session steam-modo-juego
+57:[+24.74s] DEBUG: Seat seat0: Creating display server of type wayland
+58:[+24.74s] DEBUG: Using VT 8
+59:[+24.74s] DEBUG: Seat seat0: Display server ready, running session
+60:[+24.74s] DEBUG: Registering session with bus path /org/freedesktop/DisplayManager/Session0
+61:[+24.74s] DEBUG: Session pid=996: Running command /etc/lightdm/Xsession /usr/local/bin/steam-modo-juego
+62:[+24.74s] DEBUG: Creating shared data directory /var/lib/lightdm-data/isaac
+63:[+24.74s] DEBUG: Session pid=996: Logging to .xsession-errors
+64:[+24.75s] DEBUG: Activating VT 8
+65:[+24.90s] DEBUG: Seat seat0: Stopping greeter
+66:[+24.90s] DEBUG: Terminating login1 session c1
+67:[+24.90s] DEBUG: Session pid=962: Sending SIGTERM
+68:[+24.90s] DEBUG: Activating login1 session c2
+69:[+24.90s] DEBUG: Seat seat0 changes active session to c2
+70:[+24.90s] DEBUG: Session c2 is already active
+71:[+44.37s] DEBUG: Seat seat0 changes active session to 
+72:[+51.24s] DEBUG: Seat seat0 changes active session to 1
+73:[+56.58s] DEBUG: Session pid=996: Exited with return value 1
+74:[+56.58s] DEBUG: Seat seat0: Session stopped
+75:[+56.58s] DEBUG: Seat seat0: Stopping display server, no sessions require it
+76:[+56.58s] DEBUG: Seat seat0: Display server stopped
+77:[+56.58s] DEBUG: Seat seat0: Active display server stopped, starting greeter
+78:[+56.58s] DEBUG: Seat seat0: Creating greeter session
+79:[+56.58s] DEBUG: Seat seat0: Creating display server of type x
+80:[+56.58s] DEBUG: Using VT 9
+81:[+56.58s] DEBUG: Seat seat0: Starting local X display on VT 9
+82:[+56.58s] DEBUG: XServer 1: Logging to /var/log/lightdm/x-1.log
+83:[+56.58s] DEBUG: XServer 1: Writing X server authority to /var/run/lightdm/root/:1
+84:[+56.58s] DEBUG: XServer 1: Launching X Server
+85:[+56.61s] DEBUG: Launching process 2004: /usr/bin/X :1 -seat seat0 -auth /var/run/lightdm/root/:1 -nolisten tcp vt9 -novtswitch
+86:[+56.61s] DEBUG: XServer 1: Waiting for ready signal from X server :1
+87:[+56.61s] DEBUG: Releasing VT 8
+88:[+56.63s] DEBUG: Seat seat0 changes active session to 
+89:[+57.12s] DEBUG: Got signal 10 from process 2004
+90:[+57.12s] DEBUG: XServer 1: Got signal from X server :1
+91:[+57.12s] DEBUG: XServer 1: Connecting to XServer :1
+92:[+57.18s] DEBUG: Seat seat0: Display server ready, starting session authentication
+93:[+57.18s] DEBUG: Session pid=2020: Started with service 'lightdm-greeter', username 'lightdm'
+94:[+57.20s] DEBUG: Session pid=2020: Authentication complete with return value 0: Success
+95:[+57.20s] DEBUG: Seat seat0: Session authenticated, running command
+96:[+57.20s] DEBUG: Session pid=2020: Running command /usr/bin/lightdm-gtk-greeter
+97:[+57.20s] DEBUG: Creating shared data directory /var/lib/lightdm-data/lightdm
+98:[+57.20s] DEBUG: Session pid=2020: Logging to /var/log/lightdm/seat0-greeter.log
+99:[+57.21s] DEBUG: Activating VT 9
+100:[+57.21s] DEBUG: Activating login1 session c3
+101:[+57.21s] DEBUG: Seat seat0 changes active session to c3
+102:[+57.21s] DEBUG: Session c3 is already active
+103:[+57.41s] DEBUG: Greeter connected version=1.32.0 api=1 resettable=false
+104:[+58.00s] DEBUG: Greeter start authentication for isaac
+105:[+58.00s] DEBUG: Session pid=2053: Started with service 'lightdm', username 'isaac'
+106:[+58.01s] DEBUG: Session pid=2053: Got 1 message(s) from PAM
+107:[+58.01s] DEBUG: Prompt greeter with 1 message(s)
+108:[+63.95s] DEBUG: Seat seat0 changes active session to 1
+109:[+592.51s] DEBUG: Got signal 15 from process 725
+110:[+592.51s] DEBUG: Caught Terminated signal, shutting down
+111:[+592.51s] DEBUG: Stopping display manager
+112:[+592.51s] DEBUG: Seat seat0: Stopping
+113:[+592.51s] DEBUG: Seat seat0: Stopping display server
+114:[+592.51s] DEBUG: Sending signal 15 to process 894
+115:[+592.51s] DEBUG: Seat seat0: Stopping display server
+116:[+592.51s] DEBUG: Sending signal 15 to process 2004
+117:[+592.51s] DEBUG: Seat seat0: Stopping session
+118:[+592.51s] DEBUG: Terminating login1 session c3
+119:[+592.52s] WARNING: Error terminating login1 session: The connection is closed
+120:[+592.52s] DEBUG: Session pid=2020: Sending SIGTERM
+121:[+592.52s] DEBUG: Seat seat0: Stopping session
+122:[+592.52s] DEBUG: Session pid=2053: Sending SIGTERM
+===== /var/log/lightdm/lightdm.log
+1:[+0.11s] DEBUG: Logging to /var/log/lightdm/lightdm.log
+2:[+0.11s] DEBUG: Starting Light Display Manager 1.32.0, UID=0 PID=854
+9:[+0.11s] DEBUG: Using D-Bus name org.freedesktop.DisplayManager
+11:[+0.18s] DEBUG: Monitoring logind for seats
+12:[+0.18s] DEBUG: New seat added from logind: seat0
+13:[+0.18s] DEBUG: Seat seat0: Loading properties from config section Seat:*
+15:[+0.18s] DEBUG: Seat seat0: Starting
+16:[+0.18s] DEBUG: Seat seat0: Creating user session
+17:[+1.75s] DEBUG: Loading users from org.freedesktop.Accounts
+18:[+1.75s] DEBUG: User /org/freedesktop/Accounts/User1000 added
+19:[+2.03s] DEBUG: Seat seat0: Can't login unknown user 'anon'
+20:[+2.03s] DEBUG: Seat seat0: Creating greeter session
+21:[+2.04s] DEBUG: Seat seat0: Creating display server of type x
+22:[+2.07s] DEBUG: Seat seat0: Plymouth is running on VT 1, but this is less than the configured minimum of 7 so not replacing it
+23:[+2.07s] DEBUG: Quitting Plymouth
+24:[+2.10s] DEBUG: Using VT 7
+25:[+2.10s] DEBUG: Seat seat0: Starting local X display on VT 7
+26:[+2.10s] DEBUG: XServer 0: Logging to /var/log/lightdm/x-0.log
+27:[+2.11s] DEBUG: XServer 0: Writing X server authority to /var/run/lightdm/root/:0
+28:[+2.11s] DEBUG: XServer 0: Launching X Server
+29:[+2.11s] DEBUG: Launching process 895: /usr/bin/X :0 -seat seat0 -auth /var/run/lightdm/root/:0 -nolisten tcp vt7 -novtswitch
+30:[+2.11s] DEBUG: XServer 0: Waiting for ready signal from X server :0
+31:[+2.11s] DEBUG: Acquired bus name org.freedesktop.DisplayManager
+32:[+2.11s] DEBUG: Registering seat with bus path /org/freedesktop/DisplayManager/Seat0
+33:[+6.72s] DEBUG: Got signal 10 from process 895
+34:[+6.72s] DEBUG: XServer 0: Got signal from X server :0
+35:[+6.72s] DEBUG: XServer 0: Connecting to XServer :0
+36:[+6.76s] DEBUG: Seat seat0: Display server ready, starting session authentication
+37:[+6.76s] DEBUG: Session pid=964: Started with service 'lightdm-greeter', username 'lightdm'
+38:[+6.84s] DEBUG: Session pid=964: Authentication complete with return value 0: Success
+39:[+6.84s] DEBUG: Seat seat0: Session authenticated, running command
+40:[+6.84s] DEBUG: Session pid=964: Running command /usr/bin/lightdm-gtk-greeter
+41:[+6.84s] DEBUG: Creating shared data directory /var/lib/lightdm-data/lightdm
+42:[+6.84s] DEBUG: Session pid=964: Logging to /var/log/lightdm/seat0-greeter.log
+43:[+6.88s] DEBUG: Activating VT 7
+44:[+6.88s] DEBUG: Activating login1 session c1
+45:[+6.88s] DEBUG: Seat seat0 changes active session to c1
+46:[+6.88s] DEBUG: Session c1 is already active
+47:[+8.25s] DEBUG: Greeter connected version=1.32.0 api=1 resettable=false
+48:[+9.95s] DEBUG: Greeter start authentication for isaac
+49:[+9.95s] DEBUG: Session pid=998: Started with service 'lightdm', username 'isaac'
+50:[+9.97s] DEBUG: Session pid=998: Got 1 message(s) from PAM
+51:[+9.97s] DEBUG: Prompt greeter with 1 message(s)
+52:[+16.80s] DEBUG: Continue authentication
+53:[+16.84s] DEBUG: Session pid=998: Authentication complete with return value 0: Success
+54:[+16.84s] DEBUG: Authenticate result for user isaac: Success
+55:[+16.84s] DEBUG: User isaac authorized
+56:[+17.10s] DEBUG: Greeter requests session steam-modo-juego
+57:[+17.10s] DEBUG: Seat seat0: Creating display server of type wayland
+58:[+17.10s] DEBUG: Using VT 8
+59:[+17.10s] DEBUG: Seat seat0: Display server ready, running session
+60:[+17.10s] DEBUG: Registering session with bus path /org/freedesktop/DisplayManager/Session0
+61:[+17.10s] DEBUG: Session pid=998: Running command /etc/lightdm/Xsession /usr/local/bin/steam-modo-juego
+62:[+17.10s] DEBUG: Creating shared data directory /var/lib/lightdm-data/isaac
+63:[+17.10s] DEBUG: Session pid=998: Logging to .xsession-errors
+64:[+17.11s] DEBUG: Activating VT 8
+65:[+17.26s] DEBUG: Seat seat0: Stopping greeter
+66:[+17.26s] DEBUG: Terminating login1 session c1
+67:[+17.27s] DEBUG: Session pid=964: Sending SIGTERM
+68:[+17.27s] DEBUG: Activating login1 session c2
+69:[+17.27s] DEBUG: Seat seat0 changes active session to c2
+70:[+17.27s] DEBUG: Session c2 is already active
+71:[+44.19s] DEBUG: Seat seat0 changes active session to 
+72:[+51.62s] DEBUG: Seat seat0 changes active session to 1
+73:[+92.93s] DEBUG: Session pid=998: Exited with return value 0
+74:[+92.93s] DEBUG: Seat seat0: Session stopped
+75:[+92.93s] DEBUG: Seat seat0: Stopping display server, no sessions require it
+76:[+92.93s] DEBUG: Seat seat0: Display server stopped
+77:[+92.93s] DEBUG: Seat seat0: Active display server stopped, starting greeter
+78:[+92.93s] DEBUG: Seat seat0: Creating greeter session
+79:[+92.93s] DEBUG: Seat seat0: Creating display server of type x
+80:[+92.93s] DEBUG: Using VT 9
+81:[+92.93s] DEBUG: Seat seat0: Starting local X display on VT 9
+82:[+92.93s] DEBUG: XServer 1: Logging to /var/log/lightdm/x-1.log
+83:[+92.93s] DEBUG: XServer 1: Writing X server authority to /var/run/lightdm/root/:1
+84:[+92.93s] DEBUG: XServer 1: Launching X Server
+85:[+92.93s] DEBUG: Launching process 2032: /usr/bin/X :1 -seat seat0 -auth /var/run/lightdm/root/:1 -nolisten tcp vt9 -novtswitch
+86:[+92.93s] DEBUG: XServer 1: Waiting for ready signal from X server :1
+87:[+92.93s] DEBUG: Releasing VT 8
+88:[+92.95s] DEBUG: Seat seat0 changes active session to 
+89:[+93.43s] DEBUG: Got signal 10 from process 2032
+90:[+93.43s] DEBUG: XServer 1: Got signal from X server :1
+91:[+93.43s] DEBUG: XServer 1: Connecting to XServer :1
+92:[+93.48s] DEBUG: Seat seat0: Display server ready, starting session authentication
+93:[+93.48s] DEBUG: Session pid=2048: Started with service 'lightdm-greeter', username 'lightdm'
+94:[+93.51s] DEBUG: Session pid=2048: Authentication complete with return value 0: Success
+95:[+93.51s] DEBUG: Seat seat0: Session authenticated, running command
+96:[+93.51s] DEBUG: Session pid=2048: Running command /usr/bin/lightdm-gtk-greeter
+97:[+93.51s] DEBUG: Creating shared data directory /var/lib/lightdm-data/lightdm
+98:[+93.51s] DEBUG: Session pid=2048: Logging to /var/log/lightdm/seat0-greeter.log
+99:[+93.52s] DEBUG: Activating VT 9
+100:[+93.52s] DEBUG: Activating login1 session c3
+101:[+93.52s] DEBUG: Seat seat0 changes active session to c3
+102:[+93.52s] DEBUG: Session c3 is already active
+103:[+93.76s] DEBUG: Greeter connected version=1.32.0 api=1 resettable=false
+104:[+94.35s] DEBUG: Greeter start authentication for isaac
+105:[+94.35s] DEBUG: Session pid=2081: Started with service 'lightdm', username 'isaac'
+106:[+94.36s] DEBUG: Session pid=2081: Got 1 message(s) from PAM
+107:[+94.36s] DEBUG: Prompt greeter with 1 message(s)
+108:[+97.43s] DEBUG: Seat seat0 changes active session to 1
+===== seat0-greeter.log (final)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.366: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.384: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.402: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.425: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.444: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.464: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.483: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.501: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.520: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.542: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.561: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.581: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.600: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.621: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.643: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.663: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.682: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.701: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.720: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)
+
+(lightdm-gtk-greeter:2052): Gtk-WARNING **: 00:50:56.736: Drawing a gadget with negative dimensions. Did you forget to allocate a size? (node menubar owner GreeterMenuBar)

@@ -1,0 +1,23 @@
+# Real values for the @PLACEHOLDERS@ (MACs, UUIDs, SSID, Steam account id…). Never commit.
+local.env
+# Rendered copies made by install/install.sh from the templates + local.env
+/build/
+# Editor / Python leftovers
+*.bak
+!/logs/**/*.bak
+__pycache__/
+*.pyc
+# Release binaries: published as assets of the GitHub Release, not in git. install/fetch-assets.sh
+# downloads each one to the path where the scripts look for it (list: install/assets.tsv).
+/common/fonts/
+/common/xterm/jetbrains-blocks/*.ttf
+/common/xfce/orchis-themes.tar.gz
+/common/xfce/volantes-cursors.tar.gz
+/common/steam/gamescope-patch/*.xbps
+/common/steam/portal-gamescope/*.pkg.tar.zst
+/common/steam/steamos-manager/*.tar.gz
+/common/xfce-wayland/thunar-wallpaper/*.xbps
+/common/xfce-wayland/xfdesktop-wallpaper/*.xbps
+/legion/inputplumber-x86_64.tar.gz
+/legion/portal-wlr-patch/*.xbps
+/legion/steam/extest/libextest.so

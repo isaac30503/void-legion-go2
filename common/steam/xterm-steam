@@ -1,0 +1,25 @@
+#!/bin/sh
+# xterm-steam — xterm as a "non-Steam game" (Steam → Add a non-Steam game
+# → Target: ~/.local/bin/xterm-steam with the full path). Equivalent to the xterm-steam-fix of the SteamOS
+# recipe (§13.2, 13.6, 13.9), adapted to Void:
+#   - unset LD_PRELOAD: Steam puts its gameoverlayrenderer.so (32 and 64 bits) in everything it launches;
+#     here it only gives "wrong ELF class" warnings, but it has nothing to do in a terminal.
+#   - unset LC_ALL: Steam forces LC_ALL=C and xterm starts without UTF-8 (the Nerd Font icons and
+#     the accents come out as "â", "Ã"). Without LC_ALL, everything goes back to LANG (es_MX.UTF-8 here).
+#   - In the session "Steam (Game Mode)" (gamescope; XDG_SESSION_DESKTOP=gamescope, set by
+#     steam-game-mode): gamescope's Xwayland does not have ~/.Xresources loaded (lightdm does that
+#     only in the Xfce session), and gamescope does not maximize: it is loaded and the
+#     size to fill the screen is computed (cell of 8×18 px + 4 px of border at 96 DPI, step 11).
+# Void recipe, step 14. Previous name: xterm-steam (unchanged).
+unset LD_PRELOAD
+unset LC_ALL
+
+if [ "$XDG_SESSION_DESKTOP" = "gamescope" ]; then
+    xrdb -nocpp -load "$HOME/.Xresources" 2>/dev/null
+    size=$(xdotool getdisplaygeometry 2>/dev/null)     # "1366 768"
+    width=${size% *}; height=${size#* }
+    if [ -n "$size" ] && [ "$width" -gt 0 ] 2>/dev/null && [ "$height" -gt 0 ] 2>/dev/null; then
+        exec /usr/bin/xterm -geometry "$(( (width - 4) / 8 ))x$(( (height - 4) / 18 ))+0+0" "$@"
+    fi
+fi
+exec /usr/bin/xterm "$@"

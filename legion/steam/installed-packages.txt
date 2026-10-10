@@ -1,0 +1,17 @@
+MangoHud
+MangoHud-32bit
+MangoHud-mangoapp
+Vulkan-Tools
+alsa-pipewire-32bit
+gamescope
+libdrm-32bit
+libgcc-32bit
+libglvnd-32bit
+libpulseaudio-32bit
+libstdc++-32bit
+libva-32bit
+mesa-dri-32bit
+mesa-vulkan-radeon
+mesa-vulkan-radeon-32bit
+steam
+vulkan-loader-32bit

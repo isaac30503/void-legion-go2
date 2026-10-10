@@ -1,0 +1,9 @@
+[user]
+indicatorStyle=1
+inactiveIndicatorStyle=1
+inactiveColor=rgb(94,92,100)
+indicatorColor=rgb(255,255,255)
+noWindowsListIfSingle=true
+onlyDisplayVisible=true
+onlyDisplayScreen=true
+middleButtonBehavior=1

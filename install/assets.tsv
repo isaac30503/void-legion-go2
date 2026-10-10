@@ -1,0 +1,21 @@
+# Binaries of the GitHub Release (they are not in git). install/fetch-assets.sh downloads them and checks the sha256.
+# release: assets-2026-10-09
+# asset	sha256	destination
+inputplumber-x86_64.tar.gz	bb167707964777751ad15f2da0ac99eb16a926a3997098e884f749b2e06f777b	legion/inputplumber-x86_64.tar.gz
+xdg-desktop-portal-wlr-0.8.4_2.x86_64.xbps	845a8b54c5e9106ac125dc77a52349dcda421f312de30b827c774b255524b8bd	legion/portal-wlr-patch/xdg-desktop-portal-wlr-0.8.4_2.x86_64.xbps
+libextest.so	5f5059fa156f431ab015699265d07c7925643e147b05e4acbf072981adf14ae2	legion/steam/extest/libextest.so
+gamescope-3.16.30_2.x86_64.xbps	53c89d77baa433d4be3948c79978679615eb89dc6cac79ae4b17ceac243100f1	common/steam/gamescope-patch/gamescope-3.16.30_2.x86_64.xbps
+gamescope-dbg-3.16.30_2.x86_64.xbps	0100f0e1e2545203fbcbd6f845384e61585d4107e80a2f7bdb98027700918722	common/steam/gamescope-patch/gamescope-dbg-3.16.30_2.x86_64.xbps
+xdg-desktop-portal-gamescope-0.1.33.412a4bf-2-x86_64.pkg.tar.zst	3929455f2e0e810327d879afef6ed449eeb66fd88448a86ffae184e113627ac5	common/steam/portal-gamescope/xdg-desktop-portal-gamescope-0.1.33.412a4bf-2-x86_64.pkg.tar.zst
+steamos-manager-v26.4.1-void-2.tar.gz	1c8214cbdd5e72026f7b7bf75e9424bcd86467d347ccd60249942f3686da3c97	common/steam/steamos-manager/steamos-manager-v26.4.1-void-2.tar.gz
+steamos-manager-v26.4.1-void.tar.gz	9dbc4566eec83d56ea9088c4d1c42d1b82f4bc247276917d526383ed14443b77	common/steam/steamos-manager/steamos-manager-v26.4.1-void.tar.gz
+Thunar-4.20.10_2.x86_64.xbps	70ccff54505dd70d09f6cdd0d00925c8113a1810843d480da0c351bab060999b	common/xfce-wayland/thunar-wallpaper/Thunar-4.20.10_2.x86_64.xbps
+Thunar-devel-4.20.10_2.x86_64.xbps	17480c9d3b7bd802cf2cd65ada8c8351042b82c599c7219cf13cef0be10e4f56	common/xfce-wayland/thunar-wallpaper/Thunar-devel-4.20.10_2.x86_64.xbps
+xfdesktop-4.20.2_2.x86_64.xbps	6f36c3908bd2ea75e834f268ce8194a58894c95e26f9c181d738d441579446d0	common/xfce-wayland/xfdesktop-wallpaper/xfdesktop-4.20.2_2.x86_64.xbps
+orchis-themes.tar.gz	b50bf488826db373eb88471044479a94e94953a3c62c3a87dd4fe7bddb96bcfe	common/xfce/orchis-themes.tar.gz
+volantes-cursors.tar.gz	c4da50803e8267b73411ba6954fe454ce896187572e45f67292b8c86a9f7b172	common/xfce/volantes-cursors.tar.gz
+JetBrainsMonoNFMBlocks-Bold.ttf	d80684cce1802f970def1b871a14cfa05db72805d31fa2e22ba1cada8ddd6e6d	common/xterm/jetbrains-blocks/JetBrainsMonoNFMBlocks-Bold.ttf
+JetBrainsMonoNFMBlocks-BoldItalic.ttf	0e8509f093d613f192c28d14a112eb6c8b83abd495b4d0a5f188513b86e7878b	common/xterm/jetbrains-blocks/JetBrainsMonoNFMBlocks-BoldItalic.ttf
+JetBrainsMonoNFMBlocks-Italic.ttf	2fd092311e674372f5c62321be277d69922c0866fb4e2abc71990276eec78f42	common/xterm/jetbrains-blocks/JetBrainsMonoNFMBlocks-Italic.ttf
+JetBrainsMonoNFMBlocks-Regular.ttf	61c68f88303dd317ee0d21ee435733bae5e1fe2a6392c84059046b4a2aa3c2fb	common/xterm/jetbrains-blocks/JetBrainsMonoNFMBlocks-Regular.ttf
+jetbrains-mono-nerd-font-ttf.tar.gz	4716a8e6492e240477d120ccb91d5a4d51fd7a3f17fd64dcf98ae0743fe42e4a	common/fonts/
