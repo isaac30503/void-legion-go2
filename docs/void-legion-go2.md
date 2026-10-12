@@ -226,6 +226,7 @@ The Game Mode launcher looks for `steamos-manager` every time it starts: there i
    ```bash
    D="$B/legion/steam"
    mkdir -p ~/.config/autostart && cp "$D/steam-background.desktop" ~/.config/autostart/
+   rm -f ~/.config/autostart/steam-segundo-plano.desktop   # the old Spanish name, if it is there (otherwise Steam starts twice)
    K="$HOME/.local/share/Steam/steamapps/common/Steam Controller Configs/@STEAM_ACCOUNT_ID@/config/413080"
    mkdir -p "$K" && cp "$D/desktop-layout-controller_steamos_handheld.vdf" "$K/controller_steamos_handheld.vdf"
    ```
@@ -616,6 +617,7 @@ cp -r "$L/xfce/panel" ~/.config/xfce4/
 cp "$L/xfce/gtk.css" ~/.config/gtk-3.0/gtk.css
 cp "$X/"{window-snap,window-focus,new-windows} ~/.local/bin/ && chmod +x ~/.local/bin/{window-snap,window-focus,new-windows}
 cp "$X/new-windows.desktop" ~/.config/autostart/
+rm -f ~/.local/bin/{ventana-acoplar,ventana-foco,ventanas-nuevas} ~/.config/autostart/ventanas-nuevas.desktop   # the old Spanish names, if they are there (otherwise two watchers run)
 ```
 
 > **In this repository:** `legion/xfce/xfce-perchannel-xml/xfce4-panel.xml` contains the Wi-Fi name
@@ -2016,6 +2018,7 @@ triggers, on-screen keyboard with RT+X…). Three pieces, all user ones:
 D="$B/legion/steam"
 mkdir -p ~/.config/autostart ~/.local/share/applications ~/.local/lib/extest
 cp "$D/steam-background.desktop" ~/.config/autostart/
+rm -f ~/.config/autostart/steam-segundo-plano.desktop   # the old Spanish name, if it is there (otherwise Steam starts twice)
 cp "$D/steam-extest.desktop" ~/.local/share/applications/steam.desktop
 install -m 755 "$D/extest/libextest.so" ~/.local/lib/extest/   # or build it (below)
 # the desktop layout (with Steam CLOSED):
@@ -3155,7 +3158,10 @@ screen sharing*).
   resumable stages (`install/install.sh`). Checked against the originals on the IdeaPad: same output in
   Spanish (`update-system --summary`, `audit-void.sh`, `ssh-survey.sh`, GRUB theme background, patch test).
   The root installers were not run again on the Legion with the new names: the first run of each one
-  migrates that piece (see `install/README.md`).
+  migrates that piece (see `install/README.md`). The pieces copied by hand (window scripts of step 13 and
+  Steam's background autostart, point K.6) are migrated by the `rm -f` of the old Spanish names added to
+  those blocks (2026-10-11): without it, `ventanas-nuevas` and `new-windows` would both run, and Steam would be
+  launched twice at login.
 
 - **2026-10-09 (Decky's Colores)** — Approved by the user: `hidapi` (Void package) for Hooandee's plugin
   **Colores**, which without `libhidapi` did not detect the controller with RGB (`driver=NullDevice`).
