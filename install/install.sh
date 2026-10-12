@@ -83,7 +83,8 @@ cp -r "$L/xfce/xfce-perchannel-xml" ~/.config/xfce4/xfconf/
 cp -r "$L/xfce/panel" ~/.config/xfce4/
 cp "$L/xfce/gtk.css" ~/.config/gtk-3.0/gtk.css
 cp "$X/"{window-snap,window-focus,new-windows} ~/.local/bin/ && chmod +x ~/.local/bin/{window-snap,window-focus,new-windows}
-cp "$X/new-windows.desktop" ~/.config/autostart/'
+cp "$X/new-windows.desktop" ~/.config/autostart/
+rm -f ~/.local/bin/{ventana-acoplar,ventana-foco,ventanas-nuevas} ~/.config/autostart/ventanas-nuevas.desktop   # the old Spanish names, if they are there (otherwise two watchers run)'
 stage "G. Claude Code (step 7)" run \
 'command -v claude >/dev/null || [ -x ~/.local/bin/claude ] || curl -fsSL https://claude.ai/install.sh | bash
 mkdir -p ~/Work ~/.claude/projects/-home-isaac-Work/memory ~/Work/.claude/agents
@@ -124,7 +125,7 @@ stage "K. By hand in Steam and on the desktop (list, point K: developer mode and
 #   install -m 755 "$B/common/steam/xterm-steam" "$B/common/steam/firefox-steam" ~/.local/bin/
 #   sudo sh "$B/common/steam/install-decky.sh"
 #   python3 "$B/common/steam/art-xterm/generate.py"            (Steam closed)
-#   cp "$B/legion/steam/steam-background.desktop" ~/.config/autostart/
+#   cp "$B/legion/steam/steam-background.desktop" ~/.config/autostart/; rm -f ~/.config/autostart/steam-segundo-plano.desktop
 #   bash "$B/legion/portal-wlr-patch/build-portal-wlr.sh"; bash "$B/legion/screen-share/install.sh"
 #   sudo sh "$B/common/steam/portal-gamescope/install-portal-gamescope.sh"; bash "$B/common/steam/gamescope-patch/build-gamescope.sh"
 #   cp "$B/legion/wireplumber/51-audio-priority.conf" ~/.config/wireplumber/wireplumber.conf.d/'
