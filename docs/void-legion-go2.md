@@ -302,7 +302,7 @@ The Game Mode launcher looks for `steamos-manager` every time it starts: there i
    a device changes, its name (`node.name`, with the USB serial number or the MAC) no longer matches and
    `audio-priority` has to be repeated.
 
-**L. Check.** The *Verification* block and an `update-system`, which must end with
+**L. Check.** The *Verification* block and a `void-update`, which must end with
 "✓ Todo en orden" ("✓ All in order").
 
 **M. Clean up** (final product, the user's decision, 2026-10-05). With everything checked, remove from `~`
@@ -560,11 +560,11 @@ cp ~/.bashrc ~/.bashrc.bak && cat "$V/shell/bashrc-block.sh" >> ~/.bashrc
 mkdir -p ~/.config/fish/functions ~/.local/bin
 bash "$B/install/install-i18n.sh"   # ~/.local/share/void-legion (without it, the messages come out in English)
 cp "$V/fish/functions/"{__vl_t,fish_prompt,fish_greeting,disk-ops}.fish ~/.config/fish/functions/
-cp "$V/fish/functions/"{install-pkg,remove-pkg,update-system,audio-ctrl,audio-priority}.fish ~/.config/fish/functions/   # audio-*: see step 6 of the IdeaPad
+cp "$V/fish/functions/"{install-pkg,remove-pkg,audio-ctrl,audio-priority}.fish ~/.config/fish/functions/   # audio-*: see step 6 of the IdeaPad
 cp "$V/ssh-setup/ssh-setup.fish" ~/.config/fish/functions/
 cp "$V/ssh-setup/ssh-survey.sh" ~/.config/fish/ && chmod +x ~/.config/fish/ssh-survey.sh
 fish -c 'fish_add_path -U ~/.local/bin'
-bash "$V/patch-test/install-patch-test.sh"   # patch test of update-system (without root; IdeaPad recipe, step 6)
+bash "$V/void-update/install-void-update.sh" --no-tray   # void-update + its patch test (without root; see "void-update" below)
 # 9. fonts, Orchis, Volantes
 mkdir -p ~/.local/share/fonts ~/.themes ~/.local/share/icons
 cp "$V/fonts/"*.ttf ~/.local/share/fonts/
@@ -583,11 +583,43 @@ mkdir -p ~/.config/fastfetch && cp "$V/fastfetch/gen-config.py" ~/.config/fastfe
 
 - **`~/.local/bin` has to exist before `fish_add_path`:** otherwise it returns an error (with
   `set -e` it cut the first time, without a message).
-- Check: `fish -c 'functions -q install-pkg update-system disk-ops ssh-setup; and echo OK'`;
+- Check: `fish -c 'functions -q install-pkg disk-ops ssh-setup; and echo OK'` and `void-update --version`;
   `fc-list | grep -ci jetbrains` → 100 (104 after root part 2, which copies the 4 Blocks to
   `/usr/local/share/fonts/`); `fc-match "JetBrainsMono NFM Blocks:charset=23fa" family`
   → `Adwaita Mono`; `ls ~/.themes` → the 6 variants of Orchis.
 - **Step 7 (Claude Code):** goes separately, further down.
+
+### void-update: updates, panel icon and automatic checks (2026-10-11)
+
+It replaces the fish function `update-system` (the user's decision, 2026-10-11: the old name is removed),
+modeled on CachyOS's **cachy-update** (a fork of *arch-update*), in `common/void-update/`, on both machines.
+Installed without root by the block above (`install-void-update.sh`, which also installs the patch test and the
+translations, removes `~/.config/fish/functions/update-system.fish` and moves the date of the last update to
+`~/.local/state/void-update/last-update`, the one fastfetch shows). After step 13, the panel icon:
+
+```bash
+void-update --tray --enable      # starts it now and at every login (~/.config/autostart/void-update-tray.desktop)
+```
+
+| | |
+|---|---|
+| `void-update` | full update: syncs; shows **Void's news** published since the last update (https://voidlinux.org/atom.xml; on 2026-03-10 one asked for a manual step with `linux-firmware`); the **list colored like cachy-update** (the changed part of each version in red → green) with the download size; the warning about packages built here that the update would replace (patch test); **one** confirmation; xbps first, then everything; sshd if OpenSSH changed; Flatpak; orphans except kernels; cache; loose kernels; `.new-*`; LazyVim; **runit services still running old code** (a process with a replaced library or executable, `(deleted)` in `/proc/<pid>/maps`, followed up to its `runsv`): it offers to restart them (`sv restart`; never `lightdm`, `dbus` or the consoles); the **summary** OK / REPAIRED / WARNING (the same checks as before); and if there is a new kernel or glibc, it **asks** whether to reboot (`[y/N]`: it never reboots by itself). A lock prevents two at a time |
+| `void-update --check` | looks for updates **without root**: `xbps-install -Mun` fetches the repositories' index into memory (~5–10 s), and `flatpak remote-ls --updates`. Updates the icon and, if the list changed, sends a notification with a "Run void-update" button |
+| `void-update --list` · `--news [N]` · `--services` · `--summary` | the pending list (exit 7 if none) · Void's latest news · services with old code · only the summary, without sudo |
+| `void-update --tray [--enable\|--disable]` | the icon (Ayatana AppIndicator, already installed: nm-applet needs it) |
+| `void-update --gen-config` · `--show-config` · `--edit-config` | `~/.config/void-update/void-update.conf` (interval, notifications, Flatpak, news…; example in `common/void-update/void-update.conf.example`) |
+
+**The icon** follows the icon theme (Papirus: `update-none` up to date, `software-update-available` with
+updates, `nwg-update-checking` while checking, `software-update-urgent` if the check failed). Its menu: "N
+updates available" (runs it), submenus *Packages (N)*, *Flatpak (N)* and *All (N)* with the list, last and
+next check, **Run void-update**, **Check for updates**, **Exit**; the middle click runs it too (in Ayatana the
+left click opens the menu). "Run" opens `void-update.desktop` in a terminal (xterm, as the rest of the
+system), which waits for Enter at the end. **Automatic checks:** when the network connects (NetworkManager's
+`StateChanged` over D-Bus) if the last one is older than the interval, and every `check_interval_hours`
+(6 by default, like cachy-update's timer; 0 = only on connect). The icon reacts to void-update's state file
+event-driven (file monitor), never polling it. It does not start in Game Mode (no session autostart there).
+**Verified on the IdeaPad on 2026-10-11:** `--check` found 3 updates in 10 s without root; `--summary`
+identical to `update-system --resumen` (same lines, in Spanish); the icon shows in the top panel's tray.
 
 ### Root part 2: login screen same as the session (step 10)
 
@@ -773,7 +805,7 @@ It does, in order:
    (2026-10-03; the user went in and updated it). A later attempt did not go in (cause not
    found; for a while the XS1000 was disconnected) and **afterwards it booted fine again**.
 3. **Removes the ISO's kernel** (`vkpurge rm 6.12.11_1`); 6.12.111 stays as a fallback (the
-   `linux6.12` package keeps being updated: 6.12.112 on 2026-10-05; it shows as orphan and `update-system`
+   `linux6.12` package keeps being updated: 6.12.112 on 2026-10-05; it shows as orphan and `void-update`
    respects it).
 4. **Silent boot**: the IdeaPad's `silent-boot.sh`, as is (here too there was
    `/etc/modules-load.d/dm-raid.conf`, from the installer: it stays `.desactivado`). Kernel line:
@@ -1271,7 +1303,7 @@ sudo bash "$B/legion/tdp/install-tdp.sh"               # remove: --remove
   `dkms install`; `modprobe`. At boot they load by themselves (they go by the firmware's WMI GUIDs) and
   DKMS rebuilds them when another 6.18 is installed (hook in `/etc/kernel.d/`). **With a 6.19 they are not
   built** (on purpose): its new sources will have to be brought or check whether Void already enables them.
-- **Updates** (2026-10-04): within 6.18, `update-system` installs the new kernel and the
+- **Updates** (2026-10-04): within 6.18, `void-update` installs the new kernel and the
   hook `/etc/kernel.d/post-install/10-dkms` rebuilds the modules by itself (the headers
   `linux6.18-headers` are updated in the same transaction); when deleting old kernels,
   `pre-remove/10-dkms` removes them. **The risk was the series change**: the `linux` metapackage
@@ -1286,10 +1318,10 @@ sudo bash "$B/legion/tdp/install-tdp.sh"               # remove: --remove
   # lenovo-wmi-* sources of that series, or check whether Void already enables them)
   ```
 
-  **Held on 2026-10-04**; that day `update-system` ended with the 9 checks OK
+  **Held on 2026-10-04**; that day `void-update` ended with the 9 checks OK
   ("✓ Todo en orden" / "✓ All in order": TDP for 6.18.55_1, kernel held, 6.18 series = the recommended one,
   gamescope, libraries of InputPlumber/`steamos-manager`/`extest`, no `.new-*`, no reboot).
-  Also, **the summary of `update-system`** (step 6 of the IdeaPad recipe) checks that the
+  Also, **the summary of `void-update`** (step 6 of the IdeaPad recipe) checks that the
   module is built for the newest kernel (if it is 6.18.x and missing, it rebuilds it), warns if
   the metapackages are not held and **warns when Void recommends another series** (compares the
   repository's `linux` with the installed one): that way you know when to consider the change.
@@ -1330,10 +1362,10 @@ sudo sh "$B/legion/gpu-overdrive.sh" && sudo reboot                     # manual
   (`Exec=/bin/false` + `SystemdService`), with a list in `/usr/local/share/steamos-manager-void/manifest`
   (used by `--remove`), removes `[gpu_power_profile]` from the profiles if `pp_power_profile_mode` is missing
   (below), and reloads D-Bus. The rest of `legion-go-series.toml` stays as it comes. In the same folder
-  it records, on every installation (since 2026-10-08), the **reference that `update-system` reads**: `sha256`
+  it records, on every installation (since 2026-10-08), the **reference that `void-update` reads**: `sha256`
   (output of `sha256sum /usr/lib/steamos-manager /usr/bin/steamosctl` as they were installed; it is
   checked by `sha256sum -c`) and `package` (the tarball's name without `.tar.gz`, e.g.
-  `steamos-manager-v26.4.1-void-2`: with it `update-system` says whether it is the patched one or the official one).
+  `steamos-manager-v26.4.1-void-2`: with it `void-update` says whether it is the patched one or the official one).
   `--remove` deletes the whole folder.
 - **It needs `tracefs`**, which Void does not mount: without it, it crashed on start with `Error: No such file or
   directory (os error 2)` after "Starting SLS log receiver" (its `ftrace` creates
@@ -1386,7 +1418,7 @@ sudo sh "$B/legion/gpu-overdrive.sh" && sudo reboot                     # manual
 
   Before anything it **tests the patch** against that tag (`patch-still-needed git`, since
   2026-10-09; YA_INCLUIDO (ALREADY_INCLUDED) → it does not build; CONFLICTO (CONFLICT) → it stops; on 2026-10-09, HACE_FALTA (STILL_NEEDED) on v26.4.1, commit
-  `a0d399defebd`, the same that the script checks). `update-system` also looks at the latest upstream
+  `a0d399defebd`, the same that the script checks). `void-update` also looks at the latest upstream
   tag and, if it is new, tests the patch against it (NOTA (NOTE) on its line).
   It clones the tag `v26.4.1` in `~/src/steamos-manager` (checks commit `a0d399d`), applies the
   `0*.patch` of its folder, `make build`, `make test` inside `dbus-run-session` (two tests, the
@@ -1401,7 +1433,7 @@ sudo sh "$B/legion/gpu-overdrive.sh" && sudo reboot                     # manual
   **The build dependencies are kept on purpose** (the user's decision, 2026-10-08: they are
   needed to rebuild steamos-manager with `build-steamos-manager.sh` after an update, and that
   script stops if any is missing). Cost: 34 packages, **≈ 470 MB** installed (with `libllvm21`, which
-  only clang uses; Mesa uses `libllvm22`), which `update-system` updates with the rest. They are only
+  only clang uses; Mesa uses `libllvm22`), which `void-update` updates with the rest. They are only
   steamos-manager's: `extest` uses rustup's Rust and `gcc-multilib`, and gamescope and the wlroots portal are
   built with `xbps-src`, which installs their dependencies inside its own environment
   (`binary-bootstrap`, in `~/src/void-packages`), not in the system. To remove them one day (before,
@@ -1536,7 +1568,7 @@ Propiedades → Acceso directo* (*Properties → Shortcut*) → click on the ico
 ### Discord (Vesktop) via Flatpak, the GNOME Software store and its art (2026-10-05 and 06)
 
 **Discord is not in Void's repositories** (not even in `nonfree`; searched with `xbps-query -Rs discord`
-on 2026-10-05). **Flatpak** (Flathub) was chosen: official, sandboxed and updated by `update-system`,
+on 2026-10-05). **Flatpak** (Flathub) was chosen: official, sandboxed and updated by `void-update`,
 which already does `flatpak update` if it finds Flatpak (for all installations, the user's too).
 Store: **GNOME Software** (`gnome-software` 50.2, "flatpak only", from Void's repository; it brings
 `flatpak` 1.18.3 as a dependency). Discarded: **KDE Discover** (`discover`, 36 dependencies of
@@ -1731,12 +1763,12 @@ flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/fl
     screens, as before. It still needs `XDPW_PERSIST_MODE`. Built with Void's package
     (`build-portal-wlr.sh`, same scheme as gamescope's: `revision=2`, ~1 min with 16 threads;
     package saved next to it: the current one, with the three patches, in the third point below; since
-    2026-10-09 the script and `update-system` first test the three patches against Void's code, see the
+    2026-10-09 the script and `void-update` first test the three patches against Void's code, see the
     IdeaPad recipe, step 6, *Prueba de parches propios* (*Testing own patches*): on 2026-10-09, the three HACE_FALTA (STILL_NEEDED) on 0.8.4_1 and
     on upstream `master`) and installed with `sudo xbps-install -R ~/src/void-packages/hostdir/binpkgs
     xdg-desktop-portal-wlr`. **Rebooting the Legion was needed** for it to work (restarting only the
     portal was not enough; not found out what the old session kept). The chooser no longer carries memory: only the
-    Steam rule. **`update-system` warns** if Void replaces the portal (repository without
+    Steam rule. **`void-update` warns** if Void replaces the portal (repository without
     `hostdir/binpkgs`). **Verified** (2026-10-07, after rebooting): each stream calls the chooser
     **once** (the follow-up ones are restored by the portal and do not reach the log), and reconfiguring or
     streaming again asks anew. The user also saw that **a window on another workspace did
@@ -1942,12 +1974,12 @@ flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/fl
     **Tested** (2026-10-07, with `gdb` attached): stream, reconfigure, stop and start again
     several times → **no crashes** (11 stream state changes, no `SIGSEGV`). Nuance: that time no
     `out of buffers` showed up, which is when the race opens: a good sign, not definitive proof.
-    **`update-system` warns** if the installed gamescope stops being the one built here
+    **`void-update` warns** if the installed gamescope stops being the one built here
     (`xbps-query -p repository gamescope` without `hostdir/binpkgs`): a Void update replaces it;
     then, repeat `build-gamescope.sh` (if the patch no longer applies, it stops at "patching").
-    **Since 2026-10-09** `update-system` and `build-gamescope.sh` **test the patch** against the code
+    **Since 2026-10-09** `void-update` and `build-gamescope.sh` **test the patch** against the code
     of Void's template (`patch-still-needed`, IdeaPad recipe, step 6, *Testing own
-    patches*): if it already has it, the script does not build and `update-system` gives the command to go back to Void's
+    patches*): if it already has it, the script does not build and `void-update` gives the command to go back to Void's
     (`sudo xbps-install -Sf gamescope && sudo setcap cap_sys_nice=eip /usr/bin/gamescope`). On 2026-10-09:
     HACE_FALTA (STILL_NEEDED) on 3.16.30_1 (and on upstream `master`).
     **Common's version, checked** (2026-10-07, full review): run as is from
@@ -1962,7 +1994,7 @@ flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/fl
     portal** (with the options above). The default one (X11 chooser with windows) was discarded: it forces
     `ENABLE_GAMESCOPE_WSI=0` in every game (and loses the layer's things) and the full screen comes out black.
     **Also verified** (2026-10-07): no crashes when changing the stream's settings and with a heavier
-    game (Borderlands 3). If a Void update replaces gamescope, `update-system` warns and it is
+    game (Borderlands 3). If a Void update replaces gamescope, `void-update` warns and it is
     redone with `build-gamescope.sh`.
   - **Verified again** (2026-10-07, by the user), after the wlroots portal's three patches,
     the new chooser and the labwc rules: **screen sharing in Game Mode still
@@ -2468,7 +2500,7 @@ take the dialog **to the external monitor** and choose another: `monitorDP-1/…
 takes the screen **when it opens**: dragged to the other one it does not notice; you have to close it and open it on the screen
 you want, checked on 2026-10-09). Never `monitorUnknown`. `xbps-query -p pkgver xfdesktop`
 → `xfdesktop-4.20.2_2`. **Verified on 2026-10-09 on both screens** (`monitoreDP-1` and `monitorDP-1`, each one with its wallpaper;
-without `monitorUnknown`). `update-system` watches it **by testing the patch** against Void's code (since
+without `monitorUnknown`). `void-update` watches it **by testing the patch** against Void's code (since
 2026-10-09; before it assumed "fixed in >= 4.20.3"): OK while it is needed, NOTA (NOTE) with the command to go back
 to Void's if it already has it, AVISO (WARNING) if it does not apply (IdeaPad recipe, step 6, *Prueba de parches propios* (*Testing own patches*)).
 
@@ -2509,7 +2541,7 @@ screen**, right click on an image → "Establecer como fondo de pantalla" ("Set 
 the wallpaper of that screen changes; Thunar **on the external monitor**: `monitorDP-1/…` and that one's changes.
 Never `monitorUnknown`. `xbps-query -p pkgver Thunar` → `Thunar-4.20.10_2`. **Verified on 2026-10-09 on both screens** (`monitoreDP-1` and `monitorDP-1`; without `monitorUnknown`). Unlike
 the dialog, **dragging Thunar's window** to another screen is enough: it sets the wallpaper on the
-one it is on at that moment. `update-system` watches it **by testing the patch** against Void's code (since
+one it is on at that moment. `void-update` watches it **by testing the patch** against Void's code (since
 2026-10-09; before it assumed "fixed if Void's plugin links `libxfce4windowing`"), the same as
 `xfdesktop`; `build-thunar.sh` also tests it before building (before, a `grep`).
 
@@ -2598,7 +2630,7 @@ Steam's "Probar entradas del dispositivo" ("Test Device Inputs") **does not show
 `extest` is missing in the running Steam. Check `grep '^N:' /proc/bus/input/devices | grep extest`.
 If it does not show: make sure Steam was started with the launcher or the autostart (both carry the `LD_PRELOAD`).
 If a Steam update broke it, rebuild (step 14, "Controller on the desktop").
-`update-system` warns if the library lacks something.
+`void-update` warns if the library lacks something.
 
 ### The trackpad clicks by itself
 
@@ -2625,17 +2657,17 @@ It is labwc (`libseat … Device not taken`). Reboot over SSH (`sudo reboot`, st
    reboot) and `grep -c '^\[gpu_performance\]' /usr/share/steamos-manager/devices/legion-go-series.toml`
    → `1` (otherwise, repeat `install-steamos-manager.sh`).
 
-### `update-system` ends with AVISO (WARNING)
+### `void-update` ends with AVISO (WARNING)
 
-Each line says what to do (what each one checks: IdeaPad recipe, step 6, `update-system`). To
-see it again without updating or `sudo`: **`update-system --summary`** (summary) (2026-10-08). The Legion's ones:
+Each line says what to do (what each one checks: IdeaPad recipe, step 6, `void-update`). To
+see it again without updating or `sudo`: **`void-update --summary`** (summary) (2026-10-08). The Legion's ones:
 
 - **TDP** that does not build for the new kernel (the error, in `/var/lib/dkms/lenovo-wmi-tdp/*/build/make.log`;
   the hidden GRUB boots that kernel without fine TDP: for the previous one, `grub-hidden.sh --remove`, step 8),
   kernel not held or new series recommended by Void: step 14, TDP, "Updates". gamescope's `cap_sys_nice`:
-  `sudo setcap cap_sys_nice=eip /usr/bin/gamescope` (`update-system` puts it back by itself).
+  `sudo setcap cap_sys_nice=eip /usr/bin/gamescope` (`void-update` puts it back by itself).
 - **Patched gamescope or `xdg-desktop-portal-wlr`.** Already **before confirming** the update,
-  `update-system` warns if the list replaces them ("Void reemplazará … parcheado (a → b)" / "Void will replace … patched (a → b)"): to keep them,
+  `void-update` warns if the list replaces them ("Void reemplazará … parcheado (a → b)" / "Void will replace … patched (a → b)"): to keep them,
   answer `n` and `sudo xbps-pkgdb -m hold <package>` (without Void's fixes). In the summary, an
   AVISO (WARNING) if the installed one is already Void's (**without the patch**), if Void has **the same** version and revision
   as ours (xbps does not install it, but it is a newer Void build: rebuild to have its
@@ -2694,7 +2726,7 @@ Detail in step 14, "Desktop portals and screen sharing".
    Vesktop's launch options with `--env=XDG_SESSION_TYPE=wayland` (step 14).
 2. **gamescope crashes** (back to Xfce; `Segmentation fault` in `steam-game-mode.log`, after `out of
    buffers`): is the patched gamescope still there? `xbps-query -p pkgver,repository gamescope` →
-   `3.16.30_2` and `hostdir/binpkgs` (`update-system` warns). Otherwise, rebuild (`build-gamescope.sh`,
+   `3.16.30_2` and `hostdir/binpkgs` (`void-update` warns). Otherwise, rebuild (`build-gamescope.sh`,
    install and `setcap`). If with the patch it crashes again: `diag-gamescope-pipewire.sh` (with `gdb` and
    `gamescope-dbg`) and look at the trace.
 3. **Only Steam's menu is heard:** audio source "Todo el sistema" ("Entire system") in the stream's configuration
@@ -2767,7 +2799,7 @@ folder "/mnt/microsd"`. If it came out in another path, repeat `microsd-at-boot.
 ### In Xfce Wayland, choosing a wallpaper does nothing
 
 The dialog writes to `monitorUnknown` and `xfdesktop` reads `monitor<connector>` (`eDP-1`, `DP-1`): step 15,
-*Desktop wallpaper on Wayland*. Fix: the patched xfdesktop (or Void's, if `update-system` says it already has it). On the spot,
+*Desktop wallpaper on Wayland*. Fix: the patched xfdesktop (or Void's, if `void-update` says it already has it). On the spot,
 without root: `xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitor<connector>/workspace0/last-image -n -t
 string -s <image>` (without `-n -t string` if the key already exists).
 
@@ -2775,7 +2807,7 @@ string -s <image>` (without `-n -t string` if the key already exists).
 
 Thunar writes to `monitorUnknown` (step 15, *Wallpaper from Thunar on Wayland*). Fix: the patched
 Thunar and `thunar -q`. If it stays the same: `xbps-query -p pkgver Thunar` (did an update replace it?
-`update-system --summary`) and that no old Thunar is left open (`pgrep -a thunar`).
+`void-update --summary`) and that no old Thunar is left open (`pgrep -a thunar`).
 
 ### `Common` does not mount (`wrong fs type…`, `volume is dirty`)
 
@@ -2849,8 +2881,10 @@ iw dev wlp193s0 get power_save             # Power save: off
 sudo sv status decky                       # run (Decky Loader)
 xbps-query -p pkgver hidapi                # hidapi-0.14.0_1 (Decky's Colores plugin, step 14)
 cat ~/.local/state/wallpaper-watcher.log     # in Xfce Wayland: "watching 2 screens" and, after a change, "xfdesktop --reload"
-xbps-query -p pkgver xfdesktop             # xfdesktop-4.20.2_2 (patched, step 15: wallpaper on Wayland) or Void's if update-system says it already has it
-ls ~/.local/bin/patch-still-needed ~/.local/share/update-system/patches   # patch test: Thunar gamescope steamos-manager xdg-desktop-portal-wlr xfdesktop
+xbps-query -p pkgver xfdesktop             # xfdesktop-4.20.2_2 (patched, step 15: wallpaper on Wayland) or Void's if void-update says it already has it
+ls ~/.local/bin/patch-still-needed ~/.local/share/void-update/patches   # patch test: Thunar gamescope steamos-manager xdg-desktop-portal-wlr xfdesktop
+void-update --version; ls ~/.config/autostart/void-update-tray.desktop; pgrep -af void-update-tray   # void-update 1.0.0 · the icon running
+void-update --list | tail -3                 # the pending updates (rootless), or "System is up to date" ("El sistema está al día")
 xbps-query -p pkgver Thunar                # Thunar-4.20.10_2 (patched, step 15: wallpaper from Thunar on Wayland)
 grep -E "mode:|cursor:" ~/.local/state/steam-game-mode.log | tail -2   # direct screen (DRM) / volantes_cursors
 sudo sv status inputplumber steamos-manager udev-net   # all three in "run"
@@ -2862,7 +2896,7 @@ cat /sys/module/amdgpu/parameters/ppfeaturemask   # 0xfff7ffff (overdrive, step 
 grep -c '^\[gpu_performance\]' /usr/share/steamos-manager/devices/legion-go-series.toml; cat /sys/class/drm/card*/device/power_dpm_force_performance_level   # 1 · auto (manual only with the manual clock enabled in Steam)
 sha256sum /usr/lib/steamos-manager         # cc464424414289025056eaa2ee38976aa36b6d3dc662340ebd427e4600d1586c (with the set_clocks patch)
 sha256sum -c /usr/local/share/steamos-manager-void/sha256   # /usr/lib/steamos-manager: OK · /usr/bin/steamosctl: OK (the installer's reference)
-cat /usr/local/share/steamos-manager-void/paquete           # steamos-manager-v26.4.1-void-2 (written by the installer; update-system --summary shows it)
+cat /usr/local/share/steamos-manager-void/paquete           # steamos-manager-v26.4.1-void-2 (written by the installer; void-update --summary shows it)
 xbps-query -m | grep -c '^speech-dispatcher-[0-9]'   # 1 (marked manual: steamos-manager's libspeechd; without the [0-9] it would also count speech-dispatcher-devel)
 xbps-query -m | grep -cE '^(glib-devel|eudev-libudev-devel|speech-dispatcher-devel|clang|pkg-config)-[0-9]'   # 5 (steamos-manager's build dependencies, kept on purpose)
 bluetoothctl show | grep Alias             # Alias: Legion-Go-Gen-2 (step 5–12)
@@ -2909,7 +2943,7 @@ DISPLAY=:0 xprop -root GAMESCOPE_VRR_ENABLED   # = 1 in Game Mode with "Habilita
 > **In this repository:** `install/verify.sh` runs the commands of this block that need no root and
 > prints each one with its expected value next to it; the `sudo` ones are listed for the user to run.
 
-And an `update-system`: its final summary must say "✓ Todo en orden" ("✓ All in order").
+And an `void-update`: its final summary must say "✓ Todo en orden" ("✓ All in order").
 
 Verified on 2026-10-03: kernel 6.18.55, avahi announcing `Legion-Go-Gen-2.local`, `ssh lego` and
 `ssh ideapad` by name, keyboard `us`/`intl`, session with Orchis, Papirus-Dark teal, Volantes,
@@ -2976,7 +3010,7 @@ sharing in Game Mode").
   "no me es prioritario borrar dependencias de compilación si se requieren para el mantenimiento tras
   actualizaciones" — "deleting build dependencies is not a priority for me if they are needed for maintenance after
   updates"). `glib-devel`, `eudev-libudev-devel`, `speech-dispatcher-devel`, `clang` and
-  `pkg-config` (34 packages with their dependencies, ≈ 470 MB; `update-system` updates them too) are
+  `pkg-config` (34 packages with their dependencies, ≈ 470 MB; `void-update` updates them too) are
   used by `build-steamos-manager.sh`; gamescope and the wlroots portal are not (`xbps-src` brings its own in
   its environment), nor `extest` (Rust and `gcc-multilib`). How to remove them if one day wanted: step 14,
   steamos-manager, "How it is built".
@@ -3049,13 +3083,13 @@ sharing in Game Mode").
 
 **Wallpaper on Wayland (2026-10-09): xfdesktop and Thunar patched, installed** (step 15) and verified that
 day on the Legion's screen: the dialog and "Establecer como fondo de pantalla" ("Set as wallpaper") write `monitoreDP-1` and
-the wallpaper changes; `update-system --summary` → 14 × OK. On the external monitor, too (`monitorDP-1`, each
+the wallpaper changes; `void-update --summary` → 14 × OK. On the external monitor, too (`monitorDP-1`, each
 screen with its wallpaper). Remaining limit: the dialog takes the screen when it opens (close it and open it on the
 other one); Thunar follows its window. **Done.**
 
 **Before, to do:** nothing (2026-10-08). **Done that day** by the user: registering the name of the package of
 the already installed steamos-manager, without reinstalling (`echo steamos-manager-v26.4.1-void-2 | sudo tee
-/usr/local/share/steamos-manager-void/paquete`; the installer records it by itself since that day): `update-system
+/usr/local/share/steamos-manager-void/paquete`; the installer records it by itself since that day): `void-update
 --resumen` gives 12 × OK with `steamos-manager, paquete steamos-manager-v26.4.1-void-2`; `sudo xbps-pkgdb -m manual
 speech-dispatcher` (checked: `xbps-query -m` lists `speech-dispatcher-0.12.1_1`) and the empty
 folders of the live `/mnt/home` and `/mnt/steamos-home` no longer exist (in `/mnt` only `microsd` remains; the
@@ -3092,10 +3126,10 @@ screen sharing*).
   `common/agent/audit-void.sh`.
 - **gamescope patch**: if `Segmentation fault` shows up again in `~/.local/state/steam-game-mode.log`
   when streaming, repeat the diagnosis (`legion/diag-gamescope-pipewire.sh`, step 14); and after
-  a Void update, `update-system` warns if it has to be rebuilt.
+  a Void update, `void-update` warns if it has to be rebuilt.
 - **`extest`**: if a Steam update breaks it, rebuild (step 14); Rust and `gcc-multilib` are
   kept for that (see *Cleanup*).
-  `update-system` warns if `extest`, InputPlumber or `steamos-manager` lack a library.
+  `void-update` warns if `extest`, InputPlumber or `steamos-manager` lack a library.
 
 **Cleanup** (2026-10-05, the user's decision: everything except what may be needed later)
 
@@ -3148,6 +3182,13 @@ screen sharing*).
   session when reinstalling InputPlumber.
 
 ## History
+
+- **2026-10-11 (void-update)** — `update-system` becomes **`void-update`** (bash, `common/void-update/`), like
+  CachyOS's cachy-update: rootless checks (`xbps-install -Mun`), panel icon with automatic checks (on network
+  connect and every 6 h), notifications, Void's news before updating, colored list, runit services with old code,
+  and the same summary (identical output, checked against `update-system --resumen`). The old name is removed
+  (the user's decision); its patch folders move to `~/.local/share/void-update/patches` and
+  `~/.cache/void-update/patches`. Step 5–12, *void-update*.
 
 - **2026-10-09 (this repository)** — The Legion's documentation and pieces, translated into English and
   organized as the private GitHub repository `void-legion-go2`: same content, English names for scripts,

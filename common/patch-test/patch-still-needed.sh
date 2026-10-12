@@ -18,12 +18,12 @@
 #   patch-still-needed git <url> <ref> <name> <patch>...  tag or branch of upstream
 #   --no-cache (before the mode): do not read the cache (--sin-cache also works)
 #   --version <version_revision> (before "void"): if the cache already has that version, it answers without network
-#     (update-system passes it the one that Void's repository publishes; the template may be ahead)
+#     (void-update passes it the one that Void's repository publishes; the template may be ahead)
 # Output: one line "PATCH <file> <state>" per patch and, at the end, always one line
 #   "RESULT <name> <tested version> <state> <detail>"
-# The words PATCH, RESULT and the states are fixed (update-system reads them); <detail> is for a person and
+# The words PATCH, RESULT and the states are fixed (void-update reads them); <detail> is for a person and
 # follows the system's language (lib/i18n.sh).
-# Cache: ~/.cache/update-system/patches/<name>-<version>-<hash of the patches and the language>.txt (UNCHECKED
+# Cache: ~/.cache/void-update/patches/<name>-<version>-<hash of the patches and the language>.txt (UNCHECKED
 # is not saved). For Void, the version is the template's (version_revision); for git, the ref and its commit.
 #
 # What is downloaded is treated as data: it goes to a new, empty directory that is deleted at the end; from the
@@ -46,7 +46,7 @@ else t() { _f=$1; shift; printf -- "$_f\n" "$@"; }; fi
 # tr_ FORMAT ARGS: the translated text, to put it inside a line with $(…)
 tr_() { t "$@"; }
 
-CACHE=${XDG_CACHE_HOME:-$HOME/.cache}/update-system/patches
+CACHE=${XDG_CACHE_HOME:-$HOME/.cache}/void-update/patches
 VP_URL=https://github.com/void-linux/void-packages.git
 USE_CACHE=1; HINT=
 while :; do

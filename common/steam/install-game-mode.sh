@@ -31,7 +31,7 @@
 #   /usr/local/bin/steamos-update                       with -steamos3 Steam asks for
 #                                                       system updates: it answers "there are
 #                                                       none" (code 7, like SteamOS); here the system
-#                                                       is updated with update-system
+#                                                       is updated with void-update
 #   /usr/share/applications/game-mode.desktop          "Game Mode" launcher for Xfce
 #   /usr/local/lib/steam-game-mode/bin/sudo             brightness from Steam: its "sudo -n tee …/brightness"
 #                                                       → elogind's SetBrightness (without privileges)
@@ -356,7 +356,7 @@ cat > "$UPD" <<'EOF'
 #!/bin/sh
 # steamos-update — with -steamos3, Steam asks for system updates (in SteamOS it is
 # /usr/bin/steamos-update; code 7 = "No update available"). Here the system is updated with
-# update-system, so it always answers that there are none. Installed by common/steam/install-game-mode.sh (step 14).
+# void-update, so it always answers that there are none. Installed by common/steam/install-game-mode.sh (step 14).
 [ "$1" = "--supports-duplicate-detection" ] && exit 0
 echo "No update available" >&2
 exit 7

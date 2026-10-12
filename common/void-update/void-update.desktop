@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=void-update
+GenericName=System update
+GenericName[es]=Actualizar el sistema
+Comment=Update Void Linux (xbps, Flatpak) and the tasks around it
+Comment[es]=Actualizar Void Linux (xbps, Flatpak) y lo que hay que hacer antes y después
+Exec=void-update --wait
+Icon=software-update-available
+Terminal=true
+Categories=System;PackageManager;
+Keywords=update;upgrade;xbps;void;actualizar;

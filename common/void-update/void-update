@@ -1,0 +1,112 @@
+#!/bin/bash
+# void-update — updates Void and assists with what has to be done before and after, like CachyOS's
+# cachy-update (a fork of arch-update), adapted to xbps and runit. It replaces the fish function update-system
+# (2026-10-11; the user's decision: the old name is removed).
+#
+#   void-update                  full update (lib/upgrade.sh): news, list, confirm, xbps first, the rest,
+#                                Flatpak, orphans, cache, kernels, .new-*, services to restart, summary, reboot?
+#   void-update -c, --check      looks for updates WITHOUT root (xbps-install -Mun, Flatpak), updates the tray
+#                                icon and notifies if the list changed
+#   void-update -l, --list       looks and shows the pending updates (exit 7 if there are none)
+#   void-update -n, --news [N]   Void's latest N news (default 5; config news_count)
+#   void-update -s, --services   runit services still running old code (asks to restart them)
+#   void-update --summary        only the final summary, without syncing, without sudo, changing nothing
+#   void-update --tray [--enable|--disable]
+#                                the panel icon; --enable also starts it at every login (XDG autostart),
+#                                --disable stops that. --check --enable is the same as --tray --enable: the
+#                                periodic checks are done by the icon (on network connect and every N hours)
+#   void-update --gen-config [--force] | --show-config | --edit-config
+#                                ~/.config/void-update/void-update.conf (see void-update.conf.example)
+#   void-update -V, --version | -h, --help | -D, --debug (traces)
+#
+# Exit: 0 ok · 1 invalid option · 2 failed check · 3 tray error · 4 not confirmed · 5 update error ·
+#       7 no pending updates (--list) · 8 configuration error
+# Its messages follow the system's language (lib/i18n.sh; Spanish catalog included). Installed by
+# install-void-update.sh in ~/.local/bin, with its libraries in ~/.local/lib/void-update.
+set -o pipefail
+VU_VERSION=1.0.0
+
+# Libraries: next to this script (the repository) or installed
+HERE=$(dirname "$(readlink -f "$0")")
+if [ -d "$HERE/lib" ] && [ -f "$HERE/lib/base.sh" ]; then VU_LIB=$HERE/lib; VU_TRAY=$HERE/void-update-tray
+else VU_LIB=$HOME/.local/lib/void-update/lib; VU_TRAY=$HOME/.local/lib/void-update/void-update-tray; fi
+[ -f "$VU_LIB/base.sh" ] || { echo "void-update: libraries not found ($VU_LIB)" >&2; exit 1; }
+# Translations: the repository's lib/i18n.sh, or the installed copy, or English
+R=$HERE; until [ -f "$R/lib/i18n.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
+if [ -f "$R/lib/i18n.sh" ]; then I18N_REPO_DIR=$R; . "$R/lib/i18n.sh"
+elif [ -r "$HOME/.local/share/void-legion/lib/i18n.sh" ]; then . "$HOME/.local/share/void-legion/lib/i18n.sh"
+else t() { _f=$1; shift; printf -- "$_f\n" "$@"; }; fi
+
+for f in base check list news services summary upgrade; do . "$VU_LIB/$f.sh"; done
+
+VU_DESKTOP=void-update.desktop
+VU_AUTOSTART="${XDG_CONFIG_HOME:-$HOME/.config}/autostart/void-update-tray.desktop"
+
+usage() { sed -n '/^#   void-update /,/^# Exit/p' "$0" | sed 's/^# \{0,1\}//' | sed '$d'; }
+
+# Opens void-update in a terminal (tray, notification): through its .desktop, like cachy-update (gio picks the
+# terminal: here xterm, ~/.local/bin/xdg-terminal-exec); without gio, xterm directly.
+open_terminal() {
+    local d
+    for d in "${XDG_DATA_HOME:-$HOME/.local/share}/applications" /usr/local/share/applications /usr/share/applications; do
+        [ -f "$d/$VU_DESKTOP" ] && command -v gio >/dev/null && { setsid -f gio launch "$d/$VU_DESKTOP" >/dev/null 2>&1; return; }
+    done
+    setsid -f xterm -e "$0" --wait >/dev/null 2>&1
+}
+
+tray() {
+    case "${1:-}" in
+        --enable)
+            mkdir -p "$(dirname "$VU_AUTOSTART")"
+            cat > "$VU_AUTOSTART" <<EOF || exit 3
+[Desktop Entry]
+Type=Application
+Name=void-update (tray)
+Comment=$(t "Update notifier for Void Linux")
+Exec=void-update --tray
+Icon=software-update-available
+X-GNOME-Autostart-enabled=true
+EOF
+            ok "The icon will start at every login (%s)" "$VU_AUTOSTART"
+            pgrep -u "$(id -u)" -f 'void-update-tray' >/dev/null || setsid -f "$VU_TRAY" >/dev/null 2>&1
+            return 0 ;;
+        --disable)
+            rm -f "$VU_AUTOSTART"; ok "The icon will no longer start at login"; return 0 ;;
+    esac
+    [ -x "$VU_TRAY" ] || { err "The icon is not installed (%s)" "$VU_TRAY"; exit 3; }
+    exec "$VU_TRAY"
+}
+
+gen_config() {
+    if [ -e "$VU_CONF" ] && [ "${1:-}" != --force ]; then err "%s already exists (--force overwrites it)" "$VU_CONF"; exit 8; fi
+    mkdir -p "$(dirname "$VU_CONF")"
+    local ex; for ex in "$HERE/void-update.conf.example" "$HOME/.local/lib/void-update/void-update.conf.example"; do
+        [ -f "$ex" ] && { cp "$ex" "$VU_CONF"; ok "Written: %s" "$VU_CONF"; return 0; }
+    done
+    err "void-update.conf.example not found"; exit 8
+}
+
+case "${1:-}" in
+    "")              vu_upgrade; rc=$? ;;
+    -c|--check)      if [ "${2:-}" = --enable ]; then tray --enable; rc=$?
+                     elif [ "${2:-}" = --disable ]; then tray --disable; rc=$?
+                     else vu_check || rc=2; fi ;;
+    -l|--list)       vu_check --quiet || exit 2; vu_print_list || { ok "System is up to date"; exit 7; } ;;
+    -n|--news)       vu_news "${2:-}"; rc=$? ;;
+    -s|--services)   vu_services --ask; rc=$? ;;
+    --summary|--resumen)
+                     VU_NEW_FILES=$(find /etc -name '*.new-*' 2>/dev/null | grep -c .)
+                     VU_REBOOT=$(vu_reboot_since_boot)
+                     vu_summary --no-repair; rc=0 ;;
+    --tray)          tray "${2:-}" ;;
+    --gen-config)    gen_config "${2:-}"; rc=$? ;;
+    --show-config)   if [ -r "$VU_CONF" ]; then cat "$VU_CONF"; else err "There is no %s (void-update --gen-config)" "$VU_CONF"; exit 8; fi ;;
+    --edit-config)   [ -r "$VU_CONF" ] || gen_config; "${EDITOR:-${VISUAL:-nano}}" "$VU_CONF"; rc=$? ;;
+    --open-terminal) open_terminal; rc=0 ;;
+    --wait)          vu_upgrade; rc=$?; echo; read -r -p "$(t "Press Enter to close")" _ ;;
+    -D|--debug)      shift; exec bash -x "$0" "$@" ;;
+    -V|--version)    echo "void-update $VU_VERSION"; rc=0 ;;
+    -h|--help)       usage; rc=0 ;;
+    *)               err "Unknown option: %s (void-update --help)" "$1"; exit 1 ;;
+esac
+exit "${rc:-0}"

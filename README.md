@@ -9,7 +9,8 @@ What the machine ends up with: Void (glibc, runit) with Xfce on Wayland (labwc) 
 mode, switching without password, clean Steam shutdown); InputPlumber (Valve controller, gyroscope),
 fine **TDP** through DKMS, **steamos-manager** (patched), Decky, screen sharing in both modes (patched
 wlroots portal, own chooser, SteamOS's gamescope portal, patched gamescope), hidden GRUB with a themed
-menu, and an `update-system` that **tests whether each own patch is still needed**.
+menu, and **`void-update`** (like CachyOS's cachy-update: panel icon, rootless checks, notifications, Void's
+news, services to restart) that also **tests whether each own patch is still needed**.
 
 > Private repository. Private values (MACs, UUIDs, Wi-Fi name, serial numbers, Steam account id) are
 > written as `@NAME@`; the real ones live only in `local.env`, which is not in git ([docs/sanitization.md](docs/sanitization.md)).

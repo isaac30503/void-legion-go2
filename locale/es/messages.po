@@ -2867,8 +2867,8 @@ msgid "K. By hand in Steam and on the desktop (list, point K: developer mode and
 msgstr "K. A mano en Steam y en el escritorio (lista, punto K: modo desarrollador y ahorro de energía del Wi-Fi, teclado, xterm y Firefox como juegos, Decky, arte, disposición del mando, Bluetooth, VRR, Vesktop y portales, orden del audio)"
 
 #: install/install.sh
-msgid "L. Check (Verification block of the recipe and update-system)"
-msgstr "L. Comprobación (bloque de Comprobación de la receta y update-system)"
+msgid "L. Check (Verification block of the recipe and void-update)"
+msgstr "L. Comprobación (bloque de Comprobación de la receta y void-update)"
 
 #: install/install.sh
 msgid "M. Clean up: archive the logs of ~ in logs/legion/ (check them for private values) and delete them"
@@ -2978,3 +2978,267 @@ msgstr "== binarios de la Release"
 msgid "   note: some binaries are not here yet (bash install/fetch-assets.sh)"
 msgstr "   nota: aún faltan binarios (bash install/fetch-assets.sh)"
 
+
+#: common/void-update
+msgid "Update notifier for Void Linux"
+msgstr "Aviso de actualizaciones para Void Linux"
+
+#: common/void-update
+msgid "The icon will start at every login (%s)"
+msgstr "El ícono arrancará en cada inicio de sesión (%s)"
+
+#: common/void-update
+msgid "The icon will no longer start at login"
+msgstr "El ícono ya no arrancará al iniciar sesión"
+
+#: common/void-update
+msgid "The icon is not installed (%s)"
+msgstr "El ícono no está instalado (%s)"
+
+#: common/void-update
+msgid "%s already exists (--force overwrites it)"
+msgstr "%s ya existe (--force lo sobrescribe)"
+
+#: common/void-update
+msgid "Written: %s"
+msgstr "Escrito: %s"
+
+#: common/void-update
+msgid "void-update.conf.example not found"
+msgstr "no se encuentra void-update.conf.example"
+
+#: common/void-update
+msgid "System is up to date"
+msgstr "El sistema está al día"
+
+#: common/void-update
+msgid "There is no %s (void-update --gen-config)"
+msgstr "No hay %s (void-update --gen-config)"
+
+#: common/void-update
+msgid "Press Enter to close"
+msgstr "Pulsa Enter para cerrar"
+
+#: common/void-update
+msgid "Unknown option: %s (void-update --help)"
+msgstr "Opción desconocida: %s (void-update --help)"
+
+#: common/void-update
+msgid "%d min"
+msgstr "%d min"
+
+#: common/void-update
+msgid "%d h %d min"
+msgstr "%d h %d min"
+
+#: common/void-update
+msgid "%d d %d h"
+msgstr "%d d %d h"
+
+#: common/void-update
+msgid "More…"
+msgstr "Más…"
+
+#: common/void-update
+msgid "1 update available"
+msgstr "1 actualización disponible"
+
+#: common/void-update
+msgid "%s updates available"
+msgstr "%s actualizaciones disponibles"
+
+#: common/void-update
+msgid "Checking for updates…"
+msgstr "Buscando actualizaciones…"
+
+#: common/void-update
+msgid "The last check failed: %s"
+msgstr "La última búsqueda falló: %s"
+
+#: common/void-update
+msgid "All (%s)"
+msgstr "Todo (%s)"
+
+#: common/void-update
+msgid "Packages (%s)"
+msgstr "Paquetes (%s)"
+
+#: common/void-update
+msgid "Flatpak (%s)"
+msgstr "Flatpak (%s)"
+
+#: common/void-update
+msgid "Last check %s ago"
+msgstr "Última búsqueda hace %s"
+
+#: common/void-update
+msgid "Next check in %s"
+msgstr "Próxima búsqueda en %s"
+
+#: common/void-update
+msgid "Run void-update"
+msgstr "Ejecutar void-update"
+
+#: common/void-update
+msgid "Check for updates"
+msgstr "Buscar actualizaciones"
+
+#: common/void-update
+msgid "Exit"
+msgstr "Salir"
+
+#: common/void-update
+msgid "void-update's icon is already running"
+msgstr "el ícono de void-update ya está en marcha"
+
+#: common/void-update
+msgid "void-update removed (state and configuration kept in ~/.local/state/void-update and ~/.config/void-update)"
+msgstr "void-update quitado (el estado y la configuración se conservan en ~/.local/state/void-update y ~/.config/void-update)"
+
+#: common/void-update
+msgid "!! missing packages: %s"
+msgstr "!! faltan paquetes: %s"
+
+#: common/void-update
+msgid "== void-update"
+msgstr "== void-update"
+
+#: common/void-update
+msgid "   patch test installed (patch-still-needed)"
+msgstr "   prueba de parches instalada (patch-still-needed)"
+
+#: common/void-update
+msgid "== migration from update-system"
+msgstr "== migración desde update-system"
+
+#: common/void-update
+msgid "   removed ~/.config/fish/functions/update-system.fish"
+msgstr "   quitado ~/.config/fish/functions/update-system.fish"
+
+#: common/void-update
+msgid "   date of the last update moved to ~/.local/state/void-update/last-update"
+msgstr "   fecha de la última actualización movida a ~/.local/state/void-update/last-update"
+
+#: common/void-update
+msgid "   fastfetch's configuration regenerated"
+msgstr "   configuración de fastfetch regenerada"
+
+#: common/void-update
+msgid "== panel icon"
+msgstr "== ícono del panel"
+
+#: common/void-update
+msgid "== done: void-update --help"
+msgstr "== hecho: void-update --help"
+
+#: common/void-update
+msgid "A check is already running"
+msgstr "Ya hay una búsqueda en marcha"
+
+#: common/void-update
+msgid "timeout after %s s"
+msgstr "sin respuesta tras %s s"
+
+#: common/void-update
+msgid "The check failed: %s"
+msgstr "La búsqueda falló: %s"
+
+#: common/void-update
+msgid "Close"
+msgstr "Cerrar"
+
+#: common/void-update
+msgid "Packages (%s):"
+msgstr "Paquetes (%s):"
+
+#: common/void-update
+msgid "Flatpak (%s):"
+msgstr "Flatpak (%s):"
+
+#: common/void-update
+msgid "Could not read Void's news (%s)"
+msgstr "No se pudieron leer las noticias de Void (%s)"
+
+#: common/void-update
+msgid "Void news"
+msgstr "Noticias de Void"
+
+#: common/void-update
+msgid "(new)"
+msgstr "(nueva)"
+
+#: common/void-update
+msgid "No Void news since the last update"
+msgstr "Sin noticias de Void desde la última actualización"
+
+#: common/void-update
+msgid "Void news since the last update:"
+msgstr "Noticias de Void desde la última actualización:"
+
+#: common/void-update
+msgid "Some news ask for a manual step before or after updating: read them (links above) before answering"
+msgstr "Algunas noticias piden un paso a mano antes o después de actualizar: leerlas (enlaces de arriba) antes de responder"
+
+#: common/void-update
+msgid "No service needs a restart after the update"
+msgstr "Ningún servicio necesita reiniciarse tras la actualización"
+
+#: common/void-update
+msgid "This service runs old code and needs a restart to use the update:"
+msgstr "Este servicio corre código viejo y necesita reiniciarse para usar la actualización:"
+
+#: common/void-update
+msgid "These services run old code and need a restart to use the update:"
+msgstr "Estos servicios corren código viejo y necesitan reiniciarse para usar la actualización:"
+
+#: common/void-update
+msgid "Services to restart (e.g. 1 3), 0 = all, Enter = none: "
+msgstr "Servicios a reiniciar (p. ej. 1 3), 0 = todos, Enter = ninguno: "
+
+#: common/void-update
+msgid "Invalid answer"
+msgstr "Respuesta no válida"
+
+#: common/void-update
+msgid "Not restarted: the services keep the old code until they are restarted or the machine reboots"
+msgstr "Sin reiniciar: los servicios siguen con el código viejo hasta que se reinicien o se reinicie la máquina"
+
+#: common/void-update
+msgid "Restarted: %s"
+msgstr "Reiniciado: %s"
+
+#: common/void-update
+msgid "Could not restart %s"
+msgstr "No se pudo reiniciar %s"
+
+#: common/void-update
+msgid "There is already a void-update running"
+msgstr "Ya hay un void-update en marcha"
+
+#: common/void-update
+msgid "Go on anyway? [y/N] "
+msgstr "¿Seguir de todos modos? [s/N] "
+
+#: common/void-update
+msgid "↻ A reboot is advisable (%s). Reboot now? [y/N] "
+msgstr "↻ Conviene reiniciar (%s). ¿Reiniciar ahora? [s/N] "
+
+#: common/void-update
+msgid "it is not known with which script %s was built: look for it in the recipe (and add it to vu_how_to_rebuild, common/void-update/lib/summary.sh)"
+msgstr "no se sabe con qué script se compiló %s: buscarlo en la receta (y añadirlo a vu_how_to_rebuild, common/void-update/lib/summary.sh)"
+
+#: common/void-update
+msgid "TDP (lenovo-wmi-tdp) not built for %s: %s (void-update does it by itself)"
+msgstr "TDP (lenovo-wmi-tdp) sin compilar para %s: %s (void-update lo hace solo)"
+
+#: common/void-update
+msgid "gamescope without cap_sys_nice: %s (void-update does it by itself)"
+msgstr "gamescope sin cap_sys_nice: %s (void-update lo hace solo)"
+
+#: common/void-update
+msgid "!! the patch needs libxfce4windowing >= 4.20.6 (there is %s): update first (void-update)"
+msgstr "!! el parche necesita libxfce4windowing >= 4.20.6 (hay %s): actualizar antes (void-update)"
+
+#: common/void-update
+msgid "from local repositories (built here; void-update warns if Void replaces them):"
+msgstr "de repositorios locales (compilados aquí; void-update avisa si Void los reemplaza):"

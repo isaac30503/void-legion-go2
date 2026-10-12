@@ -1,0 +1,261 @@
+#!/usr/bin/env python3
+"""void-update-tray — void-update's panel icon (StatusNotifierItem, like cachy-update's applet), with
+Ayatana AppIndicator (libayatana-appindicator + python3-gobject, already on both machines: nm-applet needs them).
+
+- The icon shows the state (~/.local/state/void-update/state, written by void-update): up to date, updates
+  available, checking or error. It follows the icon theme (Papirus: update-none, software-update-available,
+  nwg-update-checking, software-update-urgent), with generic fallbacks.
+- Menu: "N updates available" (opens void-update in a terminal), submenus Packages (N) / Flatpak (N) / All (N)
+  with the list, last check and next check, "Run void-update", "Check for updates", "Exit". The middle click on
+  the icon runs void-update (AppIndicator: secondary activate; the left click opens the menu).
+- Checks by itself (void-update --check, without root): when the network connects (event of NetworkManager over
+  D-Bus) if the last check is older than the interval, and then every check_interval_hours (config; 0 = only on
+  connect). It reacts to the state file event-driven (Gio file monitor), never polling it; the "ago"/"in"
+  labels are refreshed once a minute.
+Started with "void-update --tray" (and at login with "void-update --tray --enable"). Its texts follow the
+system's language (void_legion_i18n).
+"""
+import os, sys, time, shutil, subprocess
+import gi
+gi.require_version("Gtk", "3.0")
+gi.require_version("AyatanaAppIndicator3", "0.1")
+from gi.repository import Gtk, GLib, Gio, AyatanaAppIndicator3 as AI
+
+for _d in (os.path.expanduser("~/.local/share/void-legion/lib"), "/usr/local/share/void-legion/lib",
+           os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), "lib")):
+    if os.path.isfile(os.path.join(_d, "void_legion_i18n.py")):
+        sys.path.insert(0, _d)
+        break
+try:
+    from void_legion_i18n import _
+except ImportError:
+    def _(s):
+        return s
+
+STATE = os.path.join(os.environ.get("XDG_STATE_HOME") or os.path.expanduser("~/.local/state"), "void-update")
+CONF = os.path.join(os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config"), "void-update", "void-update.conf")
+HERE = os.path.dirname(os.path.realpath(__file__))
+VU = next((p for p in (os.path.join(HERE, "void-update"), shutil.which("void-update"),
+                os.path.expanduser("~/.local/bin/void-update")) if p and os.path.isfile(p)), "void-update")
+ICONS = {  # state -> candidates, first one the theme has
+    "up-to-date": ["update-none", "nwg-update-noupdate", "software-update-available-symbolic", "emblem-default"],
+    "available": ["software-update-available", "nwg-update-available", "system-software-update"],
+    "checking": ["nwg-update-checking", "mintupdate-checking", "view-refresh"],
+    "error": ["software-update-urgent", "mintupdate-error", "dialog-warning"],
+}
+NM_CONNECTED_GLOBAL = 70
+
+
+def conf():
+    c = {"check_interval_hours": 6, "hide_tray_when_up_to_date": False, "tray_updates_per_page": 30}
+    try:
+        for line in open(CONF, encoding="utf-8"):
+            line = line.split("#", 1)[0].strip()
+            if "=" not in line:
+                continue
+            k, v = (x.strip().strip("'\"") for x in line.split("=", 1))
+            if k in ("check_interval_hours", "tray_updates_per_page") and v.isdigit():
+                c[k] = int(v)
+            elif k == "hide_tray_when_up_to_date":
+                c[k] = v == "true"
+    except OSError:
+        pass
+    return c
+
+
+def read(name):
+    try:
+        return open(os.path.join(STATE, name), encoding="utf-8").read()
+    except OSError:
+        return ""
+
+
+def lines(name):
+    return [l for l in read(name).splitlines() if l.strip()]
+
+
+def human(seconds):
+    seconds = max(0, int(seconds))
+    if seconds < 3600:
+        return _("%d min") % max(1, seconds // 60)
+    if seconds < 86400:
+        return _("%d h %d min") % (seconds // 3600, seconds % 3600 // 60)
+    return _("%d d %d h") % (seconds // 86400, seconds % 86400 // 3600)
+
+
+# libayatana-appindicator warns once that it is deprecated in favor of its -glib version (not packaged with
+# GObject introspection for Python here): harmless, silenced.
+GLib.log_set_handler("libayatana-appindicator", GLib.LogLevelFlags.LEVEL_WARNING, lambda *a: None)
+
+
+class Tray:
+    def __init__(self):
+        self.cfg = conf()
+        self.theme = Gtk.IconTheme.get_default()
+        self.ind = AI.Indicator.new("void-update", self.icon("up-to-date"), AI.IndicatorCategory.SYSTEM_SERVICES)
+        self.ind.set_title("void-update")
+        self.ind.set_status(AI.IndicatorStatus.ACTIVE)
+        self.checking = None
+        os.makedirs(STATE, exist_ok=True)
+        # React to void-update's state (event-driven)
+        self.mon = Gio.File.new_for_path(STATE).monitor_directory(Gio.FileMonitorFlags.WATCH_MOVES, None)
+        self.mon.connect("changed", self.on_state_changed)
+        self.refresh()
+        GLib.timeout_add_seconds(60, self.tick)            # only the "ago"/"in" labels
+        # Network: check when it connects (NetworkManager over D-Bus) and every N hours
+        self.nm_state = 0
+        try:
+            self.nm = Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SYSTEM, Gio.DBusProxyFlags.NONE, None,
+                                                     "org.freedesktop.NetworkManager", "/org/freedesktop/NetworkManager",
+                                                     "org.freedesktop.NetworkManager", None)
+            st = self.nm.get_cached_property("State")
+            self.nm_state = st.unpack() if st else 0
+            self.nm.connect("g-signal", self.on_nm_signal)
+        except GLib.Error:
+            self.nm = None
+            self.nm_state = NM_CONNECTED_GLOBAL      # without NetworkManager: assume online
+        if self.nm_state >= NM_CONNECTED_GLOBAL:
+            GLib.timeout_add_seconds(20, self.check_if_due)  # a short margin after login
+        if self.cfg["check_interval_hours"] > 0:
+            GLib.timeout_add_seconds(self.cfg["check_interval_hours"] * 3600, self.periodic)
+
+    # ---- helpers
+    def icon(self, state):
+        for name in ICONS.get(state, ICONS["error"]):
+            if self.theme.has_icon(name):
+                return name
+        return ICONS.get(state, ICONS["error"])[-1]
+
+    def last_check(self):
+        try:
+            return int(read("last-check").split()[0])
+        except (IndexError, ValueError):
+            return 0
+
+    # ---- checks
+    def check(self, *_a):
+        if self.checking and self.checking.poll() is None:
+            return
+        self.checking = subprocess.Popen([VU, "--check"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                                         start_new_session=True)
+
+    def check_if_due(self):
+        hours = self.cfg["check_interval_hours"] or 6
+        if time.time() - self.last_check() >= hours * 3600 or read("state").strip() in ("", "error"):
+            self.check()
+        return False
+
+    def periodic(self):
+        if self.nm_state >= NM_CONNECTED_GLOBAL:
+            self.check()
+        return True
+
+    def on_nm_signal(self, _proxy, _sender, signal, params):
+        if signal == "StateChanged":
+            old, self.nm_state = self.nm_state, params.unpack()[0]
+            if self.nm_state >= NM_CONNECTED_GLOBAL > old:
+                self.check_if_due()
+
+    def run_update(self, *_a):
+        subprocess.Popen([VU, "--open-terminal"], start_new_session=True)
+
+    # ---- display
+    def on_state_changed(self, _m, f, _o, event):
+        if event in (Gio.FileMonitorEvent.CHANGES_DONE_HINT, Gio.FileMonitorEvent.CREATED,
+                     Gio.FileMonitorEvent.MOVED_IN, Gio.FileMonitorEvent.RENAMED) and \
+                f.get_basename() in ("state", "all", "last-check", "state.new"):
+            self.refresh()
+
+    def tick(self):
+        self.refresh()
+        return True
+
+    def build_list_menu(self, title, items):
+        top = Gtk.MenuItem(label=title)
+        per = self.cfg["tray_updates_per_page"] or max(1, len(items))
+        root = cur = Gtk.Menu()
+        for i, it in enumerate(items):
+            if i and i % per == 0:
+                more = Gtk.MenuItem(label=_("More…"))
+                nxt = Gtk.Menu()
+                more.set_submenu(nxt)
+                cur.append(more)
+                cur = nxt
+            mi = Gtk.MenuItem(label=" ".join(it.split()))
+            mi.set_sensitive(False)
+            cur.append(mi)
+        top.set_submenu(root)
+        return top
+
+    def refresh(self):
+        state = read("state").strip() or "up-to-date"
+        pk, fp = lines("packages"), lines("flatpak")
+        n = len(lines("all")) if state != "up-to-date" else 0
+        if state == "available" and n == 0:
+            state = "up-to-date"
+        self.ind.set_icon_full(self.icon(state), state)
+        if state == "available":
+            text = _("1 update available") if n == 1 else _("%s updates available") % n
+        elif state == "checking":
+            text = _("Checking for updates…")
+        elif state == "error":
+            text = _("The last check failed: %s") % (read("error").splitlines() or ["?"])[0]
+        else:
+            text = _("System is up to date")
+        self.ind.set_title("void-update — " + text)
+        hide = self.cfg["hide_tray_when_up_to_date"] and state == "up-to-date"
+        self.ind.set_status(AI.IndicatorStatus.PASSIVE if hide else AI.IndicatorStatus.ACTIVE)
+
+        menu = Gtk.Menu()
+        head = Gtk.MenuItem(label=text)
+        if state == "available":
+            head.connect("activate", self.run_update)
+        else:
+            head.set_sensitive(False)
+        menu.append(head)
+        kinds = (1 if pk else 0) + (1 if fp else 0)
+        if state == "available":
+            if kinds >= 2:
+                menu.append(self.build_list_menu(_("All (%s)") % (len(pk) + len(fp)), pk + fp))
+            if pk:
+                menu.append(self.build_list_menu(_("Packages (%s)") % len(pk), pk))
+            if fp:
+                menu.append(self.build_list_menu(_("Flatpak (%s)") % len(fp), fp))
+        menu.append(Gtk.SeparatorMenuItem())
+        last = self.last_check()
+        if last:
+            mi = Gtk.MenuItem(label=_("Last check %s ago") % human(time.time() - last))
+            mi.set_sensitive(False)
+            menu.append(mi)
+        hours = self.cfg["check_interval_hours"]
+        if hours > 0 and last:
+            mi = Gtk.MenuItem(label=_("Next check in %s") % human(last + hours * 3600 - time.time()))
+            mi.set_sensitive(False)
+            menu.append(mi)
+        menu.append(Gtk.SeparatorMenuItem())
+        run = Gtk.MenuItem(label=_("Run void-update"))
+        run.connect("activate", self.run_update)
+        menu.append(run)
+        chk = Gtk.MenuItem(label=_("Check for updates"))
+        chk.connect("activate", self.check)
+        menu.append(chk)
+        ex = Gtk.MenuItem(label=_("Exit"))
+        ex.connect("activate", lambda *_a: Gtk.main_quit())
+        menu.append(ex)
+        menu.show_all()
+        self.ind.set_menu(menu)
+        self.ind.set_secondary_activate_target(run)
+
+
+if __name__ == "__main__":
+    # A single icon per session
+    lock = os.path.join(os.environ.get("XDG_RUNTIME_DIR", "/tmp"), "void-update-tray.lock")
+    import fcntl
+    fd = open(lock, "w")
+    try:
+        fcntl.lockf(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        print(_("void-update's icon is already running"), file=sys.stderr)
+        sys.exit(0)
+    Tray()
+    Gtk.main()

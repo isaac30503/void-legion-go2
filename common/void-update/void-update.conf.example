@@ -1,0 +1,19 @@
+# ~/.config/void-update/void-update.conf — void-update's settings (void-update --gen-config writes this file;
+# --edit-config opens it). KEY=value, one per line; "#" starts a comment. Missing keys keep their default.
+
+# The tray icon checks for updates when the network connects and then every N hours (0 = only on connect).
+check_interval_hours=6
+# Seconds allowed for each query (xbps index, Flatpak, news) before giving up.
+check_timeout=120
+# Desktop notification when the list of pending updates changes (true/false).
+notifications=true
+# Include Flatpak applications, if Flatpak is installed (true/false).
+flatpak=true
+# Show Void's news published since the last update before updating (true/false).
+news=true
+# How many news "void-update --news" shows without a number.
+news_count=5
+# Hide the icon while the system is up to date (true/false).
+hide_tray_when_up_to_date=false
+# Entries per page in the tray's lists (the rest under "More…").
+tray_updates_per_page=30

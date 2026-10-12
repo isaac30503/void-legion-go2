@@ -8,7 +8,7 @@
 #   sudo xbps-install -R ~/src/void-packages/hostdir/binpkgs -R ~/src/void-packages/hostdir/binpkgs/debug gamescope
 #   sudo setcap cap_sys_nice=eip /usr/bin/gamescope
 # (with gamescope-dbg installed, add "gamescope-dbg": its version has to be the same). Afterwards, publish
-# the .xbps as Release assets and delete ~/src/void-packages (~1.1 GB). update-system warns if the gamescope
+# the .xbps as Release assets and delete ~/src/void-packages (~1.1 GB). void-update warns if the gamescope
 # installed stops being the one built here (a Void update replaces it: repeat this script).
 # If Void bumps the version and the patch no longer applies, xbps-src stops at "patching": review the patch.
 # Previous (Spanish) name: compilar-gamescope.sh (folder gamescope-parche/).

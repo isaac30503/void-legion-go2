@@ -20,7 +20,7 @@
 #   bash common/xfce-wayland/xfdesktop-wallpaper/build-xfdesktop.sh   # leaves the package in ~/src/void-packages/hostdir/binpkgs
 # Afterwards: publish the .xbps (Release asset; install/fetch-assets.sh puts it next to this script) and
 # install with install-xfdesktop-wallpaper.sh (root). Delete ~/src/void-packages when done if nothing else
-# is going to be built. update-system warns if the installed xfdesktop stops being the one built here (a
+# is going to be built. void-update warns if the installed xfdesktop stops being the one built here (a
 # Void update replaces it: repeat this script). If the patch no longer applies, xbps-src stops at "patching".
 # Done on 2026-10-09: the package of this folder (xfdesktop-4.20.2_2.x86_64.xbps, sha256 6f36c390…) was
 # built on the Legion (2 min 47 s, with binary-bootstrap) and is valid for both machines. On the IdeaPad
