@@ -5,8 +5,8 @@
 # IdeaPad recipe, step 15, "Desktop wallpaper on Wayland". It does not touch the wallpaper configuration
 # (xfconf) or restart anything: after installing, close and open the wallpaper dialog again.
 # Going back (Void's, without the patch): nothing needs to be touched; when Void publishes xfdesktop
-#   >= 4.20.3 (or a revision higher than this one), update-system replaces it and that one already has the fix.
-#   Downgrading by hand to Void's before that is not tested. (Since 2026-10-09 update-system tests the patch
+#   >= 4.20.3 (or a revision higher than this one), void-update replaces it and that one already has the fix.
+#   Downgrading by hand to Void's before that is not tested. (Since 2026-10-09 void-update tests the patch
 #   against Void's code instead of assuming a version, and when Void already has it, it gives the command
 #   sudo xbps-install -Sf xfdesktop: recipe, step 6, "Testing own patches".)
 # Previous (Spanish) name: instalar-xfdesktop-fondo.sh. The .xbps comes from the GitHub Release
@@ -24,7 +24,7 @@ t "package: %s   installed now: %s" "$VER" "$(xbps-query -p pkgver xfdesktop)"
 xbps-query -p pkgver libxfce4windowing
 LW=$(xbps-query -p pkgver libxfce4windowing); LW=${LW#libxfce4windowing-}
 if xbps-uhelper cmpver "$LW" 4.20.6; [ $? = 255 ]; then
-    t "!! the patch needs libxfce4windowing >= 4.20.6 (there is %s): update first (update-system)" "$LW"; exit 1
+    t "!! the patch needs libxfce4windowing >= 4.20.6 (there is %s): update first (void-update)" "$LW"; exit 1
 fi
 REPO=$(mktemp -d /tmp/xfdesktop-repo.XXXXXX)
 trap 'rm -rf "$REPO"' EXIT

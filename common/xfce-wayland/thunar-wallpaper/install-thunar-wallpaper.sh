@@ -5,7 +5,7 @@
 # to it, just in case) is not needed. ROOT: sudo bash common/xfce-wayland/thunar-wallpaper/install-thunar-wallpaper.sh
 # Each machine's recipe, step 15, "Desktop wallpaper on Wayland". It does not touch the wallpaper configuration.
 # Afterwards, AS THE USER: thunar -q (closes Thunar, which has the old plugin loaded) and open it again.
-# Going back (Void's, without the patch): when Void publishes a higher revision, update-system
+# Going back (Void's, without the patch): when Void publishes a higher revision, void-update
 #   replaces it and warns. Downgrading by hand to Void's before that is not tested.
 # Previous (Spanish) name: instalar-thunar-fondo.sh. The .xbps comes from the GitHub Release
 # (install/fetch-assets.sh puts it next to this script).
@@ -21,7 +21,7 @@ VER=$(basename "$PKG" .x86_64.xbps)
 t "package: %s   installed now: %s" "$VER" "$(xbps-query -p pkgver Thunar)"
 LW=$(xbps-query -p pkgver libxfce4windowing); LW=${LW#libxfce4windowing-}
 if xbps-uhelper cmpver "$LW" 4.20.6; [ $? = 255 ]; then
-    t "!! the patch needs libxfce4windowing >= 4.20.6 (there is %s): update first (update-system)" "$LW"; exit 1
+    t "!! the patch needs libxfce4windowing >= 4.20.6 (there is %s): update first (void-update)" "$LW"; exit 1
 fi
 REPO=$(mktemp -d /tmp/thunar-repo.XXXXXX)
 trap 'rm -rf "$REPO"' EXIT

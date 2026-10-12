@@ -19,7 +19,7 @@
 #   bash common/xfce-wayland/thunar-wallpaper/build-thunar.sh   # leaves Thunar-*.xbps and Thunar-devel-*.xbps in ~/src/void-packages/hostdir/binpkgs
 # Only Thunar needs to be installed (the plugin goes in it; Thunar-devel is installed on neither).
 # Afterwards: publish the Thunar-*.xbps (Release asset; install/fetch-assets.sh puts it next to this script),
-# install with install-thunar-wallpaper.sh (root) and delete ~/src/void-packages. update-system warns if a
+# install with install-thunar-wallpaper.sh (root) and delete ~/src/void-packages. void-update warns if a
 # Void update replaces it: repeat this script.
 # Before building it TESTS the patch against the code of Void's template (patch-still-needed,
 # 2026-10-09; before it looked with grep for a specific line): ALREADY_INCLUDED → it does not build; CONFLICT → it stops.

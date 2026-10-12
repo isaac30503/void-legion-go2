@@ -13,7 +13,7 @@
 #   or the machine: the first time, restarting only the portal was not enough)
 #   pkill -u "$USER" -f '^/usr/libexec/xdg-desktop-portal-wlr'     # D-Bus relaunches it (it cuts a stream)
 #   rm -rf ~/src/void-packages
-# update-system warns if the installed one stops being the one built here (a Void update
+# void-update warns if the installed one stops being the one built here (a Void update
 # replaces it: repeat this script). If the patch no longer applies, xbps-src stops at "patching".
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done

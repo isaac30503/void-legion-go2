@@ -1,19 +1,19 @@
 #!/bin/bash
-# Installs (without root) the test of our own patches that update-system uses (2026-10-09; Void recipe, step 6):
+# Installs (without root) the test of our own patches that void-update uses (2026-10-09; Void recipe, step 6):
 #   ~/.local/bin/patch-still-needed                  ← patch-still-needed.sh (next to this script)
-#   ~/.local/share/update-system/patches/<package>/  ← our own patches of each piece built here
+#   ~/.local/share/void-update/patches/<package>/  ← our own patches of each piece built here
 #   ~/.local/share/void-legion/{lib,locale}          ← the translations of its messages (install_i18n_user)
 # The same on both machines (each one only tests the pieces it has). Repeat it if a
 # patch or the script changes. Usage: bash common/patch-test/install-patch-test.sh   (from the repository)
 # Previous (Spanish) name: fish/void/instalar-prueba-parches.sh, which installed
 # ~/.local/bin/parche-sigue-haciendo-falta and ~/.local/share/update-system/parches: both are removed here
-# (the update-system of this repository uses the new names).
+# (the void-update of this repository uses the new names).
 set -euo pipefail
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"
 [ "$(id -u)" != 0 ] || { t "without root"; exit 1; }
 V="$(dirname "$(readlink -f "$0")")"
-DEST=~/.local/share/update-system/patches
+DEST=~/.local/share/void-update/patches
 # Void package (or name) → folder of its patches, relative to the repository's root
 declare -A DIRS=(
     [xfdesktop]=common/xfce-wayland/xfdesktop-wallpaper
@@ -35,4 +35,6 @@ install_i18n_user
 # The old Spanish-named installation
 rm -f ~/.local/bin/parche-sigue-haciendo-falta
 rm -rf ~/.local/share/update-system/parches ~/.cache/update-system/parches
+# and the folders of before void-update (2026-10-11: update-system/patches → void-update/patches)
+rm -rf ~/.local/share/update-system ~/.cache/update-system
 t "installed:"; ls -l ~/.local/bin/patch-still-needed; (cd "$DEST" && ls -1 */)

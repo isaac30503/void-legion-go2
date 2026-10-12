@@ -29,7 +29,9 @@ all the machines of the network. **Do not set fish with `chsh`.**
 
 - **Void is not atomic** and the init is **runit**: `sudo ln -s /etc/sv/<svc> /var/service/`;
   `sudo sv status|restart <svc>` (without root, `sv status` gives "access denied"). Software with `xbps`
-  (`install-pkg`, `remove-pkg`, `update-system`, the same fish functions as the IdeaPad; and since
+  (`install-pkg`, `remove-pkg`, the same fish functions as the IdeaPad, and **`void-update`** —since 2026-10-11, it replaced
+  `update-system`: a bash command like CachyOS's cachy-update, with a panel icon that checks without root on network
+  connect and every 6 h, notifications, Void's news, services with old code; `common/void-update/`, recipe step 5–12—; and since
   2026-10-05 `audio-ctrl` and `audio-priority`, adapted to Void: `pw-dump` with `python3`, WirePlumber is
   restarted without systemd —the one PipeWire starts inherits `SIGTERM` blocked, so after 3 s `SIGKILL`
   goes—; `audio-priority` in a terminal of the session, not over SSH). The order chosen here
@@ -64,7 +66,7 @@ all the machines of the network. **Do not set fish with `chsh`.**
   Vesktop icon and it won) and in the tray (Vesktop draws it: `~/.var/app/dev.vencord.Vesktop/config/
   vesktop/userAssets/tray` and `trayUnread`, its PNGs with the pink changed). After updating Vesktop, if
   its launcher changes, run it again.
-  `update-system` does `flatpak update`. New apps show up in the menu with a new session.
+  `void-update` does `flatpak update`. New apps show up in the menu with a new session.
   **Portals** (2026-10-06): `xdg-desktop-portal`, `-gtk` and `-wlr` (Void brings `xfce-portals.conf`:
   screen sharing through `wlr`). Screen sharing uses an **own chooser with previews**
   (`~/.local/bin/screen-share`, from `<repo>/legion/screen-share/`, with `grim`; configured in
@@ -76,7 +78,7 @@ all the machines of the network. **Do not set fish with `chsh`.**
   0002, when switching streams it reuses the source of a restored session that Vesktop closed without
   starting, because the token is single-use and the next request arrived without it; 0003, passes the
   chooser `XDPW_REQUEST_HANDLE`/`XDPW_APP_ID`). No
-  memory and no timings in the chooser (the user's decision: nothing that depends on timings). `update-system`
+  memory and no timings in the chooser (the user's decision: nothing that depends on timings). `void-update`
   warns if Void replaces the portal → `build-portal-wlr.sh`, install and restart. The desktop Steam (`-pipewire`)
   asks for the screen when starting and does not keep the token: the chooser knows who is asking (pending request in
   D-Bus → PID → `/proc/PID/comm`) and with `RULES = {"steam": "screen"}` grants it without a dialog (Steam
@@ -94,7 +96,7 @@ all the machines of the network. **Do not set fish with `chsh`.**
   on 2026-10-07 after the wlroots portal's patches (they do not affect it). **gamescope 3.16.30_2 with an own patch**
   (`<repo>/common/steam/gamescope-patch/`: race
   `request_buffer`/`remove_buffer` in `src/pipewire.cpp`, which brought gamescope down when starting/reconfiguring
-  a stream); `update-system` warns if Void replaces it → `build-gamescope.sh` + `setcap`. Restarting the wlroots
+  a stream); `void-update` warns if Void replaces it → `build-gamescope.sh` + `setcap`. Restarting the wlroots
   portal cuts an ongoing stream.
 - **Remote Play in Game Mode** (2026-10-07): Steam's client is 32-bit and needs
   `pipewire-32bit` and `libspa-videoconvert-32bit` to capture gamescope's PipeWire node (without them,
@@ -148,19 +150,19 @@ all the machines of the network. **Do not set fish with `chsh`.**
   (`lenovo-wmi-tdp/6.18.55`, only 6.18 kernels). Profile `custom` and
   `/sys/class/firmware-attributes/lenovo-wmi-other-0` (`ppt_pl1_spl` 5–35, `ppt_pl2_sppt` 5–37,
   `ppt_pl3_fppt` 5–45 W). With a 6.19 kernel they do not build: that is why
-  `linux` and `linux-headers` are **held** (6.18 is LTS; `xbps-query -H`). `update-system` ends with a **summary
+  `linux` and `linux-headers` are **held** (6.18 is LTS; `xbps-query -H`). `void-update` ends with a **summary
   OK/REPAIRED/WARNING** (OK/REPARADO/AVISO in Spanish) (TDP for the new kernel, hold, gamescope and its PipeWire
   patch, the `xdg-desktop-portal-wlr` patch, libraries of InputPlumber, `steamos-manager` and `extest`). **Since
   2026-10-08:** it warns **before confirming** if the update replaces the patched gamescope or wlroots portal
   (any package from a local repository), compares each one with Void's (same revision
   = WARNING: it is a newer Void build that xbps does not install), `ldd` of the gamescope portal, and
   `steamos-manager` (`ldd`, reference sha256, build dependencies) and `extest` (`ldd` and what is
-  needed to rebuild it). **`update-system --summary`** (`--resumen` also works): only the summary, without syncing or `sudo`.
-  **Testing own patches (2026-10-09):** `update-system` no longer assumes from the version whether an own
+  needed to rebuild it). **`void-update --summary`** (`--resumen` also works): only the summary, without syncing or `sudo`.
+  **Testing own patches (2026-10-09):** `void-update` no longer assumes from the version whether an own
   patch is still needed: it **tests** it against the code of Void's template (or of the latest
   upstream tag, for steamos-manager) with `~/.local/bin/patch-still-needed`
-  (`<repo>/common/patch-test/patch-still-needed.sh`; patches in `~/.local/share/update-system/patches/`, put there by
-  `install-patch-test.sh`, without root; cache in `~/.cache/update-system/patches/`; before this repository:
+  (`<repo>/common/patch-test/patch-still-needed.sh`; patches in `~/.local/share/void-update/patches/`, put there by
+  `install-patch-test.sh`, without root; cache in `~/.cache/void-update/patches/`; before this repository:
   `parche-sigue-haciendo-falta`, `…/parches/`): STILL_NEEDED /
   ALREADY_INCLUDED (NOTE with `sudo xbps-install -Sf <package>` to go back to Void's) / PARTIAL / CONFLICT
   (review the patch) / UNCHECKED (without network) (HACE_FALTA / YA_INCLUIDO / PARCIAL / CONFLICTO / SIN_COMPROBAR
@@ -264,7 +266,7 @@ all the machines of the network. **Do not set fish with `chsh`.**
   **built here** on 2026-10-09 (the same `.xbps` for the IdeaPad; `<repo>/common/xfce-wayland/xfdesktop-wallpaper/`,
   recipe step 15). **Installed** and verified on 2026-10-09 on the Legion's
   screen (`monitoreDP-1`) and on the external one (`monitorDP-1`); the dialog takes the screen **when it opens** (dragged,
-  it does not notice: close it and open it on the other one). `update-system` watches it.
+  it does not notice: close it and open it on the other one). `void-update` watches it.
   **Thunar, "Establecer como fondo de pantalla"** ("Set as wallpaper") (same bug: `monitorUnknown`; no fix upstream):
   own patch (connector through `libxfce4windowing`, keeps the screen of Thunar's window),
   `Thunar-4.20.10_2` **built here** on 2026-10-09 (`<repo>/common/xfce-wayland/thunar-wallpaper/`, recipe step

@@ -59,9 +59,10 @@ cfg={
   box(_("Installed / Powered on / Updated")),
   m("command","\U000f199f "+_("Installed"),AGE,text='n=$(( ($(date +%s) - $(stat -c %W /home)) / 86400 )); [ $n -eq 1 ] && echo "'+ONE_DAY+'" || printf "'+N_DAYS+'\\n" "$n"'),
   m("uptime","\U000f1ad0 "+_("Powered on"),AGE,format="{?1}{1} d, {?}{2} h {3} min"),
-  # Date of the last update-system that ended fine (it records it in ~/.local/state). If it
-  # does not exist, that of xbps's pkgdb (it changes with any installation).
-  m("command","\ueb29 "+_("Updated"),AGE,text='f="$HOME/.local/state/update-system.last"; if [ -r "$f" ]; then t=$(cat "$f"); else t=$(stat -c %Y /var/db/xbps/pkgdb-0.38.plist); fi; n=$(( ($(date +%s) - t) / 86400 )); if [ $n -eq 1 ]; then s="'+ONE_DAY+'"; else s=$(printf "'+N_DAYS+'" "$n"); fi; echo "$s ($(date -d @$t +%d-%m-%Y))"'),
+  # Date of the last void-update that ended fine (it records it in ~/.local/state/void-update/last-update; before
+  # 2026-10-11, update-system in ~/.local/state/update-system.last). If neither exists, that of xbps's pkgdb (it
+  # changes with any installation).
+  m("command","\ueb29 "+_("Updated"),AGE,text='f="$HOME/.local/state/void-update/last-update"; [ -r "$f" ] || f="$HOME/.local/state/update-system.last"; if [ -r "$f" ]; then t=$(cat "$f"); else t=$(stat -c %Y /var/db/xbps/pkgdb-0.38.plist); fi; n=$(( ($(date +%s) - t) / 86400 )); if [ $n -eq 1 ]; then s="'+ONE_DAY+'"; else s=$(printf "'+N_DAYS+'" "$n"); fi; echo "$s ($(date -d @$t +%d-%m-%Y))"'),
   # Counts against the repodata of the last sync (xbps-install -S needs root)
   m("command","\U000f06b0 "+_("Pending"),AGE,text='n=$(xbps-install -un 2>/dev/null | wc -l); [ $n -eq 0 ] && echo "'+sh(_("nothing (according to the last sync)"))+'" || printf "'+sh(_("%s packages (according to the last sync)"))+'\\n" "$n"'),
   box(),"break"]}

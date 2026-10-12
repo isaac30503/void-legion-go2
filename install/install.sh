@@ -57,11 +57,11 @@ grep -q "bashrc.d" ~/.bashrc || { cp ~/.bashrc ~/.bashrc.bak && cat "$V/shell/ba
 mkdir -p ~/.config/fish/functions ~/.local/bin
 bash "$B/install/install-i18n.sh"
 cp "$V/fish/functions/"{__vl_t,fish_prompt,fish_greeting,disk-ops}.fish ~/.config/fish/functions/
-cp "$V/fish/functions/"{install-pkg,remove-pkg,update-system,audio-ctrl,audio-priority}.fish ~/.config/fish/functions/
+cp "$V/fish/functions/"{install-pkg,remove-pkg,audio-ctrl,audio-priority}.fish ~/.config/fish/functions/
 cp "$V/ssh-setup/ssh-setup.fish" ~/.config/fish/functions/
 cp "$V/ssh-setup/ssh-survey.sh" ~/.config/fish/ && chmod +x ~/.config/fish/ssh-survey.sh
 fish -c "fish_add_path -U ~/.local/bin"
-bash "$V/patch-test/install-patch-test.sh"
+bash "$V/void-update/install-void-update.sh" --no-tray   # void-update + patch test (the icon, after step 13)
 mkdir -p ~/.local/share/fonts ~/.themes ~/.local/share/icons
 cp "$V/fonts/"*.ttf ~/.local/share/fonts/
 cp -r "$V/xterm/jetbrains-blocks" ~/.local/share/fonts/ && chmod +x ~/.local/share/fonts/jetbrains-blocks/regenerate.sh
@@ -129,8 +129,8 @@ stage "K. By hand in Steam and on the desktop (list, point K: developer mode and
 #   bash "$B/legion/portal-wlr-patch/build-portal-wlr.sh"; bash "$B/legion/screen-share/install.sh"
 #   sudo sh "$B/common/steam/portal-gamescope/install-portal-gamescope.sh"; bash "$B/common/steam/gamescope-patch/build-gamescope.sh"
 #   cp "$B/legion/wireplumber/51-audio-priority.conf" ~/.config/wireplumber/wireplumber.conf.d/'
-stage "L. Check (Verification block of the recipe and update-system)" manual \
-'# fish -c update-system   → must end in "All in order" ("Todo en orden" in Spanish)'
+stage "L. Check (Verification block of the recipe and void-update)" manual \
+'# void-update   → must end in "All in order" ("Todo en orden" in Spanish); then: void-update --tray --enable (panel icon)'
 stage "M. Clean up: archive the logs of ~ in logs/legion/ (check them for private values) and delete them" run \
 'mkdir -p "$REPO/logs/legion" && cp ~/*.log "$REPO/logs/legion/" 2>/dev/null || true
 echo "-> review $REPO/logs/legion/ (bash $REPO/install/verify.sh --secrets), commit; then: rm -f ~/*.log"'

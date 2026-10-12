@@ -92,7 +92,7 @@ keep their original names. `install/aliases.sh` can create the old command names
 | `fish/arch/brew/disk-ops.fish` | `common/fish/functions/disk-ops.fish` |
 | `fish/void/audio-ctrl.fish` | `common/fish/functions/audio-ctrl.fish` |
 | `fish/void/audio-priority.fish` | `common/fish/functions/audio-priority.fish` |
-| `fish/void/update-system.fish` | `common/fish/functions/update-system.fish` |
+| `fish/void/update-system.fish` (fish function `update-system`) | `common/void-update/` (command `void-update`, since 2026-10-11; the old name is removed) |
 | `fish/void/parche-sigue-haciendo-falta.sh` | `common/patch-test/patch-still-needed.sh` |
 | `fish/void/instalar-prueba-parches.sh` | `common/patch-test/install-patch-test.sh` |
 | `fish/void/agente/auditar-void.sh` | `common/agent/audit-void.sh` |
@@ -158,9 +158,9 @@ keep their original names. `install/aliases.sh` can create the old command names
 | service `capturar-avisos`` | service `capture-syslog`` |
 | `/run/decky-avisos` | `/run/decky-events` |
 | `/usr/local/share/grub-tema, hooks 60-grub-tema` | `/usr/local/share/grub-theme, hooks 60-grub-theme` |
-| `~/.local/bin/parche-sigue-haciendo-falta, ~/.local/share/update-system/parches` | `~/.local/bin/patch-still-needed, …/update-system/patches` |
+| `~/.local/bin/parche-sigue-haciendo-falta, ~/.local/share/update-system/parches` | `~/.local/bin/patch-still-needed, ~/.local/share/void-update/patches` |
 | states HACE_FALTA / YA_INCLUIDO / PARCIAL / CONFLICTO / SIN_COMPROBAR; lines PARCHE / RESULTADO` | `STILL_NEEDED / ALREADY_INCLUDED / PARTIAL / CONFLICT / UNCHECKED; PATCH / RESULT` |
-| `update-system --resumen`; summary OK / REPARADO / AVISO` | `update-system --summary; OK / REPAIRED / WARNING (Spanish words with the Spanish catalog)` |
+| `update-system --resumen`; summary OK / REPARADO / AVISO; `~/.local/state/update-system.last` | `void-update --summary`; OK / REPAIRED / WARNING (Spanish words with the Spanish catalog); `~/.local/state/void-update/last-update` |
 | `/usr/local/share/{inputplumber,steamos-manager}-void/manifiesto, paquete` | `…/manifest, package` |
 | `~/.cache/arte-vesktop-anterior` | `~/.cache/art-vesktop-previous` |
 | options --quitar, --parar, --dejar, --deshacer, --sin-pantalla-de-carga, --conservar` | `--remove, --stop, --keep, --undo, --no-loading-screen, --keep` |

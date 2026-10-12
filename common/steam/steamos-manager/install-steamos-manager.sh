@@ -9,7 +9,7 @@
 # official one without patch: change TAR below to steamos-manager-v26.4.1-void.tar.gz (the one from Void's
 # container of 2026-10-03, IdeaPad recipe, step 14) and repeat this script. It records in
 # /usr/local/share/steamos-manager-void/ the fingerprint (sha256) and the package's name (package), which
-# update-system reads; --remove deletes that folder. (Both tarballs come from the GitHub Release:
+# void-update reads; --remove deletes that folder. (Both tarballs come from the GitHub Release:
 # install/fetch-assets.sh.)
 # They are two processes, as in SteamOS:
 #   - root, on the system bus ("steamos-manager -r"): runit service steamos-manager;
@@ -18,7 +18,7 @@
 # What it controls comes from the model's profile (/usr/share/steamos-manager/devices/*.toml). On the
 # Legion Go 2 it needs the lenovo-wmi-* modules (legion/tdp/install-tdp.sh).
 # Previous (Spanish) name: instalar-steamos-manager.sh (it wrote the list "manifiesto" and the name
-# "paquete"; installing replaces them with "manifest" and "package", which update-system reads).
+# "paquete"; installing replaces them with "manifest" and "package", which void-update reads).
 # Usage: sudo sh common/steam/steamos-manager/install-steamos-manager.sh [--remove]   (--quitar also works)
 set -eu
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
@@ -58,7 +58,7 @@ while read -r f; do
     install -D -m $m "$T$f" "$f"
 done < "$MAN"
 t "installed %s files (list in %s)" "$(wc -l < "$MAN")" "$MAN"
-# Reference for update-system (2026-10-08): the fingerprint of the two binaries as they were
+# Reference for void-update (2026-10-08): the fingerprint of the two binaries as they were
 # installed ("sha256sum -c" checks it) and, separately, the package's name (tarball without .tar.gz),
 # to know whether it is the patched one (…-void-2) or the official one (…-void). They are rewritten on every installation.
 sha256sum /usr/lib/steamos-manager /usr/bin/steamosctl > "${MAN%/*}/sha256.tmp"

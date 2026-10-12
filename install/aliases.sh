@@ -6,7 +6,7 @@
 # The installers delete the old Spanish-named files when they run (so that only one copy exists): after
 # repeating an installer, run this again if the aliases are wanted.
 # switch-mode-root already accepts its Spanish arguments (juego, escritorio…) and the sudoers rule keeps
-# /usr/local/bin/cambiar-modo-root allowed; the fish functions keep their names (update-system, audio-ctrl…).
+# /usr/local/bin/cambiar-modo-root allowed; the fish functions keep their names (audio-ctrl, install-pkg…).
 # For other languages: add lines "old-name new-name" to the list below.
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
