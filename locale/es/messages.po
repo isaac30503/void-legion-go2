@@ -3242,3 +3242,71 @@ msgstr "!! el parche necesita libxfce4windowing >= 4.20.6 (hay %s): actualizar a
 #: common/void-update
 msgid "from local repositories (built here; void-update warns if Void replaces them):"
 msgstr "de repositorios locales (compilados aquí; void-update avisa si Void los reemplaza):"
+
+#: install/migrate.sh
+msgid "   (shortcuts: no Xfce session here; run again from the session)"
+msgstr "   (atajos: aquí no hay sesión de Xfce; repetirlo desde la sesión)"
+
+#: install/migrate.sh
+msgid "   shortcut %s → %s"
+msgstr "   atajo %s → %s"
+
+#: install/migrate.sh
+msgid "   already fixed (%s)"
+msgstr "   ya fijadas (%s)"
+
+#: install/migrate.sh
+msgid "   would write enabled=False in %s"
+msgstr "   escribiría enabled=False en %s"
+
+#: install/migrate.sh
+msgid "   fixed: enabled=False in %s"
+msgstr "   fijadas: enabled=False en %s"
+
+#: install/migrate.sh
+msgid "!! both ~/%s and ~/%s exist: move the files by hand and delete the one you do not want"
+msgstr "!! existen ~/%s y ~/%s: mover los archivos a mano y borrar la que no se quiera"
+
+#: install/migrate.sh
+msgid "== Migration of %s to this repository's pieces"
+msgstr "== Migración de %s a las piezas de este repositorio"
+
+#: install/migrate.sh
+msgid "== personal folders (Descargas, Documentos…): kept, in their current language"
+msgstr "== carpetas personales (Descargas, Documentos…): se conservan, en su idioma actual"
+
+#: install/migrate.sh
+msgid "== plan (%s steps):"
+msgstr "== plan (%s pasos):"
+
+#: install/migrate.sh
+msgid "Go on? It asks for the sudo password once [Y/n] "
+msgstr "¿Seguir? Pide la contraseña de sudo una vez [S/n] "
+
+#: install/migrate.sh
+msgid "== preparing the clone (binaries of the Release, build/)"
+msgstr "== preparando el clon (binarios de la Release, build/)"
+
+#: install/migrate.sh
+msgid "!! install/fetch-assets.sh failed"
+msgstr "!! falló install/fetch-assets.sh"
+
+#: install/migrate.sh
+msgid "   ok"
+msgstr "   bien"
+
+#: install/migrate.sh
+msgid "!! failed: %s"
+msgstr "!! falló: %s"
+
+#: install/migrate.sh
+msgid "== migration done: reboot now (sudo reboot) so that the renamed services and sessions start"
+msgstr "== migración hecha: reiniciar ahora (sudo reboot) para que arranquen los servicios y sesiones renombrados"
+
+#: install/migrate.sh
+msgid "!! %s step(s) failed (above); fix them and run this again (it only repeats what applies)"
+msgstr "!! fallaron %s paso(s) (arriba); arreglarlos y volver a correr esto (solo repite lo que aplica)"
+
+#: install/migrate.sh
+msgid "   Old Spanish-named pieces still on the system, if any: bash install/migrate.sh --dry-run"
+msgstr "   Piezas viejas con nombre en español que queden, si las hay: bash install/migrate.sh --dry-run"
