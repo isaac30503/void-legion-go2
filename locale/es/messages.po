@@ -3501,3 +3501,15 @@ msgstr "!! %s tenía ficheros que no se pueden borrar sin root: movido a %s; bó
 
 msgid "build/: %s files"
 msgstr "build/: %s ficheros"
+
+msgid "removed (elogind powers off with the button again: its default)"
+msgstr "quitado (elogind vuelve a apagar con el botón: lo de fábrica)"
+
+msgid "!! needs Python >= 3.13 (os.timerfd_create)"
+msgstr "!! necesita Python >= 3.13 (os.timerfd_create)"
+
+msgid "   marked: %s"
+msgstr "   marcado: %s"
+
+msgid "Log out and back in (or reboot) so that the session starts it; log: ~/.local/state/power-button.log"
+msgstr "Cerrar sesión y volver a entrar (o reiniciar) para que la sesión lo arranque; registro: ~/.local/state/power-button.log"
