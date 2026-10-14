@@ -1,5 +1,5 @@
 #!/bin/sh
-# install-power-button.sh — the power button in both modes (2026-10-14): a press opens the power menu, held ~3 s
+# install-power-button.sh — the power button in both modes (2026-10-14): a press opens the power menu, held ~5 s
 # it suspends (power-button explains why it is not the Deck's way on the Legion Go 2).
 #   /usr/local/bin/power-button                          the program (Python, started by each session)
 #   /etc/udev/rules.d/70-power-button.rules              the button's devices: marked and readable by the session

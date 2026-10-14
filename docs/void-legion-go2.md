@@ -179,7 +179,7 @@ log in. Then:
 
 ```bash
 sudo sh "$B/common/steam/install-game-mode.sh" --no-loading-screen
-sudo sh "$B/common/power-button/install-power-button.sh"   # power button: press = menu, held = suspend (step 14)
+sudo sh "$B/common/power-button/install-power-button.sh"   # power button: press = menu, held ~5 s = suspend (step 14)
 sudo sh "$B/common/steam/test-direct-session.sh"
 sudo sh "$B/common/steam/install-passwordless-switch.sh"
 sudo sh "$B/common/xfce-wayland/install-xfce-wayland.sh"   # step 15: BEFORE rebooting
@@ -2375,7 +2375,7 @@ the same as before, checked). **Firefox and Steam with only labwc's border** (`S
 border forceSSD`; in Firefox, "Barra de título" ("Title Bar") unchecked): detail in step 15 of the IdeaPad.
 **Verified:** Game Mode's "Cambiar a escritorio" enters Xfce Wayland (labwc 0.20.2).
 
-### Power button: press = power menu, held ~3 s = suspend, in both modes (2026-10-14)
+### Power button: press = power menu, held ~5 s = suspend, in both modes (2026-10-14)
 
 The user's request: the Steam Deck's power button (there: a short press suspends, held 1 s opens the power
 menu) in Game Mode and on the desktop. **What the Deck does** (read on it, SteamOS 3.8.28): logind ignores the
@@ -2386,12 +2386,13 @@ On its desktop, KDE: `PowerButtonAction=1` (suspend), no long press.
 
 **What the Legion Go 2 sends** (captured on 2026-10-14 with every input device open, read-only): at every press,
 the ACPI `Power Button` gives `KEY_POWER` pressed **and** released in the same millisecond, and **nothing when it
-is released**; only if it is still held ~3.2 s later, the embedded controller types **Super+F16** on the internal
+is released**; only if it is still held, ~3–5.5 s later (3.2 s in the capture; 5.3 and 5.6 s when it was tried), the embedded controller types **Super+F16** on the internal
 keyboard (`AT Translated Set 2 keyboard`, scancodes `0xdb`/`0x67`; Void's hwdb already maps `0x67` to F16, the
-same as Valve's for 83N0/83N1). So the Deck's "short" cannot be known until 3.2 s have gone by without F16. The
+same as Valve's for 83N0/83N1). So the Deck's "short" cannot be known until several seconds have gone by without F16. The
 user chose (over "wait 3.5 s, then suspend" and "suspend at once, no menu"): **a press opens the power menu at once;
-held ~3 s, it suspends** (nothing waits). When held, the menu opens first and may still be there after waking up
-(Cancel/Esc).
+held ~5 s, it suspends** (nothing waits). When held, the menu opens first and may still be there after waking up
+(Cancel/Esc). **Let go as soon as the screen goes off:** held much longer, the firmware powers off at once
+(happened on 2026-10-14). An F16 counts as "held" up to 10 s after the press.
 
 **Before (careful):** elogind's default is `HandlePowerKey=poweroff`. On the desktop xfce4-power-manager blocks
 it (inhibitor `handle-power-key`), but in **Game Mode one press powered the Legion off** (2026-10-14).
@@ -3231,10 +3232,10 @@ screen sharing*).
 
 ## History
 
-- **2026-10-14 (power button)** — Press = power menu, held ~3 s = suspend, in Game Mode and on the desktop
+- **2026-10-14 (power button)** — Press = power menu, held ~5 s = suspend, in Game Mode and on the desktop
   (`common/power-button/`; step 14, *Power button*). Compared with the Steam Deck (short = suspend, held 1 s =
   menu): the Legion Go 2's firmware never reports the release (ACPI `KEY_POWER` pressed+released at once; Super+F16
-  only after ~3.2 s held), so the user chose this order. Found on the way: elogind's default powered the Legion
+  only after ~3–5.5 s held), so the user chose this order. Found on the way: elogind's default powered the Legion
   off from Game Mode with one press; now `HandlePowerKey=ignore`, like SteamOS.
 - **2026-10-13 (Spanish aliases removed)** — The user's decision ("I did not form habits"): the old Spanish
   arguments and options are no longer accepted (`--quitar`, `--parar`, `--dejar`, `--deshacer`, `--conservar`,
