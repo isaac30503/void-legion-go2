@@ -1,34 +1,18 @@
 #!/usr/bin/python3 -IS
-# power-button --mode game|desktop — the power button, in the spirit of the Steam Deck's (2026-10-14, the user's
-# request and choice):
-#   a press opens the power menu at once; held ~5 s, the machine suspends.
-#   Game Mode: Steam's power menu (steam://longpowerpress) / Steam suspends (steam://shortpowerpress), the URLs of
-#     SteamOS's steamos-powerbuttond; without Steam running, it suspends through elogind (loginctl suspend).
-#   Desktop (Xfce, X11 or Wayland): Xfce's logout dialog (xfce4-session-logout: shut down, restart, suspend,
-#     hibernate, log out) / loginctl suspend.
-# Why not the Deck's way (short = suspend, held 1 s = menu): the Legion Go 2's firmware never says when the
-# button is released. On every press the ACPI "Power Button" sends KEY_POWER pressed+released at once, and only if
-# it is still held ~3–5.5 s later (3.2 s in a capture; 5.3 and 5.6 s in use) the embedded controller types Super+F16 on the internal keyboard ("AT Translated
-# Set 2 keyboard", scancodes 0xdb and 0x67; the F16 mapping is in Void's hwdb, the same as Valve's). Captured on
-# 2026-10-14. Deciding "short" would mean waiting 3.5 s before suspending; the user chose: press = menu (nothing
-# waits), held = suspend. Holding much longer powers off in the firmware (seen on 2026-10-14): let go when the screen goes off. When held, the menu opens first and may still be open after waking up (Cancel/Esc).
-# On a machine without that F16 (the IdeaPad), a press opens the menu and that is all.
-# Started by each session (the Game Mode launcher; /etc/xdg/autostart/power-button.desktop for Xfce): the newest
-# one replaces the previous one, and it ends when the process that started it (its session) ends.
-# Devices: the input devices that udev marks with POWER_BUTTON=1 (70-power-button.rules, which also gives the
-# session read access with TAG uaccess, like Valve's 70-steamos-power-button.rules), from /run/udev/data.
-# elogind must ignore the key (50-power-button.conf: HandlePowerKey=ignore, like SteamOS), or it acts too: its
-# default powers off (it did, on 2026-10-14, in Game Mode).
-# Event-driven, no timers or periodic wake-ups: it sleeps in poll() on the buttons, a pidfd of its session's
-# process (the kernel says when it ends) and a timerfd that the kernel cancels on every resume from suspend
-# (TFD_TIMER_CANCEL_ON_SET: timerfd_resume()); presses in the 2 s after waking up are ignored (the press that
-# wakes the machine would otherwise open the menu).
-# Python (not C: the user's decision, 2026-10-14: no build step; as fast here, ~10 MB of memory, 0 % CPU at
-# rest), standard library only. Needs Python >= 3.13 (os.timerfd_create). Log: ~/.local/state/power-button.log
-# (in English: the checks read it). Installed by install-power-button.sh.
+# power-button --mode game|desktop — the power button like on the Steam Deck (2026-10-14, the user's request):
+#   a short press suspends; held ~3 s, the power menu opens.
+#   Game Mode: Steam does both, as with SteamOS's steamos-powerbuttond (steam://shortpowerpress suspends,
+#     steam://longpowerpress opens Steam's power menu); without Steam running, a press suspends through elogind.
+#   Desktop (Xfce, X11 or Wayland): press → loginctl suspend; held → Xfce's logout dialog (xfce4-session-logout:
+#     shut down, restart, suspend, hibernate, log out).
+# The Legion Go 2's firmware tells the two apart by itself (captured on 2026-10-14, timed with a stopwatch): a press
+# released before ~3 s gives, ON RELEASE, KEY_POWER pressed+released on the ACPI "Power Button"; held ~3 s, the
+# embedded controller types Super+F16 on the internal keyboard ("AT Translated Set 2 keyboard", scancodes 0xdb and
+# 0x67; the F16 mapping is in Void's hwdb, the same as Valve's) WHILE STILL HELD, and no KEY_POWER at all. So each
+# event is one action, with no timing here (the Deck's daemon times 1 s itself; this firmware's ~3 s is fixed).
+# Holding much longer powers off in the firmware. On a machine without that F16 (the IdeaPad), a press suspends.
 import os, select, signal, struct, sys, time
 
-HELD_AFTER = 10.0             # an F16 counts as "held" if it comes within this after the press (it came at 3.2–5.6 s)
 AFTER_RESUME = 2.0            # seconds after waking up during which presses are ignored
 EV_KEY, KEY_POWER, KEY_F16 = 1, 116, 186
 EVENT = struct.Struct("llHHi")  # struct input_event (64-bit): time, type, code, value
@@ -73,7 +57,7 @@ def menu(mode):
     elif steam_running():
         run(STEAM, "-ifrunning", "steam://longpowerpress")
     else:
-        log("press without Steam: nothing")
+        log("held without Steam: nothing")
 
 
 def suspend(mode):
@@ -157,7 +141,6 @@ def main():
     for fd in list(buttons) + [session, tfd]:
         poller.register(fd, select.POLLIN)
     log(f"started: mode {mode}, devices {' '.join(buttons.values())}, session pid {parent}")
-    pressed_at = None          # monotonic time of the last press, while an F16 can still follow
     ignore_until = 0.0
     while True:
         ready = {fd for fd, _ in poller.poll()}   # no timeout: sleep until something happens
@@ -172,7 +155,6 @@ def main():
                 if e.errno == 125:   # ECANCELED
                     log(f"resumed or clock set: presses ignored for {AFTER_RESUME:.0f} s")
                     ignore_until = now + AFTER_RESUME
-                    pressed_at = None
             arm(tfd)
         for fd in buttons:
             if fd not in ready:
@@ -188,14 +170,12 @@ def main():
                     _, _, typ, code, value = EVENT.unpack_from(data, i)
                     if typ != EV_KEY or value != 1 or now < ignore_until:
                         continue
-                    if code == KEY_POWER:
-                        log("press: menu")
-                        pressed_at = now
-                        menu(mode)
-                    elif code == KEY_F16 and pressed_at is not None and now - pressed_at < HELD_AFTER:
-                        log(f"held ({now - pressed_at:.1f} s): suspend")
-                        pressed_at = None
+                    if code == KEY_POWER:     # a short press, reported on release
+                        log("press: suspend")
                         suspend(mode)
+                    elif code == KEY_F16:     # held ~3 s (the firmware decides; it comes while still held)
+                        log("held: menu")
+                        menu(mode)
 
 
 if __name__ == "__main__":
