@@ -226,7 +226,6 @@ class Chooser(Gtk.Window):
 
 LOG = os.path.expanduser("~/.cache/screen-share.log")
 RULES = {"steam": "screen"}
-ALIASES = {"pantalla": "screen", "cancelar": "cancel"}   # the old Spanish actions
 
 
 def who_asks():
@@ -286,7 +285,7 @@ def record(text):
 def main():
     items_list = sources([l.rstrip("\n") for l in sys.stdin if l.strip()])
     programs = who_asks()
-    actions = {ALIASES.get(RULES.get(p), RULES.get(p)) for p in programs}
+    actions = {RULES.get(p) for p in programs}
     if programs and len(actions) == 1 and None not in actions:
         action = actions.pop()
         screens = [f[3] for f in items_list if f[0] == "screen"]

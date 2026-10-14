@@ -8,7 +8,6 @@
 # Its texts follow the system's language (__vl_t, translations in ~/.local/share/void-legion; the Spanish
 # ones are the original texts). The x-ray (ssh-survey.sh) runs on the other machine: it is sent there, through
 # the same stdin, with the local catalog and lib/i18n.sh in front, so it comes out in this language too.
-# The old Spanish options also work: --usuario, --diagnostico, --sin-claude.
 # Previous name: herramientas/ssh-setup.fish (function ssh-setup, unchanged). Installed in
 # ~/.config/fish/functions/ssh-setup.fish, with ssh-survey.sh in ~/.config/fish/ssh-survey.sh.
 
@@ -178,11 +177,8 @@ end
 
 function ssh-setup --description "Set up or redo SSH access to a machine of the local network"
     functions -q __vl_t; or function __vl_t; printf "$argv[1]\n" $argv[2..-1]; end
-    argparse h/help i/ip= u/user= usuario= a/alias= d/diagnosis diagnostico 'no-claude' 'sin-claude' -- $argv
+    argparse h/help i/ip= u/user= a/alias= d/diagnosis 'no-claude' -- $argv
     or return 1
-    set -q _flag_usuario; and set _flag_user $_flag_usuario
-    set -q _flag_diagnostico; and set _flag_diagnosis 1
-    set -q _flag_sin_claude; and set _flag_no_claude 1
 
     if set -q _flag_help
         echo "ssh-setup [alias] [--ip IP] [--user U] [--diagnosis] [--no-claude]"
@@ -195,7 +191,6 @@ function ssh-setup --description "Set up or redo SSH access to a machine of the 
         echo "  "(__vl_t "The alias is the first argument. Without it, %s is used" '$ssh_setup_default_host')
         echo "  "(__vl_t "(set with: %s), and if that is not there either," 'set -U ssh_setup_default_host <alias>')
         echo "  "(__vl_t "'lego'. The user and the IP come from ~/.ssh/config if the alias already exists.")
-        echo "  "(__vl_t "(The old Spanish options also work: --usuario, --diagnostico, --sin-claude.)")
         echo
         echo "  ssh-setup                                     # "(__vl_t "the Legion Go 2")
         echo "  ssh-setup fedora --ip 192.168.0.172 -u "(id -un)"  # "(__vl_t "setting up a new machine")

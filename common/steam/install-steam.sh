@@ -17,7 +17,7 @@
 # Previous (Spanish) name: instalar-steam.sh (list paquetes-instalados.txt).
 #   sudo sh common/steam/install-steam.sh            installs (xbps shows the list and asks to confirm)
 #   sudo sh common/steam/install-steam.sh --remove   removes what it installed, with its dependencies, and the repos
-#                                                    (--quitar also works)
+#                                                   
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"

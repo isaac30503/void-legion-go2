@@ -12,7 +12,7 @@
 # with "bypass" as well; it stops as soon as they move. At the end it PUTS the right controller BACK as it was
 # (with --keep, it leaves it on for the next step). It only touches the right controller.
 # Previous (Spanish) name: probar-imu-mando.sh (its log of 2026-10-05 is archived in logs/legion/).
-#   sudo sh legion/test-controller-imu.sh [--keep]      (--dejar also works)
+#   sudo sh legion/test-controller-imu.sh [--keep]     
 # Log: ~/test-controller-imu.log. Legion recipe, Pending (2026-10-05).
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"
@@ -23,7 +23,6 @@ for h in /sys/class/hidraw/hidraw*; do
     [ -e "$h/device/../ep_83" ] && DEV=/dev/${h##*/}
 done
 [ -n "$DEV" ] || { t "I cannot find the controller's configuration interface (17ef:61eb…61ee, endpoint 0x83)"; exit 1; }
-case "${1:-}" in --dejar) set -- --keep ;; esac
 VL_LIB="$REPO_ROOT/lib" python3 - "$DEV" "${1:-}" "$TARGET_HOME/test-controller-imu.log" <<'EOF'
 import os, sys, time, select, struct
 sys.path.insert(0, os.environ.get("VL_LIB", ""))

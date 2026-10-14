@@ -21,9 +21,9 @@ is `/run/media/isaac/Common` (the external Kingston XS1000 SSD connected to the 
 > the system exactly as on the original machine, and the scripts run from there.
 > **Names:** scripts, commands, services and files that the original wrote in Spanish have English names
 > here (`pasos-1-a-3.sh` → `steps-1-to-3.sh`, `cambiar-modo-root` → `switch-mode-root`…); the full table,
-> old → new, is [`docs/glossary.md`](glossary.md). The scripts still accept the old Spanish arguments
-> (`--quitar`, `juego`, `izq`…) and their installers replace the old Spanish-named pieces on a system
-> that already has them. Their messages follow the system's language ([`docs/i18n.md`](i18n.md)): in
+> old → new, is [`docs/glossary.md`](glossary.md). Only the English names and arguments are accepted (the
+> old Spanish ones, `--quitar`, `juego`, `izq`…, were removed on 2026-10-13); the installers replace the
+> old Spanish-named pieces on a system that already has them. Their messages follow the system's language ([`docs/i18n.md`](i18n.md)): in
 > Spanish they are the original ones, so the quotes in Spanish below are still what one sees there. The
 > logs that programs read (and that this recipe greps) are always in English. Files archived in
 > `logs/` keep their original names and contents (see [`logs/README.md`](../logs/README.md)).
@@ -3188,6 +3188,15 @@ screen sharing*).
 
 ## History
 
+- **2026-10-13 (Spanish aliases removed)** — The user's decision ("I did not form habits"): the old Spanish
+  arguments and options are no longer accepted (`--quitar`, `--parar`, `--dejar`, `--deshacer`, `--conservar`,
+  `--sin-pantalla-de-carga`, `--sin-cache`, `--resumen`, `--desde-grub`, `--vista`, `TEMA_PANTALLA`/`TEMA_EQUIPO`,
+  `juego`/`escritorio`/`--puede` of `switch-mode-root`, `izq`/`der`/`arr`/`abj`/`llena`/`inicio` of the window
+  scripts, `--usuario`/`--diagnostico`/`--sin-claude` of `ssh-setup`, the actions `pantalla`/`cancelar` of
+  `screen-share`), `install/aliases.sh` was deleted and the sudoers rule no longer allows
+  `/usr/local/bin/cambiar-modo-root`. The Xfce shortcuts of both machines were moved to
+  `window-focus left|right|up|down` and `window-snap left|right|up|down|home` before. What removes the old
+  Spanish-named pieces when installing (used by `install/migrate.sh`) stays.
 - **2026-10-13 (`local.env` encrypted in the repository)** — `local.env` only existed on the two machines.
   Now its copy encrypted with age and a passphrase, `local.env.age`, is committed (`install/secrets.sh seal | open
   | status`; `render.sh` opens it by itself in a fresh clone; `verify.sh` fails if it is older than `local.env`).

@@ -8,7 +8,7 @@
 # No screen reader (Orca) is used. Void recipe, steps 10 and 14.
 # Previous (Spanish) name: greeter-sin-atspi.sh.
 #   sudo sh common/steam/greeter-without-atspi.sh            turns it off (leaves .bak)
-#   sudo sh common/steam/greeter-without-atspi.sh --remove   turns it back on (--quitar also works)
+#   sudo sh common/steam/greeter-without-atspi.sh --remove   turns it back on
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"

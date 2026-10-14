@@ -5,7 +5,7 @@
 # Previous (Spanish) name: como-steamos.sh (files 30-como-steamos.conf, 91-como-steamos.conf and the
 # "como-steamos" block of /etc/rc.local; applying or --remove also cleans those old names).
 #   sudo bash legion/like-steamos.sh           # apply (if Steam is open, it closes it cleanly)
-#   sudo bash legion/like-steamos.sh --remove  # undo (the packages stay; --quitar also works)
+#   sudo bash legion/like-steamos.sh --remove  # undo (the packages stay)
 # 1. /etc/sysctl.d/30-like-steamos.conf: split_lock_mitigate=0 (SteamOS: 30-splitlock.conf; with 1, the
 #    kernel slows down ~10 ms the program that does a "split lock", and some Windows games
 #    stutter), inotify like Arch/SteamOS (10-arch.conf) and fq_codel as the network queue

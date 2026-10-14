@@ -1,9 +1,10 @@
 # Glossary: original (Spanish) names → this repository's names
 
 The original lived on the external disk in `Backups Linux/` and was written in Spanish. Here everything has
-English names; the scripts still accept the old Spanish arguments (`--quitar`, `juego`, `izq`…) and their
-installers replace the old Spanish-named pieces on a system that already has them. Archived files in `logs/`
-keep their original names. `install/aliases.sh` can create the old command names as aliases.
+English names, and only those: the old Spanish arguments and options (`--quitar`, `juego`, `izq`…) are no
+longer accepted (removed on 2026-10-13, the user's decision; before, they worked as aliases). The installers
+still replace the old Spanish-named pieces on a system that already has them (`install/migrate.sh`). Archived
+files in `logs/` keep their original names.
 
 ## Files (scripts and pieces)
 

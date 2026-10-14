@@ -94,7 +94,7 @@ case "${1:-}" in
     -l|--list)       vu_check --quiet || exit 2; vu_print_list || { ok "System is up to date"; exit 7; } ;;
     -n|--news)       vu_news "${2:-}"; rc=$? ;;
     -s|--services)   vu_services --ask; rc=$? ;;
-    --summary|--resumen)
+    --summary)
                      VU_NEW_FILES=$(find /etc -name '*.new-*' 2>/dev/null | grep -c .)
                      VU_REBOOT=$(vu_reboot_since_boot)
                      vu_summary --no-repair; rc=0 ;;

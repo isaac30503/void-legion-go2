@@ -5,9 +5,9 @@ recovered, so they should survive any reinstall.
 
 > In this repository: `common/ssh-setup/ssh-setup.fish` and `common/ssh-setup/ssh-survey.sh`.
 > Previous (Spanish) location and name: `Backups Linux/herramientas/` on the external disk, with this
-> manual as `LEEME-ssh-setup.md`. The function is still called `ssh-setup`; its old Spanish options
-> (`--usuario`, `--diagnostico`, `--sin-claude`) still work next to the English ones (`--user`,
-> `--diagnosis`, `--no-claude`).
+> manual as `LEEME-ssh-setup.md`. The function is still called `ssh-setup`; its options are the English ones
+> (`--user`, `--diagnosis`, `--no-claude`; the old Spanish `--usuario`, `--diagnostico` and `--sin-claude` were
+> removed on 2026-10-13).
 
 ## Where they go
 

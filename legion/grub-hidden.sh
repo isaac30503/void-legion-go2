@@ -11,7 +11,7 @@
 # Windows on the XS1000, from the Legion's firmware boot menu.
 # Previous (Spanish) name: grub-oculto.sh.
 #   sudo sh legion/grub-hidden.sh            applies
-#   sudo sh legion/grub-hidden.sh --remove   back to the menu with the theme, 5 s (--quitar also works)
+#   sudo sh legion/grub-hidden.sh --remove   back to the menu with the theme, 5 s
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"

@@ -2,8 +2,7 @@
 # install-theme.sh — installs (or removes) the GRUB theme "void-xterm": style of the terminal,
 # with ALL the text antialiased in the background image (GRUB only draws 1-bit fonts).
 #   sudo bash common/grub-theme/install-theme.sh            installs / reinstalls / regenerates
-#   sudo bash common/grub-theme/install-theme.sh --remove   back to the usual text menu (--quitar also works;
-#                                                            also from its installed copy:
+#   sudo bash common/grub-theme/install-theme.sh --remove   back to the usual text menu (#                                                            also from its installed copy:
 #                                                            sudo bash /usr/local/share/grub-theme/install-theme.sh --remove)
 # What it does (Void recipe, step 8):
 #   1. python3-Pillow and python3-fonttools (official; the generator uses them)
@@ -27,7 +26,7 @@ else    # the installed copy (outside the repository): only what it needs
     FROM_REPO=
     if [ -r /usr/local/lib/void-legion/i18n.sh ]; then . /usr/local/lib/void-legion/i18n.sh
     else t() { _f=$1; shift; printf -- "$_f\n" "$@"; }; fi
-    is_remove() { case "${1:-}" in --remove|--quitar) return 0 ;; *) return 1 ;; esac; }
+    is_remove() { case "${1:-}" in --remove) return 0 ;; *) return 1 ;; esac; }
 fi
 [ "$(id -u)" = 0 ] || { t "Run it with sudo."; exit 1; }
 HERE=$(dirname "$(readlink -f "$0")")

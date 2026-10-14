@@ -17,12 +17,11 @@
 # keys does not work with the real keys pressed: the shortcut has the keyboard grabbed).
 # With [window] (new-windows uses it) it does not move the pointer or activate the window.
 # Void recipe, step 13 (shortcuts).
-# Previous (Spanish) name: ventana-acoplar izq|der|arr|abj|llena|inicio (those arguments still work;
-# its state folder was $XDG_RUNTIME_DIR/ventana-acoplar).
+# Previous (Spanish) name: ventana-acoplar izq|der|arr|abj|llena|inicio (those arguments were removed on
+# 2026-10-13; its state folder was $XDG_RUNTIME_DIR/ventana-acoplar).
 
 GAP=8      # px between windows and between window and edge: the same everywhere
 dir=$1
-case "$dir" in izq) dir=left ;; der) dir=right ;; arr) dir=up ;; abj) dir=down ;; llena) dir=full ;; inicio) dir=home ;; esac
 case "$dir" in left|right|up|down|full|home) ;; *) echo "usage: window-snap left|right|up|down|full|home [window]" >&2; exit 1 ;; esac
 if [ -n "$2" ]; then w=$2; interactive=0; else w=$(xdotool getactivewindow 2>/dev/null) || exit 0; interactive=1; fi
 

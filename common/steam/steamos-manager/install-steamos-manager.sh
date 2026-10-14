@@ -19,7 +19,7 @@
 # Legion Go 2 it needs the lenovo-wmi-* modules (legion/tdp/install-tdp.sh).
 # Previous (Spanish) name: instalar-steamos-manager.sh (it wrote the list "manifiesto" and the name
 # "paquete"; installing replaces them with "manifest" and "package", which void-update reads).
-# Usage: sudo sh common/steam/steamos-manager/install-steamos-manager.sh [--remove]   (--quitar also works)
+# Usage: sudo sh common/steam/steamos-manager/install-steamos-manager.sh [--remove]  
 set -eu
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"

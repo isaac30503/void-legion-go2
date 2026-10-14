@@ -13,8 +13,7 @@
 # Legion recipe, Pending → Decided).
 # Previous (Spanish) name: giro-mando-derecho.sh (its log of 2026-10-05 is archived in logs/legion/).
 #   sudo sh legion/right-controller-gyro.sh          # apply
-#   sudo sh legion/right-controller-gyro.sh --undo   # back to the tablet (saved filter + bypass: no;
-#                                                    #  --deshacer also works)
+#   sudo sh legion/right-controller-gyro.sh --undo   # back to the tablet (saved filter + bypass: no)
 # Check: sh legion/diag-gyro.sh turning the right controller DETACHED (what reaches Steam must move)
 # and, in Steam, the gyroscope as mouse. Log: ~/right-controller-gyro.log.
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
@@ -26,7 +25,6 @@ for h in /sys/class/hidraw/hidraw*; do
     [ -e "$h/device/../ep_83" ] && DEV=/dev/${h##*/}
 done
 [ -n "$DEV" ] || { t "I cannot find the controller's configuration interface (endpoint 0x83)"; exit 1; }
-case "${1:-}" in --deshacer) set -- --undo ;; esac
 VL_LIB="$REPO_ROOT/lib" python3 - "$DEV" "${1:-}" <<'EOF' 2>&1 | tee "$TARGET_HOME/right-controller-gyro.log"
 import os, sys, time, select, json, subprocess
 sys.path.insert(0, os.environ.get("VL_LIB", ""))

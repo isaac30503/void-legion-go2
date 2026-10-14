@@ -21,8 +21,7 @@
 # Previous (Spanish) name: instalar-xfce-wayland.sh (it installed ~/.local/bin/brillo and fondo-vigilante, and
 # the launchers escritorio-wayland.desktop / escritorio-x11.desktop: installing replaces them).
 #   sudo sh common/xfce-wayland/install-xfce-wayland.sh            installs (or redoes labwc's configuration)
-#   sudo sh common/xfce-wayland/install-xfce-wayland.sh --remove   removes launchers and configuration (leaves labwc;
-#                                                                   --quitar also works)
+#   sudo sh common/xfce-wayland/install-xfce-wayland.sh --remove   removes launchers and configuration (leaves labwc)
 # Void recipe, step 15.
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done

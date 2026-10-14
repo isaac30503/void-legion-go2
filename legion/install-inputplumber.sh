@@ -7,7 +7,7 @@
 # controller through hidraw.
 # Previous (Spanish) name: instalar-inputplumber.sh (file list /usr/local/share/inputplumber-void/manifiesto;
 # --remove also reads that old list).
-# Usage: sudo bash legion/install-inputplumber.sh [--remove]      (--quitar also works)
+# Usage: sudo bash legion/install-inputplumber.sh [--remove]     
 #        (with inputplumber-x86_64.tar.gz of v0.81.0 and inputplumber-udevadm next to the script;
 #         the tarball comes from the GitHub Release: install/fetch-assets.sh)
 set -euo pipefail

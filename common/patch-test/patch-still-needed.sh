@@ -16,7 +16,7 @@
 # Usage (without root):
 #   patch-still-needed void <package> <patch>...          current template of void-packages (master)
 #   patch-still-needed git <url> <ref> <name> <patch>...  tag or branch of upstream
-#   --no-cache (before the mode): do not read the cache (--sin-cache also works)
+#   --no-cache (before the mode): do not read the cache
 #   --version <version_revision> (before "void"): if the cache already has that version, it answers without network
 #     (void-update passes it the one that Void's repository publishes; the template may be ahead)
 # Output: one line "PATCH <file> <state>" per patch and, at the end, always one line
@@ -51,7 +51,7 @@ VP_URL=https://github.com/void-linux/void-packages.git
 USE_CACHE=1; HINT=
 while :; do
     case "${1:-}" in
-        --no-cache|--sin-cache) USE_CACHE=0; shift ;;
+        --no-cache) USE_CACHE=0; shift ;;
         --version)              HINT=${2:-}; shift 2 ;;
         *) break ;;
     esac

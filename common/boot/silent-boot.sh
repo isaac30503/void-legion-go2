@@ -8,7 +8,7 @@
 # regenerated (update-grub, or common/grub-theme/install-theme.sh, which does it).
 # And it removes GRUB's loading messages in /etc/grub.d/10_linux (remove-loading.py; leaves .bak).
 #   sudo sh common/boot/silent-boot.sh            applies (leaves /etc/rc.conf.bak)
-#   sudo sh common/boot/silent-boot.sh --remove   shows everything again (--quitar also works)
+#   sudo sh common/boot/silent-boot.sh --remove   shows everything again
 # Void recipe, step 8 ("Boot and shutdown with fewer messages").
 # Previous (Spanish) name: arranque/arranque-silencioso.sh (block "# >>> arranque silencioso" in rc.conf and
 # /etc/modules-load.d/dm-raid.conf.desactivado: applying or --remove also handles those old names).

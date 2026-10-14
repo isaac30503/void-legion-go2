@@ -3,7 +3,7 @@
 # also when booting straight into Game Mode (there is no desktop session there to mount it).
 # Previous (Spanish) name: microsd-al-arrancar.sh.
 #   sudo sh legion/microsd-at-boot.sh            # with Steam CLOSED
-#   sudo sh legion/microsd-at-boot.sh --remove   # undoes it (with Steam closed; --quitar also works)
+#   sudo sh legion/microsd-at-boot.sh --remove   # undoes it (with Steam closed)
 # - /etc/fstab (leaves fstab.bak): UUID → /mnt/microsd, ext4, with "nofail": on Void, if "mount -a"
 #   fails at boot, /etc/runit/core-services/03-filesystems.sh opens the emergency console;
 #   with nofail, if the card is not there it boots anyway. fsck pass 0 (as when udisks mounted it).

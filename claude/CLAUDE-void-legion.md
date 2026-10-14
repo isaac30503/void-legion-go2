@@ -157,7 +157,7 @@ all the machines of the network. **Do not set fish with `chsh`.**
   (any package from a local repository), compares each one with Void's (same revision
   = WARNING: it is a newer Void build that xbps does not install), `ldd` of the gamescope portal, and
   `steamos-manager` (`ldd`, reference sha256, build dependencies) and `extest` (`ldd` and what is
-  needed to rebuild it). **`void-update --summary`** (`--resumen` also works): only the summary, without syncing or `sudo`.
+  needed to rebuild it). **`void-update --summary`**: only the summary, without syncing or `sudo`.
   **Testing own patches (2026-10-09):** `void-update` no longer assumes from the version whether an own
   patch is still needed: it **tests** it against the code of Void's template (or of the latest
   upstream tag, for steamos-manager) with `~/.local/bin/patch-still-needed`

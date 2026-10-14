@@ -5,7 +5,7 @@ box on top of the menu. They are in /etc/grub.d/10_linux as one echo line per me
 turned into a marked comment (it goes like that into grub.cfg, where GRUB ignores it) and --remove gives
 it back as it was. 10_linux is a configuration file of the grub package: the change survives
 updates (xbps leaves the new version as .new-*).
-Usage: remove-loading.py /etc/grub.d/10_linux [--remove]    (then update-grub; --quitar also works)
+Usage: remove-loading.py /etc/grub.d/10_linux [--remove]    (then update-grub)
 Previous (Spanish) name: quitar-loading.py. Its marker was "# arranque-silencioso: echo del mensaje de carga
 quitado": it is recognized too, and normalized to the English one when applying.
 Void recipe, step 8.
@@ -24,7 +24,7 @@ MARK = "\t# silent-boot: echo of the loading message removed"
 OLD_MARK = "\t# arranque-silencioso: echo del mensaje de carga quitado"
 
 path = sys.argv[1]
-give_back = len(sys.argv) > 2 and sys.argv[2] in ("--remove", "--quitar")
+give_back = len(sys.argv) > 2 and sys.argv[2] == "--remove"
 lines = open(path, encoding="utf-8").read().split("\n")
 n = 0
 for i, line in enumerate(lines):
