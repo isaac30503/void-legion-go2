@@ -31,7 +31,7 @@ if is_remove "${1:-}"; then
 fi
 python3 -c 'import os; os.timerfd_create' 2>/dev/null || { t "!! needs Python >= 3.13 (os.timerfd_create)"; exit 1; }
 install -m 755 "$H/power-button" "$BIN.tmp" && mv "$BIN.tmp" "$BIN"
-install -m 644 "$H/70-power-button.rules" "$RULE"
+mkdir -p "${RULE%/*}" && install -m 644 "$H/70-power-button.rules" "$RULE"   # the folder may not exist (Legion)
 mkdir -p "${CONF%/*}" && install -m 644 "$H/50-power-button.conf" "$CONF"
 install -m 644 "$H/power-button.desktop" "$AUTO"
 reload
