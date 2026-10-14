@@ -6,8 +6,8 @@
 
 Catalogs: <locale dir>/<language>/messages.po (gettext PO: msgid = English, msgstr = translation).
 Language: LANGUAGE, LC_ALL, LC_MESSAGES or LANG (or LANG in /etc/locale.conf). Locale dirs, first
-found: $VOID_LEGION_LOCALE_DIR, ~/.local/share/void-legion/locale,
-/usr/local/share/void-legion/locale, and locale/ of the repository this file is in.
+found: $VOID_LEGION_LOCALE_DIR, locale/ of the repository this file is in (it may be newer than the
+installed copies), ~/.local/share/void-legion/locale, /usr/local/share/void-legion/locale.
 The installers copy this module to ~/.local/share/void-legion/lib and /usr/local/share/void-legion/lib;
 the scripts look for it there (or in the repository's lib/) and, if missing, show English.
 Only what a person reads is translated; logs and tokens read by programs stay in English.
@@ -54,9 +54,9 @@ def _load():
         return
     here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     for d in (os.environ.get("VOID_LEGION_LOCALE_DIR", ""),
+              os.path.join(here, "locale"),  # from a clone, its own catalog first (it may be newer)
               os.path.expanduser("~/.local/share/void-legion/locale"),
-              "/usr/local/share/void-legion/locale",
-              os.path.join(here, "locale")):
+              "/usr/local/share/void-legion/locale"):
         p = os.path.join(d, lang, "messages.po") if d else ""
         if p and os.path.isfile(p):
             msgid = None

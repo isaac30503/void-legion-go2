@@ -10,8 +10,8 @@
 # Catalogs: <locale dir>/<language>/messages.po (gettext PO format: msgid = the English text,
 # msgstr = the translation). Language: LANGUAGE, LC_ALL, LC_MESSAGES or LANG; when running through
 # sudo with an empty environment, the system's LANG from /etc/locale.conf (Void sets it there).
-# Locale dirs, first found: $VOID_LEGION_LOCALE_DIR, ~/.local/share/void-legion/locale,
-# /usr/local/share/void-legion/locale, and the repository's locale/ (next to this lib/).
+# Locale dirs, first found: $VOID_LEGION_LOCALE_DIR, the repository's locale/ (when running from a clone: it may be
+# newer than the installed copies), ~/.local/share/void-legion/locale, /usr/local/share/void-legion/locale.
 # How to add a language: docs/i18n.md.
 #
 # Rules followed by the scripts: only what a person reads is translated (progress, questions,
@@ -34,8 +34,9 @@ _i18n_catalog() {
     _here=""
     # The repository's locale/ when this file is sourced from a clone (I18N_REPO_DIR set by common.sh).
     [ -n "${I18N_REPO_DIR:-}" ] && _here="$I18N_REPO_DIR/locale"
-    for _d in "${VOID_LEGION_LOCALE_DIR:-}" "${HOME:-/nonexistent}/.local/share/void-legion/locale" \
-              /usr/local/share/void-legion/locale "$_here"; do
+    # From a clone, its own catalog first (it may be newer than the installed copies)
+    for _d in "${VOID_LEGION_LOCALE_DIR:-}" "$_here" "${HOME:-/nonexistent}/.local/share/void-legion/locale" \
+              /usr/local/share/void-legion/locale; do
         [ -n "$_d" ] && [ -r "$_d/$_lang/messages.po" ] && { echo "$_d/$_lang/messages.po"; return 0; }
     done
     return 0    # no catalog: English (and never a failure, for scripts with set -e)
