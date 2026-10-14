@@ -13,7 +13,8 @@ menu, and **`void-update`** (like CachyOS's cachy-update: panel icon, rootless c
 news, services to restart) that also **tests whether each own patch is still needed**.
 
 > Private repository. Private values (MACs, UUIDs, Wi-Fi name, serial numbers, Steam account id) are
-> written as `@NAME@`; the real ones live only in `local.env`, which is not in git ([docs/sanitization.md](docs/sanitization.md)).
+> written as `@NAME@`; the real ones live in `local.env`, which is in git only **encrypted** (`local.env.age`, age with a passphrase;
+> [docs/sanitization.md](docs/sanitization.md)).
 
 ## Start here
 

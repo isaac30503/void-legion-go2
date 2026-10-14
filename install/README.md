@@ -11,7 +11,8 @@ Run them **as the user, from the clone** (not from `build/`, and not with `sudo`
 | `migrate.sh [--dry-run]` | a machine installed with the original Spanish-named pieces (Common) → this repository's: runs only the installers of what is installed (each one removes its old pieces), fixes the personal folders in their current language (`enabled=False` in `~/.config/user-dirs.conf`: no `Downloads` next to `Descargas`), sudo once, then reboot |
 | `install-i18n.sh` | installs the translations of the messages (as user, and with `sudo` for the system) ([`../docs/i18n.md`](../docs/i18n.md)) |
 | `aliases.sh [--remove]` | optional: the old Spanish command names as links to the new ones ([`../docs/glossary.md`](../docs/glossary.md)) |
-| `verify.sh [--secrets]` | checks: syntax, catalogs, paths of the recipe, binaries, and that no private value is in the clone or its history |
+| `secrets.sh seal \| open \| status` | `local.env` ↔ `local.env.age`, its copy encrypted with age and a passphrase, which is in git ([`../docs/sanitization.md`](../docs/sanitization.md)) |
+| `verify.sh [--secrets]` | checks: syntax, catalogs, paths of the recipe, binaries, that no private value is in the clone or its history, and that `local.env.age` says the same as `local.env` |
 | `assets.tsv` | list of the Release's binaries: name, sha256, destination, and the release tag |
 
 First time on a freshly installed Void (recipe, point B):
