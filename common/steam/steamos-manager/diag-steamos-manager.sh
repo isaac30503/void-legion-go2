@@ -7,16 +7,16 @@
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"
 need_root
-L=$TARGET_HOME/diag-steamos-manager.log; : > $L; chown "$TARGET_USER": $L
+L=$TARGET_HOME/diag-steamos-manager.log; : > "$L"; chown "$TARGET_USER": "$L"
 sv down steamos-manager
 try() {
-    echo "===== $1" >> $L
-    RUST_LOG=debug timeout 4 /usr/lib/steamos-manager -r >> $L 2>&1; echo "exit: $?" >> $L
+    echo "===== $1" >> "$L"
+    RUST_LOG=debug timeout 4 /usr/lib/steamos-manager -r >> "$L" 2>&1; echo "exit: $?" >> "$L"
 }
 try "as is"
 if ! mountpoint -q /sys/kernel/tracing; then
-    mount -t tracefs nodev /sys/kernel/tracing && echo "== tracefs mounted" >> $L
+    mount -t tracefs nodev /sys/kernel/tracing && echo "== tracefs mounted" >> "$L"
 fi
 try "with tracefs"
 sv up steamos-manager
-t "done: %s" "$L"; tail -n 5 $L
+t "done: %s" "$L"; tail -n 5 "$L"

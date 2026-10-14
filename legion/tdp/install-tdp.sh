@@ -40,12 +40,12 @@ sleep 1
 # 4. Check
 dkms status -m $N
 lsmod | grep -E '^lenovo_wmi' || true
-for p in /sys/class/platform-profile/*; do echo "$(cat $p/name): $(cat $p/choices) → $(cat $p/profile)"; done
+for p in /sys/class/platform-profile/*; do echo "$(cat "$p"/name): $(cat "$p"/choices) → $(cat "$p"/profile)"; done
 A=/sys/class/firmware-attributes/lenovo-wmi-other-0/attributes
 if [ -d $A ]; then
     for a in $A/*/; do a=${a%/}; printf '%-16s %-8s min %-4s max %-4s (%s)\n' "${a##*/}" \
-        "$(cat $a/current_value 2>/dev/null)" "$(cat $a/min_value 2>/dev/null)" "$(cat $a/max_value 2>/dev/null)" \
-        "$(cat $a/display_name 2>/dev/null)"; done
+        "$(cat "$a"/current_value 2>/dev/null)" "$(cat "$a"/min_value 2>/dev/null)" "$(cat "$a"/max_value 2>/dev/null)" \
+        "$(cat "$a"/display_name 2>/dev/null)"; done
 else
     t "there is NO %s" "$A"; dmesg | grep -iE 'lenovo|wmi' | tail -20
 fi

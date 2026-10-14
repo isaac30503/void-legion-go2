@@ -1,4 +1,6 @@
 # shellcheck shell=bash
+# shellcheck disable=SC2154  # configuration and colors: defined in base.sh (void-update sources them together)
+# shellcheck disable=SC2034  # VU_REPLACED, VU_NEW_FILES: read by summary.sh
 # upgrade.sh — void-update without options: the full update. The idea comes from omarchy-update (Arch) and
 # cachy-update, adapted to Void and to what happened on these machines. In order:
 #
@@ -53,7 +55,7 @@ vu_upgrade() {
 }
 
 vu_steps() {
-    local raw pending=() names mib n
+    local raw pending=() names mib orphans kernels remove new_files
     vu_news_before_update
     raw=$(mktemp)
     xbps-install -un > "$raw" 2>/dev/null

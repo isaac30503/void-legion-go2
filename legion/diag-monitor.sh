@@ -13,8 +13,8 @@ echo "== kernel: $(cat /proc/cmdline)"
 echo "== connectors (status / enabled / dpms / current mode)"
 for c in /sys/class/drm/card*-*; do
     [ -e "$c/status" ] || continue
-    printf '%s: %s / %s / %s / %s\n' "${c##*/}" "$(cat $c/status)" "$(cat $c/enabled 2>/dev/null)" \
-        "$(cat $c/dpms 2>/dev/null)" "$(head -1 $c/modes 2>/dev/null)"
+    printf '%s: %s / %s / %s / %s\n' "${c##*/}" "$(cat "$c"/status)" "$(cat "$c"/enabled 2>/dev/null)" \
+        "$(cat "$c"/dpms 2>/dev/null)" "$(head -1 "$c"/modes 2>/dev/null)"
 done
 echo "== GPU busy: $(cat /sys/class/drm/card0/device/gpu_busy_percent 2>/dev/null)%"
 echo "== profile: $(cat /sys/firmware/acpi/platform_profile 2>/dev/null)"

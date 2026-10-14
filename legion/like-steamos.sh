@@ -71,7 +71,7 @@ fi
 if pgrep -u "$U" -x steam >/dev/null; then
     t "== closing Steam (steam -shutdown)"
     _p=$(pgrep -u "$U" -x steam | head -1)
-    _e=$(tr '\0' '\n' < /proc/$_p/environ 2>/dev/null | grep -E '^(HOME|USER|LOGNAME|DISPLAY|XDG_RUNTIME_DIR|DBUS_SESSION_BUS_ADDRESS)=' | tr '\n' ' ')
+    _e=$(tr '\0' '\n' < "/proc/$_p/environ" 2>/dev/null | grep -E '^(HOME|USER|LOGNAME|DISPLAY|XDG_RUNTIME_DIR|DBUS_SESSION_BUS_ADDRESS)=' | tr '\n' ' ')
     chpst -u "$U" env -i PATH=/usr/bin:/bin $_e /usr/bin/steam -shutdown </dev/null >/dev/null 2>&1 &
     timeout 30 pidwait -u "$U" -x steam 2>/dev/null
     if pgrep -u "$U" -x steam >/dev/null; then t "Steam did not close: close it by hand and repeat."; exit 1; fi

@@ -7,7 +7,7 @@
 set -uo pipefail
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"
-cd "$REPO_ROOT"
+cd "$REPO_ROOT" || exit 1
 bad=0
 ok()   { t "   ok    %s" "$1"; }
 fail() { t "!! FAIL  %s" "$1"; bad=1; }
@@ -91,6 +91,18 @@ while IFS= read -r f; do
 done < <(git ls-files --cached --others --exclude-standard 2>/dev/null | grep . || find common legion lib install -type f)
 find . -name __pycache__ -prune -exec rm -rf {} + 2>/dev/null
 ok "scripts"
+# Static analysis with ShellCheck, if installed: no errors or warnings in any shell script (notes are allowed; 2026-10-14)
+if command -v shellcheck >/dev/null; then
+    sh_files=()
+    while IFS= read -r f; do
+        case "$f" in *.sh) sh_files+=("$f") ;;
+            *) [ -f "$f" ] && head -c 40 "$f" | grep -qE '^#!(/bin/(ba)?sh|/usr/bin/env (ba)?sh)' && sh_files+=("$f") ;; esac
+    done < <(git ls-files --cached --others --exclude-standard 2>/dev/null)
+    if out=$(shellcheck -S warning "${sh_files[@]}" 2>&1); then ok "shellcheck (${#sh_files[@]})"
+    else printf '%s\n' "$out" | grep -E '^In |SC[0-9]+' | head -20; fail "shellcheck"; fi
+else
+    t "   note: shellcheck is not installed (sudo xbps-install -S shellcheck)"
+fi
 
 t "== catalogs"
 for po in locale/*/messages.po; do

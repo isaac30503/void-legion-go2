@@ -72,7 +72,7 @@ else
 
     t "== 3. console 1 for X (lightdm closes Plymouth): without text login on it"
     rm -f "$TTY1"
-    ls /etc/runit/runsvdir/default | grep agetty | tr '\n' ' '; echo
+    for f in /etc/runit/runsvdir/default/agetty*; do [ -e "$f" ] && printf '%s ' "${f##*/}"; done; echo
 fi
 grep '^GRUB_CMDLINE_LINUX_DEFAULT' "$GRUB"
 

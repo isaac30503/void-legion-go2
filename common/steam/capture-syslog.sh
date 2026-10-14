@@ -50,7 +50,7 @@ mkdir -p "$SV"
 printf '#!/bin/sh\nrm -f /dev/log\nexec python3 /run/capture-syslog.py 2>&1\n' > "$SV/run"
 chmod 755 "$SV/run"
 ln -s "$SV" /var/service/
-for i in 1 2 3 4 5 6 7 8 9 10; do [ -S /dev/log ] && break; sleep 1; done   # runsvdir sees it in ~5 s
+for _ in 1 2 3 4 5 6 7 8 9 10; do [ -S /dev/log ] && break; sleep 1; done   # runsvdir sees it in ~5 s
 logger -t capture-syslog "test" 2>/dev/null
 sleep 1; cat "$LOG"
 t "== Listening. Switch mode (there and back) and then: sudo sh %s --stop" "$0"

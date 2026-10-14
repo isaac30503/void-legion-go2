@@ -1,4 +1,5 @@
 # shellcheck shell=bash
+# shellcheck disable=SC2154  # configuration and colors: defined in base.sh (void-update sources them together)
 # summary.sh — the SUMMARY at the end of an update (and of "void-update --summary"): one line per check with
 # OK / REPAIRED / WARNING / NOTE (2026-10-04; short lines since 2026-10-14), so as not to have to read everything above. It repairs only what is safe
 # (the same that its installer would do): the Legion's TDP DKMS module on a 6.18 kernel and gamescope's
@@ -89,7 +90,7 @@ vu_void_version() {
 # Receives the lines of xbps-install -un; leaves the names in VU_REPLACED for the summary.
 vu_local_warning() {
     VU_REPLACED=()
-    local locals l new n before pr from st ver det
+    local locals l new n before from st ver det
     locals=$(vu_locals); [ -n "$locals" ] || return 0
     for l in "$@"; do
         new=${l%% *}; n=$(printf '%s\n' "$new" | vu_pkgname)
@@ -126,7 +127,7 @@ vu_short_name() { case "$1" in xdg-desktop-portal-wlr) echo portal-wlr ;; steamo
 # A summary line ("STATE|name|short|detail") for a package built here: the short text fits the line; the detail
 # says which patch it carries, what is lost without it and what to do.
 vu_local_line() {
-    local n=$1 patch=$2 loss=$3 ver repo how void from_void=0 st= pver= det= tested= short_t= back cmp
+    local n=$1 patch=$2 loss=$3 ver repo how void from_void=0 st='' pver='' det='' tested='' short_t='' back cmp
     ver=$(xbps-query -p pkgver "$n" 2>/dev/null); [ -n "$ver" ] || return 0
     repo=$(xbps-query -p repository "$n" 2>/dev/null)
     how=$(vu_how_to_rebuild "$n")
@@ -271,7 +272,7 @@ vu_summary() {
     # steamos-manager (built here with a patch, outside xbps): libraries, reference sha256, build dependencies,
     # which package it is, and whether upstream published a new version that still needs the patch.
     if [ -e /usr/lib/steamos-manager ]; then
-        local bad=() dir=/usr/local/share/steamos-manager-void pkg= name ref sum= deps=() p note= tag url newest r
+        local bad=() dir=/usr/local/share/steamos-manager-void pkg='' name ref sum='' deps=() p note='' tag url newest r
         if [ -f $dir/package ]; then pkg=$(head -1 $dir/package | tr -d '[:space:]'); elif [ -f $dir/paquete ]; then pkg=$(head -1 $dir/paquete | tr -d '[:space:]'); fi
         if [ -z "$pkg" ]; then name=$(t "unknown package (repeat %s to record it)" install-steamos-manager.sh)
         elif [[ "$pkg" == *-void ]]; then name=$(t "package %s (the official one, WITHOUT the set_clocks patch: \"Error setting manual GPU clock\" in the log with the manual clock disabled; the patched one is …-void-2)" "$pkg")
@@ -315,6 +316,7 @@ vu_summary() {
         [ -n "$missing" ] && bad+=("$(t "does NOT find %s: rebuild with %s (Legion recipe, step 14, \"Controller on the desktop\")" "$missing" 'cd ~/src/extest && ~/.cargo/bin/cargo build --release && install -D -m 755 target/i686-unknown-linux-gnu/release/libextest.so ~/.local/lib/extest/libextest.so')")
         i686=$(ls -d ~/.rustup/toolchains/*/lib/rustlib/i686-unknown-linux-gnu 2>/dev/null | head -1)
         [ -x ~/.cargo/bin/cargo ] || bad+=("$(t "to rebuild it, missing Rust from rustup (~/.cargo, ~/.rustup)")")
+        # shellcheck disable=SC2088  # the message shows "~" literally
         [ -x ~/.cargo/bin/cargo ] && [ -z "$i686" ] && bad+=("$(t "to rebuild it, missing the 32-bit target: %s" '~/.cargo/bin/rustup target add i686-unknown-linux-gnu')")
         [ -f ~/src/extest/Cargo.lock ] || bad+=("$(t "to rebuild it, missing ~/src/extest (its code, 1.0.3: copy in %s)" legion/steam/extest/extest-1.0.3-src.tar.gz)")
         xbps-query gcc-multilib >/dev/null 2>&1 || bad+=("$(t "to rebuild it, missing: %s" 'sudo xbps-install -S gcc-multilib')")

@@ -142,7 +142,7 @@ case "$dir" in
             left|right|up|down)                                    # half
                 case $dir in
                     "$state") exit 0 ;;                            # outwards: nothing
-                    $(opposite "$state")) target=full ;;           # inwards: almost maximized
+                    "$(opposite "$state")") target=full ;;           # inwards: almost maximized
                     up|down) target=$dir-$state ;;                 # perpendicular: corner
                     *)       target=$state-$dir ;;
                 esac ;;

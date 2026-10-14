@@ -47,7 +47,7 @@ fi
 t "== void-update"
 mkdir -p "$LIB/lib.new" "$BIN" "$APPS" "$COMP"
 install -m 644 "$HERE"/lib/*.sh "$LIB/lib.new/"
-rm -rf "$LIB/lib"; mv "$LIB/lib.new" "$LIB/lib"
+rm -rf "${LIB:?}/lib"; mv "$LIB/lib.new" "$LIB/lib"
 install -m 755 "$HERE/void-update-tray" "$LIB/void-update-tray.new" && mv "$LIB/void-update-tray.new" "$LIB/void-update-tray"
 install -m 644 "$HERE/void-update.conf.example" "$LIB/"
 mkdir -p "$LIB/icons" ~/.local/share/icons/hicolor/scalable/apps
