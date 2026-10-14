@@ -251,5 +251,10 @@ else
     t "!! %s can NOT use %s without password: the switch will ask for it again" "$U" "$HELP"; exit 1
 fi
 grep -n 'autologin' "$DROP"
-t "== Reboot: it enters Game Mode by itself. 'Switch to Desktop' → Xfce without password;"
+# The message says the mode it will really start in (the kept one; before, it always said Game Mode)
+case "$SESSION" in
+    steam-game-mode*) t "== Reboot: it enters Game Mode by itself. 'Switch to Desktop' → Xfce without password;" ;;
+    xfce-wayland)     t "== Reboot: it enters the desktop (Xfce on Wayland) by itself, the chosen mode. 'Switch to Desktop' → Xfce without password;" ;;
+    *)                t "== Reboot: it enters the desktop (Xfce X11) by itself, the chosen mode. 'Switch to Desktop' → Xfce without password;" ;;
+esac
 t "   from Xfce, the 'Game Mode' launcher → Game Mode without password."
