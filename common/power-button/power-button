@@ -1,17 +1,17 @@
 #!/usr/bin/python3 -IS
 # power-button --mode game|desktop — the power button, in the spirit of the Steam Deck's (2026-10-14, the user's
 # request and choice):
-#   a press opens the power menu at once; held ~3 s, the machine suspends.
+#   a press opens the power menu at once; held ~5 s, the machine suspends.
 #   Game Mode: Steam's power menu (steam://longpowerpress) / Steam suspends (steam://shortpowerpress), the URLs of
 #     SteamOS's steamos-powerbuttond; without Steam running, it suspends through elogind (loginctl suspend).
 #   Desktop (Xfce, X11 or Wayland): Xfce's logout dialog (xfce4-session-logout: shut down, restart, suspend,
 #     hibernate, log out) / loginctl suspend.
 # Why not the Deck's way (short = suspend, held 1 s = menu): the Legion Go 2's firmware never says when the
 # button is released. On every press the ACPI "Power Button" sends KEY_POWER pressed+released at once, and only if
-# it is still held ~3.2 s later the embedded controller types Super+F16 on the internal keyboard ("AT Translated
+# it is still held ~3–5.5 s later (3.2 s in a capture; 5.3 and 5.6 s in use) the embedded controller types Super+F16 on the internal keyboard ("AT Translated
 # Set 2 keyboard", scancodes 0xdb and 0x67; the F16 mapping is in Void's hwdb, the same as Valve's). Captured on
 # 2026-10-14. Deciding "short" would mean waiting 3.5 s before suspending; the user chose: press = menu (nothing
-# waits), held = suspend. When held, the menu opens first and may still be open after waking up (Cancel/Esc).
+# waits), held = suspend. Holding much longer powers off in the firmware (seen on 2026-10-14): let go when the screen goes off. When held, the menu opens first and may still be open after waking up (Cancel/Esc).
 # On a machine without that F16 (the IdeaPad), a press opens the menu and that is all.
 # Started by each session (the Game Mode launcher; /etc/xdg/autostart/power-button.desktop for Xfce): the newest
 # one replaces the previous one, and it ends when the process that started it (its session) ends.
@@ -28,7 +28,7 @@
 # (in English: the checks read it). Installed by install-power-button.sh.
 import os, select, signal, struct, sys, time
 
-HELD_AFTER = 6.0              # an F16 counts as "held" if it comes this long after the press (it came at 3.2 s)
+HELD_AFTER = 10.0             # an F16 counts as "held" if it comes within this after the press (it came at 3.2–5.6 s)
 AFTER_RESUME = 2.0            # seconds after waking up during which presses are ignored
 EV_KEY, KEY_POWER, KEY_F16 = 1, 116, 186
 EVENT = struct.Struct("llHHi")  # struct input_event (64-bit): time, type, code, value

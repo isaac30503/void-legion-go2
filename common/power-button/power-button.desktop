@@ -2,8 +2,8 @@
 Type=Application
 Name=Power button
 Name[es]=Botón de encendido
-Comment=Press: power menu; held ~3 s: suspend (common/power-button)
-Comment[es]=Pulsar: menú de energía; mantener ~3 s: suspender (common/power-button)
+Comment=Press: power menu; held ~5 s: suspend (common/power-button)
+Comment[es]=Pulsar: menú de energía; mantener ~5 s: suspender (common/power-button)
 Exec=/usr/local/bin/power-button --mode desktop
 OnlyShowIn=XFCE;
 NoDisplay=true

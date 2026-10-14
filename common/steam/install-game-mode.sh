@@ -115,7 +115,7 @@ if [ -x /usr/lib/steamos-manager ]; then
     RUST_LOG=info /usr/lib/steamos-manager & sm=$!
     echo "== user steamos-manager started (pid $sm)"
 fi
-# Power button (common/power-button/install-power-button.sh): a press opens Steam's power menu, held ~3 s Steam
+# Power button (common/power-button/install-power-button.sh): a press opens Steam's power menu, held ~5 s Steam
 # suspends. Only if it is installed; it ends with this launcher (its parent).
 pb=
 if [ -x /usr/local/bin/power-button ]; then
