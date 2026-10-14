@@ -115,6 +115,13 @@ if [ -x /usr/lib/steamos-manager ]; then
     RUST_LOG=info /usr/lib/steamos-manager & sm=$!
     echo "== user steamos-manager started (pid $sm)"
 fi
+# Power button (common/power-button/install-power-button.sh): a press opens Steam's power menu, held ~3 s Steam
+# suspends. Only if it is installed; it ends with this launcher (its parent).
+pb=
+if [ -x /usr/local/bin/power-button ]; then
+    /usr/local/bin/power-button --mode game & pb=$!
+    echo "== power button started (pid $pb)"
+fi
 # Brightness: Steam changes it with "echo N | sudo -n tee /sys/class/backlight/<x>/brightness", which here
 # asks for a password. First in the PATH goes /usr/local/lib/steam-game-mode/bin/sudo, which turns
 # ONLY that command into elogind's SetBrightness (GNOME's and KDE's: the session on screen
@@ -258,6 +265,7 @@ exec 3<&-; rm -f "$FIFO"
 echo "== $(date '+%F %T'): end of gamescope; to Xfce"
 [ -n "$pw" ] && { pkill -P "$pw" 2>/dev/null; kill "$pw" 2>/dev/null; }   # PipeWire and its children
 [ -n "$sm" ] && kill "$sm" 2>/dev/null
+[ -n "$pb" ] && kill "$pb" 2>/dev/null
 /usr/local/bin/steamos-session-select xfce
 EOF
 chmod 755 "$BIN"

@@ -179,6 +179,7 @@ log in. Then:
 
 ```bash
 sudo sh "$B/common/steam/install-game-mode.sh" --no-loading-screen
+sudo sh "$B/common/power-button/install-power-button.sh"   # power button: press = menu, held = suspend (step 14)
 sudo sh "$B/common/steam/test-direct-session.sh"
 sudo sh "$B/common/steam/install-passwordless-switch.sh"
 sudo sh "$B/common/xfce-wayland/install-xfce-wayland.sh"   # step 15: BEFORE rebooting
@@ -2374,6 +2375,46 @@ the same as before, checked). **Firefox and Steam with only labwc's border** (`S
 border forceSSD`; in Firefox, "Barra de título" ("Title Bar") unchecked): detail in step 15 of the IdeaPad.
 **Verified:** Game Mode's "Cambiar a escritorio" enters Xfce Wayland (labwc 0.20.2).
 
+### Power button: press = power menu, held ~3 s = suspend, in both modes (2026-10-14)
+
+The user's request: the Steam Deck's power button (there: a short press suspends, held 1 s opens the power
+menu) in Game Mode and on the desktop. **What the Deck does** (read on it, SteamOS 3.8.28): logind ignores the
+key (`HandlePowerKey=ignore`); in Game Mode `steamos-powerbuttond` (Valve, C, a user service started with the
+gamescope session) reads the button and sends `steam -ifrunning steam://shortpowerpress` or, if still held after
+1 s (`alarm(1)`), `steam://longpowerpress`; its devices are marked by udev (`STEAMOS_POWER_BUTTON`, `TAG+="uaccess"`).
+On its desktop, KDE: `PowerButtonAction=1` (suspend), no long press.
+
+**What the Legion Go 2 sends** (captured on 2026-10-14 with every input device open, read-only): at every press,
+the ACPI `Power Button` gives `KEY_POWER` pressed **and** released in the same millisecond, and **nothing when it
+is released**; only if it is still held ~3.2 s later, the embedded controller types **Super+F16** on the internal
+keyboard (`AT Translated Set 2 keyboard`, scancodes `0xdb`/`0x67`; Void's hwdb already maps `0x67` to F16, the
+same as Valve's for 83N0/83N1). So the Deck's "short" cannot be known until 3.2 s have gone by without F16. The
+user chose (over "wait 3.5 s, then suspend" and "suspend at once, no menu"): **a press opens the power menu at once;
+held ~3 s, it suspends** (nothing waits). When held, the menu opens first and may still be there after waking up
+(Cancel/Esc).
+
+**Before (careful):** elogind's default is `HandlePowerKey=poweroff`. On the desktop xfce4-power-manager blocks
+it (inhibitor `handle-power-key`), but in **Game Mode one press powered the Legion off** (2026-10-14).
+
+`common/power-button/`, installed with `sudo sh "$B/common/power-button/install-power-button.sh"` (and then
+`sudo sh "$B/common/steam/install-game-mode.sh" --no-loading-screen`, whose launcher starts it):
+- **`/usr/local/bin/power-button --mode game|desktop`** (Python, standard library; not C: the user's decision, no
+  build step, the same speed here, ~10 MB of memory and 0 % CPU at rest). Event-driven, no timers: it sleeps in
+  `poll()` on the marked devices, a pidfd of its session's process (it ends with it) and a `timerfd` with
+  `TFD_TIMER_CANCEL_ON_SET`, which the kernel cancels on every resume (`timerfd_resume()`): presses in the 2 s after
+  waking up are ignored (the waking press would open the menu). Game Mode: press → `steam://longpowerpress`
+  (Steam's power menu), held → `steam://shortpowerpress` (Steam suspends); desktop: press →
+  `xfce4-session-logout` (shut down, restart, suspend, hibernate, log out), held → `loginctl suspend`. One per user
+  (the newest session's). Log: `~/.local/state/power-button.log`.
+- **`/etc/udev/rules.d/70-power-button.rules`**: `POWER_BUTTON=1` and `uaccess` for the ACPI `Power Button` and, on
+  83N0/83N1 only, the internal keyboard (the embedded controller's: no other keys come through it).
+- **`/etc/elogind/logind.conf.d/50-power-button.conf`**: `HandlePowerKey=ignore`, `HandlePowerKeyLongPress=ignore`
+  (reloaded with `SIGHUP`, no session touched; check: `busctl get-property org.freedesktop.login1
+  /org/freedesktop/login1 org.freedesktop.login1.Manager HandlePowerKey` → `s "ignore"`).
+- **`/etc/xdg/autostart/power-button.desktop`**: the desktop's (X11 and Wayland). Game Mode: its launcher, only if
+  the program is installed.
+- xfce4-power-manager: `power-button-action` = 0 (nothing), in `legion/xfce/` (in the X11 session it would act too).
+
 ### Internal screen without wallpaper when coming from Game Mode: `wallpaper-watcher` (2026-10-04)
 
 **Symptom:** when going from Game Mode to the desktop, the Legion's screen stayed **black** (the
@@ -2883,6 +2924,8 @@ xrandr --listactivemonitors                # X11: eDP and, with the monitor, Dis
 pgrep -af new-windows                  # the watcher, only in the X11 session (on Wayland it exits right away: labwc does it)
 ssh ideapad hostname                       # ideapad-100
 iw dev wlp193s0 get power_save             # Power save: off
+busctl get-property org.freedesktop.login1 /org/freedesktop/login1 org.freedesktop.login1.Manager HandlePowerKey   # s "ignore" (power-button)
+pgrep -af power-button                     # one, with --mode game or --mode desktop; log ~/.local/state/power-button.log
 sudo sv status decky                       # run (Decky Loader)
 xbps-query -p pkgver hidapi                # hidapi-0.14.0_1 (Decky's Colores plugin, step 14)
 cat ~/.local/state/wallpaper-watcher.log     # in Xfce Wayland: "watching 2 screens" and, after a change, "xfdesktop --reload"
@@ -3188,6 +3231,11 @@ screen sharing*).
 
 ## History
 
+- **2026-10-14 (power button)** — Press = power menu, held ~3 s = suspend, in Game Mode and on the desktop
+  (`common/power-button/`; step 14, *Power button*). Compared with the Steam Deck (short = suspend, held 1 s =
+  menu): the Legion Go 2's firmware never reports the release (ACPI `KEY_POWER` pressed+released at once; Super+F16
+  only after ~3.2 s held), so the user chose this order. Found on the way: elogind's default powered the Legion
+  off from Game Mode with one press; now `HandlePowerKey=ignore`, like SteamOS.
 - **2026-10-13 (Spanish aliases removed)** — The user's decision ("I did not form habits"): the old Spanish
   arguments and options are no longer accepted (`--quitar`, `--parar`, `--dejar`, `--deshacer`, `--conservar`,
   `--sin-pantalla-de-carga`, `--sin-cache`, `--resumen`, `--desde-grub`, `--vista`, `TEMA_PANTALLA`/`TEMA_EQUIPO`,

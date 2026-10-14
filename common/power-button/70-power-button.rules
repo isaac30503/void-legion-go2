@@ -1,0 +1,8 @@
+# Installed by common/power-button/install-power-button.sh. The power button's input devices: marked for
+# power-button (POWER_BUTTON=1) and readable by the session on screen (uaccess), like Valve's
+# 70-steamos-power-button.rules.
+# The ACPI button: KEY_POWER at every press (pressed+released at once: it never says when it is released).
+SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="Power Button", ENV{POWER_BUTTON}="1", TAG+="uaccess"
+# Legion Go 2 (83N0/83N1): held ~3.2 s, its embedded controller types Super+F16 on this internal keyboard (it has
+# no other keys: the controllers and the keyboards are other devices).
+SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="AT Translated Set 2 keyboard", ATTR{[dmi/id]product_name}=="83N0|83N1", ENV{POWER_BUTTON}="1", TAG+="uaccess"

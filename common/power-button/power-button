@@ -1,0 +1,193 @@
+#!/usr/bin/python3 -IS
+# power-button --mode game|desktop — the power button, in the spirit of the Steam Deck's (2026-10-14, the user's
+# request and choice):
+#   a press opens the power menu at once; held ~3 s, the machine suspends.
+#   Game Mode: Steam's power menu (steam://longpowerpress) / Steam suspends (steam://shortpowerpress), the URLs of
+#     SteamOS's steamos-powerbuttond; without Steam running, it suspends through elogind (loginctl suspend).
+#   Desktop (Xfce, X11 or Wayland): Xfce's logout dialog (xfce4-session-logout: shut down, restart, suspend,
+#     hibernate, log out) / loginctl suspend.
+# Why not the Deck's way (short = suspend, held 1 s = menu): the Legion Go 2's firmware never says when the
+# button is released. On every press the ACPI "Power Button" sends KEY_POWER pressed+released at once, and only if
+# it is still held ~3.2 s later the embedded controller types Super+F16 on the internal keyboard ("AT Translated
+# Set 2 keyboard", scancodes 0xdb and 0x67; the F16 mapping is in Void's hwdb, the same as Valve's). Captured on
+# 2026-10-14. Deciding "short" would mean waiting 3.5 s before suspending; the user chose: press = menu (nothing
+# waits), held = suspend. When held, the menu opens first and may still be open after waking up (Cancel/Esc).
+# On a machine without that F16 (the IdeaPad), a press opens the menu and that is all.
+# Started by each session (the Game Mode launcher; /etc/xdg/autostart/power-button.desktop for Xfce): the newest
+# one replaces the previous one, and it ends when the process that started it (its session) ends.
+# Devices: the input devices that udev marks with POWER_BUTTON=1 (70-power-button.rules, which also gives the
+# session read access with TAG uaccess, like Valve's 70-steamos-power-button.rules), from /run/udev/data.
+# elogind must ignore the key (50-power-button.conf: HandlePowerKey=ignore, like SteamOS), or it acts too: its
+# default powers off (it did, on 2026-10-14, in Game Mode).
+# Event-driven, no timers or periodic wake-ups: it sleeps in poll() on the buttons, a pidfd of its session's
+# process (the kernel says when it ends) and a timerfd that the kernel cancels on every resume from suspend
+# (TFD_TIMER_CANCEL_ON_SET: timerfd_resume()); presses in the 2 s after waking up are ignored (the press that
+# wakes the machine would otherwise open the menu).
+# Python (not C: the user's decision, 2026-10-14: no build step; as fast here, ~10 MB of memory, 0 % CPU at
+# rest), standard library only. Needs Python >= 3.13 (os.timerfd_create). Log: ~/.local/state/power-button.log
+# (in English: the checks read it). Installed by install-power-button.sh.
+import os, select, signal, struct, sys, time
+
+HELD_AFTER = 6.0              # an F16 counts as "held" if it comes this long after the press (it came at 3.2 s)
+AFTER_RESUME = 2.0            # seconds after waking up during which presses are ignored
+EV_KEY, KEY_POWER, KEY_F16 = 1, 116, 186
+EVENT = struct.Struct("llHHi")  # struct input_event (64-bit): time, type, code, value
+HOME = os.path.expanduser("~")
+RUN = os.environ.get("XDG_RUNTIME_DIR") or "/tmp"
+PIDFILE = os.path.join(RUN, "power-button.pid")
+LOG = os.path.join(os.environ.get("XDG_STATE_HOME") or os.path.join(HOME, ".local/state"), "power-button.log")
+STEAM = os.path.join(HOME, ".steam/root/ubuntu12_32/steam")
+
+
+def log(msg):
+    try:
+        os.makedirs(os.path.dirname(LOG), exist_ok=True)
+        if os.path.exists(LOG) and os.path.getsize(LOG) > 256 * 1024:
+            os.replace(LOG, LOG + ".old")
+        with open(LOG, "a") as f:
+            f.write(time.strftime("%F %T ") + msg + "\n")
+    except OSError:
+        pass
+
+
+def run(*cmd):
+    log("run: " + " ".join(cmd))
+    try:
+        os.posix_spawnp(cmd[0], cmd, os.environ, setsid=True)   # reaped by the kernel (SIGCHLD ignored)
+    except OSError as e:
+        log(f"failed: {e}")
+
+
+def steam_running():
+    """~/.steam/steam.pid names a live process called steam."""
+    try:
+        pid = int(open(os.path.join(HOME, ".steam/steam.pid")).read())
+        return open(f"/proc/{pid}/comm").read().startswith("steam")
+    except (OSError, ValueError):
+        return False
+
+
+def menu(mode):
+    if mode == "desktop":
+        run("xfce4-session-logout")
+    elif steam_running():
+        run(STEAM, "-ifrunning", "steam://longpowerpress")
+    else:
+        log("press without Steam: nothing")
+
+
+def suspend(mode):
+    if mode == "game" and steam_running():
+        run(STEAM, "-ifrunning", "steam://shortpowerpress")
+    else:
+        run("loginctl", "suspend")
+
+
+def marked_devices():
+    """/dev/input/eventN that udev marked: /run/udev/data/c<major>:<minor> has the line E:POWER_BUTTON=1."""
+    out = []
+    for e in sorted(os.listdir("/dev/input")):
+        if not e.startswith("event"):
+            continue
+        dev = "/dev/input/" + e
+        try:
+            rdev = os.stat(dev).st_rdev
+            with open(f"/run/udev/data/c{os.major(rdev)}:{os.minor(rdev)}") as f:
+                if "E:POWER_BUTTON=1\n" in f.read():
+                    out.append(dev)
+        except OSError:
+            pass
+    return out
+
+
+def arm(tfd):
+    """The cancel-on-set timer: readable (ECANCELED) when the machine resumes or the clock is set."""
+    os.timerfd_settime(tfd, flags=os.TFD_TIMER_ABSTIME | os.TFD_TIMER_CANCEL_ON_SET,
+                       initial=time.time() + 10 * 365 * 24 * 3600)
+
+
+def take_over():
+    """Only one per user: the newest session wins (the previous one may be from a session that already ended)."""
+    try:
+        old = int(open(PIDFILE).read())
+        if old != os.getpid() and b"power-button" in open(f"/proc/{old}/cmdline", "rb").read():
+            os.kill(old, signal.SIGTERM)
+    except (OSError, ValueError):
+        pass
+    with open(PIDFILE, "w") as f:
+        f.write(str(os.getpid()))
+
+
+def main():
+    args = sys.argv[1:]
+    if len(args) != 2 or args[0] != "--mode" or args[1] not in ("game", "desktop"):
+        print("usage: power-button --mode game|desktop", file=sys.stderr)
+        return 2
+    mode = args[1]
+    parent = os.getppid()
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
+    signal.signal(signal.SIGCHLD, signal.SIG_IGN)
+    take_over()
+    buttons = {}
+    for dev in marked_devices():
+        try:
+            buttons[os.open(dev, os.O_RDONLY | os.O_NONBLOCK | os.O_CLOEXEC)] = dev
+        except OSError as e:
+            log(f"cannot read {dev}: {e} (reboot after installing: udev gives the access)")
+    if not buttons:
+        log("no readable power button (POWER_BUTTON=1): exiting")
+        return 1
+    try:
+        session = os.pidfd_open(parent)          # readable when the session's process ends
+    except OSError:
+        log("the session already ended: exiting")
+        return 0
+    tfd = os.timerfd_create(time.CLOCK_REALTIME, flags=os.TFD_NONBLOCK | os.TFD_CLOEXEC)
+    arm(tfd)
+    poller = select.poll()
+    for fd in list(buttons) + [session, tfd]:
+        poller.register(fd, select.POLLIN)
+    log(f"started: mode {mode}, devices {' '.join(buttons.values())}, session pid {parent}")
+    pressed_at = None          # monotonic time of the last press, while an F16 can still follow
+    ignore_until = 0.0
+    while True:
+        ready = {fd for fd, _ in poller.poll()}   # no timeout: sleep until something happens
+        now = time.monotonic()
+        if session in ready:
+            log("the session ended: exiting")
+            return 0
+        if tfd in ready:       # resumed (or the clock was set): handled before the button
+            try:
+                os.read(tfd, 8)
+            except OSError as e:
+                if e.errno == 125:   # ECANCELED
+                    log(f"resumed or clock set: presses ignored for {AFTER_RESUME:.0f} s")
+                    ignore_until = now + AFTER_RESUME
+                    pressed_at = None
+            arm(tfd)
+        for fd in buttons:
+            if fd not in ready:
+                continue
+            while True:
+                try:
+                    data = os.read(fd, EVENT.size * 32)
+                except BlockingIOError:
+                    break
+                if not data:
+                    break
+                for i in range(0, len(data) - EVENT.size + 1, EVENT.size):
+                    _, _, typ, code, value = EVENT.unpack_from(data, i)
+                    if typ != EV_KEY or value != 1 or now < ignore_until:
+                        continue
+                    if code == KEY_POWER:
+                        log("press: menu")
+                        pressed_at = now
+                        menu(mode)
+                    elif code == KEY_F16 and pressed_at is not None and now - pressed_at < HELD_AFTER:
+                        log(f"held ({now - pressed_at:.1f} s): suspend")
+                        pressed_at = None
+                        suspend(mode)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
