@@ -21,7 +21,12 @@ DL=$(mktemp -d); trap 'rm -rf "$DL"' EXIT
 
 download() {   # $1 = asset name → $DL/$1
     if command -v gh >/dev/null 2>&1; then
-        gh release download "$TAG" -R "$SLUG" -p "$1" -D "$DL" --clobber >/dev/null
+        # 3 attempts: GitHub sometimes answers "release not found" for a moment (seen 2026-10-13, fresh clone)
+        local n; for n in 1 2 3; do
+            gh release download "$TAG" -R "$SLUG" -p "$1" -D "$DL" --clobber >/dev/null && return 0
+            [ $n = 3 ] || { t "   retrying %s (%s/3)" "$1" "$((n+1))"; sleep $((n*5)); }
+        done
+        return 1
     elif [ -n "${GH_TOKEN:-}" ]; then
         id=$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/$SLUG/releases/tags/$TAG" \
             | python3 -c 'import json,sys; n=sys.argv[1]; print(next(a["id"] for a in json.load(sys.stdin)["assets"] if a["name"]==n))' "$1")
