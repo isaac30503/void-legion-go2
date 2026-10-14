@@ -20,6 +20,8 @@ if [ ! -e "$REPO_ROOT/local.env" ] && [ -s "$REPO_ROOT/local.env.age" ]; then ba
 python3 -I - "$REPO_ROOT" "${1:-}" "$HOME" "$(id -un)" <<'PY'
 import os, re, sys, shutil
 root, mode, home, user = sys.argv[1:5]
+sys.path.insert(0, os.path.join(root, "lib"))
+from void_legion_i18n import _   # messages through the translation catalog (docs/i18n.md)
 vals = {"TARGET_HOME": home, "TARGET_USER": user}
 for l in open(os.path.join(root, "local.env"), encoding="utf-8"):
     m = re.match(r"^\s*([A-Z0-9_]+)=(.*)$", l.rstrip("\n"))
@@ -59,10 +61,10 @@ for rel in files:
                 missing.add(n)
 if mode == "--check":
     for n in sorted(missing):
-        print("missing in local.env:", n)
+        print(_("missing in local.env: %s") % n)
     sys.exit(1 if missing else 0)
 if missing:
-    print("!! local.env lacks: " + " ".join(sorted(missing)) + " (those stay as @NAME@ in build/)")
+    print(_("!! local.env lacks: %s (those stay as @NAME@ in build/)") % " ".join(sorted(missing)))
 import time
 def clear(path):
     """Removes path; if something in it cannot be removed (e.g. a root-owned __pycache__ left by an installer run
@@ -73,7 +75,8 @@ def clear(path):
     if os.path.lexists(path):
         aside = f"{path}.old-{int(time.time())}"
         os.rename(path, aside)
-        print(f"!! {os.path.basename(path)} had files that cannot be removed without root: moved to {os.path.basename(aside)}; delete it with: sudo rm -rf {aside}")
+        print(_("!! %s had files that cannot be removed without root: moved to %s; delete it with: sudo rm -rf %s")
+              % (os.path.basename(path), os.path.basename(aside), aside))
 tmp = out + ".tmp"
 clear(tmp)
 for rel in files:
@@ -95,5 +98,5 @@ for rel in files:
 os.symlink(os.path.join(root, "local.env"), os.path.join(tmp, "local.env"))
 clear(out)
 os.rename(tmp, out)
-print(f"build/: {len(files)} files")
+print(_("build/: %s files") % len(files))
 PY

@@ -25,16 +25,18 @@ while [ $# -gt 0 ]; do
     esac; shift
 done
 
-# Each stage (its title is a translatable message: no "%" in it): title | kind (run, manual, reboot) | commands (run in bash, with REPO and B set)
+# Each stage (its title is a translatable message: no "%" in it): title | kind (run, manual, reboot) | commands (run in bash, with REPO
+# and B set and the translation function t loaded: messages to the user go with t, not echo). A line of the commands that starts
+# with "#" is an instruction for a person: it is shown through the catalog (no "%" in it either).
 S_TITLE=(); S_KIND=(); S_CMD=()
 stage() { S_TITLE+=("$1"); S_KIND+=("$2"); S_CMD+=("$3"); }
 
 stage "A. Installation with void-installer (steps 0–1)" manual \
 '# By hand, from the Void live ISO: sudo void-installer with the table of step 1 (and its two traps).
 # Then the authorized_keys line of step 1, and: sudo rmdir /mnt/home /mnt/steamos-home (if they exist).'
-stage "B. The repository: binaries, local.env, build/" run \
+stage "B. The repository: binaries, local.env (from local.env.age), build/" run \
 'bash "$REPO/install/fetch-assets.sh"
-[ -s "$REPO/local.env" ] || { cp "$REPO/local.env.example" "$REPO/local.env"; chmod 600 "$REPO/local.env"; echo "!! fill in $REPO/local.env with the real values and run this stage again"; exit 1; }
+[ -s "$REPO/local.env" ] || bash "$REPO/install/secrets.sh" open    # asks the passphrase (docs/sanitization.md)
 bash "$REPO/install/render.sh" --check
 bash "$REPO/install/render.sh"'
 stage "C1. System, keyboard and SSH (steps 2–3)" reboot \
@@ -47,7 +49,7 @@ stage "D. SSH in both directions (step 4)" run \
 '[ -f ~/.ssh/id_ed25519 ] || ssh-keygen -q -t ed25519 -N "" -C "isaac@Legion-Go-Gen-2" -f ~/.ssh/id_ed25519
 mkdir -p ~/.ssh && cp "$B/legion/ssh-config" ~/.ssh/config && chmod 600 ~/.ssh/config
 cat ~/.ssh/id_ed25519.pub
-echo "-> add that line to the IdeaPad'"'"'s ~/.ssh/authorized_keys; on the IdeaPad: ssh-keygen -R Legion-Go-Gen-2.local"'
+t "-> add that line to the IdeaPad'"'"'s ~/.ssh/authorized_keys; on the IdeaPad: ssh-keygen -R Legion-Go-Gen-2.local"'
 stage "E1. X11 desktop, root part 1 (steps 5–12)" run \
 'sudo bash "$B/legion/desktop-1-root.sh"'
 stage "E2. X11 desktop, user part (steps 5–12)" run \
@@ -91,11 +93,11 @@ mkdir -p ~/Work ~/.claude/projects/-home-isaac-Work/memory ~/Work/.claude/agents
 cp "$B/claude/CLAUDE-void-legion.md" ~/Work/CLAUDE.md
 cp "$B/claude/memory/"*.md ~/.claude/projects/-home-isaac-Work/memory/
 cp "$B/claude/agents/void-maintainer.md" ~/Work/.claude/agents/
-echo "-> log in: cd ~/Work && claude   (on the Legion itself)"'
+t "-> log in: cd ~/Work && claude   (on the Legion itself)"'
 stage "H. GRUB without Plymouth (step 8): XS1000 connected" reboot \
 'sudo bash "$B/legion/grub-root.sh"
 sudo sh "$B/legion/grub-hidden.sh"
-echo "-> unmount Common if it is mounted (udisksctl unmount -b /dev/sda4) before the reboot"'
+t "-> unmount Common if it is mounted (udisksctl unmount -b /dev/sda4) before the reboot"'
 stage "I1. Steam (step 14)" run \
 'sudo sh "$B/common/steam/install-steam.sh"
 mkdir -p ~/.local/share/applications ~/.local/lib/extest
@@ -119,7 +121,7 @@ sudo bash "$B/legion/like-steamos.sh"
 sudo xbps-pkgdb -m hold linux linux-headers'
 stage "J2. microSD (step 14) — with Steam CLOSED" run \
 'sudo sh "$B/legion/microsd-at-boot.sh"
-echo "-> in Steam, add /mnt/microsd as a library"'
+t "-> in Steam, add /mnt/microsd as a library"'
 stage "K. By hand in Steam and on the desktop (list, point K: developer mode and Wi-Fi power management, keyboard, xterm and Firefox as games, Decky, art, controller layout, Bluetooth, VRR, Vesktop and portals, audio order)" manual \
 '# Follow point K of the list in docs/void-legion-go2.md, item by item (1–12). The scripted parts of it:
 #   install -m 755 "$B/common/steam/xterm-steam" "$B/common/steam/firefox-steam" ~/.local/bin/
@@ -133,7 +135,7 @@ stage "L. Check (Verification block of the recipe and void-update)" manual \
 '# void-update   → must end in "All in order" ("Todo en orden" in Spanish); then: void-update --tray --enable (panel icon)'
 stage "M. Clean up: archive the logs of ~ in logs/legion/ (check them for private values) and delete them" run \
 'mkdir -p "$REPO/logs/legion" && cp ~/*.log "$REPO/logs/legion/" 2>/dev/null || true
-echo "-> review $REPO/logs/legion/ (bash $REPO/install/verify.sh --secrets), commit; then: rm -f ~/*.log"'
+t "-> review %s (bash %s --secrets), commit; then: rm -f ~/*.log" "$REPO/logs/legion/" "$REPO/install/verify.sh"'
 
 N=${#S_TITLE[@]}
 if [ -n "$LIST" ]; then
@@ -149,7 +151,12 @@ export REPO B
 for i in $(seq "$start" "$end"); do
     k=$((i-1))
     echo; t "==== %s/%s %s" "$i" "$N" "$(t "${S_TITLE[$k]}")"
-    echo "${S_CMD[$k]}" | sed 's/^/   | /'
+    while IFS= read -r line; do
+        case "$line" in
+            "# "*) printf '   | # %s\n' "$(t "${line#\# }")" ;;
+            *)     printf '   | %s\n' "$line" ;;
+        esac
+    done <<< "${S_CMD[$k]}"
     [ -n "$DRY" ] && continue
     case "${S_KIND[$k]}" in
         manual)
@@ -157,7 +164,7 @@ for i in $(seq "$start" "$end"); do
         run|reboot)
             read -r -p "$(t "Run it? [Y/n] ")" ans
             case "$ans" in [nN]*) t "stopped; to go on: bash install/install.sh --from %s" "$i"; exit 0 ;; esac
-            bash -euo pipefail -c "${S_CMD[$k]}" || { t "!! stage %s failed; fix it and: bash install/install.sh --from %s" "$i" "$i"; exit 1; } ;;
+            I18N_REPO_DIR=$REPO bash -euo pipefail -c '. "$REPO/lib/i18n.sh"; eval "$1"' _ "${S_CMD[$k]}" || { t "!! stage %s failed; fix it and: bash install/install.sh --from %s" "$i" "$i"; exit 1; } ;;
     esac
     mkdir -p "$(dirname "$STATE")"; echo "$i" > "$STATE"
     if [ "${S_KIND[$k]}" = reboot ]; then

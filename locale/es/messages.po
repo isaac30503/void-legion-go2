@@ -2803,8 +2803,6 @@ msgid "A. Installation with void-installer (steps 0–1)"
 msgstr "A. Instalación con void-installer (pasos 0–1)"
 
 #: install/install.sh
-msgid "B. The repository: binaries, local.env, build/"
-msgstr "B. El repositorio: binarios, local.env, build/"
 
 #: install/install.sh
 msgid "C1. System, keyboard and SSH (steps 2–3)"
@@ -3455,3 +3453,51 @@ msgstr "local.env.age → local.env (pide la contraseña; chmod 600)"
 
 msgid "whether both say the same (exit 0) or which one is newer (exit 1)"
 msgstr "si los dos dicen lo mismo (sale con 0) o cuál es más nuevo (sale con 1)"
+
+msgid "B. The repository: binaries, local.env (from local.env.age), build/"
+msgstr "B. El repositorio: binarios, local.env (de local.env.age), build/"
+
+msgid "-> add that line to the IdeaPad's ~/.ssh/authorized_keys; on the IdeaPad: ssh-keygen -R Legion-Go-Gen-2.local"
+msgstr "-> añadir esa línea al ~/.ssh/authorized_keys de la IdeaPad; en la IdeaPad: ssh-keygen -R Legion-Go-Gen-2.local"
+
+msgid "-> log in: cd ~/Work && claude   (on the Legion itself)"
+msgstr "-> iniciar sesión: cd ~/Work && claude   (en la propia Legion)"
+
+msgid "-> unmount Common if it is mounted (udisksctl unmount -b /dev/sda4) before the reboot"
+msgstr "-> desmontar Common si está montado (udisksctl unmount -b /dev/sda4) antes de reiniciar"
+
+msgid "-> in Steam, add /mnt/microsd as a library"
+msgstr "-> en Steam, añadir /mnt/microsd como biblioteca"
+
+msgid "-> review %s (bash %s --secrets), commit; then: rm -f ~/*.log"
+msgstr "-> revisar %s (bash %s --secrets), commit; después: rm -f ~/*.log"
+
+msgid "By hand, from the Void live ISO: sudo void-installer with the table of step 1 (and its two traps)."
+msgstr "A mano, desde la ISO live de Void: sudo void-installer con la tabla del paso 1 (y sus dos trampas)."
+
+msgid "Then the authorized_keys line of step 1, and: sudo rmdir /mnt/home /mnt/steamos-home (if they exist)."
+msgstr "Después, la línea de authorized_keys del paso 1, y: sudo rmdir /mnt/home /mnt/steamos-home (si existen)."
+
+msgid "(list, point I)"
+msgstr "(lista, punto I)"
+
+msgid "Follow point K of the list in docs/void-legion-go2.md, item by item (1–12). The scripted parts of it:"
+msgstr "Seguir el punto K de la lista de docs/void-legion-go2.md, apartado por apartado (1–12). Sus partes con script:"
+
+msgid "  python3 \"$B/common/steam/art-xterm/generate.py\"            (Steam closed)"
+msgstr "  python3 \"$B/common/steam/art-xterm/generate.py\"            (con Steam cerrado)"
+
+msgid "void-update   → must end in \"All in order\" (\"Todo en orden\" in Spanish); then: void-update --tray --enable (panel icon)"
+msgstr "void-update   → debe acabar en \"Todo en orden\"; después: void-update --tray --enable (ícono del panel)"
+
+msgid "missing in local.env: %s"
+msgstr "falta en local.env: %s"
+
+msgid "!! local.env lacks: %s (those stay as @NAME@ in build/)"
+msgstr "!! a local.env le falta: %s (se quedan como @NAME@ en build/)"
+
+msgid "!! %s had files that cannot be removed without root: moved to %s; delete it with: sudo rm -rf %s"
+msgstr "!! %s tenía ficheros que no se pueden borrar sin root: movido a %s; bórralo con: sudo rm -rf %s"
+
+msgid "build/: %s files"
+msgstr "build/: %s ficheros"
