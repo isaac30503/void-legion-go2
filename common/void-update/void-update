@@ -42,7 +42,29 @@ for f in base check list news services summary upgrade; do . "$VU_LIB/$f.sh"; do
 VU_DESKTOP=void-update.desktop
 VU_AUTOSTART="${XDG_CONFIG_HOME:-$HOME/.config}/autostart/void-update-tray.desktop"
 
-usage() { sed -n '/^#   void-update /,/^# Exit/p' "$0" | sed 's/^# \{0,1\}//' | sed '$d'; }
+# The help (the same as the header above), through the translation catalog: the commands and options stay
+# as they are, each line of description is a message.
+usage() {
+    _u() { printf '  %-28s %s\n' "$1" "$(t "$2")"; shift 2; local l; for l in "$@"; do printf '  %-28s %s\n' "" "$(t "$l")"; done; }
+    _u "void-update" "full update: news, list, confirm, xbps first, the rest," \
+        "Flatpak, orphans, cache, kernels, .new-*, services to restart, summary, reboot?"
+    _u "void-update -c, --check" "looks for updates WITHOUT root (xbps-install -Mun, Flatpak), updates the tray" \
+        "icon and notifies if the list changed"
+    _u "void-update -l, --list" "looks and shows the pending updates (exit 7 if there are none)"
+    _u "void-update -n, --news [N]" "Void's latest N news (default 5; config news_count)"
+    _u "void-update -s, --services" "runit services still running old code (asks to restart them)"
+    _u "void-update --summary" "only the final summary, without syncing, without sudo, changing nothing"
+    printf '  %s\n' "void-update --tray [--enable|--disable]"
+    _u "" "the panel icon; --enable also starts it at every login (XDG autostart)," \
+        "--disable stops that. --check --enable is the same as --tray --enable: the" \
+        "periodic checks are done by the icon (on network connect and every N hours)"
+    printf '  %s\n' "void-update --gen-config [--force] | --show-config | --edit-config"
+    _u "" "~/.config/void-update/void-update.conf (see void-update.conf.example)"
+    printf '  %s\n' "void-update -V, --version | -h, --help | -D, --debug ($(t "traces"))"
+    echo
+    t "Exit: 0 ok · 1 invalid option · 2 failed check · 3 tray error · 4 not confirmed · 5 update error ·"
+    t "      7 no pending updates (--list) · 8 configuration error"
+}
 
 # Opens void-update in a terminal (tray, notification): through its .desktop, like cachy-update (gio picks the
 # terminal: here xterm, ~/.local/bin/xdg-terminal-exec); without gio, xterm directly.
