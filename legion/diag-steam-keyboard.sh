@@ -6,7 +6,7 @@
 # Previous (Spanish) name: diag-teclado-steam.sh.
 #
 # Usage:  cp "<repo>/legion/diag-steam-keyboard.sh" /tmp/ && bash /tmp/diag-steam-keyboard.sh
-#         bash /tmp/diag-steam-keyboard.sh --stop        (--parar also works)
+#         bash /tmp/diag-steam-keyboard.sh --stop       
 #         Results in /tmp/diag-steam-keyboard/ (deleted on reboot).
 # Everything is event-driven (tail -F, xprop -spy): it spends nothing while nothing happens. When the
 # session closes (e.g. Game Mode) the X part is cut; it has to be launched again.
@@ -24,7 +24,7 @@ stop() {
 }
 
 case "$1" in
-  --stop|--parar) stop; t "Stopped. Results in %s/" "$S"; exit 0 ;;
+  --stop) stop; t "Stopped. Results in %s/" "$S"; exit 0 ;;
   --loop) ;;
   *) stop; nohup setsid bash "$0" --loop >/dev/null 2>&1 &
      t "Capturing in %s/ (stop: bash %s --stop)" "$S" "$0"; exit 0 ;;

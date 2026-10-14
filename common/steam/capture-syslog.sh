@@ -6,14 +6,14 @@
 # (/etc/sv/capture-syslog): launched from the session, elogind killed it when restarting lightdm.
 # Previous (Spanish) name: capturar-avisos.sh (service capturar-avisos, log /var/log/capturar-avisos.log).
 #   sudo sh common/steam/capture-syslog.sh          starts (log, in English: /var/log/capture-syslog.log)
-#   sudo sh common/steam/capture-syslog.sh --stop   stops and removes /dev/log (--parar also works)
+#   sudo sh common/steam/capture-syslog.sh --stop   stops and removes /dev/log
 # Void recipe, step 14 (diagnosis of the unix_chkpwd message when switching mode).
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"
 need_root
 LOG=/var/log/capture-syslog.log
 SV=/etc/sv/capture-syslog
-case "${1:-}" in --stop|--parar)
+case "${1:-}" in --stop)
     sv down capture-syslog >/dev/null 2>&1
     rm -f /var/service/capture-syslog; rm -rf "$SV" /run/capture-syslog.py
     [ -S /dev/log ] && rm -f /dev/log

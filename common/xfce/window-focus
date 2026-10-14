@@ -5,10 +5,9 @@
 # follows the mouse (otherwise, when moving the mouse it would go back to the window underneath).
 # With two screens, it only jumps between windows of the active window's monitor.
 # Void recipe, step 13 (shortcuts).
-# Previous (Spanish) name: ventana-foco izq|der|arr|abj (those arguments still work).
+# Previous (Spanish) name: ventana-foco izq|der|arr|abj (those arguments were removed on 2026-10-13).
 
 dir=$1
-case "$dir" in izq) dir=left ;; der) dir=right ;; arr) dir=up ;; abj) dir=down ;; esac
 case "$dir" in left|right|up|down) ;; *) echo "usage: window-focus left|right|up|down" >&2; exit 1 ;; esac
 
 active=$(xdotool getactivewindow 2>/dev/null) || exit 0

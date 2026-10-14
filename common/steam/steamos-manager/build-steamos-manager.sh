@@ -20,7 +20,7 @@
 # Usage: bash common/steam/steamos-manager/build-steamos-manager.sh [output-folder]   (/tmp by default)
 #   → <output>/steamos-manager-v26.4.1-void-2.tar.gz; it is published as a Release asset (and kept
 #     next to this script by install/fetch-assets.sh).
-#   --keep (second argument; --conservar also works) leaves the code in ~/src/steamos-manager; otherwise, it is deleted.
+#   --keep (second argument) leaves the code in ~/src/steamos-manager; otherwise, it is deleted.
 # The tests run inside dbus-run-session: two (job::test_job_emitted, sls::ftrace::ftrace_relay)
 # need a session bus and over SSH they fail without it (also without the patch).
 set -euo pipefail
@@ -100,5 +100,5 @@ fi
 sha256sum "$TAR" "$ROOTDIR/usr/lib/steamos-manager"
 
 cd /
-case "${2:-}" in --keep|--conservar) t "code in %s" "$SRC" ;; *) rm -rf "$SRC" ;; esac
+case "${2:-}" in --keep) t "code in %s" "$SRC" ;; *) rm -rf "$SRC" ;; esac
 t "Done: %s (cargo cache in ~/.cargo/registry: %s)" "$TAR" "$(du -sh ~/.cargo/registry | cut -f1)"

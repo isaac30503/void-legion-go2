@@ -6,7 +6,7 @@
 # /run works to keep it: it goes into the hibernation image (it is memory) and is lost on power-off.
 # Previous (Spanish) name: brillo-al-despertar.sh (hook /etc/elogind/system-sleep/brillo; --remove also
 # removes that old hook).
-# Usage: sudo sh legion/brightness-on-wake.sh [--remove]      (--quitar also works)
+# Usage: sudo sh legion/brightness-on-wake.sh [--remove]     
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"

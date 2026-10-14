@@ -5,7 +5,7 @@
 # it up. 2 = disabled for NetworkManager (applies to every Wi-Fi connection).
 # Previous (Spanish) name: wifi-sin-ahorro.sh (it wrote /etc/NetworkManager/conf.d/wifi-sin-ahorro.conf;
 # --remove also deletes that old file).
-# Usage: sudo sh legion/wifi-no-powersave.sh [--remove]      (--quitar also works)
+# Usage: sudo sh legion/wifi-no-powersave.sh [--remove]     
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"

@@ -9,7 +9,7 @@
 # their announcement to udev.
 # Previous (Spanish) name: udev-red.sh (service "udev-red", log /var/log/udev-red; --remove also
 # removes those).
-# Usage: sudo sh legion/udev-net.sh [--remove]      (--quitar also works)
+# Usage: sudo sh legion/udev-net.sh [--remove]     
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"

@@ -7,7 +7,7 @@
 # Trade-off: without Wi-Fi (cable only), there is no .local name.
 # Previous (Spanish) name: avahi-solo-wifi.sh.
 #   sudo sh legion/avahi-wifi-only.sh            applies
-#   sudo sh legion/avahi-wifi-only.sh --remove   announces over all of them (--quitar also works)
+#   sudo sh legion/avahi-wifi-only.sh --remove   announces over all of them
 # Interface: WIFI_INTERFACE of local.env (wlp193s0 on the Legion).
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done

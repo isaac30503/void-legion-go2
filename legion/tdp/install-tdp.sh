@@ -4,8 +4,7 @@
 # the "custom" profile of platform_profile and /sys/class/firmware-attributes/lenovo-wmi-other-0 (power
 # limits ppt_*), which is what steamos-manager uses. DKMS rebuilds them for every new 6.18 kernel.
 # Previous (Spanish) name: instalar-tdp.sh.
-# Usage: sudo bash legion/tdp/install-tdp.sh [--remove]   (with the lenovo-wmi-tdp/ folder next to it;
-#        --quitar also works)
+# Usage: sudo bash legion/tdp/install-tdp.sh [--remove]   (with the lenovo-wmi-tdp/ folder next to it)
 set -euo pipefail
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"

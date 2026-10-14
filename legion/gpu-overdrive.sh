@@ -13,7 +13,7 @@
 # rebuilt (2026-10-08: before, only that of the running kernel, and the 6.12 fallback, rebuilt later
 # with the .conf in place, kept it).
 # Previous name: gpu-overdrive.sh (unchanged).
-# Usage: sudo sh legion/gpu-overdrive.sh [--remove]   and reboot      (--quitar also works)
+# Usage: sudo sh legion/gpu-overdrive.sh [--remove]   and reboot     
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"

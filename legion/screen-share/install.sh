@@ -4,7 +4,7 @@
 #   sudo xbps-install -S xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr grim fuzzel
 # (fuzzel: text-mode fallback; see below). Usage, from the desktop session or over SSH:
 #   bash legion/screen-share/install.sh            # install
-#   bash legion/screen-share/install.sh --remove   # back to fuzzel (--quitar also works)
+#   bash legion/screen-share/install.sh --remove   # back to fuzzel
 # Previous (Spanish) folder: compartir-pantalla/ (the chooser was ~/.local/bin/compartir-pantalla:
 # installing or removing also removes that old name).
 # 1. ~/.local/bin/screen-share (Python + GTK 3; thumbnails with grim), and its translations:

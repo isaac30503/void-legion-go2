@@ -21,7 +21,7 @@
 # PluginLoader and runit starts it again with the new version. (inotify-tools: inotifywait.)
 # Previous (Spanish) name: instalar-decky.sh (its FIFO was /run/decky-avisos).
 #   sudo sh common/steam/install-decky.sh            installs or updates
-#   sudo sh common/steam/install-decky.sh --remove   removes it (leaves ~/homebrew/plugins; --quitar also works)
+#   sudo sh common/steam/install-decky.sh --remove   removes it (leaves ~/homebrew/plugins)
 # Void recipe, step 14.
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done

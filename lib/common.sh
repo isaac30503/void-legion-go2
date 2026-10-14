@@ -19,7 +19,7 @@
 #   need_env NAME...           stops if one of those values is missing in local.env
 #   render SRC DST             copies SRC to DST replacing every @NAME@ with its value from local.env,
 #                              and @TARGET_HOME@ / @TARGET_USER@ with the target user's home and name
-#   is_remove ARG              true for --remove (and the old Spanish spelling --quitar)
+#   is_remove ARG              true for --remove
 #   install_i18n_system        (root) copies lib/i18n.sh, lib/void_legion_i18n.py and locale/ to
 #                              /usr/local/{lib,share}/void-legion/, for the scripts the installers write
 #                              into the system (they look for the catalogs there)
@@ -95,7 +95,7 @@ install_i18n_system() { _copy_i18n /usr/local/share/void-legion /usr/local/lib/v
 install_i18n_user() { _copy_i18n "$HOME/.local/share/void-legion" "$HOME/.local/share/void-legion/lib"; }
 
 is_remove() {
-    case "${1:-}" in --remove|--quitar) return 0 ;; *) return 1 ;; esac
+    case "${1:-}" in --remove) return 0 ;; *) return 1 ;; esac
 }
 
 load_local_env

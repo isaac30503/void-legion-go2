@@ -13,7 +13,7 @@
 # Needs test-direct-session.sh (the session steam-game-mode-direct). Void recipe, step 14.
 # Previous (Spanish) name: probar-inicio-automatico.sh.
 #   sudo sh common/steam/test-autologin.sh            enables (valid on reboot)
-#   sudo sh common/steam/test-autologin.sh --remove   leaves it as it came (--quitar also works)
+#   sudo sh common/steam/test-autologin.sh --remove   leaves it as it came
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"

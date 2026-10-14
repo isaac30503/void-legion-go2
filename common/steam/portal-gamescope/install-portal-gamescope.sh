@@ -8,7 +8,7 @@
 # (install-game-mode.sh) does it if the folder that this script creates exists.
 # Previous (Spanish) name: instalar-portal-gamescope.sh.
 #   sudo sh common/steam/portal-gamescope/install-portal-gamescope.sh            # install
-#   sudo sh common/steam/portal-gamescope/install-portal-gamescope.sh --remove   # remove (--quitar also works)
+#   sudo sh common/steam/portal-gamescope/install-portal-gamescope.sh --remove   # remove
 # The package (next to it; from the GitHub Release: install/fetch-assets.sh) is Valve's official one,
 # BSD-3-Clause license; code not public (gitlab.steamos.cloud/holo/xdg-desktop-portal-gamescope).
 # Downloaded on 2026-10-06 from

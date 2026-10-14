@@ -11,7 +11,7 @@
 # Previous (Spanish) name: bluetooth/bluetooth-al-arrancar.sh (block "# >>> bluetooth al arrancar": applying or
 # --remove also removes the old block).
 #   sudo sh common/bluetooth/bluetooth-at-boot.sh            adds it (leaves /etc/rc.local.bak)
-#   sudo sh common/bluetooth/bluetooth-at-boot.sh --remove   removes it (--quitar also works)
+#   sudo sh common/bluetooth/bluetooth-at-boot.sh --remove   removes it
 # Void recipe, step 9 (Bluetooth).
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done

@@ -13,7 +13,7 @@
 # (~/.local/state/update-system.last → ~/.local/state/void-update/last-update, used by fastfetch, whose
 # gen-config.py is brought up to date and regenerated if it is installed).
 #   bash common/void-update/install-void-update.sh [--no-tray]
-#   bash common/void-update/install-void-update.sh --remove     (--quitar also works; leaves the state and config)
+#   bash common/void-update/install-void-update.sh --remove     (leaves the state and config)
 # Needs (Void packages, already on both machines; it says what is missing): python3-gobject,
 # libayatana-appindicator, libnotify, curl, glib (gio), xbps.
 set -euo pipefail

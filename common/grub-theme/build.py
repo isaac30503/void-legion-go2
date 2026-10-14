@@ -23,7 +23,6 @@ Usage:
   build.py theme_folder --from-grub          entries read from /boot/grub/grub.cfg (root)
   build.py theme_folder "Entry 1" "Entry 2" ...   entries by hand (preview)
   --preview output.png   also, a preview with the first entry chosen
-  (the Spanish spellings --desde-grub and --vista still work)
 The resolution comes from GRUB_GFXMODE and all sizes are scaled with it (it was designed for
 1366x768: on the IdeaPad it comes out identical); under the logo, the machine's name.
 Previous (Spanish) name: grub-tema/construir.py (its files fondo.png, vacia.pf2, entradas.txt and
@@ -54,9 +53,8 @@ except ImportError:
 def screen(conf="/etc/default/grub"):
     """Menu resolution: the first one of GRUB_GFXMODE (install-theme.sh sets it with the
     panel's, /sys/class/drm/*-eDP-*/modes: 1366x768 on the IdeaPad, 1920x1200 on the Legion).
-    For a preview of another machine: THEME_SCREEN=1920x1200 (and THEME_HOST=name); the Spanish
-    names TEMA_PANTALLA and TEMA_EQUIPO still work."""
-    m = re.match(r"(\d+)x(\d+)$", os.environ.get("THEME_SCREEN", os.environ.get("TEMA_PANTALLA", "")))
+    For a preview of another machine: THEME_SCREEN=1920x1200 (and THEME_HOST=name)."""
+    m = re.match(r"(\d+)x(\d+)$", os.environ.get("THEME_SCREEN", ""))
     if m:
         return int(m.group(1)), int(m.group(2))
     try:
@@ -71,7 +69,7 @@ def screen(conf="/etc/default/grub"):
 
 W, H = screen()
 E = H / 768                                        # scale: everything was designed for 1366x768
-HOST = os.environ.get("THEME_HOST") or os.environ.get("TEMA_EQUIPO") or socket.gethostname()   # under the logo
+HOST = os.environ.get("THEME_HOST") or socket.gethostname()   # under the logo
 
 
 def sc(v):
@@ -354,11 +352,10 @@ def preview(img, g, out, extra):
 if __name__ == "__main__":
     args = sys.argv[1:]
     prev = None
-    for opt in ("--preview", "--vista"):
-        if opt in args:
-            i = args.index(opt); prev = args[i + 1]; del args[i:i + 2]
+    if "--preview" in args:
+        i = args.index("--preview"); prev = args[i + 1]; del args[i:i + 2]
     folder = args[0]
-    from_grub = args[1:] in (["--from-grub"], ["--desde-grub"])
+    from_grub = args[1:] == ["--from-grub"]
     entries = grub_entries() if from_grub else args[1:]
     if not entries:
         disable(folder, _("no entry could be read from /boot/grub/grub.cfg"))

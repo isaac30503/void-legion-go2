@@ -14,7 +14,7 @@
 #   /usr/local/bin/lightdm-greeter-wrapper                       NO_AT_BRIDGE=1 + the greeter
 #   /etc/lightdm/lightdm.conf: greeter-wrapper=… in [Seat:*]     (leaves .bak; valid on reboot)
 #   sudo sh common/steam/test-direct-session.sh            installs
-#   sudo sh common/steam/test-direct-session.sh --remove   removes everything (--quitar also works)
+#   sudo sh common/steam/test-direct-session.sh --remove   removes everything
 # Needs install-game-mode.sh (the version with both modes). Void recipe, step 14.
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done

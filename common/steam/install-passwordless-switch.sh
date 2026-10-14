@@ -22,8 +22,7 @@
 # /run/cambiar-modo.log, /run/apagando-sistema): installing replaces them and keeps the chosen mode;
 # switch-mode-root still accepts the Spanish arguments.
 #   sudo sh common/steam/install-passwordless-switch.sh            installs (valid on reboot)
-#   sudo sh common/steam/install-passwordless-switch.sh --remove   removes it (the login screen comes back;
-#                                                                   --quitar also works)
+#   sudo sh common/steam/install-passwordless-switch.sh --remove   removes it (the login screen comes back)
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"
@@ -98,19 +97,18 @@ cat > "$HELP" <<EOF
 # restarts it, which logs into it by itself (like SteamOS's "Switch to Desktop"). It runs as root:
 # $U can run it without password (/etc/sudoers.d/zz-switch-mode), and that is why it only accepts these
 # arguments. "--check" only checks that it is installed. Void recipe, step 14.
-# Previous (Spanish) name: cambiar-modo-root; the Spanish arguments still work (juego, escritorio,
-# escritorio-x11, escritorio-wayland, --puede).
+# Previous (Spanish) name: cambiar-modo-root (its Spanish arguments were removed on 2026-10-13).
 D=$DROP
 # During power-off (05-close-steam.sh leaves /run/system-shutting-down) nothing is changed: when Steam
 # closes in Game Mode, the launcher takes it as "Switch to Desktop" and would get here.
 [ -e /run/system-shutting-down ] && exit 0
 case "\$1" in
-    --check|--puede)    [ -f "\$D" ]; exit \$? ;;
-    game|juego)         s=steam-game-mode-direct ;;
+    --check)            [ -f "\$D" ]; exit \$? ;;
+    game)               s=steam-game-mode-direct ;;
     # The desktop is Xfce on Wayland (labwc, step 15) since 2026-10-03; X11 stays as the
-    # fallback. desktop-wayland / escritorio-wayland: the old name, in case something still uses it.
-    desktop|desktop-wayland|escritorio|escritorio-wayland) s=xfce-wayland ;;
-    desktop-x11|escritorio-x11) s=xfce ;;
+    # fallback.
+    desktop)            s=xfce-wayland ;;
+    desktop-x11)        s=xfce ;;
     *) echo "usage: switch-mode-root game|desktop|desktop-x11" >&2; exit 2 ;;
 esac
 [ -f "\$D" ] || exit 1
@@ -238,9 +236,7 @@ chmod 755 "$SESSION_WRAPPER.tmp"; mv "$SESSION_WRAPPER.tmp" "$SESSION_WRAPPER"; 
 
 t "== 4. %s (validated with visudo)" "$SUDO"
 T=$(mktemp)
-# The Spanish alias (/usr/local/bin/cambiar-modo-root → switch-mode-root, install/aliases.sh) is allowed
-# too, so the old name keeps working without a password.
-echo "$U ALL=(root) NOPASSWD: $HELP, /usr/local/bin/cambiar-modo-root" > "$T"
+echo "$U ALL=(root) NOPASSWD: $HELP" > "$T"
 if visudo -cf "$T" >/dev/null; then
     install -m 440 -o root -g root "$T" "$SUDO"; rm -f "$T"; cat "$SUDO"
 else

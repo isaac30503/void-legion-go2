@@ -40,8 +40,8 @@
 #                                                       like Plymouth); it closes event-driven
 #   cap_sys_nice on /usr/bin/gamescope                  high priority, as in SteamOS (it is lost
 #                                                       when gamescope is updated: repeat this script)
-#   sudo sh common/steam/install-game-mode.sh [--no-loading-screen]   installs (--sin-pantalla-de-carga also works)
-#   sudo sh common/steam/install-game-mode.sh --remove                removes it (--quitar also works)
+#   sudo sh common/steam/install-game-mode.sh [--no-loading-screen]   installs
+#   sudo sh common/steam/install-game-mode.sh --remove                removes it
 # If it gets stuck: Ctrl+Alt+F2, log in, `pkill -KILL -x gamescope-wl` and `sudo sv restart lightdm`.
 # The launcher's log (~/.local/state/steam-game-mode.log) is written in English: the recipe's checks read it.
 set -e
@@ -378,7 +378,7 @@ EOF
 
 # Loading screen (steam-loading): it can be left out with --no-loading-screen (the Legion,
 # 2026-10-04: "stock" boot, without own screens); the launcher already works without it.
-case "${1:-}" in --no-loading-screen|--sin-pantalla-de-carga) NOLOAD=1 ;; *) NOLOAD= ;; esac
+case "${1:-}" in --no-loading-screen) NOLOAD=1 ;; *) NOLOAD= ;; esac
 if [ -n "$NOLOAD" ]; then
     rm -f "$CAR"; t "== without loading screen (steam-loading removed)"
 else
