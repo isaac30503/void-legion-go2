@@ -3314,3 +3314,6 @@ msgstr "   Piezas viejas con nombre en español que queden, si las hay: bash ins
 #: legion/microsd-at-boot.sh
 msgid "fstab: its comment brought to the new version"
 msgstr "fstab: su comentario, pasado a la versión nueva"
+
+msgid "   retrying %s (%s/3)"
+msgstr "   reintentando %s (%s/3)"
