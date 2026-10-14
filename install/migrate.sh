@@ -25,7 +25,8 @@ H=$HOME
 session_bus() {
     [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ] && return 0
     local p; p=$(pgrep -u "$(id -u)" -xo xfce4-session) || return 1
-    export $(tr '\0' '\n' < /proc/"$p"/environ | grep -E '^(DBUS_SESSION_BUS_ADDRESS|DISPLAY)=')
+    local kv
+    while IFS= read -r kv; do export "${kv?}"; done < <(tr '\0' '\n' < /proc/"$p"/environ | grep -E '^(DBUS_SESSION_BUS_ADDRESS|DISPLAY)=')
 }
 old_shortcuts() { session_bus && xfconf-query -c xfce4-keyboard-shortcuts -lv 2>/dev/null | grep -q 'ventana-'; }
 # Steam open blocks microsd-at-boot.sh: close it cleanly first (as like-steamos.sh does)

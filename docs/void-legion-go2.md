@@ -3236,6 +3236,13 @@ screen sharing*).
 
 ## History
 
+- **2026-10-14 (public repository, done properly)** — The repository had been public since it was created
+  (2026-10-10). Reviewed with best practices: **MIT** for this repository's own work, every third-party piece keeps
+  its authors and license (`THIRD_PARTY.md`, `LICENSES/`), the **source of the GPL binaries** is in the Release,
+  **`local.env.age` moved to a private companion repository** and removed from this one's history (`git
+  filter-repo`), and **ShellCheck** passes with no errors or warnings on the 83 shell scripts (it is part of
+  `install/verify.sh` now). Real bugs it found: four variables of `void-update`'s update steps leaking out of
+  their function, unused variables, `rm -rf` on variables that could be empty (now `${var:?}`), unquoted paths.
 - **2026-10-14 (void-update summary, half a terminal)** — The user's request: the summary lines did not fit on one
   row, and then: it must fit in half a window. Now each check is `✓|↻|⚠|ℹ  name  short text` (OK, REPAIRED,
   WARNING, NOTE; the longest line ~40 columns, names shortened: `portal-wlr`, `portal-gs`, `steamos-mgr`); the full

@@ -27,9 +27,9 @@ mv ~/.local/bin/patch-still-needed.new ~/.local/bin/patch-still-needed
 for n in "${!DIRS[@]}"; do
     shopt -s nullglob; p=("$REPO_ROOT/${DIRS[$n]}"/0*.patch); shopt -u nullglob
     [ ${#p[@]} -gt 0 ] || { t "!! no patches in %s" "${DIRS[$n]}"; exit 1; }
-    rm -rf "$DEST/$n.new"; mkdir -p "$DEST/$n.new"
+    rm -rf "${DEST:?}/${n:?}.new"; mkdir -p "$DEST/$n.new"
     install -m 644 "${p[@]}" "$DEST/$n.new/"
-    rm -rf "$DEST/$n"; mv "$DEST/$n.new" "$DEST/$n"
+    rm -rf "${DEST:?}/${n:?}"; mv "$DEST/$n.new" "$DEST/$n"
 done
 install_i18n_user
 # The old Spanish-named installation

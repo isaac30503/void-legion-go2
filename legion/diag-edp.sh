@@ -19,7 +19,7 @@ for f in "$E"/*; do
     echo "== ${f##*/}: $(cat "$f" 2>&1 | tr '\n' ' ' | cut -c1-300)"
 done
 for b in /sys/class/backlight/*; do
-    echo "== backlight ${b##*/}: brightness=$(cat $b/brightness) actual=$(cat $b/actual_brightness) bl_power=$(cat $b/bl_power)"
+    echo "== backlight ${b##*/}: brightness=$(cat "$b"/brightness) actual=$(cat "$b"/actual_brightness) bl_power=$(cat "$b"/bl_power)"
 done
 C=/sys/class/drm/card0-eDP-1
 echo "== sysfs eDP-1: status=$(cat $C/status) enabled=$(cat $C/enabled) dpms=$(cat $C/dpms)"

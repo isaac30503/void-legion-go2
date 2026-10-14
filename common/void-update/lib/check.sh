@@ -1,4 +1,5 @@
 # shellcheck shell=bash
+# shellcheck disable=SC2154  # configuration and colors: defined in base.sh (void-update sources them together)
 # check.sh — void-update --check: looks for pending updates WITHOUT root and without touching the system.
 # xbps: "xbps-install -Mun" fetches the repositories' index into memory (-M), so it needs neither root nor a
 # previous "xbps-install -S" (that one writes /var/db/xbps and needs root). Flatpak: "remote-ls --updates".
@@ -19,7 +20,7 @@ vu_write_pending() {
 
 # vu_check [--quiet]: 0 = done (with or without updates), 1 = the check failed (state "error")
 vu_check() {
-    local quiet= raw err rc
+    local quiet='' raw err rc
     [ "${1:-}" = --quiet ] && quiet=1
     exec {lock}> "$VU_RUN/void-update-check.lock"
     if ! flock -n "$lock"; then [ -n "$quiet" ] || info "A check is already running"; return 0; fi

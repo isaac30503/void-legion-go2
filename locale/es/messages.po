@@ -3620,3 +3620,6 @@ msgstr "si local.env y la copia privada dicen lo mismo (sale con 0) o no (sale c
 
 msgid "   closing Steam (steam -shutdown)"
 msgstr "   cerrando Steam (steam -shutdown)"
+
+msgid "   note: shellcheck is not installed (sudo xbps-install -S shellcheck)"
+msgstr "   nota: shellcheck no está instalado (sudo xbps-install -S shellcheck)"

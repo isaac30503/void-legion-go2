@@ -1,12 +1,13 @@
 # shellcheck shell=bash
+# shellcheck disable=SC2154  # configuration and colors: defined in base.sh (void-update sources them together)
 # list.sh — the pending updates, as cachy-update shows them: name, old version and new version, with the part of
 # the version that changes in red (old) and green (new), aligned in columns. Reads the state files of the last
 # check (check.sh).
 
 # vu_color_versions < "name old -> new" lines
 vu_color_versions() {
-    local name old arrow new i common cut
-    while read -r name old arrow new; do
+    local name old new i common cut
+    while read -r name old _ new; do
         [ -n "$name" ] || continue
         if [ -z "$c_off" ] || [ "$old" = "(new)" ]; then printf '%s %s -> %s\n' "$name" "$old" "$new"; continue; fi
         # length of the common prefix, cut back to just after its last separator (. _ - :) so that whole

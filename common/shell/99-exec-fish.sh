@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Start fish from bash instead of setting it as the login shell.
 #
 # Reason: the login shell lives in /etc/passwd and the list of valid shells in

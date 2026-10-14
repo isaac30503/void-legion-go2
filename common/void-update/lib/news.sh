@@ -1,4 +1,5 @@
 # shellcheck shell=bash
+# shellcheck disable=SC2154  # configuration and colors: defined in base.sh (void-update sources them together)
 # news.sh — Void's news (https://voidlinux.org/atom.xml), the equivalent of cachy-update's Arch news: before
 # updating, the news published since the last update are shown (some ask for a manual step, e.g. 2026-03-10,
 # "Changes to linux-firmware may require manual intervention"). The feed is read as data (python3 -I,

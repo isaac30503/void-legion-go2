@@ -38,6 +38,7 @@ if [ -f "$R/lib/i18n.sh" ]; then I18N_REPO_DIR=$R; . "$R/lib/i18n.sh"
 elif [ -r "$HOME/.local/share/void-legion/lib/i18n.sh" ]; then . "$HOME/.local/share/void-legion/lib/i18n.sh"
 else t() { _f=$1; shift; printf -- "$_f\n" "$@"; }; fi
 
+# shellcheck disable=SC1090  # its libraries, from the repository or installed
 for f in base check list news services summary upgrade; do . "$VU_LIB/$f.sh"; done
 
 VU_DESKTOP=void-update.desktop
@@ -61,6 +62,7 @@ usage() {
         "--disable stops that. --check --enable is the same as --tray --enable: the" \
         "periodic checks are done by the icon (on network connect and every N hours)"
     printf '  %s\n' "void-update --gen-config [--force] | --show-config | --edit-config"
+    # shellcheck disable=SC2088  # the help shows "~" literally
     _u "" "~/.config/void-update/void-update.conf (see void-update.conf.example)"
     printf '  %s\n' "void-update -V, --version | -h, --help | -D, --debug ($(t "traces"))"
     echo
@@ -119,7 +121,9 @@ case "${1:-}" in
     -n|--news)       vu_news "${2:-}"; rc=$? ;;
     -s|--services)   vu_services --ask; rc=$? ;;
     --summary)
+                     # shellcheck disable=SC2034  # read by summary.sh
                      VU_NEW_FILES=$(find /etc -name '*.new-*' 2>/dev/null | grep -c .)
+                     # shellcheck disable=SC2034  # read by summary.sh
                      VU_REBOOT=$(vu_reboot_since_boot)
                      case "${2:-}" in -v|--verbose) vu_summary --no-repair --verbose ;; *) vu_summary --no-repair ;; esac; rc=0 ;;
     --tray)          tray "${2:-}" ;;

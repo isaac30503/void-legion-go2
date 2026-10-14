@@ -1,4 +1,5 @@
 # shellcheck shell=bash
+# shellcheck disable=SC2034  # the configuration and colors defined here are read by the other libraries
 # base.sh — shared by void-update's libraries: paths, configuration, messages and small helpers.
 # Sourced by void-update (bash); not run alone.
 

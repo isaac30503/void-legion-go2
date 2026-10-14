@@ -33,6 +33,7 @@ if is_remove "${1:-}"; then
     [ -s "$LIST" ] || { t "There is no %s: nothing to remove" "$LIST"; exit 1; }
     t "== removing: %s" "$(tr '\n' ' ' < "$LIST")"
     rm -f "$LIM" "$SYS"; t "== removed %s and %s (valid on reboot)" "$LIM" "$SYS"
+    # shellcheck disable=SC2046  # one package name per line: the word splitting is wanted
     xbps-remove -R $(cat "$LIST")
     xbps-remove $REPOS 2>/dev/null || true
     xbps-install -S >/dev/null

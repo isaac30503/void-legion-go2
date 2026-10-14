@@ -44,7 +44,7 @@ fi
 
 [ -f "$TAR" ] || { t "missing %s (install/fetch-assets.sh downloads it)" "$TAR"; exit 1; }
 [ -f "$HERE/inputplumber-udevadm" ] || { t "missing %s" "$HERE/inputplumber-udevadm"; exit 1; }
-echo "$SHA  $TAR" | sha256sum -c --quiet
+echo "$SHA  $TAR" | sha256sum -c --quiet && t "inputplumber-x86_64.tar.gz: v%s, sha256 checked" "$VER"
 
 # 1. libiio (the only library the binary lacks) and setfacl (acl-progs): the udev rules
 #    with which it hides the controller's original devices use chmod + setfacl.
