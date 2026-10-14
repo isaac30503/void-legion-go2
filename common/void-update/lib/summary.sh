@@ -120,12 +120,14 @@ vu_local_warning() {
     done
 }
 
+# Short names for the summary's name column (half a terminal; 2026-10-14)
+vu_short_name() { case "$1" in xdg-desktop-portal-wlr) echo portal-wlr ;; steamos-manager) echo steamos-mgr ;; *) echo "$1" ;; esac; }
+
 # A summary line ("STATE|name|short|detail") for a package built here: the short text fits the line; the detail
 # says which patch it carries, what is lost without it and what to do.
 vu_local_line() {
-    local n=$1 patch=$2 loss=$3 ver repo how void from_void=0 st= pver= det= tested= short_t= back cmp v
+    local n=$1 patch=$2 loss=$3 ver repo how void from_void=0 st= pver= det= tested= short_t= back cmp
     ver=$(xbps-query -p pkgver "$n" 2>/dev/null); [ -n "$ver" ] || return 0
-    v=${ver#"$n-"}
     repo=$(xbps-query -p repository "$n" 2>/dev/null)
     how=$(vu_how_to_rebuild "$n")
     void=$(vu_void_version "$n")
@@ -134,40 +136,40 @@ vu_local_line() {
         IFS='|' read -r st pver det <<< "$(vu_test_patch "$n" "${void#"$n-"}")"
     fi
     case "$st" in
-        STILL_NEEDED) tested=$(t "; the patch is still needed (tested on Void's code %s)" "$pver"); short_t=$(t ", patch still needed") ;;
+        STILL_NEEDED) tested=$(t "; the patch is still needed (tested on Void's code %s)" "$pver"); short_t=$(t "patch still needed") ;;
         ALREADY_INCLUDED) tested=" $(t "(tested on Void's code %s)" "$pver")" ;;
         CONFLICT|PARTIAL) tested=" $(t "(on Void's code %s, the patch cannot be used as it is: %s)" "$pver" "$det")" ;;
-        UNCHECKED) tested=" $(t "(patch unchecked on Void's code: %s)" "$det")"; short_t=$(t ", patch unchecked") ;;
+        UNCHECKED) tested=" $(t "(patch unchecked on Void's code: %s)" "$det")"; short_t=$(t "patch unchecked") ;;
     esac
     back=$(vu_how_to_go_back "$n")
     if [ $from_void = 1 ]; then
         case "$st" in
-            ALREADY_INCLUDED) echo "OK|$n|$(t "%s from Void, already with the fix" "$v")|$(t "%s is Void's, which already brings %s%s" "$ver" "$patch" "$tested")" ;;
-            CONFLICT|PARTIAL) echo "WARNING|$n|$(t "%s from Void, WITHOUT the patch; review the patch" "$v")|$(t "%s is Void's, WITHOUT %s: %s. Review the patch before rebuilding%s. Then: %s" "$ver" "$patch" "$loss" "$tested" "$how")" ;;
-            *) echo "WARNING|$n|$(t "%s from Void, WITHOUT the patch: rebuild" "$v")|$(t "%s is Void's, WITHOUT %s: %s. Rebuild: %s%s" "$ver" "$patch" "$loss" "$how" "$tested")" ;;
+            ALREADY_INCLUDED) echo "OK|$(vu_short_name "$n")|$(t "Void's, already fixed")|$(t "%s is Void's, which already brings %s%s" "$ver" "$patch" "$tested")" ;;
+            CONFLICT|PARTIAL) echo "WARNING|$(vu_short_name "$n")|$(t "WITHOUT patch: review it")|$(t "%s is Void's, WITHOUT %s: %s. Review the patch before rebuilding%s. Then: %s" "$ver" "$patch" "$loss" "$tested" "$how")" ;;
+            *) echo "WARNING|$(vu_short_name "$n")|$(t "WITHOUT patch: rebuild")|$(t "%s is Void's, WITHOUT %s: %s. Rebuild: %s%s" "$ver" "$patch" "$loss" "$how" "$tested")" ;;
         esac
         return 0
     fi
-    if [ -z "$void" ]; then echo "OK|$n|$(t "%s patched (not in Void)" "$v")|$(t "%s with %s (built here; Void does not have it)" "$ver" "$patch")"; return 0; fi
+    if [ -z "$void" ]; then echo "OK|$(vu_short_name "$n")|$(t "patched (not in Void)")|$(t "%s with %s (built here; Void does not have it)" "$ver" "$patch")"; return 0; fi
     xbps-uhelper cmpver "$ver" "$void"; cmp=$?
     case "$st" in
         ALREADY_INCLUDED)
             if [ $cmp -eq 255 ]; then
-                echo "NOTE|$n|$(t "%s patched; Void %s already has the fix" "$v" "${void#"$n-"}")|$(t "%s with %s (built here). NOTE: Void has %s, which already brings it%s: the next update replaces it without losing anything" "$ver" "$patch" "$void" "$tested")"
+                echo "NOTE|$(vu_short_name "$n")|$(t "Void already has the fix")|$(t "%s with %s (built here). NOTE: Void has %s, which already brings it%s: the next update replaces it without losing anything" "$ver" "$patch" "$void" "$tested")"
             else
-                echo "NOTE|$n|$(t "%s patched; Void already has the fix" "$v")|$(t "%s with %s (built here). NOTE: Void already brings it%s: one can go back to Void's (%s) with %s" "$ver" "$patch" "$tested" "$void" "$back")"
+                echo "NOTE|$(vu_short_name "$n")|$(t "Void already has the fix")|$(t "%s with %s (built here). NOTE: Void already brings it%s: one can go back to Void's (%s) with %s" "$ver" "$patch" "$tested" "$void" "$back")"
             fi
             return 0 ;;
         CONFLICT|PARTIAL)
-            echo "WARNING|$n|$(t "%s patched; the patch does not fit Void %s" "$v" "${void#"$n-"}")|$(t "%s with %s (built here; in Void, %s)%s. Review the patch before the next rebuild: %s" "$ver" "$patch" "$void" "$tested" "$how")"
+            echo "WARNING|$(vu_short_name "$n")|$(t "patch does not fit Void")|$(t "%s with %s (built here; in Void, %s)%s. Review the patch before the next rebuild: %s" "$ver" "$patch" "$void" "$tested" "$how")"
             return 0 ;;
     esac
     case $cmp in
-        1) echo "OK|$n|$(t "%s patched (Void %s)%s" "$v" "${void#"$n-"}" "$short_t")|$(t "%s with %s (built here; in Void, %s)%s" "$ver" "$patch" "$void" "$tested")" ;;
+        1) echo "OK|$(vu_short_name "$n")|${short_t:-$(t "patched")}|$(t "%s with %s (built here; in Void, %s)%s" "$ver" "$patch" "$void" "$tested")" ;;
         0) # The scripts build with Void's revision + 1: if Void reaches the same one, it is a newer build of
            # its own (e.g. because of a new library) that xbps does not install.
-           echo "WARNING|$n|$(t "Void rebuilt %s: rebuild the patched one" "$v")|$(t "Void published %s, the same version and revision as the patched one here: xbps does not install it, but it brings changes from Void that are missing here. Rebuild to have them with %s: %s%s" "$void" "$patch" "$how" "$tested")" ;;
-        *) echo "WARNING|$n|$(t "Void %s is newer: the update drops the patch" "${void#"$n-"}")|$(t "Void has %s, newer than the patched %s: the next update replaces it WITHOUT %s (unless it is held). Rebuild afterwards: %s%s" "$void" "$ver" "$patch" "$how" "$tested")" ;;
+           echo "WARNING|$(vu_short_name "$n")|$(t "Void rebuilt it: rebuild")|$(t "Void published %s, the same version and revision as the patched one here: xbps does not install it, but it brings changes from Void that are missing here. Rebuild to have them with %s: %s%s" "$void" "$patch" "$how" "$tested")" ;;
+        *) echo "WARNING|$(vu_short_name "$n")|$(t "Void newer: patch lost")|$(t "Void has %s, newer than the patched %s: the next update replaces it WITHOUT %s (unless it is held). Rebuild afterwards: %s%s" "$void" "$ver" "$patch" "$how" "$tested")" ;;
     esac
 }
 
@@ -197,22 +199,22 @@ vu_summary() {
     # The Legion's TDP modules (DKMS, they only build for 6.18) and the kernel hold
     if command -v dkms >/dev/null && [ -n "$(dkms status -m lenovo-wmi-tdp 2>/dev/null)" ]; then
         if dkms status -m lenovo-wmi-tdp -k "$latest" 2>/dev/null | grep -q installed; then
-            lines+=("OK|TDP|$(t "built for %s" "$latest")|$(t "TDP (lenovo-wmi-tdp) built for %s" "$latest")")
+            lines+=("OK|TDP|$(t "for %s" "$latest")|$(t "TDP (lenovo-wmi-tdp) built for %s" "$latest")")
         elif [[ "$latest" =~ ^6\.18\. ]]; then
             if [ $repair = 0 ]; then
-                lines+=("WARNING|TDP|$(t "not built for %s" "$latest")|$(t "TDP (lenovo-wmi-tdp) not built for %s: %s (void-update does it by itself)" "$latest" "sudo dkms autoinstall -k $latest")")
+                lines+=("WARNING|TDP|$(t "not built (%s)" "$latest")|$(t "TDP (lenovo-wmi-tdp) not built for %s: %s (void-update does it by itself)" "$latest" "sudo dkms autoinstall -k $latest")")
             elif sudo dkms autoinstall -k "$latest" >/dev/null 2>&1 && dkms status -m lenovo-wmi-tdp -k "$latest" | grep -q installed; then
-                lines+=("REPAIRED|TDP|$(t "rebuilt for %s" "$latest")|$(t "TDP (lenovo-wmi-tdp) rebuilt for %s" "$latest")")
+                lines+=("REPAIRED|TDP|$(t "rebuilt (%s)" "$latest")|$(t "TDP (lenovo-wmi-tdp) rebuilt for %s" "$latest")")
             else
-                lines+=("WARNING|TDP|$(t "does NOT build for %s" "$latest")|$(t "TDP (lenovo-wmi-tdp) does NOT build for %s: the error is in %s. Until it is fixed, that kernel (the one the hidden GRUB boots) has no fine TDP; to boot the previous one, %s (Legion recipe, step 8). Fix: Legion recipe, step 14, TDP, \"Updates\"" "$latest" '/var/lib/dkms/lenovo-wmi-tdp/*/build/make.log' 'grub-hidden.sh --remove')")
+                lines+=("WARNING|TDP|$(t "does NOT build (%s)" "$latest")|$(t "TDP (lenovo-wmi-tdp) does NOT build for %s: the error is in %s. Until it is fixed, that kernel (the one the hidden GRUB boots) has no fine TDP; to boot the previous one, %s (Legion recipe, step 8). Fix: Legion recipe, step 14, TDP, \"Updates\"" "$latest" '/var/lib/dkms/lenovo-wmi-tdp/*/build/make.log' 'grub-hidden.sh --remove')")
             fi
         else
-            lines+=("WARNING|TDP|$(t "kernel %s is not 6.18: no fine TDP" "$latest")|$(t "the newest kernel (%s) is not of the 6.18 series: on it the Legion has no fine TDP control (the modules are only for 6.18). Boot the 6.18 one or bring its sources (Legion recipe, step 14)" "$latest")")
+            lines+=("WARNING|TDP|$(t "kernel not 6.18")|$(t "the newest kernel (%s) is not of the 6.18 series: on it the Legion has no fine TDP control (the modules are only for 6.18). Boot the 6.18 one or bring its sources (Legion recipe, step 14)" "$latest")")
         fi
         if xbps-query -H 2>/dev/null | grep -qE '^linux-[0-9]'; then
-            lines+=("OK|kernel|$(t "held in its series")|$(t "kernel held in its series: it will not change series by itself")")
+            lines+=("OK|kernel|$(t "held")|$(t "kernel held in its series: it will not change series by itself")")
         else
-            lines+=("WARNING|kernel|$(t "not held: it could change series")|$(t "the kernel could move to another series in an update and the Legion would lose the fine TDP control. To avoid it: %s" 'sudo xbps-pkgdb -m hold linux linux-headers')")
+            lines+=("WARNING|kernel|$(t "not held")|$(t "the kernel could move to another series in an update and the Legion would lose the fine TDP control. To avoid it: %s" 'sudo xbps-pkgdb -m hold linux linux-headers')")
         fi
     fi
 
@@ -221,8 +223,8 @@ vu_summary() {
     recommended=$(xbps-query -R -p pkgver linux 2>/dev/null | sed -E 's/^linux-([0-9]+\.[0-9]+).*/\1/')
     series=$(sed -E 's/^([0-9]+\.[0-9]+).*/\1/' <<< "$latest")
     if [ -n "$recommended" ]; then
-        if [ "$recommended" = "$series" ]; then lines+=("OK|kernel|$(t "%s, the series Void recommends" "$series")|$(t "kernel of the %s series, the one Void recommends" "$series")")
-        else lines+=("WARNING|kernel|$(t "%s; Void now recommends %s" "$series" "$recommended")|$(t "Void already recommends the %s series of the kernel; here it is still %s. Changing is your decision (on the Legion: release the hold and bring the TDP modules of that series)" "$recommended" "$series")"); fi
+        if [ "$recommended" = "$series" ]; then lines+=("OK|kernel|$(t "%s, Void's" "$series")|$(t "kernel of the %s series, the one Void recommends" "$series")")
+        else lines+=("WARNING|kernel|$(t "%s; Void: %s" "$series" "$recommended")|$(t "Void already recommends the %s series of the kernel; here it is still %s. Changing is your decision (on the Legion: release the hold and bring the TDP modules of that series)" "$recommended" "$series")"); fi
     fi
 
     # gamescope loses cap_sys_nice when it is updated (Game Mode; steam-modo-juego = the launcher's old name)
@@ -257,13 +259,13 @@ vu_summary() {
     local missing
     if [ -e /usr/bin/inputplumber ] && [ -z "$(xbps-query -o /usr/bin/inputplumber 2>/dev/null)" ]; then
         missing=$(vu_missing /usr/bin/inputplumber | tr '\n' ' ' | sed 's/ $//')
-        if [ -z "$missing" ]; then lines+=("OK|InputPlumber|$(t "libraries found")|$(t "InputPlumber finds its libraries")")
+        if [ -z "$missing" ]; then lines+=("OK|InputPlumber|$(t "libraries ok")|$(t "InputPlumber finds its libraries")")
         else lines+=("WARNING|InputPlumber|$(t "missing: %s" "$missing")|$(t "InputPlumber (official binary) does NOT find: %s. Install the Void package that provides it (%s) or move to a version of InputPlumber that uses the current one and repeat %s (Legion recipe, step 14)" "$missing" "xbps-query -Ro '*/<library>'" legion/install-inputplumber.sh)"); fi
     fi
     if [ -e /usr/local/lib/xdg-desktop-portal-gamescope ]; then
         missing=$(vu_missing /usr/local/lib/xdg-desktop-portal-gamescope | tr '\n' ' ' | sed 's/ $//')
-        if [ -z "$missing" ]; then lines+=("OK|$(t "gamescope portal")|$(t "libraries found")|$(t "gamescope portal finds its libraries")")
-        else lines+=("WARNING|$(t "gamescope portal")|$(t "missing: %s" "$missing")|$(t "gamescope portal (Valve's binary) does NOT find: %s. It only depends on glibc: install what is missing, or bring the one of a new SteamOS version and repeat %s (Legion recipe, step 14, \"Screen sharing in Game Mode\")" "$missing" common/steam/portal-gamescope/install-portal-gamescope.sh)"); fi
+        if [ -z "$missing" ]; then lines+=("OK|portal-gs|$(t "libraries ok")|$(t "gamescope portal finds its libraries")")
+        else lines+=("WARNING|portal-gs|$(t "missing: %s" "$missing")|$(t "gamescope portal (Valve's binary) does NOT find: %s. It only depends on glibc: install what is missing, or bring the one of a new SteamOS version and repeat %s (Legion recipe, step 14, \"Screen sharing in Game Mode\")" "$missing" common/steam/portal-gamescope/install-portal-gamescope.sh)"); fi
     fi
 
     # steamos-manager (built here with a patch, outside xbps): libraries, reference sha256, build dependencies,
@@ -300,10 +302,9 @@ vu_summary() {
                 esac
             else note=$(t "; NOTE: upstream published %s (without the patch test installed)" "$newest"); fi
         fi
-        local sm_short=${pkg#steamos-manager-}; [ -n "$sm_short" ] || sm_short=$(t "unknown package")
-        if [ ${#bad[@]} -eq 0 ] && [ -z "$note" ]; then lines+=("OK|steamos-manager|$(t "%s, the reference one" "$sm_short")|$(t "steamos-manager, %s: finds its libraries, is the reference one (sha256 %s…) and its build dependencies are there%s" "$name" "$sum" "$note")")
-        elif [ ${#bad[@]} -eq 0 ]; then lines+=("NOTE|steamos-manager|$(t "%s, the reference one; see the note" "$sm_short")|$(t "steamos-manager, %s: finds its libraries, is the reference one (sha256 %s…) and its build dependencies are there%s" "$name" "$sum" "$note")")
-        else lines+=("WARNING|steamos-manager|$(t "%s: %s problem(s)" "$sm_short" "${#bad[@]}")|steamos-manager, $name: $(printf '%s; ' "${bad[@]}" | sed 's/; $//')$note"); fi
+        if [ ${#bad[@]} -eq 0 ] && [ -z "$note" ]; then lines+=("OK|steamos-mgr|$(t "the reference one")|$(t "steamos-manager, %s: finds its libraries, is the reference one (sha256 %s…) and its build dependencies are there%s" "$name" "$sum" "$note")")
+        elif [ ${#bad[@]} -eq 0 ]; then lines+=("NOTE|steamos-mgr|$(t "new upstream version")|$(t "steamos-manager, %s: finds its libraries, is the reference one (sha256 %s…) and its build dependencies are there%s" "$name" "$sum" "$note")")
+        else lines+=("WARNING|steamos-mgr|$(t "%s problem(s)" "${#bad[@]}")|steamos-manager, $name: $(printf '%s; ' "${bad[@]}" | sed 's/; $//')$note"); fi
     fi
 
     # extest (built here with Rust from rustup, 32 bits): libraries and what is needed to rebuild it
@@ -317,36 +318,35 @@ vu_summary() {
         [ -x ~/.cargo/bin/cargo ] && [ -z "$i686" ] && bad+=("$(t "to rebuild it, missing the 32-bit target: %s" '~/.cargo/bin/rustup target add i686-unknown-linux-gnu')")
         [ -f ~/src/extest/Cargo.lock ] || bad+=("$(t "to rebuild it, missing ~/src/extest (its code, 1.0.3: copy in %s)" legion/steam/extest/extest-1.0.3-src.tar.gz)")
         xbps-query gcc-multilib >/dev/null 2>&1 || bad+=("$(t "to rebuild it, missing: %s" 'sudo xbps-install -S gcc-multilib')")
-        if [ ${#bad[@]} -eq 0 ]; then lines+=("OK|extest|$(t "libraries found, can be rebuilt")|$(t "extest finds its libraries and can be rebuilt (~/.rustup, ~/.cargo, ~/src/extest, gcc-multilib)")")
+        if [ ${#bad[@]} -eq 0 ]; then lines+=("OK|extest|$(t "can be rebuilt")|$(t "extest finds its libraries and can be rebuilt (~/.rustup, ~/.cargo, ~/src/extest, gcc-multilib)")")
         else lines+=("WARNING|extest|$(t "%s problem(s)" "${#bad[@]}")|extest: $(printf '%s; ' "${bad[@]}" | sed 's/; $//')"); fi
     fi
 
     # What the steps above already warned about, repeated here
-    if [ "$VU_NEW_FILES" -gt 0 ] 2>/dev/null; then lines+=("WARNING|.new-*|$(t "%s in /etc: compare, do not apply" "$VU_NEW_FILES")|$(t "%s .new-* template(s) in /etc: compare, do not apply" "$VU_NEW_FILES")")
-    else lines+=("OK|.new-*|$(t "none in /etc")|$(t "no .new-* templates in /etc")"); fi
+    if [ "$VU_NEW_FILES" -gt 0 ] 2>/dev/null; then lines+=("WARNING|.new-*|$(t "%s in /etc" "$VU_NEW_FILES")|$(t "%s .new-* template(s) in /etc: compare, do not apply" "$VU_NEW_FILES")")
+    else lines+=("OK|.new-*|$(t "none found")|$(t "no .new-* templates in /etc")"); fi
     if [ -n "$VU_REBOOT" ]; then lines+=("WARNING|$(t "reboot")|$(t "advisable")|$(t "a reboot is advisable: %s" "$VU_REBOOT")")
     else lines+=("OK|$(t "reboot")|$(t "not needed")|$(t "no reboot needed")"); fi
 
-    echo
     echo "==> $(t "Summary")"
-    local warnings=0 notes=0 w_ok w_rep w_warn w_note state name short detail rest width
-    w_ok=$(t "OK"); w_rep=$(t "REPAIRED"); w_warn=$(t "WARNING"); w_note=$(t "NOTE")
-    width=$(( ${COLUMNS:-$(tput cols 2>/dev/null || echo 100)} - 6 )); [ $width -ge 40 ] || width=40
+    local warnings=0 notes=0 state name short detail rest width sym
+    # Half a terminal (2026-10-14, the user's request): symbols instead of words, a 13-column name, a short text;
+    # the detail wrapped to at most 52 columns.
+    width=$(( ${COLUMNS:-$(tput cols 2>/dev/null || echo 80)} - 5 )); [ $width -le 52 ] || width=52; [ $width -ge 30 ] || width=30
     for l in "${lines[@]}"; do
         state=${l%%|*}; rest=${l#*|}; name=${rest%%|*}; rest=${rest#*|}; short=${rest%%|*}; detail=${rest#*|}
         case "$state" in
-            OK)       printf '%s  %-9s' "$c_green" "$w_ok" ;;
-            NOTE)     printf '%s  %-9s' "$c_green" "$w_note"; notes=$((notes+1)) ;;
-            REPAIRED) printf '%s  %-9s' "$c_cyan" "$w_rep" ;;
-            *)        printf '%s  %-9s' "$c_yellow" "$w_warn"; warnings=$((warnings+1)) ;;
+            OK)       sym="$c_green✓" ;;
+            NOTE)     sym="$c_green""ℹ"; notes=$((notes+1)) ;;
+            REPAIRED) sym="$c_cyan↻" ;;
+            *)        sym="$c_yellow⚠"; warnings=$((warnings+1)) ;;
         esac
-        printf '%s%-22s %s\n' "$c_off" "$name" "$short"
+        printf ' %s%s %-13s %s\n' "$sym" "$c_off" "$name" "$short"
         if [ -n "$detail" ] && { [ $verbose = 1 ] || [ "$state" != OK ]; }; then
-            printf '%s\n' "$detail" | fold -s -w "$width" | sed 's/^/      /'
+            printf '%s\n' "$detail" | fold -s -w "$width" | sed 's/^/   /'
         fi
     done
-    echo
-    if [ $warnings -eq 0 ]; then echo "${c_green}✓ $(t "All in order")${c_off}"
-    else echo "${c_yellow}⚠ $(t "%s warning(s): check above" "$warnings")${c_off}"; fi
-    [ $verbose = 1 ] || [ $warnings -gt 0 ] || [ $notes -gt 0 ] || echo "  $(t "(detail of every line: void-update --summary -v)")"
+    if [ $warnings -eq 0 ]; then printf '%s✓ %s%s' "$c_green" "$(t "All in order")" "$c_off"
+    else printf '%s⚠ %s%s' "$c_yellow" "$(t "%s warning(s): check above" "$warnings")" "$c_off"; fi
+    if [ $verbose = 0 ] && [ $warnings -eq 0 ] && [ $notes -eq 0 ]; then printf '  %s\n' "$(t "(-v: detail)")"; else echo; fi
 }

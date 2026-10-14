@@ -2976,7 +2976,6 @@ msgstr "== binarios de la Release"
 msgid "   note: some binaries are not here yet (bash install/fetch-assets.sh)"
 msgstr "   nota: aún faltan binarios (bash install/fetch-assets.sh)"
 
-
 #: common/void-update
 msgid "Update notifier for Void Linux"
 msgstr "Aviso de actualizaciones para Void Linux"
@@ -3520,77 +3519,17 @@ msgstr "   marcado: %s (%s)"
 msgid "(-v: the detail of every line, not only of the warnings)"
 msgstr "(-v: el detalle de cada línea, no solo el de los avisos)"
 
-msgid "(detail of every line: void-update --summary -v)"
-msgstr "(detalle de cada línea: void-update --summary -v)"
-
-msgid "NOTE"
-msgstr "NOTA"
-
-msgid "built for %s"
-msgstr "compilado para %s"
-
-msgid "not built for %s"
-msgstr "sin compilar para %s"
-
-msgid "rebuilt for %s"
-msgstr "recompilado para %s"
-
-msgid "does NOT build for %s"
-msgstr "NO compila para %s"
-
-msgid "kernel %s is not 6.18: no fine TDP"
-msgstr "el kernel %s no es 6.18: sin TDP fino"
-
-msgid "held in its series"
-msgstr "retenido en su serie"
-
-msgid "not held: it could change series"
-msgstr "sin retener: podría cambiar de serie"
-
-msgid "%s, the series Void recommends"
-msgstr "%s, la serie que recomienda Void"
-
-msgid "%s; Void now recommends %s"
-msgstr "%s; Void ya recomienda %s"
-
 msgid "without cap_sys_nice"
 msgstr "sin cap_sys_nice"
 
 msgid "cap_sys_nice given back"
 msgstr "cap_sys_nice repuesta"
 
-msgid "libraries found"
-msgstr "encuentra sus bibliotecas"
-
 msgid "missing: %s"
 msgstr "le falta: %s"
 
-msgid "gamescope portal"
-msgstr "portal gamescope"
-
-msgid "unknown package"
-msgstr "paquete desconocido"
-
-msgid "%s, the reference one"
-msgstr "%s, el de referencia"
-
-msgid "%s, the reference one; see the note"
-msgstr "%s, el de referencia; ver la nota"
-
-msgid "%s: %s problem(s)"
-msgstr "%s: %s problema(s)"
-
-msgid "libraries found, can be rebuilt"
-msgstr "encuentra sus bibliotecas, se puede recompilar"
-
 msgid "%s problem(s)"
 msgstr "%s problema(s)"
-
-msgid "%s in /etc: compare, do not apply"
-msgstr "%s en /etc: comparar, no aplicar"
-
-msgid "none in /etc"
-msgstr "ninguna en /etc"
 
 msgid "reboot"
 msgstr "reinicio"
@@ -3601,38 +3540,83 @@ msgstr "conviene"
 msgid "not needed"
 msgstr "no hace falta"
 
-msgid ", patch still needed"
-msgstr ", parche aún necesario"
+msgid "patch still needed"
+msgstr "parche aún necesario"
 
-msgid ", patch unchecked"
-msgstr ", parche sin comprobar"
+msgid "patch unchecked"
+msgstr "parche sin comprobar"
 
-msgid "%s from Void, already with the fix"
-msgstr "%s de Void, ya trae el arreglo"
+msgid "patched"
+msgstr "parcheado"
 
-msgid "%s from Void, WITHOUT the patch; review the patch"
-msgstr "%s de Void, SIN el parche; revisar el parche"
+msgid "Void's, already fixed"
+msgstr "de Void, ya arreglado"
 
-msgid "%s from Void, WITHOUT the patch: rebuild"
-msgstr "%s de Void, SIN el parche: recompilar"
+msgid "WITHOUT patch: review it"
+msgstr "SIN parche: revisarlo"
 
-msgid "%s patched (not in Void)"
-msgstr "%s parcheado (no está en Void)"
+msgid "WITHOUT patch: rebuild"
+msgstr "SIN parche: recompilar"
 
-msgid "%s patched; Void %s already has the fix"
-msgstr "%s parcheado; Void %s ya trae el arreglo"
+msgid "patched (not in Void)"
+msgstr "parcheado (no en Void)"
 
-msgid "%s patched; Void already has the fix"
-msgstr "%s parcheado; Void ya trae el arreglo"
+msgid "Void already has the fix"
+msgstr "Void ya trae el arreglo"
 
-msgid "%s patched; the patch does not fit Void %s"
-msgstr "%s parcheado; el parche no encaja en Void %s"
+msgid "patch does not fit Void"
+msgstr "el parche no encaja"
 
-msgid "%s patched (Void %s)%s"
-msgstr "%s parcheado (Void %s)%s"
+msgid "Void rebuilt it: rebuild"
+msgstr "Void lo rehízo: recompilar"
 
-msgid "Void rebuilt %s: rebuild the patched one"
-msgstr "Void recompiló %s: recompilar el parcheado"
+msgid "Void newer: patch lost"
+msgstr "Void más nuevo: se pierde"
 
-msgid "Void %s is newer: the update drops the patch"
-msgstr "Void %s es más nuevo: la actualización quita el parche"
+msgid "for %s"
+msgstr "para %s"
+
+msgid "not built (%s)"
+msgstr "sin compilar (%s)"
+
+msgid "rebuilt (%s)"
+msgstr "recompilado (%s)"
+
+msgid "does NOT build (%s)"
+msgstr "NO compila (%s)"
+
+msgid "kernel not 6.18"
+msgstr "kernel no es 6.18"
+
+msgid "held"
+msgstr "retenido"
+
+msgid "not held"
+msgstr "sin retener"
+
+msgid "%s, Void's"
+msgstr "%s, la de Void"
+
+msgid "%s; Void: %s"
+msgstr "%s; Void: %s"
+
+msgid "libraries ok"
+msgstr "bibliotecas bien"
+
+msgid "the reference one"
+msgstr "el de referencia"
+
+msgid "new upstream version"
+msgstr "versión nueva upstream"
+
+msgid "can be rebuilt"
+msgstr "recompilable"
+
+msgid "%s in /etc"
+msgstr "%s en /etc"
+
+msgid "none found"
+msgstr "ninguna"
+
+msgid "(-v: detail)"
+msgstr "(-v: detalle)"
