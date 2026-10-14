@@ -104,17 +104,18 @@ installed system: `sudo rmdir /mnt/home /mnt/steamos-home` (empty; step 0).
 
 **B. The repository on the machine.** Originally: copy the scripts from `Common` to `~` (with `Common`
 mounted). With this repository: clone it, bring the binaries of the Release, get `local.env` back from its
-encrypted copy (`local.env.age`, asks the passphrase kept in the password manager; docs/sanitization.md) and
-make `build/` (none of this needs root but installing `age`; `gh` asks to log in once, `gh auth login`,
-because the repository is private):
+encrypted copy (`local.env.age`, in the private repository `<owner>/void-legion-go2-private`; asks the passphrase
+kept in the password manager; docs/sanitization.md) and
+make `build/` (none of this needs root but installing `age`; the repository and its Release are public, but `gh`
+asks to log in once, `gh auth login`, to read the private repository with `local.env.age`):
 
 ```bash
 sudo xbps-install -S git github-cli age          # if they are not there yet
-gh auth login                                    # GitHub account that owns the repository
+gh auth login                                    # GitHub account that owns the private copy of local.env
 REPO=~/src/void-legion-go2
-gh repo clone <owner>/void-legion-go2 "$REPO"    # <owner>: the GitHub account
+gh repo clone isaac30503/void-legion-go2 "$REPO"
 bash "$REPO/install/fetch-assets.sh"             # binaries of the Release, checked with sha256
-bash "$REPO/install/secrets.sh" open             # local.env from local.env.age (the passphrase); without it:
+bash "$REPO/install/secrets.sh" open             # local.env from the private repository's local.env.age (the passphrase); without it:
 #   cp "$REPO/local.env.example" "$REPO/local.env" && chmod 600 "$REPO/local.env" && nano "$REPO/local.env"
 bash "$REPO/install/render.sh"                   # build/: the clone with the values filled in
 B="$REPO/build"

@@ -2,8 +2,7 @@
 local.env
 local.env.*
 !/local.env.example
-# local.env encrypted with age (install/secrets.sh): this one IS committed
-!/local.env.age
+# local.env.age (local.env encrypted) lives in the PRIVATE companion repository (install/secrets.sh); here it is only a cache
 /.local.env.stamp
 # Rendered copies made by install/install.sh from the templates + local.env
 /build/
