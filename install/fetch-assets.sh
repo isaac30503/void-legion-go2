@@ -6,7 +6,7 @@
 #   bash install/fetch-assets.sh            downloads what is missing or does not match (without root)
 #   bash install/fetch-assets.sh --check    only checks (exit 1 if something is missing or does not match)
 #
-# The repository is private: it downloads with the gh CLI (gh auth login) or, without gh, with curl and a
+# Public repository: a plain download with curl; if that fails (a private fork), the gh CLI (gh auth login) or curl and a
 # token in GH_TOKEN. Repository: the "origin" remote of the clone, or VOID_LEGION_GITHUB=<owner>/<name>.
 # A destination ending in "/" is a .tar.gz that is unpacked there (the 96 JetBrainsMono Nerd Font files).
 # Previous location of these files: next to the scripts in "<disk>/Backups Linux/fish/void/" (Common).
@@ -20,7 +20,10 @@ SLUG=${VOID_LEGION_GITHUB:-$(git -C "$REPO_ROOT" remote get-url origin 2>/dev/nu
 DL=$(mktemp -d); trap 'rm -rf "$DL"' EXIT
 
 download() {   # $1 = asset name → $DL/$1
-    if command -v gh >/dev/null 2>&1; then
+    # A public repository: a plain download, no login (the sha256 is checked afterwards anyway)
+    if curl -fsSL --retry 3 -o "$DL/$1" "https://github.com/$SLUG/releases/download/$TAG/$1" 2>/dev/null; then
+        return 0
+    elif command -v gh >/dev/null 2>&1; then
         # 3 attempts: GitHub sometimes answers "release not found" for a moment (seen 2026-10-13, fresh clone)
         local n; for n in 1 2 3; do
             gh release download "$TAG" -R "$SLUG" -p "$1" -D "$DL" --clobber >/dev/null && return 0

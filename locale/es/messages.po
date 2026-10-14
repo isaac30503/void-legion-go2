@@ -83,8 +83,6 @@ msgid "held (hold): %s"
 msgstr "retenidos (hold): %s"
 
 #: common/agent/audit-void.sh
-msgid "from local repositories (built here; update-system warns if Void replaces them):"
-msgstr "de repositorios locales (compilados aquí; update-system avisa si Void los reemplaza):"
 
 #: common/agent/audit-void.sh
 msgid "orphans: %s  (a backup linuxX.Y is on purpose)"
@@ -947,8 +945,6 @@ msgid "'lego'. The user and the IP come from ~/.ssh/config if the alias already 
 msgstr "'lego'. El usuario y la IP salen de ~/.ssh/config si el alias ya existe."
 
 #: common/ssh-setup/ssh-setup.fish
-msgid "(The old Spanish options also work: --usuario, --diagnostico, --sin-claude.)"
-msgstr "(También valen las opciones en español: --usuario, --diagnostico, --sin-claude.)"
 
 #: common/ssh-setup/ssh-setup.fish
 msgid "the Legion Go 2"
@@ -1639,8 +1635,6 @@ msgid "%s (installs the .xbps of that folder); if Void already has an equal or h
 msgstr "%s (instala el .xbps de esa carpeta); si Void ya tiene una versión o revisión igual o mayor, antes %s (misma carpeta; prueba antes el parche y no compila si Void ya lo trae) y copiar allí el .xbps nuevo (paso 15 de la receta de cada máquina, \"Fondo de escritorio en Wayland\")"
 
 #: common/fish/functions/update-system.fish
-msgid "it is not known with which script %s was built: look for it in the recipe (and add it to __update_system_how_to_rebuild)"
-msgstr "no se sabe con qué script se compiló %s: buscarlo en la receta (y añadirlo a __update_system_how_to_rebuild)"
 
 #: common/fish/functions/update-system.fish
 msgid "; careful: ~/src/void-packages already exists and the script does not update it (delete it first)"
@@ -1747,8 +1741,6 @@ msgid "TDP (lenovo-wmi-tdp) built for %s"
 msgstr "TDP (lenovo-wmi-tdp) compilado para %s"
 
 #: common/fish/functions/update-system.fish
-msgid "TDP (lenovo-wmi-tdp) not built for %s: %s (update-system does it by itself)"
-msgstr "TDP (lenovo-wmi-tdp) sin compilar para %s: %s (update-system lo hace solo)"
 
 #: common/fish/functions/update-system.fish
 msgid "TDP (lenovo-wmi-tdp) rebuilt for %s"
@@ -1783,8 +1775,6 @@ msgid "gamescope with cap_sys_nice"
 msgstr "gamescope con cap_sys_nice"
 
 #: common/fish/functions/update-system.fish
-msgid "gamescope without cap_sys_nice: %s (update-system does it by itself)"
-msgstr "gamescope sin cap_sys_nice: %s (update-system lo hace solo)"
 
 #: common/fish/functions/update-system.fish
 msgid "gamescope: cap_sys_nice given back"
@@ -1975,8 +1965,6 @@ msgid "package: %s   installed now: %s"
 msgstr "paquete: %s   instalado ahora: %s"
 
 #: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
-msgid "!! the patch needs libxfce4windowing >= 4.20.6 (there is %s): update first (update-system)"
-msgstr "!! el parche pide libxfce4windowing >= 4.20.6 (hay %s): actualizar primero (update-system)"
 
 #: common/xfce-wayland/thunar-wallpaper/*.sh common/xfce-wayland/xfdesktop-wallpaper/*.sh
 msgid "OK: installed %s"
@@ -3330,15 +3318,6 @@ msgstr "!! no se cifró"
 msgid "Type the passphrase once more, to check the copy:"
 msgstr "Escribe la contraseña una vez más, para comprobar la copia:"
 
-msgid "   done: %s (commit it: git add %s && git commit)"
-msgstr "   hecho: %s (súbelo: git add %s && git commit)"
-
-msgid "!! the check failed (another passphrase?): %s was not changed"
-msgstr "!! la comprobación falló (¿otra contraseña?): %s no se cambió"
-
-msgid "!! %s is missing: it has not been encrypted yet (bash install/secrets.sh seal)"
-msgstr "!! falta %s: todavía no se ha cifrado (bash install/secrets.sh seal)"
-
 msgid "!! not decrypted (wrong passphrase?)"
 msgstr "!! no se descifró (¿contraseña equivocada?)"
 
@@ -3348,23 +3327,11 @@ msgstr "   el %s anterior era distinto: guardado como %s (compáralos: diff %s %
 msgid "   done: %s"
 msgstr "   hecho: %s"
 
-msgid "!! %s does not exist yet: bash install/secrets.sh seal"
-msgstr "!! %s todavía no existe: bash install/secrets.sh seal"
-
 msgid "!! %s is missing: bash install/secrets.sh open"
 msgstr "!! falta %s: bash install/secrets.sh open"
 
-msgid "   unknown whether %s and %s say the same (no stamp): bash install/secrets.sh open (it keeps the current one aside if it differs)"
-msgstr "   no se sabe si %s y %s dicen lo mismo (sin marca): bash install/secrets.sh open (si difiere, guarda aparte el actual)"
-
-msgid "   %s and %s say the same"
-msgstr "   %s y %s dicen lo mismo"
-
 msgid "!! %s changed after the last copy: bash install/secrets.sh seal"
 msgstr "!! %s cambió después de la última copia: bash install/secrets.sh seal"
-
-msgid "!! %s is newer (it came with git pull): bash install/secrets.sh open"
-msgstr "!! %s es más nuevo (llegó con git pull): bash install/secrets.sh open"
 
 msgid "!! both changed: bash install/secrets.sh open (it keeps the current %s aside), merge by hand, then seal"
 msgstr "!! cambiaron los dos: bash install/secrets.sh open (guarda aparte el %s actual), unirlos a mano y luego seal"
@@ -3443,15 +3410,6 @@ msgstr "Salida: una línea \"PATCH <fichero> <estado>\" por parche y, al final, 
 
 msgid "  \"RESULT <name> <tested version> <state> <detail>\""
 msgstr "  \"RESULT <nombre> <versión probada> <estado> <detalle>\""
-
-msgid "local.env → local.env.age (asks the passphrase twice; then commit it)"
-msgstr "local.env → local.env.age (pide la contraseña dos veces; luego súbelo con commit)"
-
-msgid "local.env.age → local.env (asks the passphrase; chmod 600)"
-msgstr "local.env.age → local.env (pide la contraseña; chmod 600)"
-
-msgid "whether both say the same (exit 0) or which one is newer (exit 1)"
-msgstr "si los dos dicen lo mismo (sale con 0) o cuál es más nuevo (sale con 1)"
 
 msgid "B. The repository: binaries, local.env (from local.env.age), build/"
 msgstr "B. El repositorio: binarios, local.env (de local.env.age), build/"
@@ -3620,3 +3578,45 @@ msgstr "ninguna"
 
 msgid "(-v: detail)"
 msgstr "(-v: detalle)"
+
+msgid "!! gh is needed, logged in (gh auth login): the copy is in the private repository %s"
+msgstr "!! hace falta gh con sesión iniciada (gh auth login): la copia está en el repositorio privado %s"
+
+msgid "!! the check failed (another passphrase?): nothing was changed"
+msgstr "!! la comprobación falló (¿otra contraseña?): no se cambió nada"
+
+msgid "!! the upload to %s failed: nothing was changed"
+msgstr "!! falló la subida a %s: no se cambió nada"
+
+msgid "   done: %s, in the private repository %s"
+msgstr "   hecho: %s, en el repositorio privado %s"
+
+msgid "!! %s has no %s yet (bash install/secrets.sh seal)"
+msgstr "!! %s todavía no tiene %s (bash install/secrets.sh seal)"
+
+msgid "   unchecked: gh is not logged in (the copy is in %s)"
+msgstr "   sin comprobar: gh no tiene sesión iniciada (la copia está en %s)"
+
+msgid "!! %s has no %s yet: bash install/secrets.sh seal"
+msgstr "!! %s todavía no tiene %s: bash install/secrets.sh seal"
+
+msgid "   unknown whether %s and the copy say the same (no stamp): bash install/secrets.sh open (it keeps the current one aside if it differs)"
+msgstr "   no se sabe si %s y la copia dicen lo mismo (sin marca): bash install/secrets.sh open (si difiere, guarda aparte el actual)"
+
+msgid "   %s and the private copy say the same"
+msgstr "   %s y la copia privada dicen lo mismo"
+
+msgid "!! the private copy is newer (sealed on the other machine): bash install/secrets.sh open"
+msgstr "!! la copia privada es más nueva (cifrada en la otra máquina): bash install/secrets.sh open"
+
+msgid "local.env → local.env.age, uploaded to the private repository (asks the passphrase)"
+msgstr "local.env → local.env.age, subido al repositorio privado (pide la contraseña)"
+
+msgid "the private repository's local.env.age → local.env (asks the passphrase)"
+msgstr "el local.env.age del repositorio privado → local.env (pide la contraseña)"
+
+msgid "whether local.env and the private copy say the same (exit 0) or not (exit 1)"
+msgstr "si local.env y la copia privada dicen lo mismo (sale con 0) o no (sale con 1)"
+
+msgid "   closing Steam (steam -shutdown)"
+msgstr "   cerrando Steam (steam -shutdown)"
