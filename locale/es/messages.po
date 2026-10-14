@@ -3380,3 +3380,78 @@ msgstr "== Reiniciar: entra solo en el escritorio (Xfce sobre Wayland), el modo 
 
 msgid "== Reboot: it enters the desktop (Xfce X11) by itself, the chosen mode. 'Switch to Desktop' → Xfce without password;"
 msgstr "== Reiniciar: entra solo en el escritorio (Xfce X11), el modo elegido. 'Cambiar a escritorio' → Xfce sin contraseña;"
+
+msgid "full update: news, list, confirm, xbps first, the rest,"
+msgstr "actualización completa: noticias, lista, confirmar, xbps primero, el resto,"
+
+msgid "Flatpak, orphans, cache, kernels, .new-*, services to restart, summary, reboot?"
+msgstr "Flatpak, huérfanos, caché, kernels, .new-*, servicios por reiniciar, resumen, ¿reiniciar?"
+
+msgid "looks for updates WITHOUT root (xbps-install -Mun, Flatpak), updates the tray"
+msgstr "busca actualizaciones SIN root (xbps-install -Mun, Flatpak), actualiza el ícono"
+
+msgid "icon and notifies if the list changed"
+msgstr "del panel y avisa si la lista cambió"
+
+msgid "looks and shows the pending updates (exit 7 if there are none)"
+msgstr "busca y enseña las actualizaciones pendientes (sale con 7 si no hay ninguna)"
+
+msgid "Void's latest N news (default 5; config news_count)"
+msgstr "las últimas N noticias de Void (5 por defecto; configuración news_count)"
+
+msgid "runit services still running old code (asks to restart them)"
+msgstr "servicios de runit que siguen con código viejo (pregunta si reiniciarlos)"
+
+msgid "only the final summary, without syncing, without sudo, changing nothing"
+msgstr "solo el resumen final, sin sincronizar, sin sudo, sin cambiar nada"
+
+msgid "the panel icon; --enable also starts it at every login (XDG autostart),"
+msgstr "el ícono del panel; --enable además lo arranca en cada inicio de sesión (autostart XDG),"
+
+msgid "--disable stops that. --check --enable is the same as --tray --enable: the"
+msgstr "--disable lo deja de hacer. --check --enable es lo mismo que --tray --enable: las"
+
+msgid "periodic checks are done by the icon (on network connect and every N hours)"
+msgstr "búsquedas periódicas las hace el ícono (al conectar la red y cada N horas)"
+
+msgid "~/.config/void-update/void-update.conf (see void-update.conf.example)"
+msgstr "~/.config/void-update/void-update.conf (ver void-update.conf.example)"
+
+msgid "traces"
+msgstr "trazas"
+
+msgid "Exit: 0 ok · 1 invalid option · 2 failed check · 3 tray error · 4 not confirmed · 5 update error ·"
+msgstr "Salida: 0 bien · 1 opción no válida · 2 búsqueda fallida · 3 error del ícono · 4 sin confirmar · 5 error al actualizar ·"
+
+msgid "      7 no pending updates (--list) · 8 configuration error"
+msgstr "        7 sin actualizaciones pendientes (--list) · 8 error de configuración"
+
+msgid "Usage (without root):"
+msgstr "Uso (sin root):"
+
+msgid "current template of void-packages (master)"
+msgstr "plantilla actual de void-packages (master)"
+
+msgid "tag or branch of upstream"
+msgstr "etiqueta o rama de upstream"
+
+msgid "(before the mode) do not read the cache"
+msgstr "(antes del modo) no leer la caché"
+
+msgid "(before \"void\") if the cache already has that version, it answers without network"
+msgstr "(antes de \"void\") si la caché ya tiene esa versión, contesta sin red"
+
+msgid "Output: one line \"PATCH <file> <state>\" per patch and, at the end, always one line"
+msgstr "Salida: una línea \"PATCH <fichero> <estado>\" por parche y, al final, siempre una línea"
+
+msgid "  \"RESULT <name> <tested version> <state> <detail>\""
+msgstr "  \"RESULT <nombre> <versión probada> <estado> <detalle>\""
+
+msgid "local.env → local.env.age (asks the passphrase twice; then commit it)"
+msgstr "local.env → local.env.age (pide la contraseña dos veces; luego súbelo con commit)"
+
+msgid "local.env.age → local.env (asks the passphrase; chmod 600)"
+msgstr "local.env.age → local.env (pide la contraseña; chmod 600)"
+
+msgid "whether both say the same (exit 0) or which one is newer (exit 1)"
+msgstr "si los dos dicen lo mismo (sale con 0) o cuál es más nuevo (sale con 1)"

@@ -64,7 +64,15 @@ case "$mode" in
     *)    mode= ;;
 esac
 if [ -z "$mode" ]; then
-    sed -n '/^# Usage/,/^# Output/p' "$0" | sed 's/^# \{0,1\}//' >&2
+    {   # the help of the header, through the translation catalog
+        t "Usage (without root):"
+        printf '  %-52s %s\n' "patch-still-needed void <package> <patch>..." "$(t "current template of void-packages (master)")"
+        printf '  %-52s %s\n' "patch-still-needed git <url> <ref> <name> <patch>..." "$(t "tag or branch of upstream")"
+        printf '  %-52s %s\n' "--no-cache" "$(t "(before the mode) do not read the cache")"
+        printf '  %-52s %s\n' "--version <version_revision>" "$(t "(before \"void\") if the cache already has that version, it answers without network")"
+        t "Output: one line \"PATCH <file> <state>\" per patch and, at the end, always one line"
+        t "  \"RESULT <name> <tested version> <state> <detail>\""
+    } >&2
     exit 2
 fi
 PATCHES=()

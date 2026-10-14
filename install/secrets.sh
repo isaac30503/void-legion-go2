@@ -73,5 +73,8 @@ case "${1:-}" in
     seal)   seal ;;
     open)   open_ ;;
     status) status ;;
-    *)      sed -n '2,8p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+    *)      printf '  %-36s %s\n' "bash install/secrets.sh seal" "$(t "local.env → local.env.age (asks the passphrase twice; then commit it)")" \
+                    "bash install/secrets.sh open" "$(t "local.env.age → local.env (asks the passphrase; chmod 600)")" \
+                    "bash install/secrets.sh status" "$(t "whether both say the same (exit 0) or which one is newer (exit 1)")"
+            exit 1 ;;
 esac
