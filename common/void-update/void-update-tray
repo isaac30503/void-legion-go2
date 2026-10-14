@@ -3,8 +3,8 @@
 Ayatana AppIndicator (libayatana-appindicator + python3-gobject, already on both machines: nm-applet needs them).
 
 - The icon shows the state (~/.local/state/void-update/state, written by void-update): up to date, updates
-  available, checking or error. It follows the icon theme (Papirus: update-none, software-update-available,
-  nwg-update-checking, software-update-urgent), with generic fallbacks.
+  available, checking or error, as Void's symbol in one color (white or black, config tray_icon_style) with a
+  status badge (✓ ↓ ··· !), like cachy-update's (icons/generate.py; 2026-10-13, the user's request).
 - Menu: "N updates available" (opens void-update in a terminal), submenus Packages (N) / Flatpak (N) / All (N)
   with the list, last check and next check, "Run void-update", "Check for updates", "Exit". The middle click on
   the icon runs void-update (AppIndicator: secondary activate; the left click opens the menu).
@@ -37,17 +37,19 @@ CONF = os.path.join(os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.
 HERE = os.path.dirname(os.path.realpath(__file__))
 VU = next((p for p in (os.path.join(HERE, "void-update"), shutil.which("void-update"),
                 os.path.expanduser("~/.local/bin/void-update")) if p and os.path.isfile(p)), "void-update")
-ICONS = {  # state -> candidates, first one the theme has
-    "up-to-date": ["update-none", "nwg-update-noupdate", "software-update-available-symbolic", "emblem-default"],
-    "available": ["software-update-available", "nwg-update-available", "system-software-update"],
-    "checking": ["nwg-update-checking", "mintupdate-checking", "view-refresh"],
-    "error": ["software-update-urgent", "mintupdate-error", "dialog-warning"],
-}
+# Icons: Void's symbol in one color with a status badge, like cachy-update's (icons/generate.py), installed next to
+# this script (repository: icons/; installed: ~/.local/lib/void-update/icons). Style light = white (dark panels,
+# the default) or dark = black (config tray_icon_style). Fallback, if they are missing: the icon theme's.
+ICON_DIR = os.path.join(HERE, "icons")
+STATES = ("up-to-date", "available", "checking", "error")
+THEME_FALLBACK = {"up-to-date": "update-none", "available": "software-update-available",
+                  "checking": "view-refresh", "error": "dialog-warning"}
 NM_CONNECTED_GLOBAL = 70
 
 
 def conf():
-    c = {"check_interval_hours": 6, "hide_tray_when_up_to_date": False, "tray_updates_per_page": 30}
+    c = {"check_interval_hours": 6, "hide_tray_when_up_to_date": False, "tray_updates_per_page": 30,
+         "tray_icon_style": "light"}
     try:
         for line in open(CONF, encoding="utf-8"):
             line = line.split("#", 1)[0].strip()
@@ -58,6 +60,8 @@ def conf():
                 c[k] = int(v)
             elif k == "hide_tray_when_up_to_date":
                 c[k] = v == "true"
+            elif k == "tray_icon_style" and v in ("light", "dark"):
+                c[k] = v
     except OSError:
         pass
     return c
@@ -93,6 +97,8 @@ class Tray:
         self.cfg = conf()
         self.theme = Gtk.IconTheme.get_default()
         self.ind = AI.Indicator.new("void-update", self.icon("up-to-date"), AI.IndicatorCategory.SYSTEM_SERVICES)
+        if os.path.isdir(ICON_DIR):
+            self.ind.set_icon_theme_path(ICON_DIR)
         self.ind.set_title("void-update")
         self.ind.set_status(AI.IndicatorStatus.ACTIVE)
         self.checking = None
@@ -121,10 +127,11 @@ class Tray:
 
     # ---- helpers
     def icon(self, state):
-        for name in ICONS.get(state, ICONS["error"]):
-            if self.theme.has_icon(name):
-                return name
-        return ICONS.get(state, ICONS["error"])[-1]
+        state = state if state in STATES else "error"
+        name = f"void-update-{state}-{self.cfg['tray_icon_style']}"
+        if os.path.isfile(os.path.join(ICON_DIR, name + ".svg")):
+            return name
+        return THEME_FALLBACK[state]
 
     def last_check(self):
         try:

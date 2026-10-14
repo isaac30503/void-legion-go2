@@ -609,8 +609,12 @@ void-update --tray --enable      # starts it now and at every login (~/.config/a
 | `void-update --tray [--enable\|--disable]` | the icon (Ayatana AppIndicator, already installed: nm-applet needs it) |
 | `void-update --gen-config` · `--show-config` · `--edit-config` | `~/.config/void-update/void-update.conf` (interval, notifications, Flatpak, news…; example in `common/void-update/void-update.conf.example`) |
 
-**The icon** follows the icon theme (Papirus: `update-none` up to date, `software-update-available` with
-updates, `nwg-update-checking` while checking, `software-update-urgent` if the check failed). Its menu: "N
+**The icon**, like cachy-update's: **Void's symbol in one color** (white, for the black panel; black with
+`tray_icon_style=dark`) with a status badge in its corner: ✓ up to date, ↓ updates available, ··· checking,
+! the check failed (2026-10-13, the user's request: the distribution's symbol in black and white, consistent with
+the panel; the first version used Papirus' update icons). SVGs in `common/void-update/icons/`, made by its
+`generate.py` from `/usr/share/void-artwork/void-logo.svg` (the arcs and the dot, as vectors); the "updates
+available" one is also the launcher's and the notification's (`~/.local/share/icons/hicolor/scalable/apps/void-update.svg`). Its menu: "N
 updates available" (runs it), submenus *Packages (N)*, *Flatpak (N)* and *All (N)* with the list, last and
 next check, **Run void-update**, **Check for updates**, **Exit**; the middle click runs it too (in Ayatana the
 left click opens the menu). "Run" opens `void-update.desktop` in a terminal (xterm, as the rest of the

@@ -1,7 +1,8 @@
 #!/bin/bash
 # install-void-update.sh — installs void-update for the user (without root; 2026-10-11), on both machines:
 #   ~/.local/bin/void-update                        the command
-#   ~/.local/lib/void-update/{lib/,void-update-tray,void-update.conf.example}
+#   ~/.local/lib/void-update/{lib/,icons/,void-update-tray,void-update.conf.example}
+#   ~/.local/share/icons/hicolor/scalable/apps/void-update.svg   the application's icon (launcher, notification)
 #   ~/.local/share/applications/void-update.desktop the launcher (terminal) that the icon and the notification open
 #   ~/.config/fish/completions/void-update.fish
 #   ~/.local/bin/patch-still-needed and its patches  (common/patch-test/install-patch-test.sh)
@@ -28,7 +29,7 @@ COMP=~/.config/fish/completions
 if is_remove "${1:-}"; then
     "$BIN/void-update" --tray --disable 2>/dev/null || true
     pkill -u "$(id -u)" -f void-update-tray 2>/dev/null || true
-    rm -rf "$LIB"; rm -f "$BIN/void-update" "$APPS/void-update.desktop" "$COMP/void-update.fish"
+    rm -rf "$LIB"; rm -f "$BIN/void-update" "$APPS/void-update.desktop" "$COMP/void-update.fish" ~/.local/share/icons/hicolor/scalable/apps/void-update.svg
     t "void-update removed (state and configuration kept in ~/.local/state/void-update and ~/.config/void-update)"
     exit 0
 fi
@@ -49,6 +50,11 @@ install -m 644 "$HERE"/lib/*.sh "$LIB/lib.new/"
 rm -rf "$LIB/lib"; mv "$LIB/lib.new" "$LIB/lib"
 install -m 755 "$HERE/void-update-tray" "$LIB/void-update-tray.new" && mv "$LIB/void-update-tray.new" "$LIB/void-update-tray"
 install -m 644 "$HERE/void-update.conf.example" "$LIB/"
+mkdir -p "$LIB/icons" ~/.local/share/icons/hicolor/scalable/apps
+install -m 644 "$HERE"/icons/*.svg "$LIB/icons/"
+# The application's icon (launcher, notification): the "updates available" one, in the style of the config
+style=$(sed -n 's/^[[:space:]]*tray_icon_style[[:space:]]*=[[:space:]]*\([a-z]*\).*/\1/p' ~/.config/void-update/void-update.conf 2>/dev/null | tail -1 || true)
+install -m 644 "$HERE/icons/void-update-available-${style:-light}.svg" ~/.local/share/icons/hicolor/scalable/apps/void-update.svg
 install -m 755 "$HERE/void-update" "$BIN/void-update.new" && mv "$BIN/void-update.new" "$BIN/void-update"
 install -m 644 "$HERE/void-update.desktop" "$APPS/void-update.desktop"
 install -m 644 "$HERE/completions/void-update.fish" "$COMP/void-update.fish"

@@ -73,9 +73,11 @@ vu_notify() {
     if [ "$1" = 1 ]; then body=$(t "1 update available"); else body=$(t "%s updates available" "$1"); fi
     run=$(t "Run void-update"); close=$(t "Close")
     id=$(cat "$VU_STATE/notification-id" 2>/dev/null)
-    ID="$id" setsid -f bash -c '
+    local icon="$HOME/.local/share/icons/hicolor/scalable/apps/void-update.svg"
+    [ -f "$icon" ] || icon=software-update-available
+    ID="$id" ICON="$icon" setsid -f bash -c '
         st=$1; shift
-        out=$(notify-send -p ${ID:+-r "$ID"} -a void-update -i software-update-available "$@")
+        out=$(notify-send -p ${ID:+-r "$ID"} -a void-update -i "$ICON" "$@")
         printf "%s\n" "$out" | sed -n 1p > "$st/notification-id"
         [ "$(printf "%s\n" "$out" | sed -n 2p)" = run ] && exec void-update --open-terminal
         exit 0' _ "$VU_STATE" "void-update" "$body" -A "run=$run" -A "close=$close" \

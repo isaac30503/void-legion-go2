@@ -64,7 +64,7 @@ Type=Application
 Name=void-update (tray)
 Comment=$(t "Update notifier for Void Linux")
 Exec=void-update --tray
-Icon=software-update-available
+Icon=void-update
 X-GNOME-Autostart-enabled=true
 EOF
             ok "The icon will start at every login (%s)" "$VU_AUTOSTART"
