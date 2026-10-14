@@ -14,6 +14,8 @@ set -euo pipefail
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"
 need_user
+# A fresh clone: local.env comes from its encrypted copy (asks the passphrase; install/secrets.sh)
+if [ ! -e "$REPO_ROOT/local.env" ] && [ -s "$REPO_ROOT/local.env.age" ]; then bash "$REPO_ROOT/install/secrets.sh" open; fi
 [ -r "$REPO_ROOT/local.env" ] || { t "Missing %s (copy local.env.example to local.env and fill it in)." "$REPO_ROOT/local.env"; exit 1; }
 python3 -I - "$REPO_ROOT" "${1:-}" "$HOME" "$(id -un)" <<'PY'
 import os, re, sys, shutil

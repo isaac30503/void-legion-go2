@@ -103,18 +103,19 @@ so that the IdeaPad can get in. If in the live something was mounted on `/mnt` (
 installed system: `sudo rmdir /mnt/home /mnt/steamos-home` (empty; step 0).
 
 **B. The repository on the machine.** Originally: copy the scripts from `Common` to `~` (with `Common`
-mounted). With this repository: clone it, bring the binaries of the Release, write `local.env` with the real
-values and make `build/` (none of this needs root; `gh` asks to log in once, `gh auth login`, because the
-repository is private):
+mounted). With this repository: clone it, bring the binaries of the Release, get `local.env` back from its
+encrypted copy (`local.env.age`, asks the passphrase kept in the password manager; docs/sanitization.md) and
+make `build/` (none of this needs root but installing `age`; `gh` asks to log in once, `gh auth login`,
+because the repository is private):
 
 ```bash
-sudo xbps-install -S git github-cli              # if they are not there yet
+sudo xbps-install -S git github-cli age          # if they are not there yet
 gh auth login                                    # GitHub account that owns the repository
 REPO=~/src/void-legion-go2
 gh repo clone <owner>/void-legion-go2 "$REPO"    # <owner>: the GitHub account
 bash "$REPO/install/fetch-assets.sh"             # binaries of the Release, checked with sha256
-cp "$REPO/local.env.example" "$REPO/local.env" && chmod 600 "$REPO/local.env"
-nano "$REPO/local.env"                           # the real values (or copy the local.env kept elsewhere)
+bash "$REPO/install/secrets.sh" open             # local.env from local.env.age (the passphrase); without it:
+#   cp "$REPO/local.env.example" "$REPO/local.env" && chmod 600 "$REPO/local.env" && nano "$REPO/local.env"
 bash "$REPO/install/render.sh"                   # build/: the clone with the values filled in
 B="$REPO/build"
 ```
@@ -3187,6 +3188,12 @@ screen sharing*).
 
 ## History
 
+- **2026-10-13 (`local.env` encrypted in the repository)** — `local.env` only existed on the two machines.
+  Now its copy encrypted with age and a passphrase, `local.env.age`, is committed (`install/secrets.sh seal | open
+  | status`; `render.sh` opens it by itself in a fresh clone; `verify.sh` fails if it is older than `local.env`).
+  Point B gets `local.env` from it. Detail: `docs/sanitization.md`, *Encrypted copy*. The same day, a fresh clone
+  from GitHub was checked (Release binaries, `render.sh`, `verify.sh`: all fine) and `fetch-assets.sh` got 3
+  attempts per download (GitHub once answered "release not found" in the middle).
 - **2026-10-11 (void-update)** — `update-system` becomes **`void-update`** (bash, `common/void-update/`), like
   CachyOS's cachy-update: rootless checks (`xbps-install -Mun`), panel icon with automatic checks (on network
   connect and every 6 h), notifications, Void's news before updating, colored list, runit services with old code,

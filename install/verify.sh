@@ -1,7 +1,8 @@
 #!/bin/bash
 # verify.sh — checks of the clone (without root; changes nothing):
 #   bash install/verify.sh              all: syntax, catalogs, recipe paths, binaries, private values
-#   bash install/verify.sh --secrets    only the private values (before every commit; docs/sanitization.md)
+#   bash install/verify.sh --secrets    only the private values and the encrypted copy of local.env (before every
+#                                       commit; docs/sanitization.md)
 # Exit 1 if something fails.
 set -uo pipefail
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
@@ -67,7 +68,13 @@ sys.exit(1 if hits else 0)
 PY
 }
 
-if [ "${1:-}" = --secrets ]; then secrets; exit $bad; fi
+# The encrypted copy (local.env.age) has to say the same as local.env
+sealed() {
+    t "== encrypted copy of local.env (local.env.age)"
+    bash install/secrets.sh status || bad=1
+}
+
+if [ "${1:-}" = --secrets ]; then secrets; sealed; exit $bad; fi
 
 t "== syntax"
 while IFS= read -r f; do
@@ -119,4 +126,5 @@ bash install/fetch-assets.sh --check >/dev/null 2>&1 && ok "all present (install
     || t "   note: some binaries are not here yet (bash install/fetch-assets.sh)"
 
 secrets
+sealed
 exit $bad

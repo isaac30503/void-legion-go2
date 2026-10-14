@@ -1,5 +1,10 @@
 # Real values for the @PLACEHOLDERS@ (MACs, UUIDs, SSID, Steam account id…). Never commit.
 local.env
+local.env.*
+!/local.env.example
+# local.env encrypted with age (install/secrets.sh): this one IS committed
+!/local.env.age
+/.local.env.stamp
 # Rendered copies made by install/install.sh from the templates + local.env
 /build/
 /build.*/

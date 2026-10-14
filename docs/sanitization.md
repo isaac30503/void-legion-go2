@@ -41,6 +41,37 @@ bash install/verify.sh --secrets     # looks for every value of local.env (and M
                                      # including .bak files, logs and the contents of Release archives
 ```
 
-It must print nothing but "no private values found". New logs (`logs/…`) are the usual source of leaks
+It must print "no private values found" and, for the encrypted copy, "local.env and local.env.age say the
+same". New logs (`logs/…`) are the usual source of leaks
 (serial numbers, MACs in `dmesg`, UUIDs in `fstab`): add the value to `local.env`, replace it with `@NAME@`,
 and run the check again.
+
+## Encrypted copy: `local.env.age` (2026-10-13)
+
+`local.env` exists only on the machines, so losing them would mean gathering every value again by hand. It is
+kept **in the repository, encrypted** with [age](https://age-encryption.org) and a **passphrase**
+(`local.env.age`, ASCII-armored, committed): without the passphrase it says nothing, even to someone who sees
+the repository. With the passphrase and the GitHub account, the clone is enough to rebuild everything. The
+user's decision (2026-10-13): age with a passphrase, rather than `sops` (made for teams, per-value), `git-crypt`
+or GPG keys (keys are what usually gets lost), or a GitHub secret (its value cannot be read back).
+
+- **The passphrase is never written anywhere by the scripts.** Keep it in a password manager and on paper;
+  long (4–5 random words), in case the repository ever stops being private.
+- `install/secrets.sh` (as the user; needs `age`: `sudo xbps-install -S age`):
+
+```bash
+bash install/secrets.sh seal      # local.env → local.env.age: passphrase twice, then once more to check the copy
+git add local.env.age && git commit -m "local.env.age: …" && git push
+bash install/secrets.sh open      # local.env.age → local.env (chmod 600); a different local.env is kept as local.env.old-<epoch>
+bash install/secrets.sh status    # whether both say the same (part of verify.sh)
+```
+
+- **After editing `local.env`, seal again and commit** (`verify.sh --secrets` fails until then: "local.env changed
+  after the last copy"). After a `git pull` that brings a new `local.env.age`, `open` (the check says "is newer").
+- How it knows which one changed: `.local.env.stamp` (git-ignored) keeps the sha256 of both files after the last
+  `seal` or `open`. A clone that already had `local.env` before the first `seal` has no stamp: "unknown"
+  (not a failure) until `open` once (it keeps the current `local.env` aside if it differs: compare with `diff`).
+- `install/render.sh` runs `open` by itself when `local.env` is missing and `local.env.age` exists (a fresh
+  clone: recipe, point B).
+- Git ignores every `local.env.*` except `local.env.example` and `local.env.age`.
+

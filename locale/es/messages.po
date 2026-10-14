@@ -3317,3 +3317,60 @@ msgstr "fstab: su comentario, pasado a la versión nueva"
 
 msgid "   retrying %s (%s/3)"
 msgstr "   reintentando %s (%s/3)"
+
+msgid "!! age is not installed: sudo xbps-install -S age"
+msgstr "!! age no está instalado: sudo xbps-install -S age"
+
+msgid "!! %s is missing: nothing to encrypt"
+msgstr "!! falta %s: no hay nada que cifrar"
+
+msgid "Encrypting %s → %s. Passphrase: long (4-5 random words), the same as before if there was one; keep it in your password manager and on paper."
+msgstr "Cifrando %s → %s. Contraseña: larga (4-5 palabras al azar), la misma de antes si ya había una; guárdala en tu gestor de contraseñas y en papel."
+
+msgid "!! not encrypted"
+msgstr "!! no se cifró"
+
+msgid "Type the passphrase once more, to check the copy:"
+msgstr "Escribe la contraseña una vez más, para comprobar la copia:"
+
+msgid "   done: %s (commit it: git add %s && git commit)"
+msgstr "   hecho: %s (súbelo: git add %s && git commit)"
+
+msgid "!! the check failed (another passphrase?): %s was not changed"
+msgstr "!! la comprobación falló (¿otra contraseña?): %s no se cambió"
+
+msgid "!! %s is missing: it has not been encrypted yet (bash install/secrets.sh seal)"
+msgstr "!! falta %s: todavía no se ha cifrado (bash install/secrets.sh seal)"
+
+msgid "!! not decrypted (wrong passphrase?)"
+msgstr "!! no se descifró (¿contraseña equivocada?)"
+
+msgid "   the previous %s was different: kept as %s (compare them: diff %s %s)"
+msgstr "   el %s anterior era distinto: guardado como %s (compáralos: diff %s %s)"
+
+msgid "   done: %s"
+msgstr "   hecho: %s"
+
+msgid "!! %s does not exist yet: bash install/secrets.sh seal"
+msgstr "!! %s todavía no existe: bash install/secrets.sh seal"
+
+msgid "!! %s is missing: bash install/secrets.sh open"
+msgstr "!! falta %s: bash install/secrets.sh open"
+
+msgid "   unknown whether %s and %s say the same (no stamp): bash install/secrets.sh open (it keeps the current one aside if it differs)"
+msgstr "   no se sabe si %s y %s dicen lo mismo (sin marca): bash install/secrets.sh open (si difiere, guarda aparte el actual)"
+
+msgid "   %s and %s say the same"
+msgstr "   %s y %s dicen lo mismo"
+
+msgid "!! %s changed after the last copy: bash install/secrets.sh seal"
+msgstr "!! %s cambió después de la última copia: bash install/secrets.sh seal"
+
+msgid "!! %s is newer (it came with git pull): bash install/secrets.sh open"
+msgstr "!! %s es más nuevo (llegó con git pull): bash install/secrets.sh open"
+
+msgid "!! both changed: bash install/secrets.sh open (it keeps the current %s aside), merge by hand, then seal"
+msgstr "!! cambiaron los dos: bash install/secrets.sh open (guarda aparte el %s actual), unirlos a mano y luego seal"
+
+msgid "== encrypted copy of local.env (local.env.age)"
+msgstr "== copia cifrada de local.env (local.env.age)"
