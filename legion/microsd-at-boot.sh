@@ -51,6 +51,12 @@ fi
 # 1. fstab
 if grep -q "^UUID=$UUID " /etc/fstab; then
     t "fstab already has it"
+    # A line written by the previous (Spanish) version: its comment, in English (same line, same place)
+    if grep -q "^$FSTAB_COMMENT_OLD" /etc/fstab; then
+        cp /etc/fstab /etc/fstab.bak
+        sed -i "s|^$FSTAB_COMMENT_OLD.*|$FSTAB_COMMENT|" /etc/fstab
+        t "fstab: its comment brought to the new version"
+    fi
 else
     cp /etc/fstab /etc/fstab.bak
     printf '%s\n%s\n' "$FSTAB_COMMENT" \

@@ -3310,3 +3310,7 @@ msgstr "!! fallaron %s paso(s) (arriba); arreglarlos y volver a correr esto (sol
 #: install/migrate.sh
 msgid "   Old Spanish-named pieces still on the system, if any: bash install/migrate.sh --dry-run"
 msgstr "   Piezas viejas con nombre en español que queden, si las hay: bash install/migrate.sh --dry-run"
+
+#: legion/microsd-at-boot.sh
+msgid "fstab: its comment brought to the new version"
+msgstr "fstab: su comentario, pasado a la versión nueva"
