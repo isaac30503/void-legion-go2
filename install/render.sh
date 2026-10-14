@@ -43,7 +43,7 @@ skip = {".git", "build"}
 files = []
 for d, dn, fn in os.walk(root):
     rel = os.path.relpath(d, root)
-    dn[:] = [x for x in dn if not (rel == "." and x in skip) and x != "__pycache__"]
+    dn[:] = [x for x in dn if not (rel == "." and (x in skip or x.startswith("build."))) and x != "__pycache__"]
     for f in fn:
         if rel == "." and f == "local.env":
             continue
