@@ -39,6 +39,8 @@ ls -l "$BIN" "$RULE" "$CONF" "$AUTO"
 t "== check"
 busctl get-property org.freedesktop.login1 /org/freedesktop/login1 org.freedesktop.login1.Manager HandlePowerKey
 for f in /run/udev/data/c13:*; do
-    if grep -q '^E:POWER_BUTTON=1$' "$f"; then t "   marked: %s" "$(grep '^N:' "$f" | cut -c3-)"; fi
+    if grep -q '^E:POWER_BUTTON=1$' "$f"; then
+        d=$(readlink -f "/dev/char/${f##*/c}"); t "   marked: %s (%s)" "$d" "$(cat "/sys/class/input/${d##*/}/device/name")"
+    fi
 done
 t "Log out and back in (or reboot) so that the session starts it; log: ~/.local/state/power-button.log"

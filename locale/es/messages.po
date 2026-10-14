@@ -3513,3 +3513,6 @@ msgstr "   marcado: %s"
 
 msgid "Log out and back in (or reboot) so that the session starts it; log: ~/.local/state/power-button.log"
 msgstr "Cerrar sesión y volver a entrar (o reiniciar) para que la sesión lo arranque; registro: ~/.local/state/power-button.log"
+
+msgid "   marked: %s (%s)"
+msgstr "   marcado: %s (%s)"

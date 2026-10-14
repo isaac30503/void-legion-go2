@@ -107,15 +107,24 @@ def arm(tfd):
 
 
 def take_over():
-    """Only one per user: the newest session wins (the previous one may be from a session that already ended)."""
+    """Only one per user: the newest session wins (the previous one may be from a session that already ended).
+    Never fatal: when switching mode, elogind may remove and recreate $XDG_RUNTIME_DIR just as the session starts
+    (2026-10-14: the desktop's one died here, without a word in the log)."""
     try:
         old = int(open(PIDFILE).read())
         if old != os.getpid() and b"power-button" in open(f"/proc/{old}/cmdline", "rb").read():
             os.kill(old, signal.SIGTERM)
     except (OSError, ValueError):
         pass
-    with open(PIDFILE, "w") as f:
-        f.write(str(os.getpid()))
+    for _ in range(50):        # up to 5 s for the runtime folder to be there again
+        try:
+            with open(PIDFILE, "w") as f:
+                f.write(str(os.getpid()))
+            return
+        except OSError as e:
+            err = e
+            time.sleep(0.1)
+    log(f"pid file not written ({err}): going on without it")
 
 
 def main():
@@ -190,4 +199,11 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except SystemExit:
+        raise
+    except BaseException:      # anything unexpected goes to the log (it has no terminal)
+        import traceback
+        log("crashed:\n" + traceback.format_exc())
+        sys.exit(1)
