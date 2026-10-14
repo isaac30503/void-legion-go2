@@ -10,7 +10,8 @@
 #   void-update -l, --list       looks and shows the pending updates (exit 7 if there are none)
 #   void-update -n, --news [N]   Void's latest N news (default 5; config news_count)
 #   void-update -s, --services   runit services still running old code (asks to restart them)
-#   void-update --summary        only the final summary, without syncing, without sudo, changing nothing
+#   void-update --summary [-v]   only the final summary, without syncing, without sudo, changing nothing
+#                                (-v: the detail of every line, not only of the warnings)
 #   void-update --tray [--enable|--disable]
 #                                the panel icon; --enable also starts it at every login (XDG autostart),
 #                                --disable stops that. --check --enable is the same as --tray --enable: the
@@ -53,7 +54,8 @@ usage() {
     _u "void-update -l, --list" "looks and shows the pending updates (exit 7 if there are none)"
     _u "void-update -n, --news [N]" "Void's latest N news (default 5; config news_count)"
     _u "void-update -s, --services" "runit services still running old code (asks to restart them)"
-    _u "void-update --summary" "only the final summary, without syncing, without sudo, changing nothing"
+    _u "void-update --summary [-v]" "only the final summary, without syncing, without sudo, changing nothing" \
+        "(-v: the detail of every line, not only of the warnings)"
     printf '  %s\n' "void-update --tray [--enable|--disable]"
     _u "" "the panel icon; --enable also starts it at every login (XDG autostart)," \
         "--disable stops that. --check --enable is the same as --tray --enable: the" \
@@ -119,7 +121,7 @@ case "${1:-}" in
     --summary)
                      VU_NEW_FILES=$(find /etc -name '*.new-*' 2>/dev/null | grep -c .)
                      VU_REBOOT=$(vu_reboot_since_boot)
-                     vu_summary --no-repair; rc=0 ;;
+                     case "${2:-}" in -v|--verbose) vu_summary --no-repair --verbose ;; *) vu_summary --no-repair ;; esac; rc=0 ;;
     --tray)          tray "${2:-}" ;;
     --gen-config)    gen_config "${2:-}"; rc=$? ;;
     --show-config)   if [ -r "$VU_CONF" ]; then cat "$VU_CONF"; else err "There is no %s (void-update --gen-config)" "$VU_CONF"; exit 8; fi ;;

@@ -2710,7 +2710,7 @@ It is labwc (`libseat … Device not taken`). Reboot over SSH (`sudo reboot`, st
 ### `void-update` ends with AVISO (WARNING)
 
 Each line says what to do (what each one checks: IdeaPad recipe, step 6, `void-update`). To
-see it again without updating or `sudo`: **`void-update --summary`** (summary) (2026-10-08). The Legion's ones:
+see it again without updating or `sudo`: **`void-update --summary`** (summary) (2026-10-08; one short line per check, the detail only under the warnings; `-v` for the detail of all, 2026-10-14). The Legion's ones:
 
 - **TDP** that does not build for the new kernel (the error, in `/var/lib/dkms/lenovo-wmi-tdp/*/build/make.log`;
   the hidden GRUB boots that kernel without fine TDP: for the previous one, `grub-hidden.sh --remove`, step 8),
@@ -3235,6 +3235,10 @@ screen sharing*).
 
 ## History
 
+- **2026-10-14 (void-update summary, one line per check)** — The user's request: the summary lines did not fit on
+  one row. Now each check is `STATE  name  short text` (≤ ~90 columns); the full text (what it is, what to do) is
+  printed under it, indented and wrapped, only for WARNING, REPAIRED and the new NOTE (e.g. "Void already brings the
+  patch"), or for every line with `void-update --summary -v`.
 - **2026-10-14 (power button)** — Like the Steam Deck: press = suspend, held ~3 s = power menu, in Game Mode and on
   the desktop (`common/power-button/`; step 14, *Power button*). The Legion Go 2's firmware tells them apart by
   itself (`KEY_POWER` on release of a short press; Super+F16 while held ~3 s); misread at first as "no release
