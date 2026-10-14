@@ -3374,3 +3374,9 @@ msgstr "!! cambiaron los dos: bash install/secrets.sh open (guarda aparte el %s 
 
 msgid "== encrypted copy of local.env (local.env.age)"
 msgstr "== copia cifrada de local.env (local.env.age)"
+
+msgid "== Reboot: it enters the desktop (Xfce on Wayland) by itself, the chosen mode. 'Switch to Desktop' → Xfce without password;"
+msgstr "== Reiniciar: entra solo en el escritorio (Xfce sobre Wayland), el modo elegido. 'Cambiar a escritorio' → Xfce sin contraseña;"
+
+msgid "== Reboot: it enters the desktop (Xfce X11) by itself, the chosen mode. 'Switch to Desktop' → Xfce without password;"
+msgstr "== Reiniciar: entra solo en el escritorio (Xfce X11), el modo elegido. 'Cambiar a escritorio' → Xfce sin contraseña;"
