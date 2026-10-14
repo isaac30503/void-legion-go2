@@ -30,6 +30,9 @@ if [ -z "${REPO_ROOT:-}" ]; then
     else REPO_ROOT=${R:-$(cd "$(dirname "$0")" && pwd)}; fi
 fi
 export REPO_ROOT
+# No __pycache__ in the clone: a script run with sudo would leave it owned by root (and build/ could not be
+# remade without root). Python's caches are not needed here.
+export PYTHONDONTWRITEBYTECODE=1
 
 I18N_REPO_DIR=$REPO_ROOT
 . "$REPO_ROOT/lib/i18n.sh"

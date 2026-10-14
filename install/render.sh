@@ -61,8 +61,19 @@ if mode == "--check":
     sys.exit(1 if missing else 0)
 if missing:
     print("!! local.env lacks: " + " ".join(sorted(missing)) + " (those stay as @NAME@ in build/)")
+import time
+def clear(path):
+    """Removes path; if something in it cannot be removed (e.g. a root-owned __pycache__ left by an installer run
+    with sudo), it is moved aside (renaming only needs the parent folder) and the command to delete it is shown."""
+    if not os.path.lexists(path):
+        return
+    shutil.rmtree(path, ignore_errors=True)
+    if os.path.lexists(path):
+        aside = f"{path}.old-{int(time.time())}"
+        os.rename(path, aside)
+        print(f"!! {os.path.basename(path)} had files that cannot be removed without root: moved to {os.path.basename(aside)}; delete it with: sudo rm -rf {aside}")
 tmp = out + ".tmp"
-shutil.rmtree(tmp, ignore_errors=True)
+clear(tmp)
 for rel in files:
     src = os.path.join(root, rel); dst = os.path.join(tmp, rel)
     os.makedirs(os.path.dirname(dst), exist_ok=True)
@@ -80,7 +91,7 @@ for rel in files:
         f.write(new)
     shutil.copymode(src, dst)
 os.symlink(os.path.join(root, "local.env"), os.path.join(tmp, "local.env"))
-shutil.rmtree(out, ignore_errors=True)
+clear(out)
 os.rename(tmp, out)
 print(f"build/: {len(files)} files")
 PY
