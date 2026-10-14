@@ -340,7 +340,7 @@ vu_summary() {
             REPAIRED) printf '%s  %-9s' "$c_cyan" "$w_rep" ;;
             *)        printf '%s  %-9s' "$c_yellow" "$w_warn"; warnings=$((warnings+1)) ;;
         esac
-        printf '%s%-16s %s\n' "$c_off" "$name" "$short"
+        printf '%s%-22s %s\n' "$c_off" "$name" "$short"
         if [ -n "$detail" ] && { [ $verbose = 1 ] || [ "$state" != OK ]; }; then
             printf '%s\n' "$detail" | fold -s -w "$width" | sed 's/^/      /'
         fi
