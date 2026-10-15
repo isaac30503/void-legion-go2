@@ -1,9 +1,8 @@
 #!/bin/bash
 # install.sh — the Legion's reinstall (docs/reinstall.md, stages 1–19) as
-# numbered stages. Run it as the user (not with sudo): it asks for sudo where the recipe does. The stages that
+# numbered stages. Run it as the user (not with sudo): it asks for sudo where needed. The stages that
 # are done by hand (Steam, desktop, log in…) are shown and it waits for Enter; at a reboot it stops and says
-# how to go on. The recipe is the reference: each stage says which point/step it is, and its commands are the
-# recipe's.
+# how to go on. docs/reinstall.md is the reference: each stage names its page, and its commands are that page's.
 #   bash install/install.sh --list            the stages
 #   bash install/install.sh                   from the next pending stage (remembered in ~/.local/state)
 #   bash install/install.sh --from N          from stage N
@@ -27,7 +26,8 @@ done
 
 # Each stage (its title is a translatable message: no "%" in it): title | kind (run, manual, reboot) | commands (run in bash, with REPO
 # and B set and the translation function t loaded: messages to the user go with t, not echo). A line of the commands that starts
-# with "#" is an instruction for a person: it is shown through the catalog (no "%" in it either).
+# with "# " is an instruction for a person, shown through the catalog (no "%" in it either); one with "#   " (indented) is a
+# command for the person to run, shown as it is.
 S_TITLE=(); S_KIND=(); S_CMD=()
 stage() { S_TITLE+=("$1"); S_KIND+=("$2"); S_CMD+=("$3"); }
 
@@ -131,10 +131,10 @@ stage "16. microSD (docs/2-base-system/3-storage.md) — with Steam CLOSED" run 
 'sudo sh "$B/legion/microsd-at-boot.sh"
 t "-> in Steam, add /mnt/microsd as a library"'
 stage "17. By hand in Steam and on the desktop (docs/reinstall.md, stage 17: Steam settings, xterm and Firefox as games, Decky, art, controller layout, Bluetooth, Vesktop and screen sharing, audio order)" manual \
-'# Follow stage 17 of docs/reinstall.md, item by item (1–8); each item links to its page. The scripted parts of it:
+'# Follow stage 17 of docs/reinstall.md, item by item (1–8); each item links to its page. The scripted parts of it (the art one with Steam closed):
 #   install -m 755 "$B/common/steam/xterm-steam" "$B/common/steam/firefox-steam" ~/.local/bin/
 #   sudo sh "$B/common/steam/install-decky.sh"
-#   python3 "$B/common/steam/art-xterm/generate.py"            (Steam closed)
+#   python3 "$B/common/steam/art-xterm/generate.py"
 #   cp "$B/legion/steam/steam-background.desktop" ~/.config/autostart/
 #   bash "$B/legion/portal-wlr-patch/build-portal-wlr.sh"; bash "$B/legion/screen-share/install.sh"
 #   sudo sh "$B/common/steam/portal-gamescope/install-portal-gamescope.sh"; bash "$B/common/steam/gamescope-patch/build-gamescope.sh"
@@ -165,7 +165,8 @@ for i in $(seq "$start" "$end"); do
     echo; t "==== %s/%s %s" "$i" "$N" "$(t "${S_TITLE[$k]}")"
     while IFS= read -r line; do
         case "$line" in
-            "# "*) printf '   | # %s\n' "$(t "${line#\# }")" ;;
+            "#  "*) printf '   | %s\n' "$line" ;;                      # an indented command: as it is
+            "# "*)  printf '   | # %s\n' "$(t "${line#\# }")" ;;     # prose: through the catalog
             *)     printf '   | %s\n' "$line" ;;
         esac
     done <<< "${S_CMD[$k]}"

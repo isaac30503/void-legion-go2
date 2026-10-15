@@ -1,7 +1,7 @@
 #!/bin/bash
 # render.sh — makes build/: a copy of the whole clone with every @NAME@ replaced by its real value from
 # local.env, and @TARGET_HOME@ / @TARGET_USER@ by the home and name of the user who runs it (without root).
-# The recipe's blocks copy and run everything from there ("$B" = <repo>/build), so the files land on the
+# The blocks of docs/ copy and run everything from there ("$B" = <repo>/build), so the files land on the
 # system exactly as they were on the original machine. Repeat it after editing local.env or pulling.
 #
 #   bash install/render.sh            (re)makes build/
@@ -39,6 +39,13 @@ for l in open(os.path.join(root, "local.env.example"), encoding="utf-8"):
     if m:
         known.add(m.group(1))
 known |= {"TARGET_HOME", "TARGET_USER"}
+# Every MAC also as @NAME_UNDERSCORED@ (8C_0D_D9_…): PipeWire writes Bluetooth outputs that way
+# (bluez_output.8C_0D_D9_….1; the inputs keep the colons). Derived, not a key of local.env.
+mac = re.compile(r"([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}")
+for k in list(known):
+    if mac.fullmatch(vals.get(k, "")):
+        vals[k + "_UNDERSCORED"] = vals[k].replace(":", "_")
+    known.add(k + "_UNDERSCORED")
 def binary(data):
     return b"\0" in data[:8192]
 missing = set()

@@ -12,6 +12,7 @@ Run them **as the user, from the clone** (not from `build/`, and not with `sudo`
 | `install-i18n.sh` | installs the translations of the messages (as user, and with `sudo` for the system) ([`../docs/i18n.md`](../docs/i18n.md)) |
 | `secrets.sh seal \| open \| status` | `local.env` ↔ `local.env.age`, its copy encrypted with age and a passphrase, kept in the private companion repository ([`../docs/sanitization.md`](../docs/sanitization.md)) |
 | `verify.sh [--secrets \| --ci]` | checks: syntax, ShellCheck, catalogs (and no unused entries), links between the documents, the paths the docs cite, binaries, that no private value is in the clone or its history, and that `local.env.age` says the same as `local.env`. `--ci`: everything that needs neither `local.env` nor the binaries, plus a search for MACs and UUIDs (what GitHub Actions runs) |
+| `catalog.py check \| refs \| list` | the messages of the scripts against `locale/*/messages.po`: none without its entry, no entry unused; `refs` rewrites the `#:` comments ([`../docs/i18n.md`](../docs/i18n.md)) |
 | `assets.tsv` | list of the Release's binaries: name, sha256, destination, and the release tag |
 
 First time on a freshly installed Void ([reinstall](../docs/reinstall.md), stage 2):

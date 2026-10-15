@@ -74,6 +74,10 @@ render() {
             # Values are MACs, UUIDs, names, numbers: escape only what sed's replacement needs.
             _e=$(printf '%s' "$_v" | sed 's/[\\&|]/\\&/g')
             sed -i "s|@$_n@|$_e|g" "$_dst.tmp"
+            # A MAC also as @NAME_UNDERSCORED@ (PipeWire's Bluetooth outputs: bluez_output.8C_0D_D9_….1)
+            if printf '%s' "$_v" | grep -qxE '([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}'; then
+                sed -i "s|@${_n}_UNDERSCORED@|$(printf '%s' "$_v" | tr : _)|g" "$_dst.tmp"
+            fi
         done
     fi
     if grep -q '@[A-Z][A-Z0-9_]*@' "$_dst.tmp"; then

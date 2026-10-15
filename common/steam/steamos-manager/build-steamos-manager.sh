@@ -5,7 +5,7 @@
 # steamos-manager): 1 min 30 s of building with 16 threads.
 # Previous (Spanish) name: compilar-steamos-manager.sh (option --conservar, now --keep).
 #
-# Dependencies (the build ones are kept on purpose since 2026-10-08; see the recipe):
+# Dependencies (the build ones are kept on purpose since 2026-10-08; docs/6-game-mode/3-steamos-manager.md):
 #   sudo xbps-install -S glib-devel eudev-libudev-devel speech-dispatcher-devel clang pkg-config
 #   git, make and dbus (already in the system); Rust/cargo from rustup in ~/.cargo/bin (extest's; on
 #   2026-10-08, Rust 1.99.0). The crates' versions are pinned by the tag's Cargo.lock.

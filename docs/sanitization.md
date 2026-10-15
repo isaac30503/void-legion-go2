@@ -16,12 +16,18 @@ a made-up value.
 
 Besides, `local.env` holds **settings** of the machine that the scripts read (not private):
 `KEYBOARD_LAYOUT`, `KEYBOARD_VARIANT`, `CONSOLE_KEYMAP`, `WIFI_INTERFACE`, `TARGET_USER`. `@TARGET_HOME@` and
-`@TARGET_USER@` are filled with the home and name of whoever installs.
+`@TARGET_USER@` are filled with the home and name of whoever installs. Every MAC is also available as
+**`@NAME_UNDERSCORED@`** (`8C_0D_D9_…`), derived by `render`: PipeWire names Bluetooth *outputs* that way
+(`bluez_output.8C_0D_D9_….1`; the inputs keep the colons).
+
+Some keys appear in no public file any more (they were in the logs and Claude Code's context, now in the private
+repository): they stay in `local.env` because `verify.sh --secrets` searches for **every** value, so a log or capture
+that brings one back is caught before the commit.
 
 ## How the values get back to the system
 
-- `install/render.sh` makes `build/` = the clone with every `@NAME@` filled in (git-ignored). The recipe's
-  blocks copy and run from `"$B"` = `build/`, so files land on the system exactly as on the original machine.
+- `install/render.sh` makes `build/` = the clone with every `@NAME@` filled in (git-ignored). The blocks of docs/
+  copy and run from `"$B"` = `build/`, so files land on the system exactly as on the original machine.
 - Installers that write a template use `render SRC DST` (`lib/common.sh`), which does the same per file.
 - `install/render.sh --check` lists placeholders that `local.env` lacks.
 
@@ -75,5 +81,5 @@ bash install/secrets.sh status    # whether local.env and the private copy say t
   copy"). After sealing on the other machine, `open` here (the check says "the private copy is newer").
 - How it knows which one changed: `.local.env.stamp` (git-ignored) keeps the sha256 of `local.env` and of the copy
   after the last `seal` or `open`; without it, "unknown" (not a failure) until `open` once.
-- `install/render.sh` runs `open` by itself when `local.env` is missing (a fresh clone: recipe, point B).
+- `install/render.sh` runs `open` by itself when `local.env` is missing (a fresh clone: [reinstall](reinstall.md), stage 2).
 - Git ignores every `local.env.*` except `local.env.example`; `local.env.age` next to `local.env` is only a cache.

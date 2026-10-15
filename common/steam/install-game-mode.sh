@@ -43,7 +43,7 @@
 #   sudo sh common/steam/install-game-mode.sh [--no-loading-screen]   installs
 #   sudo sh common/steam/install-game-mode.sh --remove                removes it
 # If it gets stuck: Ctrl+Alt+F2, log in, `pkill -KILL -x gamescope-wl` and `sudo sv restart lightdm`.
-# The launcher's log (~/.local/state/steam-game-mode.log) is written in English: the recipe's checks read it.
+# The launcher's log (~/.local/state/steam-game-mode.log) is written in English: the checks of docs/ read it.
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"

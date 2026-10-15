@@ -2,7 +2,7 @@
 
 Claude Code with this machine's own context (`~/Work/CLAUDE.md`: it describes the Legion as "this machine"), its
 memory notes and the **`void-maintainer`** agent (audits the system read-only with `common/agent/audit-void.sh`,
-proposes fixes, prepares what needs root for the user and keeps the recipe up to date). The context, memory and agent
+proposes fixes, prepares what needs root for the user and keeps docs/ up to date). The context, memory and agent
 are personal: they live in the **private** companion repository (`claude/`, with the real values).
 
 ## Install

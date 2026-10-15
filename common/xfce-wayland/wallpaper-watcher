@@ -7,7 +7,7 @@
 # or "xfdesktop --reload" (checked on the Legion).
 # EVENT-DRIVEN: it waits for GTK's signals (screen added/removed, geometry or scale change);
 # half a second after the last notice (the changes arrive in a burst) it calls xfdesktop --reload.
-# Log (English; the recipe's checks read it): ~/.local/state/wallpaper-watcher.log (redone every session).
+# Log (English; the checks of docs/ read it): ~/.local/state/wallpaper-watcher.log (redone every session).
 # Previous (Spanish) name: fondo-vigilante (log fondo-vigilante.log).
 import os, subprocess, time
 import gi

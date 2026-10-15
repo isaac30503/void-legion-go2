@@ -21,7 +21,7 @@ news, services to restart) that also **tests whether each own patch is still nee
 
 ## Status on the Legion Go 2 (83N0)
 
-Verified on the hardware (dates and details in the recipe's *Verification* and *History*):
+Verified on the hardware (checks in [docs/check.md](docs/check.md); dates in [CHANGELOG.md](CHANGELOG.md) and the private archive):
 
 | | |
 |---|---|

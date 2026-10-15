@@ -30,6 +30,14 @@ test_render() {
     f=$(cd "$W" && grep -rlF '@TARGET_HOME@' --exclude-dir=build common legion | head -1)
     check "render: TARGET_HOME filled ($f)" yes "$(grep -qF "$H" "$W/build/$f" && echo yes)"
     check "render: mode kept" yes "$([ -x "$W/build/install/install.sh" ] && echo yes)"
+    # a MAC also as @NAME_UNDERSCORED@ (PipeWire's Bluetooth outputs), in render.sh and in common.sh's render
+    check "render: MAC with underscores" yes \
+        "$(grep -qF 'bluez_output.02_00_00_00_00_20.1' "$W/build/legion/wireplumber/51-audio-priority.conf" && echo yes)"
+    check "render: MAC with colons kept" yes \
+        "$(grep -qF 'bluez_input.02:00:00:00:00:20"' "$W/build/legion/wireplumber/51-audio-priority.conf" && echo yes)"
+    printf 'a=@HEADPHONES_BT_MAC_UNDERSCORED@ b=@HEADPHONES_BT_MAC@\n' > "$TMP/tpl"
+    HOME=$H bash -c 'R=$1; . "$R/lib/common.sh"; render "$2" "$3"' _ "$W" "$TMP/tpl" "$TMP/out" >/dev/null 2>&1
+    check "common.sh render: both MAC forms" "a=02_00_00_00_00_20 b=02:00:00:00:00:20" "$(cat "$TMP/out" 2>/dev/null)"
     HOME=$H bash "$W/install/render.sh" --check >/dev/null 2>&1; check "render --check: complete" 0 $?
     sed -i '/^WIFI_SSID=/d' "$W/local.env"
     HOME=$H bash "$W/install/render.sh" --check >/dev/null 2>&1; check "render --check: a value missing" 1 $?
@@ -40,6 +48,21 @@ test_render() {
     else
         echo "   (skipped: no user namespaces here) render as root, unknown user"
     fi
+}
+
+# ---- install/catalog.py: a new message without translation and an entry nobody uses are both caught -----------
+test_catalog() {
+    local W=$TMP/catalog out
+    mkdir -p "$W"
+    (cd "$REPO" && git ls-files -z --cached --others --exclude-standard | tar --null -T - -cf -) | tar -xf - -C "$W"
+    (cd "$W" && git init -q && git add -A) >/dev/null 2>&1
+    python3 "$W/install/catalog.py" check >/dev/null 2>&1; check "catalog: in step" 0 $?
+    printf '\nt "a brand new message %%s" x\n' >> "$W/common/steam/install-steam.sh"
+    printf '\nmsgid "nobody says this"\nmsgstr "nadie dice esto"\n' >> "$W/locale/es/messages.po"
+    (cd "$W" && git add -A)
+    out=$(python3 "$W/install/catalog.py" check 2>&1); check "catalog: out of step" 1 $?
+    check "catalog: the new message" yes "$(grep -q 'no translation: a brand new message %s' <<< "$out" && echo yes)"
+    check "catalog: the unused entry" yes "$(grep -q 'unused entry: nobody says this' <<< "$out" && echo yes)"
 }
 
 # ---- void-update ------------------------------------------------------------------------------------------
@@ -105,6 +128,7 @@ PY
 }
 
 test_render
+test_catalog
 test_void_update
 read -r p f < "$TMP/vu-result"; pass=$((pass + p)); failed=$((failed + f))
 test_i18n

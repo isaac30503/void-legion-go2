@@ -11,7 +11,7 @@
 # Previous (Spanish) name: diag-giroscopio-mandos.sh (its log of 2026-10-05, diag-giroscopio-mandos.log,
 # is archived in the private repository, archive/2026-10-14/logs/legion/).
 #   sudo sh legion/diag-controller-gyros.sh [seconds per phase]     (8 by default)
-# Log: ~/diag-controller-gyros.log. Legion recipe, Pending (2026-10-05).
+# Log: ~/diag-controller-gyros.log. docs/3-hardware-support/1-controllers.md, Known limits (2026-10-05).
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"
 need_root
