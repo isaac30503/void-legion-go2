@@ -41,7 +41,8 @@ without `local.env` and without the binaries:
   `02:00:00:…` / `0000…` ones and the kernel's public WMI GUIDs). It cannot look for the real values: that is
   `verify.sh --secrets`, here, before every commit.
 - **`bash tests/run.sh`:** `render.sh` on a copy of the clone with `local.env.example` (no placeholder left, values
-  and `$HOME` filled in, modes kept, `--check` with a missing value fails); `void-update`'s helpers (pending list from
+  and `$HOME` filled in, modes kept, `--check` with a missing value fails; as root with a user that does not exist, a message and not a silent exit,
+  when the system allows user namespaces); `void-update`'s helpers (pending list from
   `xbps-install -Mun`, version coloring, the configuration reader: bad values ignored and never run as code); and
   `t` (Spanish, English, unknown language, message not in the catalog). No root, network or Void needed.
 
