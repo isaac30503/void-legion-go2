@@ -2,7 +2,7 @@
 # Diagnosis: why "steamos-manager -r" crashes with "No such file or directory" (2026-10-04).
 # It runs it in the foreground for 4 s with RUST_LOG=debug: 1) as is; 2) with tracefs mounted.
 # Previous name: diag-steamos-manager.sh (unchanged; its result of 2026-10-04 is archived in
-# logs/legion/diagnostics-2026-10-04/).
+# the private repository's archive/2026-10-14/logs/legion-diagnostics-2026-10-04/).
 # Usage: sudo sh common/steam/steamos-manager/diag-steamos-manager.sh   → ~/diag-steamos-manager.log
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"

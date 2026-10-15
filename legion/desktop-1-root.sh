@@ -8,9 +8,9 @@ R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = 
 need_root
 exec > >(tee -a "$TARGET_HOME/desktop-1-root.log") 2>&1
 t "=== %s start" "$(date)"
-t "--- step 1: .new-* of /etc (templates; the good one is the current one)"
+t "--- .new-* of /etc (templates; the good one is the current one)"
 rm -v /etc/*.new-* /etc/default/*.new-* 2>/dev/null || true
-t "--- steps 5-7 and 9: packages"
+t "--- packages"
 xbps-install -Sy fish-shell fzf ntfs-3g curl git ripgrep xdg-utils \
   xterm xrdb xprop xdotool librsvg-utils ImageMagick fastfetch \
   xfce4-docklike-plugin xfce4-clipman-plugin papirus-icon-theme papirus-folders \

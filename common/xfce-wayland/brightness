@@ -2,7 +2,7 @@
 # brightness +N | -N — raises or lowers the brightness N % of the maximum (brightness keys in Xfce Wayland, where
 # xfce4-power-manager cannot catch them). Through elogind's SetBrightness: without root or new
 # permissions, only for the session on screen (the same as Game Mode's brightness).
-# Installed by common/xfce-wayland/install-xfce-wayland.sh in ~/.local/bin. Void recipe, step 15.
+# Installed by common/xfce-wayland/install-xfce-wayland.sh in ~/.local/bin. docs/5-desktop/1-xfce.md.
 # Previous (Spanish) name: brillo (install/aliases.sh can create it as an alias).
 d=$(ls /sys/class/backlight | head -1); [ -n "$d" ] || exit 1
 max=$(cat "/sys/class/backlight/$d/max_brightness"); cur=$(cat "/sys/class/backlight/$d/brightness")

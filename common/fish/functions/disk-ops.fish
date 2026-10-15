@@ -1,6 +1,6 @@
 function disk-ops --description 'Disk manager (fixed)'
     # Disks with lsblk + fzf: mount/unmount with udisksctl (it needs the graphical session) and repair NTFS
-    # with ntfsfix (package ntfs-3g). From the Arch/Homebrew setup (fish/arch/brew/ on the disk; recipe, step 6).
+    # with ntfsfix (package ntfs-3g). From the Arch/Homebrew setup (fish/arch/brew/ on the disk; docs/8-maintenance/1-void-update.md).
     # Its texts follow the system's language (__vl_t). Previous name: disk-ops (unchanged).
     functions -q __vl_t; or function __vl_t; printf "$argv[1]\n" $argv[2..-1]; end
     # 1. DATA GENERATION

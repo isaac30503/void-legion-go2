@@ -22,7 +22,7 @@
 # Previous (Spanish) name: instalar-decky.sh (its FIFO was /run/decky-avisos).
 #   sudo sh common/steam/install-decky.sh            installs or updates
 #   sudo sh common/steam/install-decky.sh --remove   removes it (leaves ~/homebrew/plugins)
-# Void recipe, step 14.
+# docs/6-game-mode/5-decky.md.
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"
@@ -71,7 +71,7 @@ t "== 4. runit service"
 mkdir -p "$SV/log"
 cat > "$SV/run" <<EOF
 #!/bin/sh
-# Decky Loader (installed by common/steam/install-decky.sh; Void recipe, step 14). Equivalent to its
+# Decky Loader (installed by common/steam/install-decky.sh; docs/6-game-mode/5-decky.md). Equivalent to its
 # systemd plugin_loader.service, plus the restart after updating itself (see install-decky.sh).
 # Event-driven: a FIFO where inotifywait writes (each change in services/: the version, the binary
 # renamed, its chmod) and PluginLoader when it ends ("EXITED"); the service waits blocked.

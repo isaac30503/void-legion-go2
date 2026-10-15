@@ -63,5 +63,5 @@ XTerm*backarrowKey: false
 ! use (xterm-color -> utilities-x-terminal.svg). xterm only reads it
 ! in XPM (iconHint); xfwm4, unlike Plasma, does not take it from the .desktop.
 ! Generated from Papirus-Dark/48x48 with rsvg-convert + an XPM converter
-! (1-bit transparency). Recipe void-ideapad-100, step 8. @TARGET_HOME@ is filled in when it is installed.
+! (1-bit transparency). docs/5-desktop/2-look-and-feel.md. @TARGET_HOME@ is filled in when it is installed.
 XTerm*iconHint: @TARGET_HOME@/.local/share/icons/xterm-papirus.xpm

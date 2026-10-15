@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <!--
   labwc for the session "Xfce (Wayland)" (~/.config/xfce4/labwc/rc.xml; installed by
-  common/xfce-wayland/install-xfce-wayland.sh; Void recipe, step 15). On Wayland windows are handled by labwc, not
-  xfwm4: this translates xfwm4's things and the Omarchy-style shortcuts (recipe, step 13).
+  common/xfce-wayland/install-xfce-wayland.sh; docs/5-desktop/3-windows-and-shortcuts.md). On Wayland windows are handled by labwc, not
+  xfwm4: this translates xfwm4's things and the Omarchy-style shortcuts (docs/5-desktop/3-windows-and-shortcuts.md).
   window-focus and window-snap (xdotool, X11) are redone with labwc actions: Super+arrows gives
   the focus to the SNAPPED window on that side (labwc has no focus by direction; if there is none,
   it goes to the previous/next one) and Super+Shift+arrows snaps to a half, chaining to a quarter,

@@ -37,11 +37,11 @@ else
     install -m 755 "$D/screen-share" ~/.local/bin/screen-share.tmp
     mv ~/.local/bin/screen-share.tmp ~/.local/bin/screen-share
     install_i18n_user                                 # its translations, in ~/.local/share/void-legion
-    printf '%s\n' "# Written by legion/screen-share/install.sh (Legion recipe, step 14)." \
+    printf '%s\n' "# Written by legion/screen-share/install.sh (docs/7-apps/1-screen-sharing.md)." \
         "[screencast]" "chooser_type=dmenu" "chooser_cmd=$HOME/.local/bin/screen-share" > "$C.tmp"
     mv "$C.tmp" "$C"
     mkdir -p "$(dirname "$SV")"
-    printf '%s\n' "# Written by legion/screen-share/install.sh (Legion recipe, step 14): the package's one + XDPW_PERSIST_MODE." \
+    printf '%s\n' "# Written by legion/screen-share/install.sh (docs/7-apps/1-screen-sharing.md): the package's one + XDPW_PERSIST_MODE." \
         "[D-BUS Service]" "Name=org.freedesktop.impl.portal.desktop.wlr" \
         "Exec=/usr/bin/env XDPW_PERSIST_MODE=permanent /usr/libexec/xdg-desktop-portal-wlr" > "$SV.tmp"
     mv "$SV.tmp" "$SV"

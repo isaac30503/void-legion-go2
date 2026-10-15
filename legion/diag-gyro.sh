@@ -1,5 +1,5 @@
 #!/bin/sh
-# Diagnosis of the Legion Go 2's body gyroscope (recipe, step 14, InputPlumber). Without root.
+# Diagnosis of the Legion Go 2's body gyroscope (docs/3-hardware-support/1-controllers.md). Without root.
 # During the 20 s, TURN the console. It compares, second by second, the kernel's raw sensor
 # (amd_sfh's gyro_3d, integer °/s) with what InputPlumber's virtual Valve controller sends to
 # Steam (hidraw of 28DE:12FB, the Deck's report 0x09: int16 gyroscope in bytes 30-35,

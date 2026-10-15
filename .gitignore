@@ -9,7 +9,6 @@ local.env.*
 /build.*/
 # Editor / Python leftovers
 *.bak
-!/logs/**/*.bak
 __pycache__/
 *.pyc
 # Release binaries: published as assets of the GitHub Release, not in git. install/fetch-assets.sh

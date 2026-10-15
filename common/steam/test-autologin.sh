@@ -10,7 +10,7 @@
 # CAREFUL: whoever turns on the machine enters the user's session without password.
 # It changes two lines that /etc/lightdm/lightdm.conf already brought from the ISO (autologin-user=anon, a
 # user that does not exist, and autologin-session=xfce); --remove puts them back as they were. Leaves .bak.
-# Needs test-direct-session.sh (the session steam-game-mode-direct). Void recipe, step 14.
+# Needs test-direct-session.sh (the session steam-game-mode-direct). docs/4-sessions/1-login-and-modes.md.
 # Previous (Spanish) name: probar-inicio-automatico.sh.
 #   sudo sh common/steam/test-autologin.sh            enables (valid on reboot)
 #   sudo sh common/steam/test-autologin.sh --remove   leaves it as it came

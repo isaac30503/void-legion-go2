@@ -23,7 +23,7 @@ if [ -e /etc/sv/udev-red ]; then rm -f /var/service/udev-red; sleep 6; rm -rf /e
 mkdir -p "$SV/log" /var/log/udev-net
 cat > "$SV/run.tmp" <<'EOS'
 #!/bin/sh
-# Installed by legion/udev-net.sh (Legion recipe, step 2–3). Once per boot; then it stays paused.
+# Installed by legion/udev-net.sh (docs/2-base-system/2-network.md). Once per boot; then it stays paused.
 exec 2>&1
 sv check udevd >/dev/null || exit 1
 udevadm settle -t 30

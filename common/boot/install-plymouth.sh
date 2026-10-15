@@ -16,7 +16,7 @@
 # Diagnosis if it gets stuck on the logo (over SSH): sudo sh diag-vt.sh (IdeaPad; not in this repository)
 #   sudo sh common/boot/install-plymouth.sh            installs
 #   sudo sh common/boot/install-plymouth.sh --remove   removes it (leaves the package installed)
-# Void recipe, step 8. On the Legion it was tried and REMOVED (Legion recipe, step 8, "Plymouth"):
+# docs/1-platform/3-boot.md. On the Legion it was tried and REMOVED (docs/1-platform/3-boot.md):
 # in a reinstall it is not run; its --remove is part of how it was taken out.
 # Previous (Spanish) name: arranque/instalar-plymouth.sh.
 set -e

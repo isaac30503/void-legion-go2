@@ -10,7 +10,7 @@
 #   x-gvfs-show: it still shows in Thunar.
 # - Steam kept the library with the path the session gave it (/run/media/<user>/<UUID>): it is
 #   changed to /mnt/microsd in its two libraryfolders.vdf, as the user did (Steam closed: otherwise it
-#   rewrites them on exit). Legion recipe, step 14, "microSD" (2026-10-05).
+#   rewrites them on exit). docs/2-base-system/3-storage.md (2026-10-05).
 # The card's UUID is MICROSD_UUID in local.env.
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done

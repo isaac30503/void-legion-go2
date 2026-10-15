@@ -2,7 +2,7 @@
 # diag-inputplumber-cpu.sh — Legion Go 2 (Void). What spends CPU in InputPlumber, by origin.
 # Previous name: diag-inputplumber-cpu.sh (unchanged; its labels were modojuego/escritorio/modojuego-mando
 # and its result /tmp/medir-inputplumber-<label>.txt: the results of 2026-10-08 are archived with those
-# names in logs/legion/install/).
+# names in the private repository, archive/2026-10-14/logs/legion/).
 #
 # WHY (2026-10-08): idle in Game Mode, InputPlumber 0.81 spends ~3 % of one core and
 # ~7000 wakeups/s (11 % average since boot). It reads 8 sources: the controller's hidraw, 4 evdev

@@ -5,9 +5,9 @@
 # and sddm things. Tarball: steamos-manager-v26.4.1-void-2.tar.gz (since 2026-10-08), built on
 # the Legion with build-steamos-manager.sh and the patch 0001-gpu-set_clocks-only-in-manual.patch
 # (the GPU clock is only written with the level at "manual": no "Error setting manual GPU
-# clock" errors with the manual clock disabled; Legion recipe, step 14, steamos-manager). Go back to the
+# clock" errors with the manual clock disabled; docs/6-game-mode/3-steamos-manager.md). Go back to the
 # official one without patch: change TAR below to steamos-manager-v26.4.1-void.tar.gz (the one from Void's
-# container of 2026-10-03, IdeaPad recipe, step 14) and repeat this script. It records in
+# container of 2026-10-03, docs/6-game-mode/3-steamos-manager.md) and repeat this script. It records in
 # /usr/local/share/steamos-manager-void/ the fingerprint (sha256) and the package's name (package), which
 # void-update reads; --remove deletes that folder. (Both tarballs come from the GitHub Release:
 # install/fetch-assets.sh.)

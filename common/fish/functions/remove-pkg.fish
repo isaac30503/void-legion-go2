@@ -1,5 +1,5 @@
 function remove-pkg --description 'Search and remove installed packages with xbps using fzf'
-    # From Omarchy's scripts (via Homebrew), adapted to Void (recipe, step 6). Its texts follow the
+    # From Omarchy's scripts (via Homebrew), adapted to Void (docs/8-maintenance/1-void-update.md). Its texts follow the
     # system's language (__vl_t). Previous name: remove-pkg (unchanged).
     functions -q __vl_t; or function __vl_t; printf "$argv[1]\n" $argv[2..-1]; end
     # Packages that cannot be removed from here: the base system, the kernel, the

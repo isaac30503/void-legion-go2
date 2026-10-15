@@ -1,6 +1,0 @@
-Filtro de InputPlumber antes: {"hidraw://hidraw1": ["Gyroscope:Center", "Gyroscope:Left", "Accelerometer:Center", "Accelerometer:Right", "Gyroscope:Right", "Accelerometer:Left"]}
-Mando derecho, IMU bypass → no
-InputPlumber 0.81 falla al cambiar filtros ("failed to send command to device") y puede
-dejar algo a medias: reiniciar la Legion lo deja todo de fábrica.
-Filtro de InputPlumber ahora: {"hidraw://hidraw1": ["Gyroscope:Right", "Accelerometer:Left", "Gyroscope:Left", "Accelerometer:Right", "Accelerometer:Center", "Gyroscope:Center"]}
-Listo.

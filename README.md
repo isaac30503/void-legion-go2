@@ -37,31 +37,30 @@ Verified on the hardware (dates and details in the recipe's *Verification* and *
 
 | | |
 |---|---|
-| **The recipe** | [docs/void-legion-go2.md](docs/void-legion-go2.md) — the index; one file per step in [docs/recipe/](docs/recipe/) (`step-NN-…`): first the full list in order (points A–M), then every step with its why and its check, *Troubleshooting*, *Verification*, *Pending*, *History* |
-| The base recipe (IdeaPad), steps 1–15 | [docs/reference/void-ideapad-100-steps.md](docs/reference/void-ideapad-100-steps.md) — "same as the IdeaPad, step N" points here |
-| Installing | [install/README.md](install/README.md) — `fetch-assets.sh`, `render.sh`, `install.sh` (the list as resumable stages) |
+| **The documentation** | [docs/void-legion-go2.md](docs/void-legion-go2.md) — the system by layers (platform → base system → hardware → sessions → desktop → Game Mode → apps → maintenance), one page per topic: what it is, install, check, problems |
+| **Reinstalling** | [docs/reinstall.md](docs/reinstall.md) — the order of execution, stage by stage; [install/](install/README.md) runs it (`install.sh`) |
+| Checking a system | [docs/check.md](docs/check.md) |
 | Names | [docs/glossary.md](docs/glossary.md) — the original was in Spanish; old name → new name of every script, command, service and file |
 | Language of the messages | [docs/i18n.md](docs/i18n.md) — the scripts speak the system's language (Spanish catalog included) |
-| Claude Code | [claude/](claude/) — the machine's context (`~/Work/CLAUDE.md`), the `void-maintainer` agent and its memory |
 | Licenses and credits | [LICENSE](LICENSE) (MIT, this repository's own work) · [THIRD_PARTY.md](THIRD_PARTY.md) (what is not ours: code, binaries, their authors, licenses and sources) |
-| Maintaining | [docs/maintenance.md](docs/maintenance.md) |
+| Changes | [CHANGELOG.md](CHANGELOG.md) |
 
 ## Layout
 
 ```
-docs/       the recipe, the IdeaPad reference, glossary, i18n, sanitization, ssh-setup, history/
-legion/     pieces only for the Legion (scripts of steps 2–15, Xfce config, TDP DKMS, portal patches, screen-share…)
-common/     pieces shared with the IdeaPad (Game Mode, Xfce Wayland, GRUB theme, boot, fish functions, xterm…)
-claude/     Claude Code context, agent and memory
+docs/       the documentation by layers (1-platform … 8-maintenance), reinstall, check, glossary, i18n, sanitization
+legion/     pieces only for the Legion (system scripts, Xfce config, TDP DKMS, portal patches, screen-share…)
+common/     pieces shared with the IdeaPad (Game Mode, Xfce Wayland, power button, void-update, GRUB theme, fish…)
 install/    fetch-assets, render, install (stages), migrate, secrets, verify, i18n; assets.tsv
 lib/        common.sh (helpers), i18n.sh and void_legion_i18n.py (translations)
 locale/     message catalogs (es)
-logs/       real logs of the installation, archived as they were (sanitized)
+LICENSES/   license texts (SPDX) and third-party notices
 ```
 
 Binaries (built `.xbps` packages, InputPlumber, steamos-manager, `libextest.so`, fonts, Orchis and Volantes)
 are assets of the GitHub Release, not git: `install/fetch-assets.sh` puts them where the scripts expect them.
-The Release also carries the source of the GPL ones ([THIRD_PARTY.md](THIRD_PARTY.md)).
+The Release also carries the source of the GPL ones ([THIRD_PARTY.md](THIRD_PARTY.md)). What is personal (the encrypted
+`local.env`, Claude Code's context, the logs and the long history of each decision) is in a private companion repository.
 
 ## Quick start (on a freshly installed Void, as the user)
 
@@ -74,9 +73,9 @@ bash install/install.sh            # runs them in order, stopping at reboots and
 
 ## Origin and authorship
 
-Translated and organized from the Spanish documentation kept on an external disk (`Backups Linux/`),
-with the same content: every command, path, version, check and dated note. Only the Legion's part is here
-(plus the IdeaPad steps it builds on).
+Translated and organized from the Spanish documentation kept on an external disk (`Backups Linux/`); on
+2026-10-14 reorganized by the system's layers. Every command, path and check of the original is here (checked
+item by item); the dated notes and diagnoses are in the private archive and in the tag `recipe-single-file`.
 
 Most of the text and code was written with **Claude Code** (Anthropic's coding agent) working on the machines
 under the author's direction; commits say so (`Co-Authored-By`). The goals, the choices (every "the user's

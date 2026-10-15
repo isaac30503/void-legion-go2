@@ -8,7 +8,7 @@ updates (xbps leaves the new version as .new-*).
 Usage: remove-loading.py /etc/grub.d/10_linux [--remove]    (then update-grub)
 Previous (Spanish) name: quitar-loading.py. Its marker was "# arranque-silencioso: echo del mensaje de carga
 quitado": it is recognized too, and normalized to the English one when applying.
-Void recipe, step 8.
+docs/1-platform/3-boot.md.
 """
 import os
 import sys

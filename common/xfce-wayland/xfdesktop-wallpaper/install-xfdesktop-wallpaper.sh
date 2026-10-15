@@ -2,13 +2,13 @@
 # Installs the patched xfdesktop (wallpaper dialog on Wayland; see build-xfdesktop.sh) from the .xbps
 # of this folder, with a temporary local repository (a path with a space, like Common's, is not
 # accepted by xbps as a repository). ROOT: sudo bash common/xfce-wayland/xfdesktop-wallpaper/install-xfdesktop-wallpaper.sh
-# IdeaPad recipe, step 15, "Desktop wallpaper on Wayland". It does not touch the wallpaper configuration
+# docs/5-desktop/4-wallpaper.md. It does not touch the wallpaper configuration
 # (xfconf) or restart anything: after installing, close and open the wallpaper dialog again.
 # Going back (Void's, without the patch): nothing needs to be touched; when Void publishes xfdesktop
 #   >= 4.20.3 (or a revision higher than this one), void-update replaces it and that one already has the fix.
 #   Downgrading by hand to Void's before that is not tested. (Since 2026-10-09 void-update tests the patch
 #   against Void's code instead of assuming a version, and when Void already has it, it gives the command
-#   sudo xbps-install -Sf xfdesktop: recipe, step 6, "Testing own patches".)
+#   sudo xbps-install -Sf xfdesktop: docs/5-desktop/4-wallpaper.md.)
 # Previous (Spanish) name: instalar-xfdesktop-fondo.sh. The .xbps comes from the GitHub Release
 # (install/fetch-assets.sh puts it next to this script).
 set -euo pipefail

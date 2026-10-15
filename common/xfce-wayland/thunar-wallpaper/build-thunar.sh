@@ -1,6 +1,6 @@
 #!/bin/bash
 # Builds Void's Thunar package with the fix of "Set as wallpaper" on Wayland and
-# one revision more than the official one (each machine's recipe, step 15, "Desktop wallpaper on Wayland").
+# one revision more than the official one (docs/5-desktop/4-wallpaper.md).
 # WITHOUT root: xbps-src builds in its own isolated environment. Same scheme as
 # ../xfdesktop-wallpaper/build-xfdesktop.sh.
 # Previous (Spanish) name: compilar-thunar.sh (folder thunar-fondo/).

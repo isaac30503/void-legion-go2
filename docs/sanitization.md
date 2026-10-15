@@ -42,7 +42,7 @@ bash install/verify.sh --secrets     # looks for every value of local.env (and M
 ```
 
 It must print "no private values found" and, for the encrypted copy, "local.env and local.env.age say the
-same". New logs (`logs/…`) are the usual source of leaks
+same". New logs or captures are the usual source of leaks (they belong to the private repository's archive)
 (serial numbers, MACs in `dmesg`, UUIDs in `fstab`): add the value to `local.env`, replace it with `@NAME@`,
 and run the check again.
 

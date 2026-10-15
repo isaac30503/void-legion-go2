@@ -2,7 +2,7 @@
 Type=Application
 Name=New windows almost maximized
 Name[es]=Ventanas nuevas casi maximizadas
-Comment=Opens each new window in the "full" region of its monitor (Void recipe, step 13)
+Comment=Opens each new window in the "full" region of its monitor (docs/5-desktop/3-windows-and-shortcuts.md)
 Comment[es]=Abre cada ventana nueva en la región "full" (llena) de su monitor (receta de Void, paso 13)
 Exec=@TARGET_HOME@/.local/bin/new-windows
 OnlyShowIn=XFCE;

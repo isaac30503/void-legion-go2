@@ -28,15 +28,15 @@ vu_how_to_rebuild() {
     local n=$1 c
     case "$n" in
         gamescope|gamescope-dbg)
-            c=$(t "%s, install and %s (Legion recipe, step 14, \"Screen sharing in Game Mode\")" 'bash <repo>/common/steam/gamescope-patch/build-gamescope.sh' 'sudo setcap cap_sys_nice=eip /usr/bin/gamescope') ;;
+            c=$(t "%s, install and %s (docs/7-apps/1-screen-sharing.md, \"In Game Mode\")" 'bash <repo>/common/steam/gamescope-patch/build-gamescope.sh' 'sudo setcap cap_sys_nice=eip /usr/bin/gamescope') ;;
         xdg-desktop-portal-wlr)
-            c=$(t "%s, install and restart the portal (Legion recipe, step 14, \"Portals\", point 4)" 'bash <repo>/legion/portal-wlr-patch/build-portal-wlr.sh') ;;
+            c=$(t "%s, install and restart the portal (docs/7-apps/1-screen-sharing.md)" 'bash <repo>/legion/portal-wlr-patch/build-portal-wlr.sh') ;;
         Thunar|Thunar-devel)
-            c=$(t "%s (installs the Thunar-*.xbps of that folder) and, as the user, %s; if Void already has an equal or higher version or revision, first %s (same folder; it tests the patch first and does not build if Void already brings it) and copy the new .xbps there (step 15 of each machine's recipe, \"Desktop wallpaper on Wayland\")" 'sudo bash <repo>/common/xfce-wayland/thunar-wallpaper/install-thunar-wallpaper.sh' 'thunar -q' 'bash build-thunar.sh') ;;
+            c=$(t "%s (installs the Thunar-*.xbps of that folder) and, as the user, %s; if Void already has an equal or higher version or revision, first %s (same folder; it tests the patch first and does not build if Void already brings it) and copy the new .xbps there (docs/5-desktop/4-wallpaper.md)" 'sudo bash <repo>/common/xfce-wayland/thunar-wallpaper/install-thunar-wallpaper.sh' 'thunar -q' 'bash build-thunar.sh') ;;
         xfdesktop)
-            c=$(t "%s (installs the .xbps of that folder); if Void already has an equal or higher version or revision, first %s (same folder; it tests the patch first and does not build if Void already brings it) and copy the new .xbps there (step 15 of each machine's recipe, \"Desktop wallpaper on Wayland\")" 'sudo bash <repo>/common/xfce-wayland/xfdesktop-wallpaper/install-xfdesktop-wallpaper.sh' 'bash build-xfdesktop.sh') ;;
+            c=$(t "%s (installs the .xbps of that folder); if Void already has an equal or higher version or revision, first %s (same folder; it tests the patch first and does not build if Void already brings it) and copy the new .xbps there (docs/5-desktop/4-wallpaper.md)" 'sudo bash <repo>/common/xfce-wayland/xfdesktop-wallpaper/install-xfdesktop-wallpaper.sh' 'bash build-xfdesktop.sh') ;;
         *)
-            c=$(t "it is not known with which script %s was built: look for it in the recipe (and add it to vu_how_to_rebuild, common/void-update/lib/summary.sh)" "$n") ;;
+            c=$(t "it is not known with which script %s was built: look for it in docs/ (and add it to vu_how_to_rebuild, common/void-update/lib/summary.sh)" "$n") ;;
     esac
     # The scripts only clone void-packages if it is not there: with an old copy they would build the old template
     [ -d ~/src/void-packages ] && c="$c$(t "; careful: ~/src/void-packages already exists and the script does not update it (delete it first)")"
@@ -66,7 +66,7 @@ vu_test_patch() {
     b=$(vu_base "$n")
     shopt -s nullglob; local patches=("$VU_PATCHES/$b"/0*.patch); shopt -u nullglob
     if [ ! -x "$VU_PATCH_TEST" ] || [ ${#patches[@]} -eq 0 ]; then
-        echo "UNCHECKED|?|$(t "the patch test is not installed (%s, recipe step 6)" common/patch-test/install-patch-test.sh)"; return 0
+        echo "UNCHECKED|?|$(t "the patch test is not installed (%s, docs/8-maintenance/2-own-patches.md)" common/patch-test/install-patch-test.sh)"; return 0
     fi
     [ -n "$hint" ] && args=(--version "$hint")
     r=$(timeout 900 "$VU_PATCH_TEST" "${args[@]}" void "$b" "${patches[@]}" 2>/dev/null | grep '^RESULT ' | tail -1)
@@ -207,10 +207,10 @@ vu_summary() {
             elif sudo dkms autoinstall -k "$latest" >/dev/null 2>&1 && dkms status -m lenovo-wmi-tdp -k "$latest" | grep -q installed; then
                 lines+=("REPAIRED|TDP|$(t "rebuilt (%s)" "$latest")|$(t "TDP (lenovo-wmi-tdp) rebuilt for %s" "$latest")")
             else
-                lines+=("WARNING|TDP|$(t "does NOT build (%s)" "$latest")|$(t "TDP (lenovo-wmi-tdp) does NOT build for %s: the error is in %s. Until it is fixed, that kernel (the one the hidden GRUB boots) has no fine TDP; to boot the previous one, %s (Legion recipe, step 8). Fix: Legion recipe, step 14, TDP, \"Updates\"" "$latest" '/var/lib/dkms/lenovo-wmi-tdp/*/build/make.log' 'grub-hidden.sh --remove')")
+                lines+=("WARNING|TDP|$(t "does NOT build (%s)" "$latest")|$(t "TDP (lenovo-wmi-tdp) does NOT build for %s: the error is in %s. Until it is fixed, that kernel (the one the hidden GRUB boots) has no fine TDP; to boot the previous one, %s (docs/1-platform/3-boot.md). Fix: docs/3-hardware-support/2-power.md, \"Fine TDP\"" "$latest" '/var/lib/dkms/lenovo-wmi-tdp/*/build/make.log' 'grub-hidden.sh --remove')")
             fi
         else
-            lines+=("WARNING|TDP|$(t "kernel not 6.18")|$(t "the newest kernel (%s) is not of the 6.18 series: on it the Legion has no fine TDP control (the modules are only for 6.18). Boot the 6.18 one or bring its sources (Legion recipe, step 14)" "$latest")")
+            lines+=("WARNING|TDP|$(t "kernel not 6.18")|$(t "the newest kernel (%s) is not of the 6.18 series: on it the Legion has no fine TDP control (the modules are only for 6.18). Boot the 6.18 one or bring its sources (docs/3-hardware-support/2-power.md)" "$latest")")
         fi
         if xbps-query -H 2>/dev/null | grep -qE '^linux-[0-9]'; then
             lines+=("OK|kernel|$(t "held")|$(t "kernel held in its series: it will not change series by itself")")
@@ -261,12 +261,12 @@ vu_summary() {
     if [ -e /usr/bin/inputplumber ] && [ -z "$(xbps-query -o /usr/bin/inputplumber 2>/dev/null)" ]; then
         missing=$(vu_missing /usr/bin/inputplumber | tr '\n' ' ' | sed 's/ $//')
         if [ -z "$missing" ]; then lines+=("OK|InputPlumber|$(t "libraries ok")|$(t "InputPlumber finds its libraries")")
-        else lines+=("WARNING|InputPlumber|$(t "missing: %s" "$missing")|$(t "InputPlumber (official binary) does NOT find: %s. Install the Void package that provides it (%s) or move to a version of InputPlumber that uses the current one and repeat %s (Legion recipe, step 14)" "$missing" "xbps-query -Ro '*/<library>'" legion/install-inputplumber.sh)"); fi
+        else lines+=("WARNING|InputPlumber|$(t "missing: %s" "$missing")|$(t "InputPlumber (official binary) does NOT find: %s. Install the Void package that provides it (%s) or move to a version of InputPlumber that uses the current one and repeat %s (docs/3-hardware-support/1-controllers.md)" "$missing" "xbps-query -Ro '*/<library>'" legion/install-inputplumber.sh)"); fi
     fi
     if [ -e /usr/local/lib/xdg-desktop-portal-gamescope ]; then
         missing=$(vu_missing /usr/local/lib/xdg-desktop-portal-gamescope | tr '\n' ' ' | sed 's/ $//')
         if [ -z "$missing" ]; then lines+=("OK|portal-gs|$(t "libraries ok")|$(t "gamescope portal finds its libraries")")
-        else lines+=("WARNING|portal-gs|$(t "missing: %s" "$missing")|$(t "gamescope portal (Valve's binary) does NOT find: %s. It only depends on glibc: install what is missing, or bring the one of a new SteamOS version and repeat %s (Legion recipe, step 14, \"Screen sharing in Game Mode\")" "$missing" common/steam/portal-gamescope/install-portal-gamescope.sh)"); fi
+        else lines+=("WARNING|portal-gs|$(t "missing: %s" "$missing")|$(t "gamescope portal (Valve's binary) does NOT find: %s. It only depends on glibc: install what is missing, or bring the one of a new SteamOS version and repeat %s (docs/7-apps/1-screen-sharing.md, \"In Game Mode\")" "$missing" common/steam/portal-gamescope/install-portal-gamescope.sh)"); fi
     fi
 
     # steamos-manager (built here with a patch, outside xbps): libraries, reference sha256, build dependencies,
@@ -278,14 +278,14 @@ vu_summary() {
         elif [[ "$pkg" == *-void ]]; then name=$(t "package %s (the official one, WITHOUT the set_clocks patch: \"Error setting manual GPU clock\" in the log with the manual clock disabled; the patched one is …-void-2)" "$pkg")
         else name=$(t "package %s" "$pkg"); fi
         missing=$(vu_missing /usr/lib/steamos-manager /usr/bin/steamosctl | tr '\n' ' ' | sed 's/ $//')
-        [ -n "$missing" ] && bad+=("$(t "does NOT find %s: rebuild with %s and install with %s (the build dependencies are installed on purpose; Legion recipe, step 14, steamos-manager)" "$missing" 'common/steam/steamos-manager/build-steamos-manager.sh /tmp' install-steamos-manager.sh)")
+        [ -n "$missing" ] && bad+=("$(t "does NOT find %s: rebuild with %s and install with %s (the build dependencies are installed on purpose; docs/6-game-mode/3-steamos-manager.md)" "$missing" 'common/steam/steamos-manager/build-steamos-manager.sh /tmp' install-steamos-manager.sh)")
         ref=$dir/sha256
         if [ ! -f $ref ]; then bad+=("$(t "without reference sha256 (%s): it cannot be known whether it is the patched one (repeat %s)" "$ref" install-steamos-manager.sh)")
         elif ! sha256sum -c --status $ref 2>/dev/null; then bad+=("$(t "the installed one is NOT the reference one (sha256 different from that of %s): repeat %s" "$ref" install-steamos-manager.sh)")
         else sum=$(grep '/usr/lib/steamos-manager$' $ref | cut -c1-8); fi
         for p in glib-devel eudev-libudev-devel speech-dispatcher-devel clang pkg-config git make; do xbps-query $p >/dev/null 2>&1 || deps+=("$p"); done
         [ ${#deps[@]} -gt 0 ] && bad+=("$(t "to rebuild it, missing: %s" "sudo xbps-install -S ${deps[*]}")")
-        [ -x ~/.cargo/bin/cargo ] || bad+=("$(t "to rebuild it, missing Rust from rustup (~/.cargo/bin/cargo; Legion recipe, step 14, \"Controller on the desktop\", extest)")")
+        [ -x ~/.cargo/bin/cargo ] || bad+=("$(t "to rebuild it, missing Rust from rustup (~/.cargo/bin/cargo; docs/6-game-mode/8-controller-on-desktop.md)")")
         tag=$(grep -oE 'v[0-9][0-9.]*[0-9]' <<< "$pkg" | head -1)
         url=https://gitlab.steamos.cloud/holo/steamos-manager.git
         newest=$(timeout 30 git ls-remote --tags --refs "$url" 'v*' 2>/dev/null | sed -nE 's#.*refs/tags/(v[0-9]+(\.[0-9]+)*)$#\1#p' | sort -V | tail -1)
@@ -313,7 +313,7 @@ vu_summary() {
     if [ -e "$extest" ]; then
         local bad=() i686
         missing=$(vu_missing "$extest" | tr '\n' ' ' | sed 's/ $//')
-        [ -n "$missing" ] && bad+=("$(t "does NOT find %s: rebuild with %s (Legion recipe, step 14, \"Controller on the desktop\")" "$missing" 'cd ~/src/extest && ~/.cargo/bin/cargo build --release && install -D -m 755 target/i686-unknown-linux-gnu/release/libextest.so ~/.local/lib/extest/libextest.so')")
+        [ -n "$missing" ] && bad+=("$(t "does NOT find %s: rebuild with %s (docs/6-game-mode/8-controller-on-desktop.md)" "$missing" 'cd ~/src/extest && ~/.cargo/bin/cargo build --release && install -D -m 755 target/i686-unknown-linux-gnu/release/libextest.so ~/.local/lib/extest/libextest.so')")
         i686=$(ls -d ~/.rustup/toolchains/*/lib/rustlib/i686-unknown-linux-gnu 2>/dev/null | head -1)
         [ -x ~/.cargo/bin/cargo ] || bad+=("$(t "to rebuild it, missing Rust from rustup (~/.cargo, ~/.rustup)")")
         # shellcheck disable=SC2088  # the message shows "~" literally

@@ -3,7 +3,7 @@
 # the Thunar-*.xbps of this folder, with a temporary local repository (a path with a space, like Common's,
 # is not accepted by xbps as a repository). Only Thunar: the wallpaper plugin goes in it; Thunar-devel (next
 # to it, just in case) is not needed. ROOT: sudo bash common/xfce-wayland/thunar-wallpaper/install-thunar-wallpaper.sh
-# Each machine's recipe, step 15, "Desktop wallpaper on Wayland". It does not touch the wallpaper configuration.
+# docs/5-desktop/4-wallpaper.md. It does not touch the wallpaper configuration.
 # Afterwards, AS THE USER: thunar -q (closes Thunar, which has the old plugin loaded) and open it again.
 # Going back (Void's, without the patch): when Void publishes a higher revision, void-update
 #   replaces it and warns. Downgrading by hand to Void's before that is not tested.

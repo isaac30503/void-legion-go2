@@ -13,7 +13,7 @@
 #     (event-driven; without it, when coming from Game Mode the internal screen was left without wallpaper);
 #   - ~/.local/share/themes/Orchis-Teal-Dark-Compact/labwc: Orchis for labwc (labwc-theme.sh);
 #   - launchers "Wayland Desktop" and "X11 Desktop" (finder, Super+Space; Spanish names in Name[es]).
-# Needs install-passwordless-switch.sh with desktop = Wayland and desktop-x11 (recipe, step 14).
+# Needs install-passwordless-switch.sh with desktop = Wayland and desktop-x11 (docs/5-desktop/1-xfce.md).
 # What does NOT work on Wayland (X11 only): window-focus and window-snap (xdotool; here
 # labwc redoes them: Super+arrows by direction only between snapped ones), the Docklike's per-workspace
 # filter (labwc does not give each window's workspace), xfce4-screensaver (no screen
@@ -22,7 +22,7 @@
 # the launchers escritorio-wayland.desktop / escritorio-x11.desktop: installing replaces them).
 #   sudo sh common/xfce-wayland/install-xfce-wayland.sh            installs (or redoes labwc's configuration)
 #   sudo sh common/xfce-wayland/install-xfce-wayland.sh --remove   removes launchers and configuration (leaves labwc)
-# Void recipe, step 15.
+# docs/5-desktop/1-xfce.md.
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"

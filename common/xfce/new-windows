@@ -7,7 +7,7 @@
 # It does not touch: the windows that were already there at start, those that are not normal (panels, desktop,
 # menus, notifications; without a declared type, like xterm, it counts as normal), dialogs and those
 # that have a parent window, fixed-size ones, the application finder (xfce4-appfinder) and
-# those that open in full screen (games). Void recipe, step 13.
+# those that open in full screen (games). docs/5-desktop/3-windows-and-shortcuts.md.
 # Previous (Spanish) name: ventanas-nuevas (autostart ventanas-nuevas.desktop).
 
 # Only in Xfce X11: the Wayland session (labwc, step 15) also declares itself XFCE and would start

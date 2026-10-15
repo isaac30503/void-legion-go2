@@ -4,7 +4,7 @@
 # desktop configuration. -steamdeck = same client as Game Mode (otherwise, Steam
 # changes branch and reinstalls the client when alternating); -silent = without opening a window.
 # It closes cleanly on logout (wrapper /usr/local/bin/xfce4-session), when going to Game Mode
-# (steamos-session-select) and when switching Wayland/X11 (switch-mode-root). Legion recipe, step 14.
+# (steamos-session-select) and when switching Wayland/X11 (switch-mode-root). docs/6-game-mode/8-controller-on-desktop.md.
 # It goes in ~/.config/autostart/ (xfce4-session launches it in both sessions). Remove: delete it.
 # Previous (Spanish) name: steam-segundo-plano.desktop. @TARGET_HOME@ is filled in when it is installed.
 Type=Application

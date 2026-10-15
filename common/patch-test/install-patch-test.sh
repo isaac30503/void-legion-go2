@@ -1,5 +1,5 @@
 #!/bin/bash
-# Installs (without root) the test of our own patches that void-update uses (2026-10-09; Void recipe, step 6):
+# Installs (without root) the test of our own patches that void-update uses (2026-10-09; docs/8-maintenance/2-own-patches.md):
 #   ~/.local/bin/patch-still-needed                  ← patch-still-needed.sh (next to this script)
 #   ~/.local/share/void-update/patches/<package>/  ← our own patches of each piece built here
 #   ~/.local/share/void-legion/{lib,locale}          ← the translations of its messages (install_i18n_user)

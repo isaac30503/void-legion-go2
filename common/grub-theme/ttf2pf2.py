@@ -14,7 +14,7 @@ for the boot menu theme. It draws each character with FreeType (through Pillow) 
 
 Usage: ttf2pf2.py font.ttf size_px output.pf2 "Visible name" [bold|normal]
 It needs Pillow and fontTools (in a venv: pip install pillow fonttools).
-Previous name: ttf2pf2.py (unchanged). Void recipe, step 8 (GRUB theme).
+Previous name: ttf2pf2.py (unchanged). docs/1-platform/3-boot.md (GRUB theme).
 """
 import struct
 import sys

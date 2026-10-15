@@ -1,4 +1,4 @@
-# gen-config.py — writes ~/.config/fastfetch/config.jsonc (Omarchy-style greeting; Void recipe, step 12).
+# gen-config.py — writes ~/.config/fastfetch/config.jsonc (Omarchy-style greeting; docs/5-desktop/2-look-and-feel.md).
 # Edit this file, never config.jsonc (it is regenerated): python3 ~/.config/fastfetch/gen-config.py
 # The icons go as \uXXXX escapes. Every line comes from the real system, not copied from Omarchy.
 # The labels follow the system's language (locale/<lang>/messages.po; installed with the user's

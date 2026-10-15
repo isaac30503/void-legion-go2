@@ -4,7 +4,7 @@
 #   sudo bash common/grub-theme/install-theme.sh            installs / reinstalls / regenerates
 #   sudo bash common/grub-theme/install-theme.sh --remove   back to the usual text menu (#                                                            also from its installed copy:
 #                                                            sudo bash /usr/local/share/grub-theme/install-theme.sh --remove)
-# What it does (Void recipe, step 8):
+# What it does (docs/1-platform/3-boot.md):
 #   1. python3-Pillow and python3-fonttools (official; the generator uses them)
 #   2. scripts in /usr/local/share/grub-theme/ (and the translations in /usr/local/share/void-legion/, so the
 #      texts painted in the background follow the system's language)
@@ -60,7 +60,7 @@ fi
 
 t "== 1. packages"
 python3 -c 'import PIL, fontTools' 2>/dev/null || xbps-install -Sy python3-Pillow python3-fonttools
-[ -r "$TTF" ] || { t "%s is missing (copy of the font of step 10 of the recipe)" "$TTF"; exit 1; }
+[ -r "$TTF" ] || { t "%s is missing (copy of the font, docs/5-desktop/2-look-and-feel.md)" "$TTF"; exit 1; }
 
 t "== 2. scripts in %s" "$LIB"
 mkdir -p "$LIB"
@@ -76,7 +76,7 @@ t "== 3. %s" "$CONF"
 MODE=$(head -1 /sys/class/drm/card*-eDP-*/modes /sys/class/drm/card*-LVDS-*/modes 2>/dev/null | grep -m1 -E '^[0-9]+x[0-9]+$')
 MODE=${MODE:-1366x768}; t "   screen: %s" "$MODE"
 cat >> "$CONF" <<EOF
-$BEGIN (recipe, step 8; remove: sudo bash $LIB/install-theme.sh --remove)
+$BEGIN (docs/1-platform/3-boot.md; remove: sudo bash $LIB/install-theme.sh --remove)
 GRUB_THEME="$DEST/theme.txt"
 GRUB_GFXMODE=$MODE,auto
 GRUB_DISABLE_SUBMENU=y
@@ -91,7 +91,7 @@ for d in post-install post-remove; do
 #!/bin/sh
 # Regenerates the background of the GRUB theme void-xterm (the names of the entries go painted in
 # it) after 50-grub regenerates the menu. It never makes the kernel installation fail.
-# Void recipe, step 8. Set/removed by $LIB/install-theme.sh.
+# docs/1-platform/3-boot.md. Set/removed by $LIB/install-theme.sh.
 [ -f "$DEST/theme.txt" ] || exit 0
 /usr/bin/python3 "$LIB/build.py" "$DEST" --from-grub >/dev/null || echo "60-grub-theme: GRUB theme disabled (text menu); see above" >&2
 exit 0

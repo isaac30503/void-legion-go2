@@ -32,7 +32,7 @@
 # Only the FIRST distfile is tested (the program's code; gamescope also brings subprojects, which
 # our own patches do not touch).
 # In this repository: common/patch-test/patch-still-needed.sh; installed in ~/.local/bin/patch-still-needed by
-# install-patch-test.sh (Void recipe, step 6).
+# install-patch-test.sh (docs/8-maintenance/2-own-patches.md).
 # Previous (Spanish) name: parche-sigue-haciendo-falta (states HACE_FALTA, YA_INCLUIDO, PARCIAL, CONFLICTO,
 # SIN_COMPROBAR and lines PARCHE/RESULTADO; cache in ~/.cache/update-system/parches).
 set -uo pipefail

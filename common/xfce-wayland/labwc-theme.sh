@@ -1,17 +1,17 @@
 #!/bin/sh
 # labwc-theme.sh — Orchis-Teal-Dark-Compact for labwc's window borders ("Xfce (Wayland)"),
-# taken from the xfwm4 theme that is already in ~/.themes (recipe, step 10): same colors, bar height,
+# taken from the xfwm4 theme that is already in ~/.themes (docs/5-desktop/2-look-and-feel.md): same colors, bar height,
 # border and buttons (Orchis's SVGs, renamed as labwc looks for them). Orchis does not ship a labwc theme.
 # It leaves ~/.local/share/themes/Orchis-Teal-Dark-Compact/labwc/ (it does not touch ~/.themes, which is restored
 # entirely from orchis-themes.tar.gz). labwc's rc.xml names it in <theme><name>. Without sudo.
 #   sh common/xfce-wayland/labwc-theme.sh          (re)makes it and reloads labwc if it is running
-# Void recipe, step 15. Previous (Spanish) name: tema-labwc.sh.
+# docs/5-desktop/2-look-and-feel.md. Previous (Spanish) name: tema-labwc.sh.
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"
 O="$HOME/.themes/Orchis-Teal-Dark-Compact/xfwm4"
 L="$HOME/.local/share/themes/Orchis-Teal-Dark-Compact/labwc"
-[ -d "$O" ] || { t "!! %s is missing (recipe, step 10)" "$O"; exit 1; }
+[ -d "$O" ] || { t "!! %s is missing (docs/5-desktop/2-look-and-feel.md)" "$O"; exit 1; }
 mkdir -p "$L"
 
 # Buttons: xfwm4 → labwc. prelight = mouse over (_hover), maximize-toggled = maximized window.

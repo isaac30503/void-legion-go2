@@ -2,7 +2,7 @@
 # Builds Void's xdg-desktop-portal-wlr package with the patches of this folder (0001: also restore
 # windows; 0002: reuse the source of a restored session that was closed without starting, when
 # changing streams in Vesktop; 0003: pass the exact request and the app to the chooser, in
-# XDPW_REQUEST_HANDLE and XDPW_APP_ID) and one revision more than the official one (Legion recipe, step 14,
+# XDPW_REQUEST_HANDLE and XDPW_APP_ID) and one revision more than the official one (docs/7-apps/1-screen-sharing.md,
 # "Desktop portals and screen sharing"). Without root: xbps-src builds in its own isolated
 # environment. Same scheme as common/steam/gamescope-patch/build-gamescope.sh.
 # Previous (Spanish) name: compilar-portal-wlr.sh (folder portal-wlr-parche/).

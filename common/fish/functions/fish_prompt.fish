@@ -1,4 +1,4 @@
-# fish prompt (from the Arch/Homebrew setup, fish/arch/brew/ on the disk; recipe, step 6). Unchanged.
+# fish prompt (from the Arch/Homebrew setup, fish/arch/brew/ on the disk; docs/5-desktop/1-xfce.md). Unchanged.
 function fish_prompt
         if not set -q VIRTUAL_ENV_DISABLE_PROMPT
                 set -g VIRTUAL_ENV_DISABLE_PROMPT true

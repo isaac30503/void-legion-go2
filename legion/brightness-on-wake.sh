@@ -17,7 +17,7 @@ if is_remove "${1:-}"; then rm -f "$G" "$OLD"; t "removed"; exit 0; fi
 mkdir -p "${G%/*}"
 cat > "$G.tmp" <<'G_EOF'
 #!/bin/sh
-# Installed by legion/brightness-on-wake.sh (Legion recipe, step 14). elogind: $1 = pre|post, $2 = type.
+# Installed by legion/brightness-on-wake.sh (docs/3-hardware-support/2-power.md). elogind: $1 = pre|post, $2 = type.
 F=/run/brightness-before-sleep
 case "$1" in
     pre)  for b in /sys/class/backlight/*; do

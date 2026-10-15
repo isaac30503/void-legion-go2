@@ -1,5 +1,5 @@
 #!/bin/bash
-# steps-1-to-3.sh — steps 1–3 of the Legion recipe (docs/recipe/step-02-03-system-keyboard-ssh.md, "2–3. System up to date,
+# steps-1-to-3.sh — steps 1–3 of the Legion recipe (docs/2-base-system/1-system.md; "2–3. System up to date,
 # keyboard and SSH"): xbps first and then the whole system, the keyboard (X and console) and SSH + mDNS.
 # Previous (Spanish) name: pasos-1-a-3.sh.
 #   sudo bash legion/steps-1-to-3.sh        then reboot (it ends with "DONE OK")

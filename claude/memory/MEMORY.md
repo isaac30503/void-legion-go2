@@ -1,2 +1,0 @@
-- [Answer in Spanish](answer-in-spanish.md) — always in Spanish, explicit request
-- [Explicit recipe](explicit-recipe.md) — every command applied goes in the recipe, without inferring anything

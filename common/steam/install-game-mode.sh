@@ -9,7 +9,7 @@
 # The launcher works for two sessions: without DISPLAY (the Wayland session "direct screen" of
 # test-direct-session.sh, the normal one) gamescope handles the screen itself; with DISPLAY (the X
 # session of this script, as a fallback) it goes nested in full screen. From lightdm's login screen,
-# the direct one was lost after ~20 s (recipe, step 14, "What it took" 2): that is why it is always entered
+# the direct one was lost after ~20 s (docs/6-game-mode/2-game-mode.md 2): that is why it is always entered
 # with autologin (install-passwordless-switch.sh).
 # Switching between the two modes (steamos-session-select):
 #   Game Mode → power menu → "Switch to Desktop": closes Steam and, when gamescope ends,
@@ -81,7 +81,7 @@ cat > "$BIN" <<'EOF'
 #!/bin/sh
 # Session "Steam (Game Mode)": gamescope full screen (nested in the session's X) + Steam
 # in console mode.
-# Installed by common/steam/install-game-mode.sh (Void recipe, step 14). Log: ~/.local/state/steam-game-mode.log
+# Installed by common/steam/install-game-mode.sh (docs/6-game-mode/2-game-mode.md). Log: ~/.local/state/steam-game-mode.log
 # D-Bus session bus (in Xfce startxfce4 starts it): without it, Steam (its interface, a
 # Chromium, fails with "Failed to connect to the bus") and the others each look for one through X11.
 # gamescope portal (common/steam/portal-gamescope/install-portal-gamescope.sh, SteamOS's), if it is there:
@@ -292,7 +292,7 @@ cat > "$SEL" <<'EOF'
 #     autologin session and restarts it (switch-mode-root, allowed by sudoers);
 #   - otherwise: it leaves the chosen session for the login screen (AccountsService, where
 #     lightdm takes it from; the user can change their own without root) and closes the current session.
-# Installed by common/steam/install-game-mode.sh (Void recipe, step 14).
+# Installed by common/steam/install-game-mode.sh (docs/6-game-mode/2-game-mode.md).
 # Log of each call (English): ~/.local/state/steamos-session-select.log
 mkdir -p "$HOME/.local/state"
 exec 2>>"$HOME/.local/state/steamos-session-select.log"
@@ -393,7 +393,7 @@ else
 cat > "$CAR" <<'EOF'
 #!/usr/bin/python3
 # steam-loading — Game Mode's loading screen while Steam starts (installed by
-# common/steam/install-game-mode.sh; Void recipe, step 14): the same as Plymouth at power-on (theme
+# common/steam/install-game-mode.sh; docs/6-game-mode/2-game-mode.md): the same as Plymouth at power-on (theme
 # bgrt-void), the firmware logo in its place and Void's symbol spinning below. Plymouth cannot
 # stay on screen here: lightdm closes it when the session starts and the screen belongs to gamescope.
 # It closes EVENT-DRIVEN: it listens to the list of windows that gamescope publishes in X
