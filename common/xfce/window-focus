@@ -4,7 +4,7 @@
 # and not minimized. It takes the pointer to the center of the chosen window, because the focus
 # follows the mouse (otherwise, when moving the mouse it would go back to the window underneath).
 # With two screens, it only jumps between windows of the active window's monitor.
-# Void recipe, step 13 (shortcuts).
+# docs/5-desktop/3-windows-and-shortcuts.md (shortcuts).
 # Previous (Spanish) name: ventana-foco izq|der|arr|abj (those arguments were removed on 2026-10-13).
 
 dir=$1

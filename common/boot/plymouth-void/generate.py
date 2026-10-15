@@ -10,7 +10,7 @@ Usage: generate.py <destination folder> [scale]      (install-plymouth.sh calls 
 The frames are already drawn at their final size and plymouthd.conf carries DeviceScale=1: if Plymouth
 scaled them itself (it does so by itself on dense screens, like the Legion's), they would come out blurry.
 It needs rsvg-convert (librsvg-utils) and Pillow. Previous (Spanish) name: plymouth-void/generar.py.
-Void recipe, step 8.
+docs/1-platform/3-boot.md.
 """
 import os
 import shutil
@@ -70,7 +70,7 @@ def main():
     conf = "\n".join(l for l in conf.split("\n") if not l.startswith("Name["))
     conf = conf.replace("Name=BGRT", "Name=BGRT Void")
     conf = conf.replace("Description=Jimmac's spinner theme using the ACPI BGRT graphics as background",
-                        "Description=BGRT (the firmware logo) with Void's symbol spinning; Void recipe, step 8")
+                        "Description=BGRT (the firmware logo) with Void's symbol spinning; docs/1-platform/3-boot.md")
     conf = conf.replace(f"ImageDir={SPINNER}", f"ImageDir={dest}")
     assert f"ImageDir={dest}" in conf
     open(os.path.join(dest, "bgrt-void.plymouth"), "w", encoding="utf-8").write(conf)

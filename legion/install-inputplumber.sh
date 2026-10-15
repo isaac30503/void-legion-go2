@@ -98,7 +98,7 @@ reload
 mkdir -p "$SV/log" /var/log/inputplumber
 cat > "$SV/run.tmp" <<'EOF'
 #!/bin/sh
-# InputPlumber (installed by legion/install-inputplumber.sh; Legion recipe, step 14).
+# InputPlumber (installed by legion/install-inputplumber.sh; docs/3-hardware-support/1-controllers.md).
 exec 2>&1
 sv check dbus >/dev/null || exit 1
 export LOG_LEVEL=info

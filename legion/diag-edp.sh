@@ -4,7 +4,7 @@
 #   sudo sh legion/diag-edp.sh black      (with the internal screen black)
 #   sudo sh legion/diag-edp.sh fine       (after switching workspace)
 # Leaves ~/diag-edp-<label>.txt. Previous name: diag-edp.sh (unchanged; its labels were negra|bien, and
-# the two results of 2026-10-04 are archived with those names in logs/legion/diagnostics-2026-10-04/).
+# the two results of 2026-10-04 are archived with those names in the private repository, archive/2026-10-14/logs/legion-diagnostics-2026-10-04/).
 # The report is written in English (it is a data file).
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"

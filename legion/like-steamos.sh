@@ -1,6 +1,6 @@
 #!/bin/bash
 # Legion Go 2 (and the IdeaPad, from its own script): system settings that SteamOS has and Void does not.
-# They come from comparing live with a Steam Deck (SteamOS 3.8.16) on 2026-10-05 (Legion recipe, step 14,
+# They come from comparing live with a Steam Deck (SteamOS 3.8.16) on 2026-10-05 (docs/6-game-mode/4-steamos-parity.md,
 # "SteamOS settings").
 # Previous (Spanish) name: como-steamos.sh (files 30-como-steamos.conf, 91-como-steamos.conf and the
 # "como-steamos" block of /etc/rc.local; applying or --remove also cleans those old names).
@@ -80,7 +80,7 @@ fi
 
 t "== 1. sysctl"
 cat > "$SYS.tmp" <<'EOF'
-# Like SteamOS (set by legion/like-steamos.sh; Legion recipe, step 14, "SteamOS settings").
+# Like SteamOS (set by legion/like-steamos.sh; docs/6-game-mode/4-steamos-parity.md).
 kernel.split_lock_mitigate = 0
 fs.inotify.max_user_watches = 524288
 fs.inotify.max_user_instances = 1024
@@ -127,7 +127,7 @@ update-grub
 grep -c 'preempt=full' /boot/grub/grub.cfg
 
 t "== 8. memlock 8 MiB (from the next session)"
-printf '%s\n' "# Like SteamOS (set by legion/like-steamos.sh; Legion recipe, step 14)." "$U - memlock 8192" > "$LIM"
+printf '%s\n' "# Like SteamOS (set by legion/like-steamos.sh; docs/6-game-mode/4-steamos-parity.md)." "$U - memlock 8192" > "$LIM"
 rm -f "$LIM_OLD"
 cat "$LIM"
 

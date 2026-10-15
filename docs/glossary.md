@@ -4,7 +4,7 @@ The original lived on the external disk in `Backups Linux/` and was written in S
 English names, and only those: the old Spanish arguments and options (`--quitar`, `juego`, `izq`…) are no
 longer accepted (removed on 2026-10-13, the user's decision; before, they worked as aliases). The installers
 still replace the old Spanish-named pieces on a system that already has them (`install/migrate.sh`). Archived
-files in `logs/` keep their original names.
+logs (in the private repository) keep their original names.
 
 ## Files (scripts and pieces)
 
@@ -100,15 +100,15 @@ files in `logs/` keep their original names.
 | `herramientas/ssh-setup.fish` | `common/ssh-setup/ssh-setup.fish` |
 | `herramientas/ssh-survey.sh` | `common/ssh-setup/ssh-survey.sh` |
 | `herramientas/LEEME-ssh-setup.md` | `docs/ssh-setup.md` |
-| `fish/void/legion/registros-legion/` | `logs/legion/` |
-| `fish/void/legion/diagnosticos-2026-10-04/` | `logs/legion-diagnostics-2026-10-04/` |
-| `fish/void/steam/diag-lightdm.txt` | `logs/ideapad/diag-lightdm.txt` |
-| `void-legion-go2.md` | `docs/void-legion-go2.md` (the index) and `docs/recipe/` (one file per step, since 2026-10-14) |
-| `void-ideapad-100.md (steps 1–15 and Troubleshooting)` | `docs/reference/void-ideapad-100-steps.md` |
-| `CLAUDE-void-legion.md` | `claude/CLAUDE-void-legion.md` |
-| `claude-agentes/mantenedor-void.md (agent `mantenedor-void`)` | `claude/agents/void-maintainer.md (agent `void-maintainer`)` |
-| `claude-memoria-legion/{MEMORY,receta-explicita,responder-en-espanol}.md` | `claude/memory/{MEMORY,explicit-recipe,answer-in-spanish}.md` |
-| `TRASPASO-legion-live.md` | `docs/history/handover-legion-live-2026-10-03.md` |
+| `fish/void/legion/registros-legion/` | private repository, `archive/2026-10-14/logs/legion/` |
+| `fish/void/legion/diagnosticos-2026-10-04/` | private repository, `archive/2026-10-14/logs/legion-diagnostics-2026-10-04/` |
+| `fish/void/steam/diag-lightdm.txt` | private repository, `archive/2026-10-14/logs/ideapad/diag-lightdm.txt` |
+| `void-legion-go2.md` | `docs/void-legion-go2.md` (the index) and the pages by layers, `docs/1-platform/` … `docs/8-maintenance/` (since 2026-10-14; old step → page: the index's last table) |
+| `void-ideapad-100.md (steps 1–15 and Troubleshooting)` | its content is in the pages by layers; the English copy, in the private repository's archive |
+| `CLAUDE-void-legion.md` | private repository, `claude/CLAUDE-void-legion.md` |
+| `claude-agentes/mantenedor-void.md (agent `mantenedor-void`)` | private repository, `claude/agents/void-maintainer.md` (agent `void-maintainer`) |
+| `claude-memoria-legion/{MEMORY,receta-explicita,responder-en-espanol}.md` | private repository, `claude/memory/{MEMORY,explicit-recipe,answer-in-spanish}.md` |
+| `TRASPASO-legion-live.md` | private repository, `archive/2026-10-14/history/handover-legion-live-2026-10-03.md` |
 | `fish/void/fonts/*.ttf` | `common/fonts/ (Release asset)` |
 | `fish/void/legion/compartir-pantalla/` | `legion/screen-share/` |
 | `fish/void/legion/portal-wlr-parche/` | `legion/portal-wlr-patch/` |

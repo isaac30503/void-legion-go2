@@ -2,7 +2,7 @@
 # test-direct-session.sh — (it started as a TEST) session "Steam (Game Mode, direct screen)", with gamescope
 # handling the screen itself (DRM/KMS), as in SteamOS: what on the Legion gives VRR, HDR and
 # refresh-rate changes. The X session "Steam (Game Mode)" stays as it is, as the fallback.
-# It attacks the cause of the failure of 2026-10-03 (recipe, step 14, "What it took" 2): the login screen
+# It attacks the cause of the failure of 2026-10-03 (docs/4-sessions/1-login-and-modes.md 2): the login screen
 # did not die with lightdm's SIGTERM because it waited for its accessibility bus (at-spi); when it died
 # late, lightdm locked the Wayland session. With NO_AT_BRIDGE=1 (GTK variable: do not connect to
 # at-spi), only for the login screen, it should die instantly.
@@ -15,7 +15,7 @@
 #   /etc/lightdm/lightdm.conf: greeter-wrapper=… in [Seat:*]     (leaves .bak; valid on reboot)
 #   sudo sh common/steam/test-direct-session.sh            installs
 #   sudo sh common/steam/test-direct-session.sh --remove   removes everything
-# Needs install-game-mode.sh (the version with both modes). Void recipe, step 14.
+# Needs install-game-mode.sh (the version with both modes). docs/4-sessions/1-login-and-modes.md.
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"
@@ -44,7 +44,7 @@ cat > "$ENV" <<'EOF'
 #!/bin/sh
 # Login screen wrapper (lightdm greeter-wrapper; installed by common/steam/test-direct-session.sh):
 # without connecting to the accessibility bus (at-spi), so that it dies instantly with lightdm's
-# SIGTERM. Void recipe, step 14.
+# SIGTERM. docs/4-sessions/1-login-and-modes.md.
 export NO_AT_BRIDGE=1
 exec "$@"
 EOF

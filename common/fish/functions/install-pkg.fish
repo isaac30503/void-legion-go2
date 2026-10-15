@@ -1,5 +1,5 @@
 function install-pkg --description 'Search and install packages with xbps using fzf'
-    # From Omarchy's scripts (via Homebrew), adapted to Void (recipe, step 6). Its texts follow the
+    # From Omarchy's scripts (via Homebrew), adapted to Void (docs/8-maintenance/1-void-update.md). Its texts follow the
     # system's language (__vl_t, translations in ~/.local/share/void-legion). Previous name: install-pkg (unchanged).
     functions -q __vl_t; or function __vl_t; printf "$argv[1]\n" $argv[2..-1]; end
     # xbps-query -Rs '' lists the whole repo as "[*] pkgver  description" ([*] = already installed).

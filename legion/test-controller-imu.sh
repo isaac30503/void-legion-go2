@@ -11,7 +11,7 @@
 # the bytes of the right one's IMU (48–59 of the report 04 3c 74…) move: as is, with "IMU on" and
 # with "bypass" as well; it stops as soon as they move. At the end it PUTS the right controller BACK as it was
 # (with --keep, it leaves it on for the next step). It only touches the right controller.
-# Previous (Spanish) name: probar-imu-mando.sh (its log of 2026-10-05 is archived in logs/legion/).
+# Previous (Spanish) name: probar-imu-mando.sh (its log of 2026-10-05 is archived in the private repository, archive/2026-10-14/logs/legion/).
 #   sudo sh legion/test-controller-imu.sh [--keep]     
 # Log: ~/test-controller-imu.log. Legion recipe, Pending (2026-10-05).
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done

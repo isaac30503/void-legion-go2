@@ -1,4 +1,4 @@
-# ~/.ssh/config of the Legion (Legion recipe, step 4).
+# ~/.ssh/config of the Legion (docs/2-base-system/2-network.md).
 # IdeaPad 100 (Void Linux + Xfce) — the network's debugging station.
 # By mDNS name and not by IP: the router changes its address. It resolves because
 # this console has nss-mdns in nsswitch.conf (step 3).

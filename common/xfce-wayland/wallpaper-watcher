@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # wallpaper-watcher — in Xfce on Wayland (labwc), asks xfdesktop for the wallpaper again when
-# the screens change (2026-10-04). Started by ~/.config/xfce4/labwc/autostart; recipe, step 15.
+# the screens change (2026-10-04). Started by ~/.config/xfce4/labwc/autostart; docs/5-desktop/4-wallpaper.md.
 # Why: when going from Game Mode to the desktop, xfsettingsd reconfigures the screens (profile of
 # displays.xml) after xfdesktop painted the wallpaper, and xfdesktop leaves the internal screen without
 # wallpaper (black; cursor and windows are visible) until something redraws it: switching workspace

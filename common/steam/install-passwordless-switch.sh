@@ -13,9 +13,9 @@
 #     with "cambiar-modo" (its first name), the "wheel" one (which asks for a password) was read later and overrode it.
 # steamos-session-select (install-game-mode.sh) uses it if it is there; otherwise, the old way.
 # As there is never a login screen in between, the direct Wayland session works in both
-# directions (the boot's login screen was what broke it, see recipe step 14).
+# directions (the boot's login screen was what broke it, see docs/4-sessions/1-login-and-modes.md).
 # CAREFUL: a password is never asked to log in; at power-on it enters the last mode used.
-# Needs test-direct-session.sh (the session steam-game-mode-direct). Void recipe, step 14.
+# Needs test-direct-session.sh (the session steam-game-mode-direct). docs/4-sessions/1-login-and-modes.md.
 # Previous (Spanish) name: instalar-cambio-sin-contrasena.sh. The pieces it installed had Spanish names
 # (cambiar-modo-root juego|escritorio|escritorio-x11 --puede, 60-modo-steam.conf, zz-cambiar-modo,
 # 05-cerrar-steam.sh, /usr/local/lib/cambiar-modo/reiniciar-lightdm, service cambio-modo,
@@ -82,7 +82,7 @@ t "== 2. %s (session: %s)" "$DROP" "$SESSION"
 mkdir -p "${DROP%/*}"
 cat > "$DROP" <<EOF
 # Autologin according to the chosen mode (changed by $HELP; set by
-# common/steam/install-passwordless-switch.sh; Void recipe, step 14).
+# common/steam/install-passwordless-switch.sh; docs/4-sessions/1-login-and-modes.md).
 [Seat:*]
 autologin-user=$U
 autologin-user-timeout=0
@@ -96,7 +96,7 @@ cat > "$HELP" <<EOF
 # switch-mode-root game|desktop|desktop-x11 — changes lightdm's autologin session and
 # restarts it, which logs into it by itself (like SteamOS's "Switch to Desktop"). It runs as root:
 # $U can run it without password (/etc/sudoers.d/zz-switch-mode), and that is why it only accepts these
-# arguments. "--check" only checks that it is installed. Void recipe, step 14.
+# arguments. "--check" only checks that it is installed. docs/4-sessions/1-login-and-modes.md.
 # Previous (Spanish) name: cambiar-modo-root (its Spanish arguments were removed on 2026-10-13).
 D=$DROP
 # During power-off (05-close-steam.sh leaves /run/system-shutting-down) nothing is changed: when Steam
@@ -139,7 +139,7 @@ mkdir -p "${RESTART%/*}"
 cat > "$RESTART.tmp" <<'RESTART_EOF'
 #!/bin/sh
 # restart-lightdm UID — restarts lightdm to switch mode (called by switch-mode-root; installed by
-# common/steam/install-passwordless-switch.sh, Void recipe, step 14) WITHOUT a race with elogind:
+# common/steam/install-passwordless-switch.sh, docs/4-sessions/1-login-and-modes.md) WITHOUT a race with elogind:
 # with "sv restart lightdm" the new session started while elogind was still cleaning the old one; when
 # the user was left without sessions, elogind deletes /run/user/UID and took with it the wayland-0 socket
 # just created by the new labwc: xfce4-session and the panel fell back to X11 (Xwayland), the panel
@@ -197,7 +197,7 @@ cat > "$SHUTDOWN" <<'SHUTDOWN_EOF'
 # /usr/local/bin/xfce4-session (3c), which keeps the session alive until here. Loaded by /etc/runit/3 (with
 # ".", without a subshell: no exit). It leaves /run/system-shutting-down so that switch-mode-root does not change the
 # mode when Game Mode's launcher sees Steam end. Event-driven wait (pidwait), 20 s
-# cap. Installed by common/steam/install-passwordless-switch.sh (Void recipe, step 14).
+# cap. Installed by common/steam/install-passwordless-switch.sh (docs/4-sessions/1-login-and-modes.md).
 # Previous (Spanish) name: 05-cerrar-steam.sh (marker /run/apagando-sistema).
 if pgrep -x steam >/dev/null 2>&1; then
     : > /run/system-shutting-down
@@ -215,7 +215,7 @@ chmod 644 "$SHUTDOWN"; ls -l "$SHUTDOWN"
 t "== 3c. %s" "$SESSION_WRAPPER"
 cat > "$SESSION_WRAPPER.tmp" <<'SESSION_EOF'
 #!/bin/sh
-# xfce4-session wrapper (installed by common/steam/install-passwordless-switch.sh; Void recipe, step 14).
+# xfce4-session wrapper (installed by common/steam/install-passwordless-switch.sh; docs/4-sessions/1-login-and-modes.md).
 # When leaving Xfce (exit button, Super+Escape, Ctrl+Alt+Del: log out, reboot or
 # power off), xfce4-session ends and the session with it: labwc --session xfce4-session (Wayland) or the
 # xinitrc (X11) close, and Steam died with Xwayland/X ("X connection to :0 broken") before the

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Diagnosis: where gamescope breaks when changing a setting of a stream through its PipeWire node
-# (2026-10-07; Legion recipe, step 14, "Screen sharing in Game Mode"). Seen on
+# (2026-10-07; docs/7-apps/1-screen-sharing.md). Seen on
 # 2026-10-07 00:07:56: Vesktop streaming the screen through gamescope's portal; when changing a
 # setting of the stream, gamescope "pipewire: warning: out of buffers" and "Segmentation fault" → the
 # launcher switches to Xfce. Valve's 2026 PipeWire fixes (e3ed1ea7, 4d143bfd) are already in
@@ -16,7 +16,7 @@
 # /var/tmp/gamescope-pipewire-trace.txt (readable by the user). The screen freezes for an instant
 # when attaching. If it does not reproduce, when leaving Game Mode gdb ends by itself.
 # Previous name: diag-gamescope-pipewire.sh (unchanged; the trace was /var/tmp/gamescope-pipewire-traza.txt:
-# the one of 2026-10-07 is archived in logs/legion/install/).
+# the one of 2026-10-07 is archived in the private repository, archive/2026-10-14/logs/legion/).
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"
 need_root

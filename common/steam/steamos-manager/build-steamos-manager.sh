@@ -1,7 +1,7 @@
 #!/bin/bash
 # Builds steamos-manager v26.4.1 (Valve, gitlab.steamos.cloud/holo/steamos-manager) with the patches
 # of this folder (0*.patch) and packs it as the "make install" tree that
-# install-steamos-manager.sh uses. WITHOUT root. Done on 2026-10-08 on the Legion (Legion recipe, step 14,
+# install-steamos-manager.sh uses. WITHOUT root. Done on 2026-10-08 on the Legion (docs/6-game-mode/3-steamos-manager.md,
 # steamos-manager): 1 min 30 s of building with 16 threads.
 # Previous (Spanish) name: compilar-steamos-manager.sh (option --conservar, now --keep).
 #

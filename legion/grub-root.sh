@@ -1,5 +1,5 @@
 #!/bin/bash
-# GRUB on the Legion (recipe docs/recipe/step-08-grub.md, step 8): entry for the Windows on the XS1000,
+# GRUB on the Legion (docs/1-platform/3-boot.md): entry for the Windows on the XS1000,
 # without the ISO's kernel, silent boot and the void-xterm theme.   sudo bash legion/grub-root.sh
 # Previous name: grub-root.sh (unchanged). Log: ~/grub-root.log.
 # The UUID of the XS1000's EFI partition (sda1 "SYSTEM") is XS1000_EFI_UUID in local.env.
@@ -26,7 +26,7 @@ if [ $WIN = 1 ]; then
     [ -e /boot/grub/custom.cfg ] && cp /boot/grub/custom.cfg /boot/grub/custom.cfg.bak
     TITLE=$(t "Windows (external disk Kingston XS1000)")     # the menu title, in the system's language
     cat > /boot/grub/custom.cfg <<CFG
-# Windows on the external Kingston XS1000 SSD (Legion recipe, step 8). The Legion boots the
+# Windows on the external Kingston XS1000 SSD (docs/1-platform/3-boot.md). The Legion boots the
 # XS1000 from its firmware, so GRUB sees it and jumping to its loader is enough (the IdeaPad, on
 # the other hand, needs the UEFI shell with OpenCore drivers). Loaded by 41_custom: it survives
 # grub-mkconfig. BEFORE choosing it: unmount Common. In Windows, shut down with Shift + Shut down.

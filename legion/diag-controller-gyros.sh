@@ -9,7 +9,7 @@
 # 54–59, int16 big endian), it also shows them by name. The first test (2026-10-05) gave 1251
 # messages through interface 2 and none with that format: that is why everything is looked at raw.
 # Previous (Spanish) name: diag-giroscopio-mandos.sh (its log of 2026-10-05, diag-giroscopio-mandos.log,
-# is archived in logs/legion/).
+# is archived in the private repository, archive/2026-10-14/logs/legion/).
 #   sudo sh legion/diag-controller-gyros.sh [seconds per phase]     (8 by default)
 # Log: ~/diag-controller-gyros.log. Legion recipe, Pending (2026-10-05).
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done

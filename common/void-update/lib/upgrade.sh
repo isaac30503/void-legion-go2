@@ -15,7 +15,7 @@
 #  5. Orphans, WITHOUT the kernels: the kernel of the previous series becomes an orphan and is the backup one.
 #  6. Cache: downloaded packages that no longer match anything installed.
 #  7. Loose kernels (those that belong to no package, e.g. the ISO's) with vkpurge.
-#  8. .new-* files in /etc: only warned about, never applied (see recipe, step 1).
+#  8. .new-* files in /etc: only warned about, never applied (see docs/2-base-system/1-system.md).
 #  9. LazyVim, if installed.
 # 10. Services that still run old code after the update (services.sh): it offers to restart them.
 # 11. SUMMARY (summary.sh): one line per check, OK / REPAIRED / WARNING.

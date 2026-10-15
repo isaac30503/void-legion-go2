@@ -1,6 +1,6 @@
 #!/bin/sh
 # grub-hidden.sh — boot straight into the newest kernel, without the GRUB menu or a wait and without GRUB
-# turning off the firmware logo (Legion recipe, step 8; the user's decision, 2026-10-04):
+# turning off the firmware logo (docs/1-platform/3-boot.md; the user's decision, 2026-10-04):
 #   - GRUB_TIMEOUT=0 + GRUB_TIMEOUT_STYLE=hidden: no menu; the first entry is the newest kernel;
 #   - GRUB_TERMINAL_OUTPUT=console: GRUB does not change the video mode for the theme (with the menu
 #     hidden it is not needed) → the firmware logo does not go off;

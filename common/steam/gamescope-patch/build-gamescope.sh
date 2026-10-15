@@ -1,6 +1,6 @@
 #!/bin/bash
 # Builds Void's gamescope package with the PipeWire patch (0003-pipewire-fix-use-after-free.patch,
-# next to it) and one revision more than the official one (Legion recipe, step 14, "Screen sharing in Game
+# next to it) and one revision more than the official one (docs/7-apps/1-screen-sharing.md, "Screen sharing in Game
 # Mode"). Without root: xbps-src builds in its own isolated environment (user namespaces).
 #   bash common/steam/gamescope-patch/build-gamescope.sh   # leaves the packages in ~/src/void-packages/hostdir/binpkgs (and debug/)
 # Done on 2026-10-07 on the Legion (16 threads): ~6 min the first time (with binary-bootstrap), ~4 the second.

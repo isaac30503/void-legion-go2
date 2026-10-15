@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # "What to share" chooser with previews, in the style of Discord, for xdg-desktop-portal-wlr
-# (Legion, 2026-10-06; recipe, step 14, "Discord (Vesktop)"). It goes in ~/.local/bin/screen-share and the
+# (Legion, 2026-10-06; docs/7-apps/1-screen-sharing.md). It goes in ~/.local/bin/screen-share and the
 # portal calls it (~/.config/xdg-desktop-portal-wlr/config: chooser_type=dmenu, chooser_cmd=this).
 # Previous (Spanish) name: compartir-pantalla (log ~/.cache/compartir-pantalla.log, window identifier
 # "compartir-pantalla"). Its texts follow the system's language (locale/<lang>/messages.po).

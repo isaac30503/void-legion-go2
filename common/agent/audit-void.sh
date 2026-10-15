@@ -1,6 +1,6 @@
 #!/bin/bash
 # audit-void.sh — READ-ONLY audit of one of the network's Void installations (IdeaPad or Legion),
-# without root. It is used by the maintenance agent (claude/agents/void-maintainer.md); it also works by hand.
+# without root. It is used by the maintenance agent (void-maintainer, in the private repository's claude/agents/); it also works by hand.
 # It changes nothing: it reports. What it finds is diagnosed, proposed and, if the user approves it,
 # fixed with a script that the user runs (root) and documented in the recipe.
 #
@@ -23,7 +23,8 @@
 # ~/.local/share/void-legion when it runs from stdin over SSH; without them, English).
 # Previous (Spanish) name: fish/void/agente/auditar-void.sh. Its section 3 compared with Common
 # ("Backups Linux": fish/, herramientas/, claude-agentes/ and the recipes); here it compares with this
-# repository (common/, legion/, lib/, claude/, install/ and the .md documents; not logs/). The files with
+# repository (common/, legion/, lib/, install/ and the .md documents) and the private companion's claude/ (cloned
+# next to it, <clone>-private). The files with
 # @PLACEHOLDERS@ count also with them filled in (local.env of the clone, and @TARGET_HOME@/@TARGET_USER@
 # = the home and name of whoever makes the index), which is how the installers write them.
 set -u
@@ -81,14 +82,16 @@ def rendered(data):
     return ph.sub(lambda m: vals[m.group(1).decode()].encode() if m.group(1).decode() in vals else m.group(0), data)
 def path_of(m):
     return m.replace("~/", home + "/", 1).replace("@TARGET_HOME@", home, 1).rstrip("/.")
-for top in ("common", "legion", "lib", "claude", "install"):
-    for d, dn, fn in os.walk(os.path.join(base, top)):
+# Claude Code's context lives in the private companion repository (claude/), cloned next to this one
+private = os.path.join(os.path.dirname(base), os.path.basename(base) + "-private")
+for root_, top in [(base, t) for t in ("common", "legion", "lib", "install")] + [(private, "claude")]:
+    for d, dn, fn in os.walk(os.path.join(root_, top)):
         if "__pycache__" in d: continue
         for f in fn:
             p = os.path.join(d, f)
             if f.endswith(".bak") or os.path.getsize(p) > 64 << 20: continue
             data = open(p, "rb").read()
-            rel = os.path.relpath(p, base)
+            rel = os.path.relpath(p, root_)
             print("M", hashlib.md5(data).hexdigest(), rel)
             if b"\0" in data[:4096]: continue
             r = rendered(data)
@@ -188,7 +191,7 @@ print("   " + _("pending updates (repodata of the last sync): %d") % len(lines))
 for l in (u.stderr.strip().splitlines()[:5]): print("!! xbps: " + l)
 kern = sorted(n for n in pk if n.startswith("linux") and n[5:6].isdigit() and "-headers" not in n)
 print("   " + _("kernels: %s; in use %s; vmlinuz: %s") % (' '.join(kern), os.uname().release, ' '.join(sorted(os.path.basename(x) for x in glob.glob('/boot/vmlinuz-*')))))
-print("   " + _("list of those installed by hand (to cross-check with the recipe):"))
+print("   " + _("list of those installed by hand (to cross-check with docs/):"))
 print("      " + " ".join(manual))
 PY
 } | python3 -I -

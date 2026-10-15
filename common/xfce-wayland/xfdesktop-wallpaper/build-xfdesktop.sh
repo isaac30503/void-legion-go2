@@ -1,6 +1,6 @@
 #!/bin/bash
 # Builds Void's xfdesktop package with the fix of the wallpaper dialog on Wayland and one revision
-# more than the official one (IdeaPad recipe, step 15, "Desktop wallpaper on Wayland"). WITHOUT root:
+# more than the official one (docs/5-desktop/4-wallpaper.md). WITHOUT root:
 # xbps-src builds in its own isolated environment (user namespaces). Same scheme as
 # legion/portal-wlr-patch/build-portal-wlr.sh and common/steam/gamescope-patch/build-gamescope.sh.
 # Previous (Spanish) name: compilar-xfdesktop.sh (folder xfdesktop-fondo/).

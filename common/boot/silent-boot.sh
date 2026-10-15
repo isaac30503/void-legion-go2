@@ -9,7 +9,7 @@
 # And it removes GRUB's loading messages in /etc/grub.d/10_linux (remove-loading.py; leaves .bak).
 #   sudo sh common/boot/silent-boot.sh            applies (leaves /etc/rc.conf.bak)
 #   sudo sh common/boot/silent-boot.sh --remove   shows everything again
-# Void recipe, step 8 ("Boot and shutdown with fewer messages").
+# docs/1-platform/3-boot.md ("Boot and shutdown with fewer messages").
 # Previous (Spanish) name: arranque/arranque-silencioso.sh (block "# >>> arranque silencioso" in rc.conf and
 # /etc/modules-load.d/dm-raid.conf.desactivado: applying or --remove also handles those old names).
 set -e
@@ -24,7 +24,7 @@ cp "$CONF" "$CONF.bak"
 sed -i "/^$BEGIN/,/^$END/d; /^$BEGIN_OLD/,/^$END_OLD/d" "$CONF"
 if [ -z "$REMOVE" ]; then
     cat >> "$CONF" <<EOF
-$BEGIN (recipe, step 8; remove: sudo sh common/boot/silent-boot.sh --remove)
+$BEGIN (docs/1-platform/3-boot.md; remove: sudo sh common/boot/silent-boot.sh --remove)
 # Silences runit's "=> …" lines and "OK"; warnings and errors still come out.
 msg() { :; }
 msg_ok() { :; }

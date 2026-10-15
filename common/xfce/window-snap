@@ -16,7 +16,7 @@
 # It looks at where the window is and places it itself with xdotool (asking xfwm4 by simulating
 # keys does not work with the real keys pressed: the shortcut has the keyboard grabbed).
 # With [window] (new-windows uses it) it does not move the pointer or activate the window.
-# Void recipe, step 13 (shortcuts).
+# docs/5-desktop/3-windows-and-shortcuts.md (shortcuts).
 # Previous (Spanish) name: ventana-acoplar izq|der|arr|abj|llena|inicio (those arguments were removed on
 # 2026-10-13; its state folder was $XDG_RUNTIME_DIR/ventana-acoplar).
 

@@ -7,7 +7,7 @@
 # Previous (Spanish) name: capturar-avisos.sh (service capturar-avisos, log /var/log/capturar-avisos.log).
 #   sudo sh common/steam/capture-syslog.sh          starts (log, in English: /var/log/capture-syslog.log)
 #   sudo sh common/steam/capture-syslog.sh --stop   stops and removes /dev/log
-# Void recipe, step 14 (diagnosis of the unix_chkpwd message when switching mode).
+# docs/4-sessions/1-login-and-modes.md (diagnosis of the unix_chkpwd message when switching mode).
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"
 need_root

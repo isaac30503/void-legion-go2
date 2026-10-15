@@ -33,7 +33,7 @@ only their pink is changed to the blue (the white, the outline and the red "unre
 It shows when opening Vesktop again. To go back to pink: delete that userAssets folder.
 Previous (Spanish) name: arte-vesktop/generar.py. Its messages follow the system's language.
   python3 common/steam/art-vesktop/generate.py    (or, from another machine: ssh lego python3 - < generate.py)
-Void recipe, step 14 (Library art).
+docs/7-apps/2-vesktop.md (Library art).
 """
 import glob, json, math, os, random, re, shutil, subprocess, sys, tempfile
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "lib"))
