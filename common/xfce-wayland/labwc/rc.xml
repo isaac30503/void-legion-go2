@@ -336,6 +336,35 @@
     <windowRule identifier="steam">
       <action name="SetDecorations" decorations="border" forceSSD="yes"/>
     </windowRule>
+    <!-- Xfce's settings (the settings manager and the dialogs it opens) are XfceTitledDialog windows: libxfce4ui
+         4.20 draws their bar itself (CSD, no switch to turn it off), so labwc gave them no frame and no teal focus
+         border. ONLY the border, like Firefox and Steam. The app_id is the binary's name. Only programs whose every
+         window is such a dialog: Thunar, the panel, xfce4-terminal and the finder also use it for secondary
+         windows, but their main windows carry labwc's bar, which "border" would remove. 2026-10-14. -->
+    <windowRule identifier="xfce4-settings-manager">
+      <action name="SetDecorations" decorations="border" forceSSD="yes"/>
+    </windowRule>
+    <windowRule identifier="xfce4-*-settings">       <!-- display, keyboard, mouse, appearance, power-manager… -->
+      <action name="SetDecorations" decorations="border" forceSSD="yes"/>
+    </windowRule>
+    <windowRule identifier="xfwm4-*settings">        <!-- xfwm4-settings, -tweaks-settings, -workspace-settings -->
+      <action name="SetDecorations" decorations="border" forceSSD="yes"/>
+    </windowRule>
+    <windowRule identifier="xfdesktop-settings">
+      <action name="SetDecorations" decorations="border" forceSSD="yes"/>
+    </windowRule>
+    <windowRule identifier="thunar-volman-settings">
+      <action name="SetDecorations" decorations="border" forceSSD="yes"/>
+    </windowRule>
+    <windowRule identifier="xfce4-settings-editor">
+      <action name="SetDecorations" decorations="border" forceSSD="yes"/>
+    </windowRule>
+    <windowRule identifier="xfce4-screensaver-preferences">
+      <action name="SetDecorations" decorations="border" forceSSD="yes"/>
+    </windowRule>
+    <windowRule identifier="xfce4-notifyd-config">
+      <action name="SetDecorations" decorations="border" forceSSD="yes"/>
+    </windowRule>
     <!-- Exception: Steam's on-screen keyboard ("Teclado en pantalla de Steam Input" / "Steam Input On-Screen
          Keyboard", RT+X; type _NET_WM_WINDOW_TYPE_UTILITY, the main window is NORMAL) comes in as it wants: the
          two rules above that apply to it are undone (the region "full" of identifier="*" and Steam's
