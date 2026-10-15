@@ -52,7 +52,7 @@ clock is on; then `OD_SCLK` shows the chosen clock, e.g. 2900/2900).
 ## Power button
 
 Like the Steam Deck: **a short press suspends; held ~3 s, the power menu opens**, in Game Mode (Steam's menu) and
-on the desktop (Xfce's logout dialog).
+on the desktop (Xfce's logout dialog). Both verified in both modes on 2026-10-14.
 
 ```bash
 sudo sh "$B/common/power-button/install-power-button.sh"   # --remove undoes it
