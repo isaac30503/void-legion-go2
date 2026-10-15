@@ -3,7 +3,7 @@
 # (2026-10-05, docs/7-apps/3-firefox.md). In Steam: Properties → Shortcut → Target =
 # ~/.local/bin/firefox-steam with the full path (install it: install -m 755 firefox-steam ~/.local/bin/).
 # Why: in gamescope there is no window manager. With "Title Bar" unchecked (for labwc,
-# step 15) Firefox draws its frame itself (client-side decorations, _MOTIF_WM_HINTS without
+# docs/7-apps/3-firefox.md) Firefox draws its frame itself (client-side decorations, _MOTIF_WM_HINTS without
 # decoration) with borders for resizing; the window could be shrunk and there was no way to go back
 # to full screen. Here:
 #  1. MOZ_GTK_TITLEBAR_DECORATION=system: Firefox does not draw its frame (it asks for the system's, and

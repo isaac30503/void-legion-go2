@@ -14,7 +14,7 @@ sudo sh "$B/legion/udev-net.sh"            # gives back to udev the interfaces i
 Then SSH, on the Legion (without root):
 
 ```bash
-ssh-keygen -q -t ed25519 -N "" -C "isaac@Legion-Go-Gen-2" -f ~/.ssh/id_ed25519
+ssh-keygen -q -t ed25519 -N "" -C "$USER@$(hostname)" -f ~/.ssh/id_ed25519
 cp "$B/legion/ssh-config" ~/.ssh/config && chmod 600 ~/.ssh/config   # Host ideapad, msi and deck
 cat ~/.ssh/id_ed25519.pub        # add this line to the IdeaPad's ~/.ssh/authorized_keys
 ```

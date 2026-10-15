@@ -1,7 +1,7 @@
 #!/bin/bash
 # new-windows — opens each new window almost full screen (region "full": the whole
 # usable area of its monitor with the 8 px gap), like the labwc rule of the Wayland session
-# (step 15). xfwm4 has no window rules, so this session watcher does it
+# (docs/5-desktop/3-windows-and-shortcuts.md). xfwm4 has no window rules, so this session watcher does it
 # (~/.config/autostart/new-windows.desktop). Event-driven: `xprop -spy` prints the list of
 # windows every time it changes; it does not query anything periodically.
 # It does not touch: the windows that were already there at start, those that are not normal (panels, desktop,
@@ -10,7 +10,7 @@
 # those that open in full screen (games). docs/5-desktop/3-windows-and-shortcuts.md.
 # Previous (Spanish) name: ventanas-nuevas (autostart ventanas-nuevas.desktop).
 
-# Only in Xfce X11: the Wayland session (labwc, step 15) also declares itself XFCE and would start
+# Only in Xfce X11: the Wayland session (labwc) also declares itself XFCE and would start
 # this autostart, but there labwc's rules do it; here it would only see the Xwayland windows.
 [ -n "$WAYLAND_DISPLAY" ] && exit 0
 

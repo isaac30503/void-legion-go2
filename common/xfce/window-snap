@@ -1,6 +1,6 @@
 #!/bin/bash
 # window-snap left|right|up|down|full|home [window] — Super+Shift+arrows and Super+Shift+Space,
-# as in the Wayland session (labwc, step 15):
+# as in the Wayland session (labwc; docs/5-desktop/3-windows-and-shortcuts.md):
 # - Arrow: snaps the window to that half; chaining another arrow, to a corner (↓ and then → =
 #   bottom-right corner); from a corner, the "opposite" arrow makes it grow to the
 #   half. **Almost maximized (region "full": the whole usable area with the 8 px gap) is the

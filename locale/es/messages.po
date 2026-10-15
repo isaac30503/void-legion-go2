@@ -2868,6 +2868,12 @@ msgstr "== sintaxis"
 msgid "== catalogs"
 msgstr "== catálogos"
 
+msgid "== links between the documents"
+msgstr "== enlaces entre los documentos"
+
+msgid "== MACs and UUIDs in the tracked files"
+msgstr "== MAC y UUID en los ficheros versionados"
+
 #: install/aliases.sh install/fetch-assets.sh install/install-i18n.sh install/install.sh install/render.sh install/verify.sh
 msgid "== paths cited by docs/"
 msgstr "== rutas que cita docs/"

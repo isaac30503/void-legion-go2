@@ -1,5 +1,7 @@
 # void-legion-go2
 
+[![ci](https://github.com/isaac30503/void-legion-go2/actions/workflows/ci.yml/badge.svg)](https://github.com/isaac30503/void-legion-go2/actions/workflows/ci.yml)
+
 **Void Linux + Xfce on the Lenovo Legion Go 2**, set up like SteamOS: the complete reinstall recipe, every
 script and configuration it uses, and the tools to apply it — so that a reinstall gives **the same
 system**, step by step, without inferring anything.
@@ -52,6 +54,8 @@ docs/       the documentation by layers (1-platform … 8-maintenance), reinstal
 legion/     pieces only for the Legion (system scripts, Xfce config, TDP DKMS, portal patches, screen-share…)
 common/     pieces shared with the IdeaPad (Game Mode, Xfce Wayland, power button, void-update, GRUB theme, fish…)
 install/    fetch-assets, render, install (stages), migrate, secrets, verify, i18n; assets.tsv
+tests/      automated tests (render, void-update's helpers, translations): bash tests/run.sh
+.github/    CI: verify.sh --ci and the tests on every push
 lib/        common.sh (helpers), i18n.sh and void_legion_i18n.py (translations)
 locale/     message catalogs (es)
 LICENSES/   license texts (SPDX) and third-party notices

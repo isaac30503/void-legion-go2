@@ -28,8 +28,10 @@ Besides, `local.env` holds **settings** of the machine that the scripts read (no
 ## What was kept on purpose
 
 - Private (RFC 1918) IP addresses of the home network (`192.168.0.x`): not reachable from outside.
-- The user name `isaac` and the hostnames (`ideapad-100`, `Legion-Go-Gen-2`): they are part of paths and of
-  the GitHub account name.
+- The user name `isaac` and the hostnames (`ideapad-100`, `Legion-Go-Gen-2`) where the documents *describe*
+  this installation (autologin user, `~/.ssh/config`…) and in the GitHub account name. **Commands and files that
+  get installed do not hard-code them:** commands use `$USER`, `$HOME`/`~` and `$(hostname)`, and templates
+  `@TARGET_USER@` / `@TARGET_HOME@` (filled by `render`), so they work for another user name as they are.
 - SSH **public** keys (`authorized_keys` lines): public by design.
 - Public identifiers of hardware and software (Lenovo WMI GUIDs, PCI ids, package maintainers' addresses).
 - The public default password of the Void live ISO (`voidlinux`).

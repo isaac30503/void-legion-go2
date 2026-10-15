@@ -63,7 +63,7 @@ sudo bash "$B/legion/desktop-2-root.sh"     # log ~/desktop-2-root.log
 the copy). Log out and, from the login screen's console (Ctrl+Alt+F2) or over SSH:
 
 ```bash
-pkill -u isaac -x xfconfd
+pkill -u "$USER" -x xfconfd
 L="$B/legion"; X="$B/common/xfce"
 mkdir -p ~/.config/xfce4/xfconf ~/.config/gtk-3.0 ~/.local/bin ~/.config/autostart
 cp -r "$L/xfce/xfce-perchannel-xml" ~/.config/xfce4/xfconf/
@@ -95,7 +95,7 @@ Wayland" / "Escritorio X11". After editing `rc.xml`: `labwc --reconfigure` (or `
 
 ## Notes
 
-- **Shell:** the login shell stays **`/bin/bash`** (`getent passwd isaac`); `~/.bashrc.d/99-exec-fish.sh`, run by a
+- **Shell:** the login shell stays **`/bin/bash`** (`getent passwd "$USER"`); `~/.bashrc.d/99-exec-fish.sh`, run by a
   block at the end of `~/.bashrc`, starts fish in interactive shells (guarded against non-interactive shells and
   loops). On purpose: with fish as the login shell the account depends on `/etc/passwd` and `/etc/shells` staying
   consistent. **Do not "fix" it with `chsh`.**

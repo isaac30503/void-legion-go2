@@ -13,9 +13,10 @@ Without root (the installer refuses `sudo`); `curl`, `git`, `ripgrep` and `xdg-u
 curl -fsSL https://claude.ai/install.sh | bash          # ~/.local/bin/claude
 P="$REPO-private"
 [ -d "$P" ] || gh repo clone isaac30503/void-legion-go2-private "$P"   # next to the clone ($REPO: reinstall, stage 2)
-mkdir -p ~/Work/.claude/agents ~/.claude/projects/-home-isaac-Work/memory
+M=~/.claude/projects/$(echo ~/Work | sed "s/[^A-Za-z0-9]/-/g")   # Claude Code's folder for ~/Work (-home-<user>-Work)
+mkdir -p ~/Work/.claude/agents "$M/memory"
 cp "$P/claude/CLAUDE-void-legion.md" ~/Work/CLAUDE.md
-cp "$P/claude/memory/"*.md ~/.claude/projects/-home-isaac-Work/memory/
+cp "$P/claude/memory/"*.md "$M/memory/"
 cp "$P/claude/agents/void-maintainer.md" ~/Work/.claude/agents/
 cd ~/Work && claude                                      # log in, on the Legion itself
 ```

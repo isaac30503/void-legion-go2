@@ -22,12 +22,45 @@ How the repository turns into the system, and how to keep it right. The tools ar
 1. Edit it in the clone (English; messages through `t` / `_` / `__vl_t`). A new message → its translation in
    `locale/es/messages.po`.
 2. A private value → `@NAME@`, and the key in `local.env` and `local.env.example`.
-3. `bash install/verify.sh`: syntax, ShellCheck (no errors or warnings), catalogs, the paths the docs cite, binaries,
-   private values (also in the git history) and the encrypted copy of `local.env`.
+3. `bash install/verify.sh`: syntax, ShellCheck (no errors or warnings), catalogs (a msgid no script uses fails),
+   links between the documents, the paths the docs cite, binaries, private values (also in the git history) and the
+   encrypted copy of `local.env`. And `bash tests/run.sh` (under a second; a changed helper → its test).
 4. Update the topic's page in `docs/` (its install, check and problems), and add a line to
    [CHANGELOG.md](../../CHANGELOG.md). The long story (diagnosis, attempts) goes to the private repository's archive.
 5. Commit (identity: the GitHub *noreply* address) and push. On the Legion: `git pull`, `bash install/render.sh`, and
    run that piece's installer again from `"$B"`.
+
+## CI and tests
+
+GitHub Actions ([`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)) runs on every push and pull request,
+without `local.env` and without the binaries:
+
+- **`bash install/verify.sh --ci`:** syntax (bash, sh, fish 4, Python 3.14, XML), ShellCheck **0.11.0** (the same as
+  the machines: fixed by version and sha256, so a new release does not change the result), catalogs, links, the paths
+  the docs cite, and a search for anything shaped like a MAC or a UUID in the tracked files (allowed: the made-up
+  `02:00:00:…` / `0000…` ones and the kernel's public WMI GUIDs). It cannot look for the real values: that is
+  `verify.sh --secrets`, here, before every commit.
+- **`bash tests/run.sh`:** `render.sh` on a copy of the clone with `local.env.example` (no placeholder left, values
+  and `$HOME` filled in, modes kept, `--check` with a missing value fails); `void-update`'s helpers (pending list from
+  `xbps-install -Mun`, version coloring, the configuration reader: bad values ignored and never run as code); and
+  `t` (Spanish, English, unknown language, message not in the catalog). No root, network or Void needed.
+
+The actions are pinned by commit (`@<sha>  # vX.Y.Z`); to update one, take the commit of its new tag
+(`gh api repos/actions/checkout/git/ref/tags/vX.Y.Z --jq .object.sha`). A red CI on `main` is fixed before anything
+else.
+
+## Versions
+
+The repository is one system, so its versions are **dates**: an annotated tag **`vYYYY.MM.DD`** on the commit that
+closes a [CHANGELOG.md](../../CHANGELOG.md) entry (with CI green), whose message is that entry:
+
+```bash
+git tag -a v2026.10.14 -m "$(sed -n '/^## 2026-10-14/,/^## /p' CHANGELOG.md | sed '1d;$d')"
+git push origin v2026.10.14
+```
+
+Two kinds of tags, not to be mixed: `vYYYY.MM.DD` (the system and its docs) and `assets-YYYY-MM-DD` (the Release of
+binaries, read by `fetch-assets.sh`). `recipe-single-file` marks the last commit with the old single-file recipe.
 
 ## Changing a binary
 
@@ -51,6 +84,7 @@ other machine `bash install/secrets.sh open`. `verify.sh --secrets` fails while 
 
 ```bash
 bash install/verify.sh --secrets     # no private value in the clone or its history; local.env and its copy match
+bash tests/run.sh                    # the same tests as the CI
 ```
 
 New logs or captures are the usual source of leaks (serial numbers, MACs, UUIDs): replace them with `@NAME@`. Logs

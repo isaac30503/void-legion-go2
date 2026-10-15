@@ -6,7 +6,7 @@
 #     mode (steam-game-mode-direct or xfce-wayland/xfce). lightdm reads that folder BEFORE lightdm.conf, so
 #     the autologin-user/autologin-session lines that the ISO brought are commented out in lightdm.conf;
 #   - /usr/local/bin/switch-mode-root game|desktop|desktop-x11 (root): changes that session
-#     and restarts lightdm (desktop = Xfce on Wayland/labwc, step 15; desktop-x11 = Xfce X11);
+#     and restarts lightdm (desktop = Xfce on Wayland/labwc, docs/5-desktop/1-xfce.md; desktop-x11 = Xfce X11);
 #   - /etc/sudoers.d/zz-switch-mode: the user can run ONLY that script without password (the script
 #     only accepts those arguments); it is validated with visudo before being put in place. The name starts
 #     with "zz" on purpose: sudoers.d is read in alphabetical order and the LAST matching rule wins;
@@ -105,7 +105,7 @@ D=$DROP
 case "\$1" in
     --check)            [ -f "\$D" ]; exit \$? ;;
     game)               s=steam-game-mode-direct ;;
-    # The desktop is Xfce on Wayland (labwc, step 15) since 2026-10-03; X11 stays as the
+    # The desktop is Xfce on Wayland (labwc, docs/5-desktop/1-xfce.md) since 2026-10-03; X11 stays as the
     # fallback.
     desktop)            s=xfce-wayland ;;
     desktop-x11)        s=xfce ;;

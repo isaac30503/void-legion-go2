@@ -1,6 +1,6 @@
 #!/bin/bash
-# "What to share" chooser with previews for xdg-desktop-portal-wlr (Legion, 2026-10-06; recipe,
-# step 14, "Discord (Vesktop)"). Without root. Requirements (root, once):
+# "What to share" chooser with previews for xdg-desktop-portal-wlr (Legion, 2026-10-06;
+# docs/7-apps/1-screen-sharing.md). Without root. Requirements (root, once):
 #   sudo xbps-install -S xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr grim fuzzel
 # (fuzzel: text-mode fallback; see below). Usage, from the desktop session or over SSH:
 #   bash legion/screen-share/install.sh            # install

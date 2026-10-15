@@ -3,6 +3,9 @@
 #   bash install/verify.sh              all: syntax, catalogs, recipe paths, binaries, private values
 #   bash install/verify.sh --secrets    only the private values and the encrypted copy of local.env (before every
 #                                       commit; docs/sanitization.md)
+#   bash install/verify.sh --ci         what can be checked without local.env and the Release binaries (GitHub
+#                                       Actions, .github/workflows/ci.yml): the checks of "all" except binaries and
+#                                       secrets, plus a generic search for MACs and UUIDs; ShellCheck is required
 # Exit 1 if something fails.
 set -uo pipefail
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
@@ -74,7 +77,22 @@ sealed() {
     bash install/secrets.sh status || bad=1
 }
 
-if [ "${1:-}" = --secrets ]; then secrets; sealed; exit $bad; fi
+# Without local.env (CI): the real values are unknown, so look for anything shaped like a MAC or a UUID in the
+# tracked files; allowed: the made-up ones (02:00:00:…, 0000…) and the public WMI GUIDs of the kernel sources
+leaks() {
+    t "== MACs and UUIDs in the tracked files"
+    git ls-files -z | xargs -0 grep -IHnoE '\b([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}\b|\b[0-9A-Fa-f]{8}(-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12}\b' \
+        | grep -vE ':(02:00:00:[0-9:]+|0{8}-0{4}-0{4}-0{4}-0{11}[0-9])$' | grep -v '^legion/tdp/lenovo-wmi-tdp/' > "${TMPDIR:-/tmp}/verify-leaks.$$"
+    if [ -s "${TMPDIR:-/tmp}/verify-leaks.$$" ]; then sed 's/^/!! /' "${TMPDIR:-/tmp}/verify-leaks.$$"; fail "MACs or UUIDs (use @NAME@: docs/sanitization.md)"
+    else ok "none"; fi
+    rm -f "${TMPDIR:-/tmp}/verify-leaks.$$"
+}
+
+ci=''
+case "${1:-}" in
+    --secrets) secrets; sealed; exit $bad ;;
+    --ci) ci=1 ;;
+esac
 
 t "== syntax"
 while IFS= read -r f; do
@@ -100,6 +118,8 @@ if command -v shellcheck >/dev/null; then
     done < <(git ls-files --cached --others --exclude-standard 2>/dev/null)
     if out=$(shellcheck -S warning "${sh_files[@]}" 2>&1); then ok "shellcheck (${#sh_files[@]})"
     else printf '%s\n' "$out" | grep -E '^In |SC[0-9]+' | head -20; fail "shellcheck"; fi
+elif [ -n "$ci" ]; then
+    fail "shellcheck is not installed"
 else
     t "   note: shellcheck is not installed (sudo xbps-install -S shellcheck)"
 fi
@@ -118,9 +138,48 @@ for i, t in zip(ids, strs):
 PY
     fi
 done
+# Every msgid has to be used by some script (otherwise it is a leftover of a removed or reworded message)
+python3 -I - <<'PY' && ok "no unused entries" || fail "unused catalog entries"
+import re, subprocess, glob
+files = subprocess.run(["git", "ls-files"], capture_output=True, text=True).stdout.split("\n")
+src = ""
+for f in files:
+    if f and not f.startswith(("locale/", "docs/")) and not f.endswith((".md", ".po", ".xbps", ".tar.gz", ".png", ".svg", ".ttf", ".zst")):
+        try: src += open(f, encoding="utf-8").read() + "\n"
+        except (UnicodeDecodeError, IsADirectoryError, FileNotFoundError): pass
+# Python messages split over several lines ("a " "b"): join adjacent literals
+flat = re.sub(r'"\s*\n\s*"', '', src)
+bad = 0
+for po in sorted(glob.glob("locale/*/messages.po")):
+    for i in re.findall(r'^msgid "(.*)"$', open(po, encoding="utf-8").read(), re.M):
+        if i and not any(c in src or c in flat for c in {i, i.replace('\\"', '"')}):
+            print("!! unused in %s: %s" % (po, i[:100])); bad += 1
+raise SystemExit(1 if bad else 0)
+PY
+
+t "== links between the documents"
+python3 -I - <<'PY' && ok "all .md links resolve" || fail "broken links"
+import re, os, subprocess
+def anchors(path):
+    out = set()
+    for l in open(path, encoding="utf-8"):
+        if l.startswith("#"):
+            out.add(re.sub(r"[^\w\- ]", "", l.lstrip("#").strip().lower()).replace(" ", "-"))
+    return out
+bad = 0
+for md in subprocess.run(["git", "ls-files", "*.md"], capture_output=True, text=True).stdout.split():
+    text = re.sub(r"```.*?```", "", open(md, encoding="utf-8").read(), flags=re.S)
+    for target in re.findall(r"\]\(([^)\s]+)\)", text):
+        if re.match(r"[a-z]+:", target): continue
+        f, _, a = target.partition("#")
+        q = os.path.normpath(os.path.join(os.path.dirname(md), f)) if f else md
+        if not os.path.exists(q): print("!! %s: %s (missing)" % (md, target)); bad += 1
+        elif a and q.endswith(".md") and a not in anchors(q): print("!! %s: %s (no such heading)" % (md, target)); bad += 1
+raise SystemExit(1 if bad else 0)
+PY
 
 t "== paths cited by docs/"
-python3 -I - <<'PY' || bad=1
+python3 -I - <<'PY' && ok "docs/" || fail "paths cited by docs/"
 import re, os, sys
 import glob
 s = "".join(open(f, encoding="utf-8").read() for f in sorted(glob.glob("docs/**/*.md", recursive=True)))
@@ -132,7 +191,8 @@ for p in set(re.findall(r'"\$B/([^"{*<…]+)"', s)):
 for m in sorted(miss): print("!! missing:", m)
 sys.exit(1 if miss else 0)
 PY
-[ $bad = 0 ] && ok "docs/"
+
+if [ -n "$ci" ]; then leaks; exit $bad; fi
 
 t "== binaries of the Release"
 bash install/fetch-assets.sh --check >/dev/null 2>&1 && ok "all present (install/fetch-assets.sh --check)" \
