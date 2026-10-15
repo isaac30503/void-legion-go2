@@ -4,6 +4,7 @@
 name: ci
 on:
   push:
+    branches: ['**']   # not on tags: a tag points to a commit already checked
   pull_request:
   workflow_dispatch:
 permissions:

@@ -97,7 +97,7 @@ esac
 t "== syntax"
 while IFS= read -r f; do
     case "$f" in
-        *.fish) fish -n "$f" 2>/dev/null || fail "$f" ;;
+        *.fish) if command -v fish >/dev/null; then fish -n "$f" 2>/dev/null || fail "$f"; else nofish=1; fi ;;
         *.py)   python3 -m py_compile "$f" 2>/dev/null || fail "$f" ;;
         *.xml)  command -v xmllint >/dev/null && { xmllint --noout "$f" 2>/dev/null || fail "$f"; } ;;
         *)      case "$(head -c 64 "$f" | tr -d '\0')" in
@@ -109,6 +109,10 @@ while IFS= read -r f; do
 done < <(git ls-files --cached --others --exclude-standard 2>/dev/null | grep . || find common legion lib install -type f)
 find . -name __pycache__ -prune -exec rm -rf {} + 2>/dev/null
 ok "scripts"
+# Without fish the .fish files cannot be checked: a note (the CI installs it, and there it is a failure)
+if [ -n "${nofish:-}" ]; then
+    if [ -n "$ci" ]; then fail "fish is not installed"; else t "   note: fish is not installed: the .fish files were not checked"; fi
+fi
 # Static analysis with ShellCheck, if installed: no errors or warnings in any shell script (notes are allowed; 2026-10-14)
 if command -v shellcheck >/dev/null; then
     sh_files=()
