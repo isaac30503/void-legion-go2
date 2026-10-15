@@ -106,7 +106,10 @@ elif [ "$(id -u)" != 0 ]; then
 fi  # otherwise (root shell without sudo): TARGET_USER from local.env, if it is there
 TARGET_USER=${TARGET_USER:-}
 if [ -n "$TARGET_USER" ]; then
-    TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
+    # A user that does not exist (a root shell with TARGET_USER of local.env wrong or still the example's) has
+    # to stop with a message: otherwise getent fails and scripts with set -e end silently
+    TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6) || TARGET_HOME=""
+    [ -n "$TARGET_HOME" ] || { t "!! The user %s does not exist (TARGET_USER in %s)." "$TARGET_USER" "$REPO_ROOT/local.env" >&2; exit 1; }
 else
     TARGET_HOME=""
 fi

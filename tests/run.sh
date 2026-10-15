@@ -33,10 +33,18 @@ test_render() {
     HOME=$H bash "$W/install/render.sh" --check >/dev/null 2>&1; check "render --check: complete" 0 $?
     sed -i '/^WIFI_SSID=/d' "$W/local.env"
     HOME=$H bash "$W/install/render.sh" --check >/dev/null 2>&1; check "render --check: a value missing" 1 $?
+    # as root (a user namespace) with a TARGET_USER that does not exist: a message, not a silent exit
+    if unshare -r true 2>/dev/null; then
+        out=$(LANGUAGE=C HOME=$H unshare -r bash "$W/install/render.sh" 2>&1); check "render as root, unknown user: exit" 1 $?
+        check "render as root, unknown user: message" "!! The user me does not exist (TARGET_USER in $W/local.env)." "$out"
+    else
+        echo "   (skipped: no user namespaces here) render as root, unknown user"
+    fi
 }
 
 # ---- void-update ------------------------------------------------------------------------------------------
 test_void_update() (
+    pass=0; failed=0   # a subshell: it counts its own and reports them through a file
     export XDG_STATE_HOME=$TMP/state XDG_CONFIG_HOME=$TMP/config XDG_RUNTIME_DIR=$TMP
     mkdir -p "$XDG_CONFIG_HOME/void-update"
     cat > "$XDG_CONFIG_HOME/void-update/void-update.conf" <<'CONF'

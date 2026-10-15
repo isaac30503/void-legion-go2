@@ -14,6 +14,9 @@ msgstr "Correr con sudo."
 msgid "Run it without sudo, as your normal user."
 msgstr "Correr sin sudo, como tu usuario normal."
 
+msgid "!! The user %s does not exist (TARGET_USER in %s)."
+msgstr "!! El usuario %s no existe (TARGET_USER en %s)."
+
 #: lib/common.sh
 msgid "Missing %s in %s (copy local.env.example to local.env and fill it in)."
 msgstr "Falta %s en %s (copiar local.env.example a local.env y rellenarlo)."
