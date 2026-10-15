@@ -1,5 +1,5 @@
 #!/bin/bash
-# install.sh — the Legion's reinstall list (docs/void-legion-go2.md, "Full list, in order", points A–M) as
+# install.sh — the Legion's reinstall list (docs/recipe/00-reinstall-list.md, points A–M) as
 # numbered stages. Run it as the user (not with sudo): it asks for sudo where the recipe does. The stages that
 # are done by hand (Steam, desktop, log in…) are shown and it waits for Enter; at a reboot it stops and says
 # how to go on. The recipe is the reference: each stage says which point/step it is, and its commands are the
@@ -124,7 +124,7 @@ stage "J2. microSD (step 14) — with Steam CLOSED" run \
 'sudo sh "$B/legion/microsd-at-boot.sh"
 t "-> in Steam, add /mnt/microsd as a library"'
 stage "K. By hand in Steam and on the desktop (list, point K: developer mode and Wi-Fi power management, keyboard, xterm and Firefox as games, Decky, art, controller layout, Bluetooth, VRR, Vesktop and portals, audio order)" manual \
-'# Follow point K of the list in docs/void-legion-go2.md, item by item (1–12). The scripted parts of it:
+'# Follow point K of the list in docs/recipe/00-reinstall-list.md, item by item (1–12). The scripted parts of it:
 #   install -m 755 "$B/common/steam/xterm-steam" "$B/common/steam/firefox-steam" ~/.local/bin/
 #   sudo sh "$B/common/steam/install-decky.sh"
 #   python3 "$B/common/steam/art-xterm/generate.py"            (Steam closed)

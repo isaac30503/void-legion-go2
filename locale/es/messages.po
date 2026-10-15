@@ -3438,8 +3438,8 @@ msgstr "Después, la línea de authorized_keys del paso 1, y: sudo rmdir /mnt/ho
 msgid "(list, point I)"
 msgstr "(lista, punto I)"
 
-msgid "Follow point K of the list in docs/void-legion-go2.md, item by item (1–12). The scripted parts of it:"
-msgstr "Seguir el punto K de la lista de docs/void-legion-go2.md, apartado por apartado (1–12). Sus partes con script:"
+msgid "Follow point K of the list in docs/recipe/00-reinstall-list.md, item by item (1–12). The scripted parts of it:"
+msgstr "Seguir el punto K de la lista de docs/recipe/00-reinstall-list.md, apartado por apartado (1–12). Sus partes con script:"
 
 msgid "  python3 \"$B/common/steam/art-xterm/generate.py\"            (Steam closed)"
 msgstr "  python3 \"$B/common/steam/art-xterm/generate.py\"            (con Steam cerrado)"

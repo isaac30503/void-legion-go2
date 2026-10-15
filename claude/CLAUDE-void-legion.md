@@ -19,7 +19,7 @@ x86_64, rolling) with **Xfce**, installed on 2026-10-03 **wiping SteamOS**. The 
 **Xfce on Wayland (labwc)**; Xfce X11 stays as a backup; on power-on it enters the last mode used
 (Game Mode or desktop). User
 `isaac` (in `wheel`), hostname `Legion-Go-Gen-2` (`Legion-Go-Gen-2.local` over mDNS).
-**Recipe: `<repo>/docs/void-legion-go2.md`** (originally `Backups Linux/void-legion-go2.md`), which copies the
+**Recipe: `<repo>/docs/void-legion-go2.md`** (the index; one file per step in `<repo>/docs/recipe/`, `step-NN-….md`, since 2026-10-14) (originally `Backups Linux/void-legion-go2.md`), which copies the
 IdeaPad's and only explains what changes; own pieces in `<repo>/legion/` (originally `fish/void/legion/`).
 **Ordered for reinstalling** (2026-10-05): it starts with the full list in order (also what is done by hand in
 Steam), it has *Troubleshooting* (symptom → what to do) and the step numbers are the IdeaPad's.
@@ -331,7 +331,7 @@ unmount it cleanly before booting its Windows.**
 
 | Document | Path inside `Common` | In this repository |
 |---|---|---|
-| **This machine's recipe** | `Backups Linux/void-legion-go2.md` | `docs/void-legion-go2.md` |
+| **This machine's recipe** | `Backups Linux/void-legion-go2.md` | `docs/void-legion-go2.md` (index) + `docs/recipe/` |
 | Own pieces (scripts, Xfce, keyboard) | `Backups Linux/fish/void/legion/` | `legion/` |
 | The IdeaPad's recipe (the base) | `Backups Linux/void-ideapad-100.md` | steps 1–15 in `docs/reference/void-ideapad-100-steps.md` |
 | Previous recipe of here (SteamOS), reference | `Backups Linux/Handheld/new/steamos-nativo-legion-go2.md` | not included |

@@ -25,7 +25,7 @@ about a problem, say **on which machine** it is (IdeaPad or Legion) and **which 
    ask the user.
    - IdeaPad recipe: `<disk>/void-ideapad-100.md` (it starts with the full list for reinstalling); its steps
      1–15 in English: `<repo>/docs/reference/void-ideapad-100-steps.md`.
-   - Legion recipe: `<repo>/docs/void-legion-go2.md` (`<disk>/void-legion-go2.md` in Spanish; it copies the
+   - Legion recipe: `<repo>/docs/void-legion-go2.md` (index; one file per step in `<repo>/docs/recipe/`) (`<disk>/void-legion-go2.md` in Spanish; it copies the
      IdeaPad's and explains only what changes).
    - Claude contexts: `<disk>/CLAUDE-void-ideapad.md`, `<repo>/claude/CLAUDE-void-legion.md` (copies of
      `~/Work/CLAUDE.md`).

@@ -122,7 +122,8 @@ done
 t "== paths cited by the recipe"
 python3 -I - <<'PY' || bad=1
 import re, os, sys
-s = open("docs/void-legion-go2.md", encoding="utf-8").read()
+import glob
+s = "".join(open(f, encoding="utf-8").read() for f in ["docs/void-legion-go2.md"] + sorted(glob.glob("docs/recipe/*.md")))
 miss = []
 for p in set(re.findall(r'"\$B/([^"{*<…]+)"', s)):
     p = p.rstrip("/")
@@ -131,7 +132,7 @@ for p in set(re.findall(r'"\$B/([^"{*<…]+)"', s)):
 for m in sorted(miss): print("!! missing:", m)
 sys.exit(1 if miss else 0)
 PY
-[ $bad = 0 ] && ok "docs/void-legion-go2.md"
+[ $bad = 0 ] && ok "docs/void-legion-go2.md + docs/recipe/"
 
 t "== binaries of the Release"
 bash install/fetch-assets.sh --check >/dev/null 2>&1 && ok "all present (install/fetch-assets.sh --check)" \
