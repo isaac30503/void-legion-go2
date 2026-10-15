@@ -37,7 +37,7 @@ Verified on the hardware (dates and details in the recipe's *Verification* and *
 
 | | |
 |---|---|
-| **The recipe** | [docs/void-legion-go2.md](docs/void-legion-go2.md) — starts with the full list in order (points A–M), then every step with its why and its check, *Troubleshooting*, *Verification*, *Pending*, *History* |
+| **The recipe** | [docs/void-legion-go2.md](docs/void-legion-go2.md) — the index; one file per step in [docs/recipe/](docs/recipe/) (`step-NN-…`): first the full list in order (points A–M), then every step with its why and its check, *Troubleshooting*, *Verification*, *Pending*, *History* |
 | The base recipe (IdeaPad), steps 1–15 | [docs/reference/void-ideapad-100-steps.md](docs/reference/void-ideapad-100-steps.md) — "same as the IdeaPad, step N" points here |
 | Installing | [install/README.md](install/README.md) — `fetch-assets.sh`, `render.sh`, `install.sh` (the list as resumable stages) |
 | Names | [docs/glossary.md](docs/glossary.md) — the original was in Spanish; old name → new name of every script, command, service and file |

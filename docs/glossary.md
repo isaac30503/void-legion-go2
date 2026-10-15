@@ -103,7 +103,7 @@ files in `logs/` keep their original names.
 | `fish/void/legion/registros-legion/` | `logs/legion/` |
 | `fish/void/legion/diagnosticos-2026-10-04/` | `logs/legion-diagnostics-2026-10-04/` |
 | `fish/void/steam/diag-lightdm.txt` | `logs/ideapad/diag-lightdm.txt` |
-| `void-legion-go2.md` | `docs/void-legion-go2.md` |
+| `void-legion-go2.md` | `docs/void-legion-go2.md` (the index) and `docs/recipe/` (one file per step, since 2026-10-14) |
 | `void-ideapad-100.md (steps 1–15 and Troubleshooting)` | `docs/reference/void-ideapad-100-steps.md` |
 | `CLAUDE-void-legion.md` | `claude/CLAUDE-void-legion.md` |
 | `claude-agentes/mantenedor-void.md (agent `mantenedor-void`)` | `claude/agents/void-maintainer.md (agent `void-maintainer`)` |

@@ -5,7 +5,7 @@ metadata:
   type: feedback
 ---
 
-The recipe (`void-legion-go2.md` here, `docs/void-legion-go2.md` in the repository; `void-ideapad-100.md` on the IdeaPad) has to be followable to the letter to reinstall the
+The recipe (`void-legion-go2.md` here, `docs/void-legion-go2.md` in the repository, the index of `docs/recipe/`; `void-ideapad-100.md` on the IdeaPad) has to be followable to the letter to reinstall the
 same system: each thing applied with its exact command, in its step and in the right order, with
 the check next to it, and the files it needs backed up on the disk (in the repository: in git, or as an asset
 of the GitHub Release).

@@ -10,7 +10,8 @@ change goes in its step, *Verification*, *Troubleshooting* if it applies, and *H
 2. If it carries a private value, write `@NAME@` and add the key to `local.env` and `local.env.example`
    ([sanitization.md](sanitization.md)).
 3. `bash install/verify.sh` (syntax, catalogs, paths of the recipe, private values).
-4. Update `docs/void-legion-go2.md` (the step, and an entry in *History*), commit and push.
+4. Update the step's file in `docs/recipe/` (`step-NN-….md`; the index is `docs/void-legion-go2.md`) and add an
+   entry to `docs/recipe/history.md`, commit and push.
 5. On the Legion: `git pull`, `bash install/render.sh`, and run the installer of that piece again from `"$B"`.
 
 ## Changing a binary (a rebuilt `.xbps`, a new InputPlumber, Orchis…)

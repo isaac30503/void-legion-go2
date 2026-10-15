@@ -1,5 +1,5 @@
 #!/bin/bash
-# GRUB on the Legion (recipe docs/void-legion-go2.md, step 8): entry for the Windows on the XS1000,
+# GRUB on the Legion (recipe docs/recipe/step-08-grub.md, step 8): entry for the Windows on the XS1000,
 # without the ISO's kernel, silent boot and the void-xterm theme.   sudo bash legion/grub-root.sh
 # Previous name: grub-root.sh (unchanged). Log: ~/grub-root.log.
 # The UUID of the XS1000's EFI partition (sda1 "SYSTEM") is XS1000_EFI_UUID in local.env.
