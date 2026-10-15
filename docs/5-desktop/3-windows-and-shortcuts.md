@@ -59,6 +59,13 @@ never go straight to almost maximized.
   own bar. In Firefox, **"Barra de título" ("Title Bar") unchecked** (☰ → Más herramientas → Personalizar barra de
   herramientas… / More tools → Customize toolbar…): it is Firefox's default (`browser.tabs.inTitlebar` = 2,
   automatic); only a very old restored profile may have it checked.
+- **Xfce's settings: only labwc's border too.** The settings manager and its dialogs are `XfceTitledDialog` windows,
+  whose bar libxfce4ui 4.20 draws itself (CSD, no switch to turn it off): without a rule they had no frame and no
+  teal focus border. Rules by app_id (the binary's name): `xfce4-settings-manager`, `xfce4-*-settings`,
+  `xfwm4-*settings`, `xfdesktop-settings`, `thunar-volman-settings`, `xfce4-settings-editor`,
+  `xfce4-screensaver-preferences`, `xfce4-notifyd-config`. **Not** Thunar, the panel, xfce4-terminal or the finder:
+  they use that dialog only for secondary windows (preferences, properties), and "border" would take labwc's bar off
+  their main windows. To see a window's app_id: the Docklike knows it (libxfce4windowing).
 - **Exceptions at the end of `<windowRules>`:**
 
   ```xml
