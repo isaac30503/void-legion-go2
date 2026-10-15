@@ -62,7 +62,7 @@ if has "$H/.local/bin/compartir-pantalla"; then
     add user "screen-share chooser: compartir-pantalla → screen-share" 'bash "$B/legion/screen-share/install.sh"'
 fi
 
-# Root pieces (sudo), in the recipe's order
+# Root pieces (sudo), in the order of docs/reinstall.md
 if has /usr/local/bin/steam-modo-juego; then
     lsflag=--no-loading-screen; has /usr/local/bin/steam-cargando && lsflag=
     add root "Game Mode: steam-modo-juego → steam-game-mode $lsflag" "sudo sh \"\$B/common/steam/install-game-mode.sh\" $lsflag"

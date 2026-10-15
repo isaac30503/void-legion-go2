@@ -10,7 +10,7 @@
 #     the tablet's iio sources it discards Gyroscope:Center and Accelerometer:Center.
 # It is lost on reboot, when the controller reconnects or when InputPlumber restarts (then, repeat).
 # Result on 2026-10-05: it does NOT work like this (InputPlumber 0.81 does not apply the whole filter;
-# Legion recipe, Pending → Decided).
+# docs/3-hardware-support/1-controllers.md, Known limits).
 # Previous (Spanish) name: giro-mando-derecho.sh (its log of 2026-10-05 is archived in the private repository, archive/2026-10-14/logs/legion/).
 #   sudo sh legion/right-controller-gyro.sh          # apply
 #   sudo sh legion/right-controller-gyro.sh --undo   # back to the tablet (saved filter + bypass: no)

@@ -2,7 +2,7 @@
 # audit-void.sh — READ-ONLY audit of one of the network's Void installations (IdeaPad or Legion),
 # without root. It is used by the maintenance agent (void-maintainer, in the private repository's claude/agents/); it also works by hand.
 # It changes nothing: it reports. What it finds is diagnosed, proposed and, if the user approves it,
-# fixed with a script that the user runs (root) and documented in the recipe.
+# fixed with a script that the user runs (root) and documented in docs/.
 #
 # Usage, on the machine itself (with the repository's clone there, or with an index):
 #   bash audit-void.sh [--repo <repo>] [--index FILE] [--sample SECONDS]

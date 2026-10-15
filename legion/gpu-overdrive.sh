@@ -6,7 +6,7 @@
 # It goes with the [gpu_performance] section of steamos-manager's profile
 # (common/steam/steamos-manager/install-steamos-manager.sh leaves it as it comes). With the manual clock
 # DISABLED in Steam, steamos-manager's log shows "Error setting manual GPU clock: Invalid argument" unless
-# the set_clocks patch is installed (recipe, Troubleshooting "Performance"). 2026-10-08: it was removed
+# the set_clocks patch is installed (docs/3-hardware-support/2-power.md, "Manual GPU clock"). 2026-10-08: it was removed
 # due to a misunderstanding and put back.
 # It goes in modprobe.d (amdgpu is a module) and not in GRUB: common/boot/silent-boot.sh rewrites the whole
 # kernel line. dracut copies /etc/modprobe.d into the initramfs: the one of ALL installed kernels is

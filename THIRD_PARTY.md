@@ -19,7 +19,7 @@ not assumed.
 | Plymouth theme `bgrt-void`: generated from Plymouth's `bgrt` and `spinner` themes (not used any more: Plymouth was removed on 2026-10-05) | `common/boot/plymouth-void/generate.py` (it reads the installed themes; nothing of them is in the repository) | Plymouth developers | `GPL-2.0-or-later` (Plymouth's) |
 
 Read at run time from the installed system, not included: the Vesktop logo (`dev.vencord.Vesktop.svg`, Vesktop,
-`GPL-3.0`) recolored by `common/steam/art-vesktop/generate.py`, and Papirus's terminal icon used by
+`GPL-3.0-or-later` — [text](LICENSES/GPL-3.0-or-later.txt)) recolored by `common/steam/art-vesktop/generate.py`, and Papirus's terminal icon used by
 `common/steam/art-xterm/generate.py`.
 
 ## Our patches to other projects

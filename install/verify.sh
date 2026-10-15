@@ -1,6 +1,7 @@
 #!/bin/bash
 # verify.sh — checks of the clone (without root; changes nothing):
-#   bash install/verify.sh              all: syntax, catalogs, recipe paths, binaries, private values
+#   bash install/verify.sh              all: syntax, ShellCheck, catalogs, links, paths cited by docs/, binaries,
+#                                       private values
 #   bash install/verify.sh --secrets    only the private values and the encrypted copy of local.env (before every
 #                                       commit; docs/sanitization.md)
 #   bash install/verify.sh --ci         what can be checked without local.env and the Release binaries (GitHub
@@ -142,24 +143,9 @@ for i, t in zip(ids, strs):
 PY
     fi
 done
-# Every msgid has to be used by some script (otherwise it is a leftover of a removed or reworded message)
-python3 -I - <<'PY' && ok "no unused entries" || fail "unused catalog entries"
-import re, subprocess, glob
-files = subprocess.run(["git", "ls-files"], capture_output=True, text=True).stdout.split("\n")
-src = ""
-for f in files:
-    if f and not f.startswith(("locale/", "docs/")) and not f.endswith((".md", ".po", ".xbps", ".tar.gz", ".png", ".svg", ".ttf", ".zst")):
-        try: src += open(f, encoding="utf-8").read() + "\n"
-        except (UnicodeDecodeError, IsADirectoryError, FileNotFoundError): pass
-# Python messages split over several lines ("a " "b"): join adjacent literals
-flat = re.sub(r'"\s*\n\s*"', '', src)
-bad = 0
-for po in sorted(glob.glob("locale/*/messages.po")):
-    for i in re.findall(r'^msgid "(.*)"$', open(po, encoding="utf-8").read(), re.M):
-        if i and not any(c in src or c in flat for c in {i, i.replace('\\"', '"')}):
-            print("!! unused in %s: %s" % (po, i[:100])); bad += 1
-raise SystemExit(1 if bad else 0)
-PY
+# Every message of the scripts has its entry, and every entry is used (install/catalog.py; after adding or removing
+# messages, "python3 install/catalog.py refs" rewrites the "#:" comments)
+python3 -I install/catalog.py check && ok "every message translated, no unused entries" || fail "catalog out of step with the scripts"
 
 t "== links between the documents"
 python3 -I - <<'PY' && ok "all .md links resolve" || fail "broken links"

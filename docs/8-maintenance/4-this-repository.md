@@ -7,7 +7,7 @@ How the repository turns into the system, and how to keep it right. The tools ar
 
 - **Private values** are written `@NAME@`; the real ones are in `local.env` (git-ignored), whose copy encrypted with
   age lives in the private companion repository (`install/secrets.sh`; [sanitization](../sanitization.md)).
-  `install/render.sh` makes **`build/`**, the clone with the values filled in: the recipe's blocks run from
+  `install/render.sh` makes **`build/`**, the clone with the values filled in: the blocks of docs/ run from
   `"$B"` = `<clone>/build`.
 - **Binaries** (built packages, official binaries, fonts, themes) are **GitHub Release assets**, not git, listed with
   their sha256 in `install/assets.tsv`; `install/fetch-assets.sh` puts them where the scripts look for them. The Release
@@ -19,8 +19,8 @@ How the repository turns into the system, and how to keep it right. The tools ar
 
 ## Changing a script or a configuration
 
-1. Edit it in the clone (English; messages through `t` / `_` / `__vl_t`). A new message → its translation in
-   `locale/es/messages.po`.
+1. Edit it in the clone (English; messages through `t` / `_` / `__vl_t`). A new or changed message → its entry in
+   `locale/es/messages.po`, then `python3 install/catalog.py refs` ([i18n](../i18n.md#rules-for-writing-messages)).
 2. A private value → `@NAME@`, and the key in `local.env` and `local.env.example`.
 3. `bash install/verify.sh`: syntax, ShellCheck (no errors or warnings), catalogs (a msgid no script uses fails),
    links between the documents, the paths the docs cite, binaries, private values (also in the git history) and the
