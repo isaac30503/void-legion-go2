@@ -9,7 +9,7 @@
 #   - In the session "Steam (Game Mode)" (gamescope; XDG_SESSION_DESKTOP=gamescope, set by
 #     steam-game-mode): gamescope's Xwayland does not have ~/.Xresources loaded (lightdm does that
 #     only in the Xfce session), and gamescope does not maximize: it is loaded and the
-#     size to fill the screen is computed (cell of 8×18 px + 4 px of border at 96 DPI, step 11).
+#     size to fill the screen is computed (cell of 8×18 px + 4 px of border at 96 DPI; docs/5-desktop/2-look-and-feel.md).
 # docs/6-game-mode/1-steam.md. Previous name: xterm-steam (unchanged).
 unset LD_PRELOAD
 unset LC_ALL

@@ -1,6 +1,6 @@
 #!/bin/sh
-# SteamOS's gamescope portal (xdg-desktop-portal-gamescope) for Game Mode (2026-10-06; Legion recipe,
-# step 14, "Screen sharing in Game Mode"). Valve ships it in SteamOS (holo repo):
+# SteamOS's gamescope portal (xdg-desktop-portal-gamescope) for Game Mode (2026-10-06;
+# docs/7-apps/1-screen-sharing.md, "In Game Mode"). Valve ships it in SteamOS (holo repo):
 # it implements ScreenCast/Screenshot/Access inside gamescope and, to share the screen, it delivers gamescope's
 # WHOLE image (its PipeWire node "gamescope", the same one Steam uses), WSI games
 # included. SteamOS uses it like this (start-gamescope-session): in Game Mode the portal only looks in

@@ -1,6 +1,6 @@
 #!/bin/sh
-# avahi-wifi-only.sh — make avahi announce Legion-Go-Gen-2.local only over the Wi-Fi (Legion recipe,
-# step 3; 2026-10-04). With the dock, the Legion has two networks at once (Wi-Fi and the dock's,
+# avahi-wifi-only.sh — make avahi announce Legion-Go-Gen-2.local only over the Wi-Fi (2026-10-04;
+# docs/2-base-system/2-network.md). With the dock, the Legion has two networks at once (Wi-Fi and the dock's,
 # enp196s0f3u1u1): avahi heard its own announcement over the other one, thought the name was taken and
 # renamed itself to Legion-Go-Gen-3.local (adds 1 to the final number) — "ssh lego" stopped
 # resolving. The Wi-Fi is always there; the name of the dock's interface depends on the adapter.

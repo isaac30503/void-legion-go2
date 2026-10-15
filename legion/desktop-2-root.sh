@@ -1,8 +1,8 @@
 #!/bin/bash
-# X11 desktop on the Legion, root part 2: login screen the same as the session (step 10).
+# X11 desktop on the Legion, root part 2: login screen the same as the session (docs/5-desktop/2-look-and-feel.md).
 # Previous (Spanish) name: escritorio-2-root.sh.
 #   sudo bash legion/desktop-2-root.sh        log: ~/desktop-2-root.log
-# Needs the user part of steps 5–12 first (Orchis in ~/.themes, Volantes and the Blocks font in ~).
+# Needs the user part first (the block of docs/5-desktop/1-xfce.md) (Orchis in ~/.themes, Volantes and the Blocks font in ~).
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"

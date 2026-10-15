@@ -186,7 +186,7 @@ else
     echo "== mode: direct screen (DRM)${STEAM_DISPLAY_REFRESH_LIMITS:+; refresh rates $STEAM_DISPLAY_REFRESH_LIMITS}"
 fi
 # Keyboard: gamescope does not read X's (00-keyboard.conf); libxkbcommon takes XKB_DEFAULT_LAYOUT.
-# It is read from the same file so that it follows the system's layout (latam on the IdeaPad, step 2).
+# It is read from the same file so that it follows the system's layout (latam on the IdeaPad; docs/2-base-system/1-system.md).
 XKB_DEFAULT_LAYOUT=$(sed -n 's/.*"XkbLayout"[[:space:]]*"\([^"]*\)".*/\1/p' /etc/X11/xorg.conf.d/00-keyboard.conf 2>/dev/null)
 export XKB_DEFAULT_LAYOUT="${XKB_DEFAULT_LAYOUT:-us}"
 # And the variant, if there is one (the Legion: us + intl, with dead keys; the IdeaPad has none).
@@ -364,7 +364,7 @@ cat > "$UPD" <<'EOF'
 #!/bin/sh
 # steamos-update — with -steamos3, Steam asks for system updates (in SteamOS it is
 # /usr/bin/steamos-update; code 7 = "No update available"). Here the system is updated with
-# void-update, so it always answers that there are none. Installed by common/steam/install-game-mode.sh (step 14).
+# void-update, so it always answers that there are none. Installed by common/steam/install-game-mode.sh (docs/6-game-mode/2-game-mode.md).
 [ "$1" = "--supports-duplicate-detection" ] && exit 0
 echo "No update available" >&2
 exit 7

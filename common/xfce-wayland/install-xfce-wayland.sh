@@ -3,7 +3,7 @@
 # windows instead of xfwm4 (Xfce 4.20: startxfce4 --wayland uses labwc). Since 2026-10-03 it is
 # THE desktop: Game Mode's "Switch to Desktop" enters it (switch-mode-root desktop)
 # and Xfce X11 stays as the fallback. You enter and leave without password with the launchers below.
-#   - package labwc (Xwayland and gtk-layer-shell are already there, from step 14 and from Xfce);
+#   - package labwc (Xwayland and gtk-layer-shell are already there, from Steam and from Xfce);
 #   - ~/.config/xfce4/labwc/{rc.xml,environment,autostart,lock}: Omarchy-style shortcuts, focus that
 #     follows the mouse, 8 px gap, new windows almost maximized (dialogs centered), rule
 #     for Firefox (labwc's bar), keyboard from 00-keyboard.conf, Volantes cursor, and
@@ -58,7 +58,7 @@ sudo -u "$U" mkdir -p "$CFG" "$H/.local/bin"
 for f in rc.xml environment autostart; do
     sudo -u "$U" install -m 644 "$D/labwc/$f" "$CFG/$f"
 done
-# Keyboard: X's (00-keyboard.conf, step 2), not fixed. latam on the IdeaPad (without variant: the
+# Keyboard: X's (00-keyboard.conf, docs/2-base-system/1-system.md), not fixed. latam on the IdeaPad (without variant: the
 # file stays the same as the backed-up one); us + intl on the Legion (2026-10-03).
 KB=/etc/X11/xorg.conf.d/00-keyboard.conf
 LAY=$(sed -n 's/.*"XkbLayout"[[:space:]]*"\([^"]*\)".*/\1/p' "$KB" 2>/dev/null || true)

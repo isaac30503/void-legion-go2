@@ -6,6 +6,10 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
 
 ## 2026-10-14
 
+- **CI** (GitHub Actions): `install/verify.sh --ci` and the new automated tests (`tests/run.sh`) on every push;
+  `verify.sh` also fails on unused catalog entries and broken links between the documents. Versions are dated tags,
+  `vYYYY.MM.DD` ([this repository](docs/8-maintenance/4-this-repository.md#versions)).
+- Commands and installed files no longer hard-code the user name (`$USER`, `$HOME`, `$(hostname)`, `@TARGET_USER@`).
 - Documentation reorganized **by the system's layers** (`docs/1-platform` … `docs/8-maintenance`), one page per topic
   with install, check and problems, and [docs/reinstall.md](docs/reinstall.md) as the order of execution. Logs, the
   long rationale and Claude Code's context moved to the private companion repository.

@@ -1,5 +1,5 @@
 #!/bin/bash
-# X11 desktop on the Legion, root part (steps 1, 5, 6, 7 and 9 of the IdeaPad recipe).
+# X11 desktop on the Legion, root part (docs/5-desktop/1-xfce.md).
 # Previous (Spanish) name: escritorio-1-root.sh.
 #   sudo bash legion/desktop-1-root.sh        log: ~/desktop-1-root.log
 set -e
@@ -16,7 +16,7 @@ xbps-install -Sy fish-shell fzf ntfs-3g curl git ripgrep xdg-utils \
   xfce4-docklike-plugin xfce4-clipman-plugin papirus-icon-theme papirus-folders \
   sassc gtk-engine-murrine xfce4-screensaver xfce4-screenshooter btop blueman \
   adwaita-fonts twemoji noto-fonts-ttf libspa-bluetooth \
-  xrandr     # per-monitor windows (step 13); added after the installation of 2026-10-03
+  xrandr     # per-monitor windows (docs/5-desktop/3-windows-and-shortcuts.md); added after the installation of 2026-10-03
 t "--- Papirus-Dark with teal folders"
 papirus-folders -C teal --theme Papirus-Dark
 readlink /usr/share/icons/Papirus-Dark/48x48/places/folder.svg

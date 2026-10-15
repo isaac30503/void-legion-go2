@@ -50,7 +50,7 @@ stage "4. Network (docs/2-base-system/2-network.md)" run \
 sudo sh "$B/legion/wifi-no-powersave.sh"
 sudo sh "$B/legion/udev-net.sh"'
 stage "5. SSH in both directions (docs/2-base-system/2-network.md)" run \
-'[ -f ~/.ssh/id_ed25519 ] || ssh-keygen -q -t ed25519 -N "" -C "isaac@Legion-Go-Gen-2" -f ~/.ssh/id_ed25519
+'[ -f ~/.ssh/id_ed25519 ] || ssh-keygen -q -t ed25519 -N "" -C "$USER@$(hostname)" -f ~/.ssh/id_ed25519
 mkdir -p ~/.ssh && cp "$B/legion/ssh-config" ~/.ssh/config && chmod 600 ~/.ssh/config
 cat ~/.ssh/id_ed25519.pub
 t "-> add that line to the IdeaPad'"'"'s ~/.ssh/authorized_keys; on the IdeaPad: ssh-keygen -R Legion-Go-Gen-2.local"'
@@ -95,9 +95,10 @@ stage "10. Claude Code, with its context from the private repository (docs/8-mai
 'command -v claude >/dev/null || [ -x ~/.local/bin/claude ] || curl -fsSL https://claude.ai/install.sh | bash
 P="$REPO-private"
 [ -d "$P" ] || gh repo clone "$SR" "$P"
-mkdir -p ~/Work/.claude/agents ~/.claude/projects/-home-isaac-Work/memory
+M=~/.claude/projects/$(echo ~/Work | sed "s/[^A-Za-z0-9]/-/g")/memory
+mkdir -p ~/Work/.claude/agents "$M"
 cp "$P/claude/CLAUDE-void-legion.md" ~/Work/CLAUDE.md
-cp "$P/claude/memory/"*.md ~/.claude/projects/-home-isaac-Work/memory/
+cp "$P/claude/memory/"*.md "$M/"
 cp "$P/claude/agents/void-maintainer.md" ~/Work/.claude/agents/
 t "-> log in: cd ~/Work && claude   (on the Legion itself)"'
 stage "11. Boot: hidden GRUB, kernel held (docs/1-platform/3-boot.md); XS1000 connected" reboot \
