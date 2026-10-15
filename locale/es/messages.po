@@ -3525,6 +3525,9 @@ msgstr "   cerrando Steam (steam -shutdown)"
 msgid "   note: shellcheck is not installed (sudo xbps-install -S shellcheck)"
 msgstr "   nota: shellcheck no está instalado (sudo xbps-install -S shellcheck)"
 
+msgid "   note: fish is not installed: the .fish files were not checked"
+msgstr "   nota: fish no está instalado: no se comprobaron los .fish"
+
 msgid "1. Install Void (docs/1-platform/2-installation.md)"
 msgstr "1. Instalar Void (docs/1-platform/2-installation.md)"
 
