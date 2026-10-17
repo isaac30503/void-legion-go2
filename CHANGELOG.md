@@ -6,6 +6,13 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
 
 ## 2026-10-16
 
+- **Plymouth again**, renewed (`common/boot/install-plymouth.sh`, [boot](docs/1-platform/3-boot.md#the-loading-animations)):
+  six animations drawn from vectors at the panel's size — Steam A/B/C and Void A/B/C (A with the firmware logo, B the
+  same symbol large, C Steam's mechanism with STEAM or Void's logo with its letters) — for the boot and, the same or
+  another, for Game Mode's loading screen (`--loading-…`). `loglevel=2` with `splash` (`silent-boot.sh`): amdgpu's
+  `pr_crit` overdrive warning took the screen before Plymouth. At shutdown, black without runit's lines (the animation
+  is opt-in: it freezes on the Legion's panel). The Legion: `--void-b --loading-steam-b`.
+
 - Game Mode's loading screen (`steam-loading`) follows the Plymouth theme in use: its frames (any number), the
   firmware logo only when the theme uses it and the theme's height; or a different screen of its own in
   `/usr/local/share/steam-loading/`. It opens at full screen size: before, the first frames came out small and

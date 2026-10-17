@@ -26,7 +26,7 @@ msgstr "Falta %s en %s (copiar local.env.example a local.env y rellenarlo)."
 msgid "Placeholders without a value in local.env, in %s:"
 msgstr "Marcadores sin valor en local.env, en %s:"
 
-#: common/agent/audit-void.sh install/install.sh
+#: common/agent/audit-void.sh common/boot/install-plymouth.sh install/install.sh
 msgid "unknown option: %s"
 msgstr "opción desconocida: %s"
 
@@ -439,48 +439,60 @@ msgid "== %s: %d lines changed"
 msgstr "== %s: %d líneas cambiadas"
 
 #: common/boot/install-plymouth.sh
-msgid "   theme bgrt-void removed"
-msgstr "   tema bgrt-void quitado"
+msgid "   Game Mode's loading screen: %s (%s)"
+msgstr "   pantalla de carga del Modo Juego: %s (%s)"
+
+#: common/boot/install-plymouth.sh
+msgid "   Game Mode's loading screen: the same"
+msgstr "   pantalla de carga del Modo Juego: la misma"
+
+#: common/boot/install-plymouth.sh
+msgid "   animation at shutdown: no (black, without text)"
+msgstr "   animación al apagar: no (negro, sin texto)"
+
+#: common/boot/install-plymouth.sh
+msgid "   animation at shutdown: yes"
+msgstr "   animación al apagar: sí"
+
+#: common/boot/install-plymouth.sh
+msgid "   panel %s px high"
+msgstr "   panel de %s px de alto"
+
+#: common/boot/install-plymouth.sh
+msgid "   themes removed"
+msgstr "   temas quitados"
+
+#: common/boot/install-plymouth.sh
+msgid "!! Plymouth does not see the theme %s: the initramfs is NOT rebuilt"
+msgstr "!! Plymouth no ve el tema %s: NO se rehace el initramfs"
+
+#: common/boot/install-plymouth.sh
+msgid "== 2. theme %s (%s)"
+msgstr "== 2. tema %s (%s)"
+
+#: common/boot/install-plymouth.sh
+msgid "== 3. kernel line: splash"
+msgstr "== 3. línea del kernel: splash"
+
+#: common/boot/install-plymouth.sh
+msgid "== 4. console 1 for Plymouth: without text login on it"
+msgstr "== 4. consola 1 para Plymouth: sin login de texto"
+
+#: common/boot/install-plymouth.sh
+msgid "== 5. shutdown: %s"
+msgstr "== 5. apagado: %s"
+
+#: common/boot/install-plymouth.sh
+msgid "== 6. kernel line and /etc/rc.conf block (silent-boot.sh: loglevel=2 with splash)"
+msgstr "== 6. línea del kernel y bloque de /etc/rc.conf (silent-boot.sh: loglevel=2 con splash)"
+
+#: common/boot/install-plymouth.sh
+msgid "== 7. initramfs and menu"
+msgstr "== 7. initramfs y menú"
 
 #: common/boot/install-plymouth.sh
 msgid "   text login of console 1 given back"
 msgstr "   login de texto de la consola 1 devuelto"
-
-#: common/boot/install-plymouth.sh
-msgid "== 1. package and theme"
-msgstr "== 1. paquete y tema"
-
-#: common/boot/install-plymouth.sh
-msgid "   panel %s px high: scale %s"
-msgstr "   panel de %s px de alto: escala %s"
-
-#: common/boot/install-plymouth.sh
-msgid "   theme: %s"
-msgstr "   tema: %s"
-
-#: common/boot/install-plymouth.sh
-msgid "!! Plymouth does not see the theme bgrt-void: the initramfs is NOT rebuilt"
-msgstr "!! Plymouth no ve el tema bgrt-void: NO se rehace el initramfs"
-
-#: common/boot/install-plymouth.sh
-msgid "== 2. kernel line: splash"
-msgstr "== 2. línea del kernel: splash"
-
-#: common/boot/install-plymouth.sh
-msgid "== 3. console 1 for X (lightdm closes Plymouth): without text login on it"
-msgstr "== 3. consola 1 para X (lightdm cierra Plymouth): sin login de texto en ella"
-
-#: common/boot/install-plymouth.sh
-msgid "== 4. /etc/rc.conf block (warnings on the logo and emergency console)"
-msgstr "== 4. bloque de /etc/rc.conf (avisos sobre el logo y consola de emergencia)"
-
-#: common/boot/install-plymouth.sh
-msgid "   redone"
-msgstr "   rehecho"
-
-#: common/boot/install-plymouth.sh
-msgid "== 5. initramfs and menu"
-msgstr "== 5. initramfs y menú"
 
 #: common/boot/install-plymouth.sh
 msgid "with Plymouth"
@@ -678,7 +690,7 @@ msgstr "tema generado en %s: %d entradas:"
 msgid "== theme, hooks and scripts removed"
 msgstr "== tema, ganchos y scripts quitados"
 
-#: common/grub-theme/install-theme.sh common/steam/install-decky.sh
+#: common/boot/install-plymouth.sh common/grub-theme/install-theme.sh common/steam/install-decky.sh
 msgid "== 1. packages"
 msgstr "== 1. paquetes"
 
