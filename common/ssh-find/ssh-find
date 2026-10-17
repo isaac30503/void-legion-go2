@@ -1,0 +1,349 @@
+#!/usr/bin/python3 -I
+"""ssh-find — finds a machine of the home network by every way at once and connects to it (ssh's ProxyCommand).
+
+    ProxyCommand ~/.local/bin/ssh-find %n %p      (in ~/.ssh/config, as an absolute path; install-ssh-find.sh)
+    ssh-find --where ALIAS                        prints the address it would use (and how it found it)
+    ssh-find --list                               the configured machines, with what is known of each
+
+Why: a single mDNS name was not enough. mDNS sometimes answered only with the IPv6 link-local address
+(fe80::, without the interface, which ssh cannot use: "Could not resolve hostname" / "Invalid argument"), the
+Wi-Fi mesh sometimes lost IPv4 ARP while IPv6 still answered ("No route to host"), the Legion renamed itself
+with the dock (Legion-Go-Gen-3.local) and the router changes the addresses (2026-10-16).
+
+How, for the alias given by ssh (%n), in ~/.config/ssh-find/hosts.conf:
+  1. candidates, all tried AT THE SAME TIME (the first TCP connection to the port wins):
+     - the last address that worked (~/.cache/ssh-find/state.json);
+     - every name of the machine through the system's resolver (mDNS included), IPv4 and IPv6; an IPv6
+       link-local address without interface is tried on every interface that is up;
+     - the neighbour table (ip neigh) entries with one of the machine's MAC addresses;
+  2. if none answers: discovery — an IPv6 ping to all the nodes of the link (ff02::1) and a sweep of port 22
+     on the /24 of every interface fill the neighbour table, and its MAC addresses are looked for again;
+  3. then it relays ssh's stdin/stdout through that connection, and remembers the address and its MAC (so it
+     learns the MACs of every interface the machine uses).
+The identity of the machine is checked by ssh itself: HostKeyAlias is fixed per machine, so a wrong machine at
+a reused address fails the host key check. Nothing needs root. docs/2-base-system/2-network.md.
+"""
+import configparser
+import concurrent.futures as cf
+import ipaddress
+import json
+import os
+import selectors
+import socket
+import subprocess
+import sys
+import time
+
+for _d in (os.path.expanduser("~/.local/share/void-legion/lib"), "/usr/local/share/void-legion/lib",
+           os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), "lib")):
+    if os.path.isfile(os.path.join(_d, "void_legion_i18n.py")):
+        sys.path.insert(0, _d)
+        break
+try:
+    from void_legion_i18n import _
+except ImportError:
+    def _(s):
+        return s
+
+CONF = os.path.expanduser("~/.config/ssh-find/hosts.conf")
+STATE = os.path.expanduser("~/.cache/ssh-find/state.json")
+CONNECT_TIMEOUT = 2.5        # s per round of attempts
+RESOLVE_TIMEOUT = 2.5        # s for the names (mDNS can take its time)
+VERBOSE = bool(os.environ.get("SSH_FIND_DEBUG"))
+
+
+def say(msg):
+    print("ssh-find: " + msg, file=sys.stderr, flush=True)
+
+
+def debug(msg):
+    if VERBOSE:
+        say(msg)
+
+
+def load_conf():
+    c = configparser.ConfigParser(interpolation=None)
+    c.read(CONF, encoding="utf-8")
+    return c
+
+
+def load_state():
+    try:
+        with open(STATE, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
+def save_state(state):
+    os.makedirs(os.path.dirname(STATE), exist_ok=True)
+    tmp = STATE + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(state, f, indent=1, sort_keys=True)
+    os.replace(tmp, STATE)
+
+
+def up_interfaces():
+    out = []
+    for name in sorted(os.listdir("/sys/class/net")):
+        if name == "lo":
+            continue
+        try:
+            if open(f"/sys/class/net/{name}/operstate").read().strip() in ("up", "unknown"):
+                out.append(name)
+        except OSError:
+            pass
+    return out
+
+
+def neighbours():
+    """[(address, interface, mac)] from the kernel's neighbour table (IPv4 and IPv6), without root."""
+    try:
+        txt = subprocess.run(["ip", "neigh", "show"], capture_output=True, text=True, timeout=3).stdout
+    except (OSError, subprocess.SubprocessError):
+        return []
+    out = []
+    for line in txt.splitlines():
+        w = line.split()
+        if "lladdr" in w and "dev" in w and w[-1] not in ("FAILED", "INCOMPLETE"):
+            out.append((w[0], w[w.index("dev") + 1], w[w.index("lladdr") + 1].lower()))
+    return out
+
+
+def candidates_for(addr, iface=None):
+    """Addresses to try for addr: a link-local IPv6 without interface, on every interface that is up."""
+    if "%" in addr:
+        addr, iface = addr.split("%", 1)
+    try:
+        ip = ipaddress.ip_address(addr)
+    except ValueError:
+        return []
+    if ip.version == 6 and ip.is_link_local:
+        return [(addr, i) for i in ([iface] if iface else up_interfaces())]
+    return [(addr, None)]
+
+
+def resolve(names):
+    """Every address of every name, through the system's resolver (files, mDNS, DNS), in parallel."""
+    found = []
+
+    def one(name):
+        try:
+            return [ai[4][0] for ai in socket.getaddrinfo(name, None, proto=socket.IPPROTO_TCP)]
+        except OSError:
+            return []
+    pool = cf.ThreadPoolExecutor(max_workers=max(1, len(names)))
+    futures = {pool.submit(one, n): n for n in names}
+    try:
+        for fut in cf.as_completed(futures, timeout=RESOLVE_TIMEOUT):
+            for a in fut.result():
+                debug(f"{futures[fut]} → {a}")
+                found.append(a)
+    except cf.TimeoutError:
+        debug("some names did not resolve in time")
+    pool.shutdown(wait=False, cancel_futures=True)
+    return found
+
+
+def try_connect(cands, port):
+    """Connects to every candidate at once; returns (socket, (address, interface)) of the first, or None."""
+    cands = list(dict.fromkeys(cands))
+    if not cands:
+        return None
+    pending = {}
+    sel = selectors.DefaultSelector()
+    for addr, iface in cands:
+        family = socket.AF_INET6 if ":" in addr else socket.AF_INET
+        s = socket.socket(family, socket.SOCK_STREAM)
+        s.setblocking(False)
+        target = (addr, port, 0, socket.if_nametoindex(iface)) if family == socket.AF_INET6 and iface else (addr, port)
+        try:
+            s.connect(target)
+        except BlockingIOError:
+            pass
+        except OSError as e:
+            debug(f"{addr}%{iface}: {e}")
+            s.close()
+            continue
+        sel.register(s, selectors.EVENT_WRITE)
+        pending[s] = (addr, iface)
+    end = time.monotonic() + CONNECT_TIMEOUT
+    winner = None
+    while pending and winner is None:
+        left = end - time.monotonic()
+        if left <= 0:
+            break
+        for key, _ev in sel.select(left):
+            s = key.fileobj
+            err = s.getsockopt(socket.SOL_SOCKET, socket.SO_ERROR)
+            sel.unregister(s)
+            where = pending.pop(s)
+            if err == 0 and winner is None:
+                winner = (s, where)
+            else:
+                debug(f"{where[0]}%{where[1]}: {os.strerror(err) if err else 'later'}")
+                s.close()
+    for s in pending:
+        s.close()
+    sel.close()
+    if winner:
+        winner[0].setblocking(True)
+    return winner
+
+
+def discover():
+    """Fills the neighbour table: IPv6 all-nodes ping on every interface and a TCP sweep of port 22 on the /24s."""
+    procs = []
+    for iface in up_interfaces():
+        try:
+            procs.append(subprocess.Popen(["ping", "-6", "-c", "2", "-i", "0.3", "-w", "2", f"ff02::1%{iface}"],
+                                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL))
+        except OSError:
+            pass
+    nets = set()
+    try:
+        txt = subprocess.run(["ip", "-4", "-o", "addr", "show", "scope", "global"],
+                             capture_output=True, text=True, timeout=3).stdout
+        for line in txt.splitlines():
+            w = line.split()
+            net = ipaddress.ip_interface(w[w.index("inet") + 1]).network
+            nets.add(net if net.prefixlen >= 24 else ipaddress.ip_network(f"{w[w.index('inet') + 1].split('/')[0]}/24", strict=False))
+    except (OSError, subprocess.SubprocessError, ValueError):
+        pass
+
+    def knock(ip):
+        try:
+            with socket.create_connection((str(ip), 22), timeout=0.6):
+                pass
+        except OSError:
+            pass
+    hosts = [h for n in nets for h in n.hosts()]
+    with cf.ThreadPoolExecutor(max_workers=64) as pool:
+        list(pool.map(knock, hosts))
+    for p in procs:
+        try:
+            p.wait(timeout=3)
+        except subprocess.TimeoutExpired:
+            p.kill()
+
+
+def mac_of(addr, iface):
+    for a, i, mac in neighbours():
+        if a == addr and (iface is None or i == iface):
+            return mac
+    return None
+
+
+def find(alias, port):
+    conf, state = load_conf(), load_state()
+    if alias not in conf:
+        say(_("%s is not in %s") % (alias, CONF))
+        return None, state
+    sec = conf[alias]
+    names = sec.get("names", "").split()
+    macs = {m.lower() for m in sec.get("macs", "").split()} | set(state.get(alias, {}).get("macs", []))
+    last = state.get(alias, {}).get("last")
+    pool = cf.ThreadPoolExecutor(max_workers=1)
+    names_future = pool.submit(resolve, names)         # meanwhile: the names, in the background
+    neigh = neighbours()
+    cands = []
+    if last:
+        now = mac_of(last[0], last[1])
+        if now and macs and now not in macs:            # that address is another machine's today
+            debug(f"{last[0]} is now {now}: skipped")
+        else:
+            cands += candidates_for(last[0], last[1])
+    for a, i, m in neigh:
+        if m in macs:
+            cands += candidates_for(a, i if a.startswith("fe80") else None)
+    # First what is already known (fast), while the names resolve.
+    won = try_connect(cands, port) if cands else None
+    if not won:
+        for a in names_future.result():
+            cands += candidates_for(a)
+        won = try_connect(cands, port)
+    pool.shutdown(wait=False)
+    if not won and macs:
+        debug("discovery")
+        discover()
+        cands = [c for a, i, m in neighbours() if m in macs for c in candidates_for(a, i if a.startswith("fe80") else None)]
+        won = try_connect(cands, port)
+    if not won:
+        say(_("%s not found (names: %s; known MAC addresses: %s)") %
+            (alias, " ".join(names) or "-", " ".join(sorted(macs)) or "-"))
+        return None, state
+    s, (addr, iface) = won
+    debug(f"connected to {addr}{'%' + iface if iface else ''}")
+    entry = state.setdefault(alias, {})
+    entry["last"] = [addr, iface]
+    entry["when"] = time.strftime("%Y-%m-%d %H:%M:%S")
+    mac = mac_of(addr, iface)
+    if mac:
+        entry["macs"] = sorted(set(entry.get("macs", [])) | {mac})
+    return (s, addr, iface), state
+
+
+def relay(s):
+    sel = selectors.DefaultSelector()
+    sel.register(0, selectors.EVENT_READ, "in")
+    sel.register(s, selectors.EVENT_READ, "sock")
+    out = sys.stdout.fileno()
+    while True:
+        for key, _ev in sel.select():
+            if key.data == "in":
+                data = os.read(0, 65536)
+                if not data:
+                    sel.unregister(0)
+                    try:
+                        s.shutdown(socket.SHUT_WR)
+                    except OSError:
+                        pass
+                else:
+                    s.sendall(data)
+            else:
+                data = s.recv(65536)
+                if not data:
+                    return
+                view = memoryview(data)
+                while view:
+                    view = view[os.write(out, view):]
+
+
+def main():
+    args = sys.argv[1:]
+    if args[:1] == ["--list"]:
+        conf, state = load_conf(), load_state()
+        for alias in conf.sections():
+            st = state.get(alias, {})
+            last = st.get("last")
+            macs = {m.lower() for m in conf[alias].get("macs", "").split()} | set(st.get("macs", []))
+            print(f"{alias}: {conf[alias].get('names', '')}  macs: {' '.join(sorted(macs))}"
+                  f"  last: {(last[0] + ('%' + last[1] if last[1] else '')) if last else '-'} {st.get('when', '')}")
+        return 0
+    if args[:1] == ["--where"] and len(args) == 2:
+        found, state = find(args[1], 22)
+        if not found:
+            return 1
+        found[0].close()
+        save_state(state)
+        print(found[1] + ("%" + found[2] if found[2] else ""))
+        return 0
+    if len(args) != 2:
+        say(_("usage: ssh-find ALIAS PORT | --where ALIAS | --list"))
+        return 2
+    found, state = find(args[0], int(args[1]))
+    if not found:
+        return 1
+    save_state(state)
+    try:
+        relay(found[0])
+    except (BrokenPipeError, ConnectionResetError):
+        pass
+    return 0
+
+
+if __name__ == "__main__":
+    code = main()
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(code)          # without waiting for name lookups still running in the background
