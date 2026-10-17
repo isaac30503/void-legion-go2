@@ -16,13 +16,39 @@ Then SSH, on the Legion (without root):
 ```bash
 ssh-keygen -q -t ed25519 -N "" -C "$USER@$(hostname)" -f ~/.ssh/id_ed25519
 cp "$B/legion/ssh-config" ~/.ssh/config && chmod 600 ~/.ssh/config   # Host ideapad, msi and deck
+bash "$B/common/ssh-find/install-ssh-find.sh"   # finds every machine by every way (below); also on the IdeaPad
 cat ~/.ssh/id_ed25519.pub        # add this line to the IdeaPad's ~/.ssh/authorized_keys
 ```
 
 On the IdeaPad: `~/.ssh/config` has `Host lego` → `HostName Legion-Go-Gen-2.local`, `User isaac`; after a
-reinstall the host key changes: `ssh-keygen -R Legion-Go-Gen-2.local`. To reach the Steam Deck (`Host deck`,
+reinstall the host key changes: `ssh-keygen -R legion-go-gen-2.local`. To reach the Steam Deck (`Host deck`,
 `steamdeck.local`, user `deck`): `ssh-copy-id deck` once (on the Deck, SSH is enabled from its Konsole with
 `passwd` and `sudo systemctl enable --now sshd`).
+
+### ssh-find: finding the machines
+
+A single mDNS name was not enough (2026-10-16): mDNS sometimes answered only with the IPv6 link-local address
+(`fe80::`, without the interface, which ssh cannot use: `Could not resolve hostname` / `Invalid argument`), the
+Wi-Fi mesh sometimes lost IPv4 ARP while IPv6 still answered (`No route to host`), the Legion renames itself with
+the dock and the router changes the addresses. **`ssh-find`** (`common/ssh-find/`, without root, the same on both
+machines) is the `ProxyCommand` of every machine and finds it by every way **at once**, the first that answers
+winning:
+
+1. the last address that worked, unless its MAC is now another machine's;
+2. the neighbour table (`ip neigh`) entries with one of the machine's MACs, IPv4 and IPv6 link-local with its
+   interface;
+3. its names through the system's resolver (mDNS, DNS, `/etc/hosts`), both families; a link-local address without
+   interface is tried on every interface;
+4. if nothing answered: an IPv6 ping to all the nodes of the link and a sweep of port 22 on the `/24`s fill the
+   neighbour table, and its MACs are looked for again (~2.5 s).
+
+It remembers the address that worked and the MAC behind it (`~/.cache/ssh-find/state.json`), so it learns every
+interface the machine uses. The machines are in `~/.config/ssh-find/hosts.conf` (created once, with the MACs of
+`local.env`; add a section to add a machine and run the installer again); the installer writes a block at the top
+of `~/.ssh/config` with `ProxyCommand` and a fixed **`HostKeyAlias`** per machine: whatever address it was found at,
+ssh checks the same host key, so a wrong machine at a reused address is refused. It also works for `scp`, `rsync`
+and `git`. `ssh-find --list` shows what is known; `ssh-find --where lego` the address it would use;
+`SSH_FIND_DEBUG=1 ssh lego` shows every attempt. `install-ssh-find.sh --remove` takes the block out.
 
 **What each script does** (each has `--remove`):
 
@@ -51,17 +77,19 @@ iw dev wlp193s0 get power_save             # Power save: off (also after rebooti
 ssh ideapad hostname                       # ideapad-100
 ```
 
-From the IdeaPad: `getent hosts Legion-Go-Gen-2.local`, `ssh lego hostname`, and a `ping` of a few ms (2–14 ms;
-with power saving, 55–100 ms).
+From the IdeaPad: `ssh lego hostname` (a fraction of a second), `ssh-find --where lego`, and a `ping` of a few ms
+(2–14 ms; with power saving, 55–100 ms).
 
 ## Problems
 
 `ssh lego` does not resolve or SSH does not get in:
 
-1. **With the dock:** avahi renamed itself (`Legion-Go-Gen-3.local`). Prevented by `avahi-wifi-only.sh`;
-   meanwhile, by IP: `ssh -o HostName=<IP> -o HostKeyAlias=legion-go-gen-2.local lego`.
+1. **`ssh-find` says it is not found:** the machine is off, or on another network and with an unknown MAC;
+   `SSH_FIND_DEBUG=1 ssh lego` shows what it tried. By hand: `ssh -o ProxyCommand=none -o HostName=<IP> lego`.
+   With the dock avahi renamed itself (`Legion-Go-Gen-3.local`, which `ssh-find` also tries); prevented by
+   `avahi-wifi-only.sh`.
 2. **It does not even answer `ping` until the Legion transmits:** Wi-Fi power saving is on
    (`iw dev wlp193s0 get power_save` → `on`): `wifi-no-powersave.sh` and Steam's switch.
 3. **The Wi-Fi shows as `wlan0`, "unmanaged":** on the spot,
    `sudo udevadm trigger --action=add --subsystem-match=net`; prevented by `udev-net`.
-4. **After a reinstall:** on the IdeaPad, `ssh-keygen -R Legion-Go-Gen-2.local`.
+4. **After a reinstall:** on the IdeaPad, `ssh-keygen -R legion-go-gen-2.local`.

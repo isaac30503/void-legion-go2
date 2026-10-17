@@ -3721,3 +3721,43 @@ msgstr "Después, la clave de la IdeaPad en ~/.ssh/authorized_keys, y: sudo rmdi
 #: legion/install-inputplumber.sh
 msgid "inputplumber-x86_64.tar.gz: v%s, sha256 checked"
 msgstr "inputplumber-x86_64.tar.gz: v%s, sha256 comprobado"
+
+#: common/ssh-find/install-ssh-find.sh
+msgid "!! python3 is missing"
+msgstr "!! falta python3"
+
+#: common/ssh-find/install-ssh-find.sh
+msgid "!! ssh does not accept %s: the previous one is %s.bak"
+msgstr "!! ssh no acepta %s: el anterior es %s.bak"
+
+#: common/ssh-find/ssh-find
+msgid "%s is not in %s"
+msgstr "%s no está en %s"
+
+#: common/ssh-find/ssh-find
+msgid "%s not found (names: %s; known MAC addresses: %s)"
+msgstr "%s no encontrada (nombres: %s; MAC conocidas: %s)"
+
+#: common/ssh-find/install-ssh-find.sh
+msgid "== %s"
+msgstr "== %s"
+
+#: common/ssh-find/install-ssh-find.sh
+msgid "== %s created"
+msgstr "== %s creado"
+
+#: common/ssh-find/install-ssh-find.sh
+msgid "== %s kept"
+msgstr "== %s conservado"
+
+#: common/ssh-find/install-ssh-find.sh
+msgid "== %s: block for %s"
+msgstr "== %s: bloque para %s"
+
+#: common/ssh-find/install-ssh-find.sh
+msgid "ssh-find removed (hosts.conf and the learned addresses kept)"
+msgstr "ssh-find quitado (se conservan hosts.conf y las direcciones aprendidas)"
+
+#: common/ssh-find/ssh-find
+msgid "usage: ssh-find ALIAS PORT | --where ALIAS | --list"
+msgstr "uso: ssh-find ALIAS PUERTO | --where ALIAS | --list"

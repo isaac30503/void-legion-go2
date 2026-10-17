@@ -49,8 +49,8 @@ sudo sh "$B/legion/udev-net.sh"
 
 ## 5. SSH both ways — [network and SSH](2-base-system/2-network.md)
 
-On the IdeaPad: `ssh-keygen -R Legion-Go-Gen-2.local`. On the Legion, the key and `~/.ssh/config` (that page's block),
-and the new `id_ed25519.pub` into the IdeaPad's `authorized_keys`. Check: `ssh ideapad hostname`.
+On the IdeaPad: `ssh-keygen -R legion-go-gen-2.local`. On the Legion, the key, `~/.ssh/config` and `ssh-find` (that
+page's block), and the new `id_ed25519.pub` into the IdeaPad's `authorized_keys`. Check: `ssh ideapad hostname`.
 
 ## 6–8. Desktop — [Xfce](5-desktop/1-xfce.md), [look and feel](5-desktop/2-look-and-feel.md)
 
