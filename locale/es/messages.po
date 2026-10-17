@@ -2623,8 +2623,8 @@ msgid "== check (runit takes up to 5 s to start the services)"
 msgstr "== comprobación (runit tarda hasta 5 s en arrancar los servicios)"
 
 #: legion/like-steamos.sh
-msgid "Done. Still to do, if not done: sudo sh common/steam/install-game-mode.sh --no-loading-screen. And reboot."
-msgstr "Listo. Falta, si no se hizo: sudo sh common/steam/install-game-mode.sh --no-loading-screen. Y reiniciar."
+msgid "Done. Still to do, if not done: sudo sh common/steam/install-game-mode.sh. And reboot."
+msgstr "Listo. Falta, si no se hizo: sudo sh common/steam/install-game-mode.sh. Y reiniciar."
 
 #: legion/gpu-overdrive.sh
 msgid "== initramfs of %s"
@@ -4061,3 +4061,23 @@ msgstr "Scripts que deciden si hay systemd según exista systemctl"
 #: common/void-update/lib/systemd.sh
 msgid "also checks that systemd runs, or runs in the initramfs: not affected"
 msgstr "también comprueba que systemd esté en marcha, o corre en el initramfs: no le afecta"
+
+#: common/agent/audit-void.sh
+msgid "pieces of this machine (install/pieces.tsv): %d"
+msgstr "piezas de esta máquina (install/pieces.tsv): %d"
+
+#: common/agent/audit-void.sh
+msgid "(pieces with something missing: %d)"
+msgstr "(piezas a las que les falta algo: %d)"
+
+#: common/agent/audit-void.sh
+msgid "%s: missing %s (installer: %s; %s)"
+msgstr "%s: falta %s (instalador: %s; %s)"
+
+#: install/verify.sh
+msgid "== the inventory (install/pieces.tsv)"
+msgstr "== el inventario (install/pieces.tsv)"
+
+#: install/verify.sh
+msgid "%s pieces; every file has its piece and every installer its place"
+msgstr "%s piezas; cada fichero tiene su pieza y cada instalador su sitio"

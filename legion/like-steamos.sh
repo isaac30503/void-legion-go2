@@ -135,4 +135,4 @@ t "== check (runit takes up to 5 s to start the services)"
 sleep 6
 sysctl kernel.split_lock_mitigate fs.inotify.max_user_watches fs.inotify.max_user_instances net.core.default_qdisc
 sv status earlyoom
-t "Done. Still to do, if not done: sudo sh common/steam/install-game-mode.sh --no-loading-screen. And reboot."
+t "Done. Still to do, if not done: sudo sh common/steam/install-game-mode.sh. And reboot."

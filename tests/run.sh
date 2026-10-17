@@ -213,7 +213,22 @@ EOF
     sc journalctl -b -1 -k >/dev/null 2>&1; check "sc: journalctl -b -1 (previous boots are not kept)" 1 $?
 }
 
+# ---- install/pieces.py: a file without piece and an installer missing from the reinstall are both caught ----------
+test_pieces() {
+    local W=$TMP/pieces out
+    mkdir -p "$W"
+    (cd "$REPO" && git ls-files -z --cached --others --exclude-standard | tar --null -T - -cf -) | tar -xf - -C "$W"
+    (cd "$W" && git init -q && git add -A) >/dev/null 2>&1
+    python3 -I "$W/install/pieces.py" >/dev/null; check "pieces: the clone is in order" 0 $?
+    echo 'echo hi' > "$W/common/stray.sh"; (cd "$W" && git add common/stray.sh)
+    out=$(python3 -I "$W/install/pieces.py"); check "pieces: a file without piece" "common/stray.sh: belongs to no piece of install/pieces.tsv" "$out"
+    rm "$W/common/stray.sh"; (cd "$W" && git rm -q --cached common/stray.sh)
+    sed -i '/install-systemd-compat.sh/d' "$W/install/install.sh"
+    out=$(python3 -I "$W/install/pieces.py"); check "pieces: an installer missing from install.sh" yes "$(grep -q 'install-systemd-compat.sh is not in install/install.sh' <<< "$out" && echo yes)"
+}
+
 test_render
+test_pieces
 test_catalog
 test_void_update
 read -r p f < "$TMP/vu-result"; pass=$((pass + p)); failed=$((failed + f))

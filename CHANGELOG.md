@@ -6,6 +6,14 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
 
 ## 2026-10-17
 
+- **The inventory, `install/pieces.tsv`** ([this repository](docs/8-maintenance/4-this-repository.md#the-inventory-installpiecestsv)):
+  every piece the repository installs, one per line, enforced by `verify.sh` (every file has its piece, every installer
+  its place in the reinstall), checked on each machine by the audit and read by the maintenance agents. Writing it
+  found what the reinstall had lost: `install.sh` now installs systemd-compat, Plymouth and `ssh-find`, both reinstall
+  documents the wallpaper patches (xfdesktop, Thunar), and Game Mode keeps its loading screen (the `--no-loading-screen`
+  of 2026-10-04 had stayed in the reinstall after Plymouth came back). The IdeaPad-only `bluetooth-at-boot.sh` and
+  `greeter-without-atspi.sh` are named in their pages.
+
 - **systemd-compat** (`common/systemd-compat/`, [systemd-compat](docs/2-base-system/4-systemd-compat.md)): Decky
   plugins made for SteamOS (Hooandee's Panel de Control and Colores) call `/usr/bin/systemctl restart plugin_loader`
   after updating themselves, `systemctl is-active inputplumber.service`, a `filter-chain` user unit and

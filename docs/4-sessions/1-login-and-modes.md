@@ -14,7 +14,10 @@ runs without it is `switch-mode-root`.
 
 **Never log in from lightdm's login screen** (it only shows after logging out): its greeter does not die on
 lightdm's `SIGTERM`, and ~20 s later it takes the console from gamescope or labwc and lightdm locks the session.
-Autologin and mode switches avoid it entirely.
+Autologin and mode switches avoid it entirely. The greeter's accessibility bus (at-spi) was what kept it alive:
+the Legion starts it without it (`NO_AT_BRIDGE=1` through `lightdm-greeter-wrapper`, below); the IdeaPad has
+`at-spi-enabled = false` in `/etc/lightdm/lightdm-gtk-greeter.conf` (`sudo sh "$B/common/steam/greeter-without-atspi.sh"`;
+its recipe, step 14).
 
 ## Install
 

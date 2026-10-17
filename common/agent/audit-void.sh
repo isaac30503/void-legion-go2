@@ -14,7 +14,8 @@
 # Sections: 1 runit services (down, relaunching in a loop, also started by D-Bus),
 # 2 packages (orphans, held, from local repositories, updates, kernels, .new-*,
 # capabilities, missing libraries in /usr/local), 3 fidelity with the repository (the system's and the user's
-# own files: exact copy, mentioned by a script, or NO TRACE), 4 consumption (CPU and
+# own files: exact copy, mentioned by a script, or NO TRACE) and the pieces of this machine (install/pieces.tsv,
+# the inventory of everything the repository installs: is what each one installs here? 2026-10-17), 4 consumption (CPU and
 # memory per process during the sample, and processes created: a relaunch loop shows there).
 # Written on 2026-10-07 after finding on the Legion the rtkit loop (runit relaunched it every
 # second because D-Bus had already started another one).
@@ -58,8 +59,9 @@ while [ $# -gt 0 ]; do
         --index|--indice) INDEX="$2"; shift 2 ;;
         --sample|--muestra) SAMPLE="$2"; shift 2 ;;
         --make-index|--hacer-indice)
-            # Index of the repository: "M <md5> <relative path>" of each file and "R <absolute path>" of each
-            # path of the system or of ~ that the scripts and documents mention (for what is generated).
+            # Index of the repository: "M <md5> <relative path>" of each file, "R <absolute path>" of each
+            # path of the system or of ~ that the scripts and documents mention (for what is generated), and
+            # "P <row>" of each piece of install/pieces.tsv (the inventory; its columns separated by tabs).
             python3 -I - "$2" <<'PY'
 import os, sys, re, hashlib, pwd
 base = sys.argv[1]
@@ -98,6 +100,11 @@ for root_, top in [(base, t) for t in ("common", "legion", "lib", "install")] + 
             if r != data: print("M", hashlib.md5(r).hexdigest(), rel)
             for m in rx.findall(data.decode("utf-8", "replace")):
                 print("R", path_of(m))
+try:
+    for l in open(os.path.join(base, "install", "pieces.tsv"), encoding="utf-8"):
+        if l.strip() and not l.startswith(("#", "id\t")): print("P", l.rstrip("\n"))
+except OSError:
+    pass
 for d, dn, fn in os.walk(base):
     dn[:] = [x for x in dn if x not in (".git", "logs", "build", "assets")]
     for f in fn:
@@ -208,11 +215,12 @@ if [ -z "$INDEX" ] || [ ! -s "$INDEX" ]; then
 else
 { printf '%s' "$PY_I18N"; cat <<'PY'
 import os, sys, glob, plistlib, hashlib
-md5c, refs = {}, set()
+md5c, refs, pieces = {}, set(), []
 for l in open(sys.argv[1], encoding="utf-8", errors="replace"):
     t = l.rstrip("\n").split(" ", 2)
     if t[0] == "M" and len(t) == 3: md5c.setdefault(t[1], t[2])
     elif t[0] == "R": refs.add(t[1])
+    elif t[0] == "P": pieces.append(l.rstrip("\n")[2:].split("\t"))
 own, sha = set(), {}
 for p in glob.glob("/var/db/xbps/.*-files.plist"):
     d = plistlib.load(open(p, "rb"))
@@ -275,6 +283,18 @@ for u in usr:
         c = classify(p); n += 1
         if c == NO_TRACE: missing += 1; print(f"!! {p}: {c}")
 print("   " + _("(%d files looked at; with no trace: %d. 'Generated' = the agent must confirm which script writes it)") % (n, missing))
+# The pieces of this machine (install/pieces.tsv): is each path they install here? Paths with * are patterns.
+hn = open("/etc/hostname").read().strip().lower()
+me = "L" if "legion" in hn else "I" if "ideapad" in hn else "?"
+mine = [p for p in pieces if len(p) == 8 and me in p[1] and p[3] != "tool"]
+print("   " + _("pieces of this machine (install/pieces.tsv): %d") % len(mine))
+gone = 0
+for pid, mach, stage, how, inst, doc, srcs, installs in mine:
+    lost = [q for q in installs.split() if q != "-" and not glob.glob(os.path.expanduser(q))]
+    if lost:
+        gone += 1
+        print("!! " + _("%s: missing %s (installer: %s; %s)") % (pid, " ".join(lost), inst, doc))
+print("   " + _("(pieces with something missing: %d)") % gone)
 PY
 } | python3 -I - "$INDEX"
 fi
