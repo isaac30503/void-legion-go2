@@ -127,10 +127,93 @@ PY
     check "t: a message not in the catalog" "no such message 7" "$(run_t es 'no such message %s' 7)"
 }
 
+# ---- systemd-compat: answers and exit codes of systemd, runit through a fake sv, real session units ----------
+test_systemd_compat() {
+    local S=$TMP/sc C=$REPO/common/systemd-compat out t0 tok1 tok2 pid s
+    mkdir -p "$S/etc/units.d" "$S/sv" "$S/service" "$S/run" "$S/xdg" "$S/log/decky"; chmod 700 "$S/xdg"
+    cat > "$S/etc/units.d/50-test.conf" <<EOF
+plugin_loader  system  runit  decky  log=$S/log/decky/current
+hhd@*          system  deny
+filter-chain   user    exec   sleep 300
+EOF
+    for s in decky inputplumber steamos-manager; do mkdir -p "$S/sv/$s"; printf '#!/bin/sh\nexec sleep 1\n' > "$S/sv/$s/run"; chmod +x "$S/sv/$s/run"; done
+    for s in decky inputplumber; do mkdir -p "$S/service/$s/supervise"; echo run > "$S/service/$s/supervise/stat"; echo 1 > "$S/service/$s/supervise/pid"; done
+    printf '#!/bin/sh\necho "sv $*" >> %s/sv-calls\n' "$S" > "$S/sv-fake"; chmod +x "$S/sv-fake"
+    printf '2001-01-01_00:00:00.00001 before this boot\n%s Decky Started\n' "$(date -u +%Y-%m-%d_%H:%M:%S.00001)" > "$S/log/decky/current"
+    sc() { c=$1; shift; env SYSTEMD_COMPAT_LIB="$C" SYSTEMD_COMPAT_ETC="$S/etc" SYSTEMD_COMPAT_SV_DIR="$S/sv" SYSTEMD_COMPAT_SERVICE_DIR="$S/service" \
+              SYSTEMD_COMPAT_RUN="$S/run" SYSTEMD_COMPAT_SV="$S/sv-fake" XDG_RUNTIME_DIR="$S/xdg" sh "$C/$c" "$@"; }
+
+    # system units: a runit service by its name, an alias of units.d, deny, a unit that does not exist
+    out=$(sc systemctl is-active inputplumber.service); check "sc: runit service by name" "active 0" "$out $?"
+    out=$(sc systemctl is-active plugin_loader); check "sc: alias of units.d (plugin_loader → decky)" "active 0" "$out $?"
+    out=$(sc systemctl is-active steamos-manager); check "sc: service not linked in /var/service" "inactive 3" "$out $?"
+    out=$(sc systemctl is-active hhd@0.service); check "sc: deny" "inactive 3" "$out $?"
+    out=$(sc systemctl is-active 'hhd@*.service'); check "sc: pattern without matches" "inactive 3" "$out $?"
+    out=$(sc systemctl start nope 2>&1); check "sc: start of a unit not found (systemd's text, exit 5)" "Failed to start nope.service: Unit nope.service not found. 5" "$out $?"
+    out=$(sc systemctl show nope -p LoadState --value); check "sc: show of a unit not found" "not-found" "$out"
+    out=$(sc systemctl restart plugin_loader 2>&1); check "sc: control without root" "Failed to restart plugin_loader.service: Interactive authentication required. 4" "$out $?"
+    out=$(sc systemctl list-units --type=service --state=active --no-legend --plain | awk '{print $1}' | sort | paste -sd' ')
+    check "sc: list-units with the alias" "inputplumber.service plugin_loader.service" "$out"
+    out=$(sc systemctl is-system-running); check "sc: is-system-running (not booted with systemd)" "offline 1" "$out $?"
+    sc systemctl --user list-jobs >/dev/null 2>&1; check "sc: --user list-jobs fails (Xfce's xinitrc)" 1 $?
+    sc systemctl daemon-reload; check "sc: daemon-reload" 0 $?
+    check "sc: requests.log has the unit not found" yes "$(grep -q $'\tnot-found\tstart nope\t' "$S/xdg/systemd-compat/requests.log" && echo yes)"
+    check "sc: the session probe is not logged" "" "$(grep 'list-jobs' "$S/xdg/systemd-compat/requests.log")"
+
+    # as root (a user namespace): sv is called, and detached when the caller runs inside the service
+    if unshare -r true 2>/dev/null; then
+        : > "$S/sv-calls"
+        unshare -r sh -c "$(declare -f sc); C='$C'; S='$S'; sc systemctl restart plugin_loader" >/dev/null 2>&1
+        check "sc: restart as root calls sv" "sv restart $S/service/decky" "$(cat "$S/sv-calls")"
+        : > "$S/sv-calls"
+        out=$(unshare -r sh -c "echo \$\$ > '$S/service/decky/supervise/pid'; $(declare -f sc); C='$C'; S='$S'; sc systemctl restart plugin_loader; echo \$?; true")
+        for _ in 1 2 3 4 5 6 7 8 9 10; do [ -s "$S/sv-calls" ] && break; sleep 0.1; done
+        check "sc: restart from inside the service: detached, returns at once" "0|sv restart $S/service/decky" "$out|$(cat "$S/sv-calls")"
+    else
+        echo "   (skipped: no user namespaces here) systemd-compat as root"
+    fi
+
+    # a user exec unit (Panel de Control's equalizer): the token it compares before and after restarting
+    tok1=$(sc systemctl --user show filter-chain.service --property=InvocationID --property=MainPID --value | paste -sd' ')
+    check "sc: exec unit not started: empty invocation, MainPID 0" " 0" "$tok1"
+    sc systemctl --user restart filter-chain.service; check "sc: restart of an exec unit" 0 $?
+    out=$(sc systemctl --user is-active filter-chain.service); check "sc: exec unit active" active "$out"
+    tok1=$(sc systemctl --user show filter-chain.service --property=InvocationID --property=MainPID --value | paste -sd' ')
+    sc systemctl --user restart filter-chain.service
+    tok2=$(sc systemctl --user show filter-chain.service --property=InvocationID --property=MainPID --value | paste -sd' ')
+    check "sc: the token changes on restart" yes "$([ -n "${tok1% *}" ] && [ "$tok1" != "$tok2" ] && echo yes)"
+    pid=${tok2#* }
+    sc systemctl --user stop filter-chain.service
+    out=$(sc systemctl --user is-active filter-chain.service); check "sc: stopped exec unit" inactive "$out"
+    check "sc: its process is gone" gone "$(kill -0 "$pid" 2>/dev/null && echo alive || echo gone)"
+
+    # a transient unit (the kiosk): nice, --setenv kept out of the log, its output through journalctl --since
+    t0=$(date +%s)
+    sc systemd-run --user --unit=kiosk --collect --quiet --nice=10 --property=CPUWeight=20 --setenv=URL=secret \
+        sh -c 'echo "url=$URL nice=$(cut -d" " -f19 /proc/self/stat)"; exec sleep 300'
+    check "sc: systemd-run" 0 $?
+    sleep 0.3
+    out=$(sc systemctl --user is-active kiosk); check "sc: transient unit active" active "$out"
+    out=$(sc journalctl --user _SYSTEMD_USER_UNIT=kiosk.service --since=@"$t0" --lines=2 --output=cat --no-pager)
+    check "sc: its output (environment and nice applied)" "url=secret nice=10" "$out"
+    check "sc: the value of --setenv is hidden in requests.log" "" "$(grep -F secret "$S/xdg/systemd-compat/requests.log")"
+    sc systemctl --user stop --no-block kiosk; sleep 0.3
+    out=$(sc systemctl --user is-active kiosk); check "sc: transient unit stopped" inactive "$out"
+    out=$(echo hi | sc systemd-run --user --pipe --quiet sh -c 'read x; echo "got $x"'); check "sc: systemd-run --pipe" "got hi" "$out"
+
+    # journalctl: the svlogd log of a runit service, this boot only, smart-case grep, a boot that is not kept
+    out=$(sc journalctl -b -u plugin_loader -o cat --no-pager); check "sc: journalctl -b -u (svlogd)" "Decky Started" "$out"
+    out=$(sc journalctl -u plugin_loader -o cat | head -1); check "sc: journalctl without -b: older lines too" "before this boot" "$out"
+    out=$(sc journalctl -u plugin_loader -o cat --grep 'decky'); check "sc: --grep lowercase = case-insensitive" "Decky Started" "$out"
+    out=$(sc journalctl -u plugin_loader -o cat --grep 'DECKY'); check "sc: --grep with a capital = case-sensitive" "-- No entries --" "$out"
+    sc journalctl -b -1 -k >/dev/null 2>&1; check "sc: journalctl -b -1 (previous boots are not kept)" 1 $?
+}
+
 test_render
 test_catalog
 test_void_update
 read -r p f < "$TMP/vu-result"; pass=$((pass + p)); failed=$((failed + f))
+test_systemd_compat
 test_i18n
 printf '%s passed, %s failed\n' "$pass" "$failed"
 [ "$failed" = 0 ]

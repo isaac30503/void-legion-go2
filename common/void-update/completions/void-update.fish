@@ -5,6 +5,8 @@ complete -c void-update -s l -l list -d 'Show pending updates'
 complete -c void-update -s n -l news -d "Void's latest news"
 complete -c void-update -s s -l services -d 'Services running old code'
 complete -c void-update -l summary -d 'Only the final summary'
+complete -c void-update -l systemd -d 'systemd-compat: who calls systemd, what was not served'
+complete -c void-update -l ack -d 'Mark as reviewed' -n '__fish_seen_argument -l systemd'
 complete -c void-update -l tray -d 'The panel icon'
 complete -c void-update -l enable -d 'Start at login' -n '__fish_seen_argument -l tray -l check -s c'
 complete -c void-update -l disable -d 'Do not start at login' -n '__fish_seen_argument -l tray -l check -s c'

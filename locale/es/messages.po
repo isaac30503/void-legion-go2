@@ -1138,7 +1138,7 @@ msgstr "ACTIVO (runit)"
 msgid "installed — not enabled"
 msgstr "instalado — no activado"
 
-#: common/ssh-setup/ssh-survey.sh
+#: common/ssh-setup/ssh-survey.sh common/void-update/lib/systemd.sh
 msgid "not installed"
 msgstr "no instalado"
 
@@ -1250,7 +1250,7 @@ msgstr "== listo (la biblioteca de juegos de ~/.local/share/Steam no se borra)"
 msgid "== 1. repositories"
 msgstr "== 1. repositorios"
 
-#: common/steam/install-steam.sh
+#: common/steam/install-steam.sh common/systemd-compat/install-systemd-compat.sh
 msgid "== 2. packages"
 msgstr "== 2. paquetes"
 
@@ -3426,7 +3426,7 @@ msgstr "cap_sys_nice repuesta"
 msgid "missing: %s"
 msgstr "le falta: %s"
 
-#: common/void-update/lib/summary.sh
+#: common/void-update/lib/summary.sh common/void-update/lib/systemd.sh
 msgid "%s problem(s)"
 msgstr "%s problema(s)"
 
@@ -3761,3 +3761,283 @@ msgstr "ssh-find quitado (se conservan hosts.conf y las direcciones aprendidas)"
 #: common/ssh-find/ssh-find
 msgid "usage: ssh-find ALIAS PORT | --where ALIAS | --list"
 msgstr "uso: ssh-find ALIAS PUERTO | --where ALIAS | --list"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "   Decky restarted (its plugins look for systemd again)"
+msgstr "   Decky reiniciado (sus plugins vuelven a buscar systemd)"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "   Decky still logs to syslog (vlogger), which nothing collects here: repeat %s so that it writes %s"
+msgstr "   Decky sigue mandando su registro a syslog (vlogger), que aquí nadie recoge: repetir %s para que escriba %s"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "   all there"
+msgstr "   están todos"
+
+#: common/steam/install-decky.sh
+msgid "   already installed"
+msgstr "   ya instalado"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "   free (or already systemd-compat's)"
+msgstr "   libres (o ya de systemd-compat)"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "   installing:%s"
+msgstr "   instalando:%s"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "   ok  systemctl --user list-jobs fails (Xfce's xinitrc: no systemd user session)"
+msgstr "   ok  systemctl --user list-jobs falla (xinitrc de Xfce: sin sesión de usuario de systemd)"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "   ok  systemctl is-active inputplumber.service = active"
+msgstr "   ok  systemctl is-active inputplumber.service = active"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "   ok  systemctl is-active plugin_loader.service = active (Decky)"
+msgstr "   ok  systemctl is-active plugin_loader.service = active (Decky)"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "   ok  systemctl is-system-running = offline (programs still see that systemd is not running)"
+msgstr "   ok  systemctl is-system-running = offline (los programas siguen viendo que systemd no está en marcha)"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "   ok  systemd-inhibit (elogind)"
+msgstr "   ok  systemd-inhibit (elogind)"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "   svlogd: %s"
+msgstr "   svlogd: %s"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "   yours, kept: %s"
+msgstr "   tuyo, se conserva: %s"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "!!  systemctl --user list-jobs answers: Xfce's xinitrc would believe there is a systemd user session"
+msgstr "!!  systemctl --user list-jobs responde: el xinitrc de Xfce creería que hay una sesión de usuario de systemd"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "!!  systemctl is-active inputplumber.service = %s"
+msgstr "!!  systemctl is-active inputplumber.service = %s"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "!!  systemctl is-active plugin_loader.service = %s"
+msgstr "!!  systemctl is-active plugin_loader.service = %s"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "!!  systemctl is-system-running = %s"
+msgstr "!!  systemctl is-system-running = %s"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "!!  systemd-inhibit --list fails"
+msgstr "!!  systemd-inhibit --list falla"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "!! %s already exists and is not systemd-compat's (%s): nothing was installed"
+msgstr "!! %s ya existe y no es de systemd-compat (%s): no se instaló nada"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "!! /run/systemd/system exists: this machine runs systemd; systemd-compat is not for it"
+msgstr "!! existe /run/systemd/system: esta máquina usa systemd; systemd-compat no es para ella"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "!! something failed: see above"
+msgstr "!! algo falló: ver arriba"
+
+#: common/void-update/lib/systemd.sh
+msgid "%s kind(s) of request not served"
+msgstr "%s tipo(s) de petición sin atender"
+
+#: common/void-update/lib/systemd.sh
+msgid "%s line(s) that call systemd"
+msgstr "%s línea(s) que llaman a systemd"
+
+#: common/void-update/lib/systemd.sh
+msgid "%s program(s) call systemd and get nothing (e.g. Decky plugins cannot restart Decky): %s (docs/2-base-system/4-systemd-compat.md)"
+msgstr "%s programa(s) llaman a systemd y no reciben nada (p. ej. los plugins de Decky no pueden reiniciar Decky): %s (docs/2-base-system/4-systemd-compat.md)"
+
+#: common/void-update/lib/systemd.sh
+msgid "%s program(s) served"
+msgstr "%s programa(s) atendidos"
+
+#: common/void-update/lib/systemd.sh
+msgid "/usr/bin/%s is not systemd-compat's (%s)"
+msgstr "/usr/bin/%s no es de systemd-compat (%s)"
+
+#: common/void-update/lib/systemd.sh
+msgid "/usr/bin/%s now comes from a package (%s): systemd-compat no longer answers there"
+msgstr "/usr/bin/%s ahora viene de un paquete (%s): systemd-compat ya no responde ahí"
+
+#: common/void-update/lib/systemd.sh
+msgid "/usr/bin/systemd-inhibit does not point to elogind-inhibit"
+msgstr "/usr/bin/systemd-inhibit no apunta a elogind-inhibit"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "== 1. the paths in /usr/bin"
+msgstr "== 1. las rutas de /usr/bin"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "== 3. the commands (%s)"
+msgstr "== 3. las órdenes (%s)"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "== 4. the units (%s)"
+msgstr "== 4. las unidades (%s)"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "== 5. links"
+msgstr "== 5. enlaces"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "== 6. Decky's log (journalctl -u plugin_loader)"
+msgstr "== 6. el registro de Decky (journalctl -u plugin_loader)"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "== 7. check"
+msgstr "== 7. comprobación"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "== done: void-update --systemd shows what programs ask for"
+msgstr "== listo: void-update --systemd enseña lo que piden los programas"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "== systemd-compat removed (your files of %s stay)"
+msgstr "== systemd-compat quitado (tus ficheros de %s se quedan)"
+
+#: common/void-update/lib/systemd.sh
+msgid "CHANGED since the last review"
+msgstr "CAMBIÓ desde la última revisión"
+
+#: common/void-update/lib/systemd.sh
+msgid "Installed (%s)"
+msgstr "Instalado (%s)"
+
+#: common/void-update/lib/systemd.sh
+msgid "Links, files, packages and units.d in order"
+msgstr "Enlaces, ficheros, paquetes y units.d en orden"
+
+#: common/void-update/lib/systemd.sh
+msgid "None"
+msgstr "Ninguna"
+
+#: common/void-update/lib/systemd.sh
+msgid "None found"
+msgstr "No se encontró ninguno"
+
+#: common/void-update/lib/systemd.sh
+msgid "Not installed: %s"
+msgstr "No instalado: %s"
+
+#: common/void-update/lib/systemd.sh
+msgid "Once reviewed: %s"
+msgstr "Una vez revisado: %s"
+
+#: common/void-update/lib/systemd.sh
+msgid "Programs that call systemd (%s)"
+msgstr "Programas que llaman a systemd (%s)"
+
+#: common/void-update/lib/systemd.sh
+msgid "Requests not served since the last review (this boot)"
+msgstr "Peticiones sin atender desde la última revisión (este arranque)"
+
+#: common/void-update/lib/systemd.sh
+msgid "Reviewed: void-update will warn again when a program changes how it calls systemd or asks something new"
+msgstr "Revisado: void-update volverá a avisar cuando un programa cambie cómo llama a systemd o pida algo nuevo"
+
+#: common/void-update/lib/systemd.sh
+msgid "See %s; once reviewed, %s"
+msgstr "Ver %s; una vez revisado, %s"
+
+#: common/void-update/lib/systemd.sh
+msgid "as reviewed"
+msgstr "como se revisó"
+
+#: common/void-update/lib/systemd.sh
+msgid "changed how they call systemd: %s"
+msgstr "cambiaron cómo llaman a systemd: %s"
+
+#: common/void-update/lib/systemd.sh
+msgid "does not exist here (that program will see it as not installed)"
+msgstr "no existe aquí (ese programa lo verá como no instalado)"
+
+#: common/void-update/lib/systemd.sh
+msgid "files of %s or units.d changed since they were installed (repeat the installer)"
+msgstr "ficheros de %s o de units.d cambiaron desde que se instalaron (repetir el instalador)"
+
+#: common/void-update/lib/systemd.sh
+msgid "hidden on purpose (deny in units.d)"
+msgstr "oculto a propósito (deny en units.d)"
+
+#: common/void-update/lib/systemd.sh
+msgid "missing"
+msgstr "no está"
+
+#: common/void-update/lib/systemd.sh
+msgid "missing package %s (%s)"
+msgstr "falta el paquete %s (%s)"
+
+#: common/void-update/lib/systemd.sh
+msgid "new: not reviewed yet"
+msgstr "nuevo: sin revisar todavía"
+
+#: common/void-update/lib/systemd.sh
+msgid "not-found: a unit that does not exist here (normal for other hardware's services); unsupported/partial: something systemd-compat does not do (yet): add it to units.d or to systemd-compat"
+msgstr "not-found: una unidad que aquí no existe (normal en servicios de otro hardware); unsupported/partial: algo que systemd-compat no hace (todavía): añadirlo a units.d o a systemd-compat"
+
+#: common/systemd-compat/install-systemd-compat.sh
+msgid "of no package"
+msgstr "de ningún paquete"
+
+#: common/void-update/lib/systemd.sh
+msgid "pattern: matches the runit services of that name"
+msgstr "patrón: coincide con los servicios de runit de ese nombre"
+
+#: common/void-update/lib/systemd.sh
+msgid "runit service %s"
+msgstr "servicio de runit %s"
+
+#: common/void-update/lib/systemd.sh
+msgid "runit service %s (not enabled)"
+msgstr "servicio de runit %s (no activado)"
+
+#: common/void-update/lib/systemd.sh
+msgid "systemd-compat"
+msgstr "systemd-compat"
+
+#: common/void-update/void-update
+msgid "systemd-compat (programs written for systemd: Decky plugins…): its installation,"
+msgstr "systemd-compat (programas hechos para systemd: plugins de Decky…): su instalación,"
+
+#: common/void-update/lib/systemd.sh
+msgid "systemd-compat installed and as in the repository; %s program(s) call systemd, none changed since the last review, and nothing new was left unserved"
+msgstr "systemd-compat instalado e igual que en el repositorio; %s programa(s) llaman a systemd, ninguno cambió desde la última revisión y no quedó nada nuevo sin atender"
+
+#: common/void-update/lib/systemd.sh
+msgid "systemd-compat not installed"
+msgstr "systemd-compat no instalado"
+
+#: common/void-update/lib/systemd.sh
+msgid "the repository has a newer systemd-compat: %s"
+msgstr "el repositorio tiene un systemd-compat más nuevo: %s"
+
+#: common/void-update/lib/systemd.sh
+msgid "to review"
+msgstr "por revisar"
+
+#: common/void-update/lib/systemd.sh
+msgid "unit of systemd-compat (units.d or systemd-run)"
+msgstr "unidad de systemd-compat (units.d o systemd-run)"
+
+#: common/void-update/lib/systemd.sh
+msgid "units.d: %s points to the runit service %s, which does not exist (%s)"
+msgstr "units.d: %s apunta al servicio de runit %s, que no existe (%s)"
+
+#: common/void-update/lib/systemd.sh
+msgid "units.d: %s runs %s, which is not installed (%s)"
+msgstr "units.d: %s ejecuta %s, que no está instalado (%s)"
+
+#: common/void-update/void-update
+msgid "who calls systemd and what was asked and not served; --ack marks it reviewed"
+msgstr "quién llama a systemd y qué se pidió y no se atendió; --ack lo marca como revisado"

@@ -12,6 +12,10 @@
 #   void-update -s, --services   runit services still running old code (asks to restart them)
 #   void-update --summary [-v]   only the final summary, without syncing, without sudo, changing nothing
 #                                (-v: the detail of every line, not only of the warnings)
+#   void-update --systemd [--ack]
+#                                systemd-compat (programs written for systemd: Decky plugins…): its installation,
+#                                who calls systemd and what was asked and not served; --ack marks it reviewed
+#                                (lib/systemd.sh; docs/2-base-system/4-systemd-compat.md)
 #   void-update --tray [--enable|--disable]
 #                                the panel icon; --enable also starts it at every login (XDG autostart),
 #                                --disable stops that. --check --enable is the same as --tray --enable: the
@@ -39,7 +43,7 @@ elif [ -r "$HOME/.local/share/void-legion/lib/i18n.sh" ]; then . "$HOME/.local/s
 else t() { _f=$1; shift; printf -- "$_f\n" "$@"; }; fi
 
 # shellcheck disable=SC1090  # its libraries, from the repository or installed
-for f in base check list news services summary upgrade; do . "$VU_LIB/$f.sh"; done
+for f in base check list news services summary systemd upgrade; do . "$VU_LIB/$f.sh"; done
 
 VU_DESKTOP=void-update.desktop
 VU_AUTOSTART="${XDG_CONFIG_HOME:-$HOME/.config}/autostart/void-update-tray.desktop"
@@ -57,6 +61,8 @@ usage() {
     _u "void-update -s, --services" "runit services still running old code (asks to restart them)"
     _u "void-update --summary [-v]" "only the final summary, without syncing, without sudo, changing nothing" \
         "(-v: the detail of every line, not only of the warnings)"
+    _u "void-update --systemd [--ack]" "systemd-compat (programs written for systemd: Decky plugins…): its installation," \
+        "who calls systemd and what was asked and not served; --ack marks it reviewed"
     printf '  %s\n' "void-update --tray [--enable|--disable]"
     _u "" "the panel icon; --enable also starts it at every login (XDG autostart)," \
         "--disable stops that. --check --enable is the same as --tray --enable: the" \
@@ -126,6 +132,7 @@ case "${1:-}" in
                      # shellcheck disable=SC2034  # read by summary.sh
                      VU_REBOOT=$(vu_reboot_since_boot)
                      case "${2:-}" in -v|--verbose) vu_summary --no-repair --verbose ;; *) vu_summary --no-repair ;; esac; rc=0 ;;
+    --systemd)       vu_systemd_report "${2:-}"; rc=$? ;;
     --tray)          tray "${2:-}" ;;
     --gen-config)    gen_config "${2:-}"; rc=$? ;;
     --show-config)   if [ -r "$VU_CONF" ]; then cat "$VU_CONF"; else err "There is no %s (void-update --gen-config)" "$VU_CONF"; exit 8; fi ;;

@@ -31,6 +31,8 @@ news_count=5                 # how many news --news shows by default
 hide_tray_when_up_to_date=false
 tray_updates_per_page=30     # entries per submenu page in the tray
 tray_icon_style=light        # tray icon: light (white, for dark panels) or dark (black)
+# shellcheck disable=SC2088  # kept literal: expanded when read (vu_sc_consumers)
+systemd_compat_scan='~/homebrew/plugins'   # folders whose subfolders are programs to watch for systemd calls (":"-separated)
 vu_load_config() {
     [ -r "$VU_CONF" ] || return 0
     local k v
@@ -44,6 +46,7 @@ vu_load_config() {
                 case "$v" in light|dark) printf -v "$k" '%s' "$v" ;; esac ;;
             notifications|flatpak|news|hide_tray_when_up_to_date)
                 case "$v" in true|false) printf -v "$k" '%s' "$v" ;; esac ;;
+            systemd_compat_scan) printf -v "$k" '%s' "$v" ;;
         esac
     done < <(grep -v '^[[:space:]]*#' "$VU_CONF")
 }
