@@ -16,6 +16,8 @@
 # HIDES the panel when that screen is unplugged. The internal screen is the one whose physical size is the eDP/LVDS
 # panel's (its EDID, within 4 mm): the panels go to the first other screen, or to Automatic when it is alone.
 # Without an internal panel (a desktop machine) the panels are left alone. PANELS_ON_EXTERNAL=0 turns it off.
+# After every change of screens it also starts xfce4-panel if it is not running (it closed once when the TV was
+# unplugged, and nothing started it again).
 # Log (English; the checks of docs/ read it): ~/.local/state/wallpaper-watcher.log (redone every session).
 # Previous (Spanish) name: fondo-vigilante (log fondo-vigilante.log).
 import glob, os, subprocess, time
@@ -37,10 +39,19 @@ def layout():
 
 last_layout = None
 
+def ensure_panel():
+    """xfce4-panel closed once when the TV was unplugged and nothing started it again (2026-10-16: it had been
+    restarted by hand, so the session no longer watched it): start it if it is not running."""
+    time.sleep(1)                                      # a panel restarting by itself gets its second
+    if subprocess.run(["pgrep", "-x", "xfce4-panel"], capture_output=True).returncode != 0:
+        subprocess.Popen(["xfce4-panel"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+        note("xfce4-panel was not running: started")
+
 def reload():
     global pending, last_layout
     pending = None
     place_panels()
+    ensure_panel()
     now = layout()
     changed, last_layout = (last_layout is not None and now != last_layout), now
     if subprocess.run(["pgrep", "-x", "xfdesktop"], capture_output=True).returncode != 0:

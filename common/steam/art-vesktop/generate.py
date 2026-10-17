@@ -21,10 +21,12 @@ pink one, even if it is repeated; the old folder ~/.cache/arte-vesktop-anterior 
 touch shortcuts.vdf: the quick menu icon is chosen in Steam
 (Properties → Shortcut → icon) with ~/.local/share/icons/steam-shortcuts/discord-256.png.
 With Steam open, the art shows after restarting Steam.
-Desktop (Xfce): it saves the recolored logo as a vector in ~/.local/share/icons/vesktop-discord.svg and
-writes ~/.local/share/applications/dev.vencord.Vesktop.desktop = the Flatpak's with Icon= pointing to
-it (the user's copy rules over the Flatpak's and over the Papirus theme's icon; same
-StartupWMClass=vesktop, so the open window takes the same icon in the panel and in Alt+Tab). If a
+Desktop (Xfce): it saves the recolored logo as a vector in the icon theme,
+~/.local/share/icons/hicolor/scalable/apps/vesktop-discord.svg, and writes
+~/.local/share/applications/dev.vencord.Vesktop.desktop = the Flatpak's with Icon=vesktop-discord (a name of its own,
+which Papirus does not have, so it is ours and not Papirus's "vesktop"; the user's copy rules over the Flatpak's; same
+StartupWMClass=vesktop, so the open window takes the same icon in the panel and in Alt+Tab). By name and not by path
+(2026-10-16): with a file path the panel loads it at 1x and stretches it, blurry on a screen at scale 2. If a
 Vesktop update changes its launcher, run this again.
 Tray (the "VC" of the top panel): that icon is drawn by Vesktop, not by the theme. Vesktop first uses the
 "user assets" (~/.var/app/dev.vencord.Vesktop/config/vesktop/userAssets/tray and trayUnread, without
@@ -33,6 +35,7 @@ only their pink is changed to the blue (the white, the outline and the red "unre
 It shows when opening Vesktop again. To go back to pink: delete that userAssets folder.
 Previous (Spanish) name: arte-vesktop/generar.py. Its messages follow the system's language.
   python3 common/steam/art-vesktop/generate.py    (or, from another machine: ssh lego python3 - < generate.py)
+  python3 common/steam/art-vesktop/generate.py --desktop    only the desktop icon and launcher (Steam may be open)
 docs/7-apps/2-vesktop.md (Library art).
 """
 import glob, json, math, os, random, re, shutil, subprocess, sys, tempfile
@@ -98,9 +101,12 @@ def recolored_svg():
 
 def desktop():
     """Desktop icon: the recolored logo and a user launcher that uses it."""
-    icon = os.path.expanduser("~/.local/share/icons/vesktop-discord.svg")
+    icon = os.path.expanduser("~/.local/share/icons/hicolor/scalable/apps/vesktop-discord.svg")
     os.makedirs(os.path.dirname(icon), exist_ok=True)
     open(icon, "w").write(recolored_svg())
+    old = os.path.expanduser("~/.local/share/icons/vesktop-discord.svg")   # by path, before 2026-10-16
+    if os.path.exists(old):
+        os.remove(old)
     source = os.path.expanduser("~/.local/share/flatpak/exports/share/applications/dev.vencord.Vesktop.desktop")
     if not os.path.exists(source):
         source = "/var/lib/flatpak/exports/share/applications/dev.vencord.Vesktop.desktop"
@@ -108,12 +114,12 @@ def desktop():
         print(_("no Vesktop launcher from the Flatpak: the desktop is not touched")); return
     dest = os.path.expanduser("~/.local/share/applications/dev.vencord.Vesktop.desktop")
     lines = open(source).read().splitlines()
-    lines = [f"Icon={icon}" if l.startswith("Icon=") else l for l in lines]
+    lines = ["Icon=vesktop-discord" if l.startswith("Icon=") else l for l in lines]
     i = lines.index("[Desktop Entry]") + 1 if "[Desktop Entry]" in lines else 0
     lines.insert(i, "# Copy of the Flatpak's launcher with the recolored icon (common/steam/art-vesktop/generate.py)")
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     open(dest + ".tmp", "w").write("\n".join(lines) + "\n"); os.replace(dest + ".tmp", dest)
-    print(_("desktop: %s → Icon=%s") % (dest, icon))
+    print(_("desktop: %s → Icon=%s") % (dest, "vesktop-discord"))
 
 def tray():
     """Tray icons: Vesktop's with the pink changed to Discord's blue."""
@@ -242,4 +248,7 @@ def main():
     desktop()
     tray()
 
-main()
+if sys.argv[1:] == ["--desktop"]:
+    desktop()
+else:
+    main()

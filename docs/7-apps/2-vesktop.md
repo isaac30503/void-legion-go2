@@ -41,15 +41,17 @@ Without root (Pillow, `rsvg-convert`). From the Flatpak's own vector it recolors
 - **Steam's library art** (cover, banner, hero, logo, icon) on a `#313338` → `#1e1f22` gradient with a pattern of
   Vesktop's speech bubbles (fixed seed); it saves what was there before in `~/.cache/art-vesktop-previous/` (only what is
   not saved already).
-- **The same icon in Xfce** (menu, finder, Docklike, Alt+Tab): `~/.local/share/icons/vesktop-discord.svg` and a copy of
-  the Flatpak's launcher in `~/.local/share/applications/dev.vencord.Vesktop.desktop` with `Icon=` that file (an absolute
-  path, because Papirus-Dark ships its own Vesktop icon, which would win), keeping `StartupWMClass=vesktop`.
+- **The same icon in Xfce** (menu, finder, Docklike, Alt+Tab): `~/.local/share/icons/hicolor/scalable/apps/vesktop-discord.svg` and a copy of
+  the Flatpak's launcher in `~/.local/share/applications/dev.vencord.Vesktop.desktop` with `Icon=vesktop-discord` (a name of
+  its own: Papirus-Dark ships its own `vesktop`, which would win), keeping `StartupWMClass=vesktop`. By name and not by
+  path (2026-10-16): with a path the panel loaded it at 1× and stretched it, blurry on a screen at scale 2. Only this
+  part: `python3 "$B/common/steam/art-vesktop/generate.py" --desktop`.
 - **The tray icon** (the "VC" Vesktop draws itself): recolored PNGs in Vesktop's *user assets*,
   `~/.var/app/dev.vencord.Vesktop/config/vesktop/userAssets/tray` and `…/trayUnread` (no extension; the red dot untouched).
   It shows after **quitting Vesktop from its tray** and opening it again.
 
 None of it touches the Flatpak, so it survives updates; if Vesktop changes its launcher or its tray PNGs, run the
-generator again. To go back: `rm ~/.local/share/applications/dev.vencord.Vesktop.desktop ~/.local/share/icons/vesktop-discord.svg`
+generator again. To go back: `rm ~/.local/share/applications/dev.vencord.Vesktop.desktop ~/.local/share/icons/hicolor/scalable/apps/vesktop-discord.svg`
 and `rm -r ~/.var/app/dev.vencord.Vesktop/config/vesktop/userAssets`.
 
 **Check:** `desktop-file-validate ~/.local/share/applications/dev.vencord.Vesktop.desktop`; menu, Docklike and tray in blue.
