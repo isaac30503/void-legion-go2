@@ -65,14 +65,17 @@ fi
 
 # Kernel line: "quiet" AFTER "loglevel=3" overrode it (the last one wins: quiet lets
 # errors through); udev silenced and no blinking cursor on the console.
-# It respects "splash" (set by install-plymouth.sh: without it Plymouth does not start).
+# It respects "splash" (set by install-plymouth.sh: without it Plymouth does not start), and with it
+# loglevel=2: with 3 the console shows the kernel's pr_crit messages, which take the screen before Plymouth
+# does (on the Legion, amdgpu's "Overdrive is enabled…"); they stay in dmesg.
 GRUB=/etc/default/grub
 cp "$GRUB" "$GRUB.bak"
-SPLASH=; grep -q '^GRUB_CMDLINE_LINUX_DEFAULT="[^"]*[" ]splash[" ]' "$GRUB" && SPLASH=" splash"
+SPLASH=; LEVEL=3
+grep -q '^GRUB_CMDLINE_LINUX_DEFAULT="[^"]*[" ]splash[" ]' "$GRUB" && { SPLASH=" splash"; LEVEL=2; }
 if [ -n "$REMOVE" ]; then
-    sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 quiet$SPLASH\"|" "$GRUB"
+    sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=$LEVEL quiet$SPLASH\"|" "$GRUB"
 else
-    sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"quiet loglevel=3 rd.udev.log_level=3 udev.log_level=3 vt.global_cursor_default=0$SPLASH\"|" "$GRUB"
+    sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"quiet loglevel=$LEVEL rd.udev.log_level=3 udev.log_level=3 vt.global_cursor_default=0$SPLASH\"|" "$GRUB"
 fi
 grep '^GRUB_CMDLINE_LINUX_DEFAULT' "$GRUB"
 

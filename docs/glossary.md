@@ -82,6 +82,7 @@ logs (in the private repository) keep their original names.
 | `fish/void/arranque/quitar-loading.py` | `common/boot/remove-loading.py` |
 | `fish/void/arranque/instalar-plymouth.sh` | `common/boot/install-plymouth.sh` |
 | `fish/void/arranque/plymouth-void/generar.py` | `common/boot/plymouth-void/generate.py` |
+| `arranque/plymouth-void.sh` (2026-10-16, tested outside the repository) | `common/boot/install-plymouth.sh` |
 | `fish/void/bluetooth/bluetooth-al-arrancar.sh` | `common/bluetooth/bluetooth-at-boot.sh` |
 | `fish/void/fastfetch/gen-config.py` | `common/fastfetch/gen-config.py` |
 | `fish/void/99-exec-fish.sh` | `common/shell/99-exec-fish.sh` |

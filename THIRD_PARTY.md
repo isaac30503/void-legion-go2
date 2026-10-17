@@ -67,6 +67,10 @@ a5a32b51028dc821155e44cdec025fe70398bae193c619ae6ba8b1babf6f49f1  source-thunar-
 
 ## Inspired by (no code taken)
 
+- **Steam's logo** (Valve): `common/boot/plymouth-void/generate.py` draws the mechanism of Steam's old loading
+  animation (its geometry and motion measured on that animation) and the word STEAM (outlines traced from the logo)
+  for the loading screens of this machine. Steam and its logo are trademarks of Valve Corporation; this repository's
+  MIT license does not cover them, and no file of Valve's is included.
 - **cachy-update** (CachyOS, a fork of **arch-update** by Antiz96): `void-update`'s behavior (panel icon, checks,
   notifications) is modeled on it; written from scratch for xbps and runit.
 - **SteamOS** (Valve): the Game Mode session, `steamos-session-select`, `steamos-powerbuttond`'s behavior and its

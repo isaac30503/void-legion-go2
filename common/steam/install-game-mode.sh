@@ -422,8 +422,8 @@ def plymouth_theme():
         pass
     return "bgrt-void"
 THEME = "/usr/share/plymouth/themes/" + plymouth_theme()
-# A loading screen of its own, different from the power-on one: frames and a steam-loading.plymouth (in
-# two-step's format) in this folder, put there by a local theme script. Without it, the Plymouth theme in use.
+# A loading screen of its own, different from the power-on one: frames and a steam-loading.plymouth in this
+# folder (common/boot/install-plymouth.sh --loading-…). Without it, the Plymouth theme in use.
 if os.path.isfile("/usr/local/share/steam-loading/steam-loading.plymouth"):
     THEME = "/usr/local/share/steam-loading"
 
