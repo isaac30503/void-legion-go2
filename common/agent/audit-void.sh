@@ -286,7 +286,7 @@ print("   " + _("(%d files looked at; with no trace: %d. 'Generated' = the agent
 # The pieces of this machine (install/pieces.tsv): is each path they install here? Paths with * are patterns.
 hn = open("/etc/hostname").read().strip().lower()
 me = "L" if "legion" in hn else "I" if "ideapad" in hn else "?"
-mine = [p for p in pieces if len(p) == 8 and me in p[1] and p[3] != "tool"]
+mine = [p[:8] for p in pieces if len(p) >= 8 and me in p[1] and p[3] != "tool"]
 print("   " + _("pieces of this machine (install/pieces.tsv): %d") % len(mine))
 gone = 0
 for pid, mach, stage, how, inst, doc, srcs, installs in mine:

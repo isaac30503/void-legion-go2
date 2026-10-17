@@ -223,6 +223,9 @@ test_pieces() {
     echo 'echo hi' > "$W/common/stray.sh"; (cd "$W" && git add common/stray.sh)
     out=$(python3 -I "$W/install/pieces.py"); check "pieces: a file without piece" "common/stray.sh: belongs to no piece of install/pieces.tsv" "$out"
     rm "$W/common/stray.sh"; (cd "$W" && git rm -q --cached common/stray.sh)
+    printf 'dup\tL\t15\troot\tlegion/udev-net.sh\tdocs/reinstall.md\tlegion/udev-net.sh\t/x\t--remove\n' >> "$W/install/pieces.tsv"
+    out=$(python3 -I "$W/install/pieces.py"); check "pieces: a file with two owners" yes "$(grep -q 'legion/udev-net.sh: belongs to several pieces (dup, udev-net)' <<< "$out" && echo yes)"
+    sed -i '$d' "$W/install/pieces.tsv"
     sed -i '/install-systemd-compat.sh/d' "$W/install/install.sh"
     out=$(python3 -I "$W/install/pieces.py"); check "pieces: an installer missing from install.sh" yes "$(grep -q 'install-systemd-compat.sh is not in install/install.sh' <<< "$out" && echo yes)"
 }

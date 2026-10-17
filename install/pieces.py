@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """pieces.py — checks install/pieces.tsv against the repository (run by install/verify.sh; docs/8-maintenance/4-this-repository.md):
-every tracked file of common/, legion/, lib/ and install/ belongs to a piece; each piece's installer, page and sources exist;
+every tracked file of common/, legion/, lib/ and install/ belongs to exactly one piece (as a file to one xbps package);
+each piece's installer, page and sources exist; its "undo" is possible (--remove: its installer takes it; rm: copies in ~);
 a "root"/"user" piece is in install/install.sh and in docs/reinstall.md or its page; a "manual" one is named in its page;
 a "via:<id>" one is named by that piece's installer. Prints one line per problem; exit 1 if any.
    python3 install/pieces.py [--list]     (--list: the pieces, for people and the audit's index)"""
 import os, subprocess, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-COLS = ["id", "machines", "stage", "how", "installer", "doc", "sources", "installs"]
+COLS = ["id", "machines", "stage", "how", "installer", "doc", "sources", "installs", "undo"]
 
 
 def load(path=os.path.join(ROOT, "install", "pieces.tsv")):
@@ -48,6 +49,20 @@ def check():
             bad.append("%s: how must be root, user, manual, via:<id> or tool" % where)
         if how != "tool" and (r["machines"] == "-" or r["installs"] == ""):
             bad.append("%s: an installed piece needs machines" % where)
+        undo = r["undo"]
+        if how == "tool":
+            if undo != "-":
+                bad.append("%s: a tool has no undo (-)" % where)
+        elif undo in ("", "-"):
+            bad.append("%s: every installed piece says how it is undone (undo)" % where)
+        elif undo == "--remove":
+            if not __import__("re").search(r"is_remove|--remove|--undo", read(r["installer"]) if r["installer"] != "-" else ""):
+                bad.append("%s: undo --remove, but %s does not take --remove" % (where, r["installer"]))
+        elif undo == "rm":
+            if r["installs"] == "-" or not all(q.startswith("~/") for q in r["installs"].split()):
+                bad.append("%s: undo rm is only for copies in ~ (its installs)" % where)
+        elif undo == "via" and not how.startswith("via:"):
+            bad.append("%s: undo via, but how is not via:<id>" % where)
         for p in [r["doc"]] + ([r["installer"]] if r["installer"] != "-" else []):
             if not os.path.exists(os.path.join(ROOT, p)):
                 bad.append("%s: %s does not exist" % (where, p))
@@ -82,8 +97,12 @@ def check():
                            capture_output=True, text=True).stdout.split()
     srcs = [s for r in rows for s in r["sources"].split() if s != "-"]
     for f in files:
-        if not any(f == s or (s.endswith("/") and f.startswith(s)) for s in srcs):
+        owners = [r["id"] for r in rows for s in r["sources"].split()
+                  if s != "-" and (f == s or (s.endswith("/") and f.startswith(s)))]
+        if not owners:
             bad.append("%s: belongs to no piece of install/pieces.tsv" % f)
+        elif len(set(owners)) > 1:
+            bad.append("%s: belongs to several pieces (%s): one owner, as in a package" % (f, ", ".join(sorted(set(owners)))))
     return bad
 
 

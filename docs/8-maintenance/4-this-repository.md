@@ -33,6 +33,47 @@ what to keep. Now:
 - **The audit** (`common/agent/audit-void.sh`, section 3) checks on each machine that what its pieces install is there.
 - **The maintenance agents** read it as the list of what to maintain (`python3 install/pieces.py --list`).
 
+## Adding or changing a piece
+
+The rules are those of a Void package (an xbps template), because a piece is the same idea one level up: something
+installed and removed as a unit, whose files nobody else owns, and that says what it leaves on the system.
+
+1. **One piece = one function, installed and undone as a unit.** Its installer puts it in place, its `undo` takes it
+   away. A new file that only makes sense with an existing piece (one more labwc setting, a new runit `conf`) goes into
+   that piece's `sources`, not into a new line. **Split** (as xbps splits subpackages) when parts are installed at
+   different stages, on different machines, or by different hands (a script and a setting made in Steam): each part is
+   its line. Do not split one installer into several pieces.
+2. **Every file of the repository has exactly one owner** (`verify.sh` fails on none or on two), as a file belongs to one
+   package. Tools that are not installed (diagnostics, generators, the repository's own scripts) also have an owner, with
+   `how` = `tool`.
+3. **`installs` lists what proves the piece is there**, as `xbps-query -f` would, but only the identifying paths: the
+   program it puts in the `PATH` (`/usr/local/bin/…`, `~/.local/bin/…`), its runit service (`/etc/sv/<name>/run`, and
+   `/var/service/<name>` when it is enabled), its own configuration (`/etc/…/conf.d/…`, `/etc/sudoers.d/…`, `~/.config/…`)
+   and links it creates in `/usr/bin`. Not shared folders, logs, caches or state (they come and go). A pattern with `*`
+   for versioned names; no spaces (`~/homebrew/plugins/Panel*`). The audit checks each path on its machines.
+4. **Every installed piece says how it is undone (`undo`)**, as every package can be removed: `--remove` if its installer
+   takes it (preferred for scripts; `verify.sh` checks that it does), `rm` for plain copies in `~`, the command when undoing
+   means going back to Void's package (`sudo xbps-install -Sf <package>`, for the patched ones), or, for the base system,
+   saying so. An installer must also be **idempotent** (running it again leaves the same state) and must **never write
+   over a file of a package or of someone else** (it checks with `xbps-query -o` and stops): its files go in `/usr/local`,
+   in `conf.d`-style folders, in its own `/etc/sv/<name>`, or in `~`, never over what an update would replace.
+5. **Settings made by hand are pieces too** (`how` = `manual`, `installer` = `-`): Steam's settings, Firefox's, Decky's
+   plugins, Bluetooth pairings, Flatpak apps. Their page says how; `installs` has a path that proves them when there is
+   one (`~/homebrew/plugins/Colores`, `/var/lib/bluetooth`), otherwise `-`. A reinstall that forgets them is not the
+   same system.
+6. **What is only on the IdeaPad and not in this repository** stays in its recipe in Common (in Spanish); `machines`
+   says where the repository's pieces are installed (`I`, `LI`), not more.
+7. **Removing or renaming a piece:** run its `undo` on each machine, delete its line, its installer from `install.sh` and
+   `docs/reinstall.md`, its **Check** lines, and what the agents' contexts say about it, in the same commit. A rename keeps
+   the old name working until both machines moved (`install/migrate.sh`, `docs/glossary.md`).
+
+**Example (2026-10-17): systemd-compat.** One function (systemctl and friends for programs written for systemd), one
+installer that takes `--remove` → one line: `L` (only the Legion has Decky), stage 15 (after InputPlumber, which it
+answers for), `root`, `common/systemd-compat/install-systemd-compat.sh`, its page, `common/systemd-compat/` (every file
+of the folder), `installs` = its commands in `/usr/local/lib/systemd-compat/`, its table in `/etc/systemd-compat/` and
+its four links in `/usr/bin`, `undo` = `--remove`. Decky's log moving to svlogd belongs to the `decky` piece (its
+installer changed), not to this one.
+
 ## Changing a script or a configuration
 
 1. Edit it in the clone (English; messages through `t` / `_` / `__vl_t`). A new or changed message → its entry in
