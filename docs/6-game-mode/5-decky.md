@@ -20,7 +20,7 @@ Its output goes to `/var/log/decky/current` (svlogd, 1 MB × 2; `journalctl -u p
 "restart Decky" button of Hooandee's plugins never restarts it (by hand: `sudo sv restart decky`).
 
 **Plugins** (from its store): **SteamGridDB**, **CSS Loader**, **Colores** and **Panel de Control** (the last two by
-Hooandee). **Colores needs `hidapi`**: it loads `libhidapi-hidraw.so.0` with `ctypes` (SteamOS ships it); without it, it
+Hooandee), **MAKO - Frame Generation** and **Decky-Framegen**. **Colores needs `hidapi`**: it loads `libhidapi-hidraw.so.0` with `ctypes` (SteamOS ships it); without it, it
 says no RGB controller is found (`~/homebrew/logs/Colores/*.log`: `driver=NullDevice … available=False`). After
 installing it, `sudo sv restart decky`. It runs as root, so it reaches the controller even with InputPlumber hiding
 it; it turns the lights off before suspending and restores them after (through `systemd-inhibit` = elogind's).
