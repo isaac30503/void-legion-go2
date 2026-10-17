@@ -1,6 +1,6 @@
 #!/bin/bash
 # verify.sh — checks of the clone (without root; changes nothing):
-#   bash install/verify.sh              all: syntax, ShellCheck, catalogs, links, paths cited by docs/, binaries,
+#   bash install/verify.sh              all: syntax, ShellCheck, catalogs, the inventory, links, paths cited by docs/, binaries,
 #                                       private values
 #   bash install/verify.sh --secrets    only the private values and the encrypted copy of local.env (before every
 #                                       commit; docs/sanitization.md)
@@ -146,6 +146,13 @@ done
 # Every message of the scripts has its entry, and every entry is used (install/catalog.py; after adding or removing
 # messages, "python3 install/catalog.py refs" rewrites the "#:" comments)
 python3 -I install/catalog.py check && ok "every message translated, no unused entries" || fail "catalog out of step with the scripts"
+
+t "== the inventory (install/pieces.tsv)"
+# Everything the repository installs, one piece per line: every tracked file of common/, legion/, lib/ and install/
+# belongs to a piece, and each installer is where its piece says (install.sh, reinstall.md or its page). A new piece
+# not added there, or one forgotten in the reinstall, fails here (docs/8-maintenance/4-this-repository.md, "The inventory").
+if out=$(python3 -I install/pieces.py 2>&1); then ok "$(t "%s pieces; every file has its piece and every installer its place" "$(python3 -I install/pieces.py --list | grep -c .)")"
+else printf '%s\n' "$out" | head -20 | sed 's/^/   /'; fail "install/pieces.tsv"; fi
 
 t "== links between the documents"
 python3 -I - <<'PY' && ok "all .md links resolve" || fail "broken links"

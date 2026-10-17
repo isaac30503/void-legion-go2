@@ -1,0 +1,74 @@
+# pieces.tsv — EVERYTHING this repository installs and keeps, one piece per line (docs/8-maintenance/4-this-repository.md,
+# "The inventory"). The maintenance agents read it as the list of what to maintain; install/verify.sh enforces it (every
+# tracked file of common/, legion/, lib/ and install/ belongs to a piece; each installer is where its "how" says);
+# common/agent/audit-void.sh checks on each machine that what its pieces install is there.
+# A new piece, or a piece that moves: change this file in the same commit (verify.sh fails otherwise).
+#
+# Columns, separated by TABs ("-" = none):
+#   id        short name
+#   machines  L (Legion), I (IdeaPad), LI (both): where it is installed (the IdeaPad follows its own recipe in Common)
+#   stage     stage of docs/reinstall.md and install/install.sh (1–19); "-" for tools
+#   how       root | user   run directly at that stage: in install/install.sh, and in docs/reinstall.md or its page
+#             manual        by hand, as its page says (the installer is named in that page)
+#             via:<id>      installed by the installer of piece <id> (which names this one's installer)
+#             tool          not installed (diagnostics, generators, the repository's own tools)
+#   installer the repository path that installs it (a script, or the file the stage copies)
+#   doc       its page in docs/
+#   sources   repository paths that belong to it (a folder ends in /), space-separated
+#   installs  paths it leaves on the machine, to check that they are there (~ = home), space-separated
+id	machines	stage	how	installer	doc	sources	installs
+repo-tools	-	-	tool	install/install.sh	docs/8-maintenance/4-this-repository.md	install/README.md install/assets.tsv install/catalog.py install/fetch-assets.sh install/install.sh install/migrate.sh install/render.sh install/secrets.sh install/verify.sh install/pieces.tsv install/pieces.py lib/common.sh	-
+i18n	LI	7	user	install/install-i18n.sh	docs/i18n.md	install/install-i18n.sh lib/i18n.sh lib/void_legion_i18n.py	~/.local/share/void-legion/lib/i18n.sh ~/.local/share/void-legion/locale/es/messages.po
+agent-audit	-	-	tool	common/agent/audit-void.sh	docs/8-maintenance/3-claude-code.md	common/agent/	-
+diagnostics	-	-	tool	-	docs/3-hardware-support/1-controllers.md	legion/diag-controller-gyros.sh legion/diag-edp.sh legion/diag-gamescope-pipewire.sh legion/diag-gyro.sh legion/diag-inputplumber-cpu.sh legion/diag-monitor.sh legion/diag-steam-keyboard.sh legion/test-controller-imu.sh legion/right-controller-gyro.sh common/steam/diag-lightdm.sh common/steam/capture-syslog.sh common/steam/test-autologin.sh common/steam/steamos-manager/diag-steamos-manager.sh	-
+system-base	L	3	root	legion/steps-1-to-3.sh	docs/2-base-system/1-system.md	legion/steps-1-to-3.sh legion/00-keyboard.conf	/etc/X11/xorg.conf.d/00-keyboard.conf
+avahi-wifi-only	L	4	root	legion/avahi-wifi-only.sh	docs/2-base-system/2-network.md	legion/avahi-wifi-only.sh	/etc/avahi/avahi-daemon.conf
+wifi-no-powersave	L	4	root	legion/wifi-no-powersave.sh	docs/2-base-system/2-network.md	legion/wifi-no-powersave.sh	/etc/NetworkManager/conf.d/wifi-no-powersave.conf
+udev-net	LI	4	root	legion/udev-net.sh	docs/2-base-system/2-network.md	legion/udev-net.sh	/etc/sv/udev-net/run /var/service/udev-net
+ssh-config	L	5	user	legion/ssh-config	docs/2-base-system/2-network.md	legion/ssh-config	~/.ssh/config
+ssh-find	LI	5	user	common/ssh-find/install-ssh-find.sh	docs/2-base-system/2-network.md	common/ssh-find/	~/.local/bin/ssh-find ~/.config/ssh-find/hosts.conf
+desktop-packages	L	6	root	legion/desktop-1-root.sh	docs/5-desktop/1-xfce.md	legion/desktop-1-root.sh	/var/service/bluetoothd
+bluetooth-at-boot	I	-	manual	common/bluetooth/bluetooth-at-boot.sh	docs/3-hardware-support/3-audio-bluetooth.md	common/bluetooth/	/etc/rc.local
+shell	LI	7	user	common/shell/99-exec-fish.sh	docs/5-desktop/1-xfce.md	common/shell/	~/.bashrc.d/99-exec-fish.sh
+fish-functions	LI	7	user	common/fish/functions/	docs/5-desktop/1-xfce.md	common/fish/	~/.config/fish/functions/install-pkg.fish ~/.config/fish/functions/remove-pkg.fish ~/.config/fish/functions/disk-ops.fish ~/.config/fish/functions/audio-ctrl.fish ~/.config/fish/functions/audio-priority.fish ~/.config/fish/functions/fish_greeting.fish ~/.config/fish/functions/fish_prompt.fish ~/.config/fish/functions/__vl_t.fish
+ssh-setup	LI	7	user	common/ssh-setup/ssh-setup.fish	docs/ssh-setup.md	common/ssh-setup/	~/.config/fish/functions/ssh-setup.fish ~/.config/fish/ssh-survey.sh
+void-update	LI	7	user	common/void-update/install-void-update.sh	docs/8-maintenance/1-void-update.md	common/void-update/	~/.local/bin/void-update ~/.local/lib/void-update/lib/base.sh ~/.local/lib/void-update/lib/systemd.sh ~/.local/share/applications/void-update.desktop
+patch-test	LI	7	via:void-update	common/patch-test/install-patch-test.sh	docs/8-maintenance/2-own-patches.md	common/patch-test/	~/.local/bin/patch-still-needed
+fonts-xterm	LI	7	user	common/xterm/Xresources	docs/5-desktop/2-look-and-feel.md	common/xterm/	~/.Xresources ~/.xprofile ~/.config/xfce4/helpers.rc ~/.local/bin/xdg-terminal-exec ~/.local/share/fonts/jetbrains-blocks ~/.local/share/icons/xterm-papirus.xpm
+fastfetch	LI	7	user	common/fastfetch/gen-config.py	docs/5-desktop/2-look-and-feel.md	common/fastfetch/	~/.config/fastfetch/gen-config.py ~/.config/fastfetch/config.jsonc
+login-screen	LI	8	root	legion/desktop-2-root.sh	docs/5-desktop/2-look-and-feel.md	legion/desktop-2-root.sh common/xfce/lightdm-gtk-greeter.conf common/xfce/lightdm-gtk.css	/etc/lightdm/lightdm-gtk-greeter.conf /usr/local/share/fonts/jetbrains-blocks
+greeter-without-atspi	I	-	manual	common/steam/greeter-without-atspi.sh	docs/4-sessions/1-login-and-modes.md	common/steam/greeter-without-atspi.sh	/etc/lightdm/lightdm-gtk-greeter.conf
+xfce-config	L	9	user	legion/xfce/gtk.css	docs/5-desktop/1-xfce.md	legion/xfce/	~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml ~/.config/xfce4/panel ~/.config/gtk-3.0/gtk.css
+window-scripts	LI	9	user	common/xfce/window-snap	docs/5-desktop/3-windows-and-shortcuts.md	common/xfce/window-snap common/xfce/window-focus common/xfce/new-windows common/xfce/new-windows.desktop	~/.local/bin/window-snap ~/.local/bin/window-focus ~/.local/bin/new-windows ~/.config/autostart/new-windows.desktop
+claude-code	L	10	user	-	docs/8-maintenance/3-claude-code.md	-	~/Work/CLAUDE.md ~/Work/.claude/agents/void-maintainer.md
+grub	L	11	root	legion/grub-root.sh	docs/1-platform/3-boot.md	legion/grub-root.sh	/boot/grub/custom.cfg
+grub-hidden	L	11	root	legion/grub-hidden.sh	docs/1-platform/3-boot.md	legion/grub-hidden.sh	-
+grub-theme	LI	11	via:grub	common/grub-theme/install-theme.sh	docs/1-platform/3-boot.md	common/grub-theme/	/boot/grub/themes/void-xterm /etc/kernel.d/post-install/60-grub-theme /usr/local/share/grub-theme/install-theme.sh
+silent-boot	LI	11	via:grub	common/boot/silent-boot.sh	docs/1-platform/3-boot.md	common/boot/silent-boot.sh common/boot/remove-loading.py	/etc/rc.conf
+plymouth	LI	11	root	common/boot/install-plymouth.sh	docs/1-platform/3-boot.md	common/boot/install-plymouth.sh common/boot/plymouth-void/	/usr/share/plymouth/themes/void-simbolo /etc/runit/shutdown.d/07-plymouth.sh /usr/local/share/steam-loading
+steam	LI	12	root	common/steam/install-steam.sh	docs/6-game-mode/1-steam.md	common/steam/install-steam.sh legion/steam/installed-packages.txt	/etc/security/limits.d/90-steam.conf /etc/sysctl.d/90-steam.conf
+steam-desktop	L	12	user	legion/steam/steam-extest.desktop	docs/6-game-mode/1-steam.md	legion/steam/steam-extest.desktop legion/steam/steam.desktop legion/steam/extest/	~/.local/share/applications/steam.desktop ~/.local/lib/extest/libextest.so
+game-mode	LI	14	root	common/steam/install-game-mode.sh	docs/6-game-mode/2-game-mode.md	common/steam/install-game-mode.sh	/usr/local/bin/steam-game-mode /usr/local/bin/steamos-session-select /usr/local/lib/steam-game-mode/bin/sudo
+power-button	L	14	root	common/power-button/install-power-button.sh	docs/3-hardware-support/2-power.md	common/power-button/	/usr/local/bin/power-button /etc/elogind/logind.conf.d/50-power-button.conf /etc/udev/rules.d/70-power-button.rules /etc/xdg/autostart/power-button.desktop
+direct-session	L	14	root	common/steam/test-direct-session.sh	docs/4-sessions/1-login-and-modes.md	common/steam/test-direct-session.sh	-
+passwordless-switch	LI	14	root	common/steam/install-passwordless-switch.sh	docs/4-sessions/1-login-and-modes.md	common/steam/install-passwordless-switch.sh	/etc/sudoers.d/zz-switch-mode /etc/sv/mode-switch/run /usr/local/bin/switch-mode-root /usr/local/bin/xfce4-session /etc/runit/shutdown.d/05-close-steam.sh /etc/xdg/lightdm/lightdm.conf.d/60-steam-mode.conf
+xfce-wayland	LI	14	root	common/xfce-wayland/install-xfce-wayland.sh	docs/5-desktop/1-xfce.md	common/xfce-wayland/install-xfce-wayland.sh common/xfce-wayland/labwc/ common/xfce-wayland/brightness common/xfce-wayland/labwc-theme.sh common/xfce-wayland/wallpaper-watcher	~/.config/xfce4/labwc/rc.xml ~/.local/bin/wallpaper-watcher ~/.local/bin/brightness
+xfdesktop-wallpaper	LI	14	root	common/xfce-wayland/xfdesktop-wallpaper/install-xfdesktop-wallpaper.sh	docs/5-desktop/4-wallpaper.md	common/xfce-wayland/xfdesktop-wallpaper/	-
+thunar-wallpaper	LI	14	root	common/xfce-wayland/thunar-wallpaper/install-thunar-wallpaper.sh	docs/5-desktop/4-wallpaper.md	common/xfce-wayland/thunar-wallpaper/	/usr/lib/thunarx-3/thunar-wallpaper-plugin.so
+inputplumber	L	15	root	legion/install-inputplumber.sh	docs/3-hardware-support/1-controllers.md	legion/install-inputplumber.sh legion/inputplumber-udevadm	/usr/bin/inputplumber /etc/sv/inputplumber/run /etc/inputplumber/devices.d/50-legion_go_2.yaml /usr/local/lib/inputplumber-void/bin
+tdp	L	15	root	legion/tdp/install-tdp.sh	docs/3-hardware-support/2-power.md	legion/tdp/	/usr/src/lenovo-wmi-tdp-*
+steamos-manager	L	15	root	common/steam/steamos-manager/install-steamos-manager.sh	docs/6-game-mode/3-steamos-manager.md	common/steam/steamos-manager/build-steamos-manager.sh common/steam/steamos-manager/install-steamos-manager.sh common/steam/steamos-manager/0001-gpu-set_clocks-only-in-manual.patch	/usr/lib/steamos-manager /etc/sv/steamos-manager/run /usr/local/share/steamos-manager-void/sha256
+gpu-overdrive	L	15	root	legion/gpu-overdrive.sh	docs/6-game-mode/3-steamos-manager.md	legion/gpu-overdrive.sh	/etc/modprobe.d/amdgpu-overdrive.conf
+brightness-on-wake	L	15	root	legion/brightness-on-wake.sh	docs/3-hardware-support/2-power.md	legion/brightness-on-wake.sh	/etc/elogind/system-sleep/brightness
+like-steamos	LI	15	root	legion/like-steamos.sh	docs/6-game-mode/4-steamos-parity.md	legion/like-steamos.sh	/etc/sysctl.d/30-like-steamos.conf /etc/security/limits.d/91-like-steamos.conf
+systemd-compat	L	15	root	common/systemd-compat/install-systemd-compat.sh	docs/2-base-system/4-systemd-compat.md	common/systemd-compat/	/usr/local/lib/systemd-compat/systemctl /usr/local/lib/systemd-compat/MANIFEST /etc/systemd-compat/units.d/50-void-legion.conf /usr/bin/systemctl /usr/bin/journalctl /usr/bin/systemd-run /usr/bin/systemd-inhibit
+microsd	L	16	root	legion/microsd-at-boot.sh	docs/2-base-system/3-storage.md	legion/microsd-at-boot.sh	/mnt/microsd
+decky	L	17	manual	common/steam/install-decky.sh	docs/6-game-mode/5-decky.md	common/steam/install-decky.sh	/etc/sv/decky/run /etc/sv/decky/log/run ~/homebrew/services/PluginLoader /var/log/decky/config
+steam-shortcuts	L	17	manual	common/steam/xterm-steam	docs/6-game-mode/1-steam.md	common/steam/xterm-steam common/steam/firefox-steam	~/.local/bin/xterm-steam ~/.local/bin/firefox-steam
+library-art	L	17	manual	common/steam/art-xterm/generate.py	docs/6-game-mode/6-library-art.md	common/steam/art-xterm/ common/steam/art-vesktop/	-
+controller-on-desktop	L	17	manual	legion/steam/steam-background.desktop	docs/6-game-mode/8-controller-on-desktop.md	legion/steam/steam-background.desktop legion/steam/desktop-layout-controller_steamos_handheld.vdf legion/steam/web-browser-layout-controller_steamos_handheld.vdf	~/.config/autostart/steam-background.desktop
+portal-wlr-patch	L	17	manual	legion/portal-wlr-patch/build-portal-wlr.sh	docs/7-apps/1-screen-sharing.md	legion/portal-wlr-patch/	-
+screen-share	L	17	manual	legion/screen-share/install.sh	docs/7-apps/1-screen-sharing.md	legion/screen-share/ legion/fuzzel.ini	~/.local/bin/screen-share ~/.config/xdg-desktop-portal-wlr/config ~/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.wlr.service ~/.config/fuzzel/fuzzel.ini
+portal-gamescope	L	17	manual	common/steam/portal-gamescope/install-portal-gamescope.sh	docs/7-apps/1-screen-sharing.md	common/steam/portal-gamescope/	/usr/local/lib/xdg-desktop-portal-gamescope /usr/local/share/xdg-desktop-portal/gamescope-portals
+gamescope-patch	L	17	manual	common/steam/gamescope-patch/build-gamescope.sh	docs/7-apps/1-screen-sharing.md	common/steam/gamescope-patch/	-
+audio-priority	L	17	manual	legion/wireplumber/51-audio-priority.conf	docs/3-hardware-support/3-audio-bluetooth.md	legion/wireplumber/	~/.config/wireplumber/wireplumber.conf.d/51-audio-priority.conf

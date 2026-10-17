@@ -17,6 +17,22 @@ How the repository turns into the system, and how to keep it right. The tools ar
 - **`install/install.sh`** runs the [reinstall](../reinstall.md) as resumable stages; **`install/migrate.sh`** moves a
   system installed with the original Spanish-named pieces to these.
 
+## The inventory: `install/pieces.tsv`
+
+**Everything this repository installs, one piece per line** (2026-10-17): its machines (L, I, LI), the stage of the
+[reinstall](../reinstall.md), how it is installed (`root`/`user` at that stage, `manual` from its page, `via:<piece>`
+from another installer, or `tool`), its installer, its page, its files in the repository and the paths it leaves on the
+machine. It exists because pieces slipped through: systemd-compat, Plymouth and `ssh-find` were installed but missing
+from `install/install.sh`, and the wallpaper patches from the whole reinstall, and the maintenance agents had no list of
+what to keep. Now:
+
+- **`install/verify.sh` (and the CI) enforces it** through `install/pieces.py`: every tracked file of `common/`,
+  `legion/`, `lib/` and `install/` belongs to a piece; a `root`/`user` piece's installer is in `install/install.sh` and in
+  `docs/reinstall.md` or its page; a `manual` one is named in its page; a `via:` one is named by the other installer;
+  pages, installers and files exist. A new piece without its line, or forgotten in the reinstall, fails.
+- **The audit** (`common/agent/audit-void.sh`, section 3) checks on each machine that what its pieces install is there.
+- **The maintenance agents** read it as the list of what to maintain (`python3 install/pieces.py --list`).
+
 ## Changing a script or a configuration
 
 1. Edit it in the clone (English; messages through `t` / `_` / `__vl_t`). A new or changed message → its entry in
@@ -25,7 +41,8 @@ How the repository turns into the system, and how to keep it right. The tools ar
 3. `bash install/verify.sh`: syntax, ShellCheck (no errors or warnings), catalogs (a msgid no script uses fails),
    links between the documents, the paths the docs cite, binaries, private values (also in the git history) and the
    encrypted copy of `local.env`. And `bash tests/run.sh` (under a second; a changed helper → its test).
-4. Update the topic's page in `docs/` (its install, check and problems), and add a line to
+4. Update the topic's page in `docs/` (its install, check and problems), its line in `install/pieces.tsv` (a new
+   piece: a new line, and its installer in `install/install.sh` and `docs/reinstall.md`), and add a line to
    [CHANGELOG.md](../../CHANGELOG.md). The long story (diagnosis, attempts) goes to the private repository's archive.
 5. Commit (identity: the GitHub *noreply* address) and push. On the Legion: `git pull`, `bash install/render.sh`, and
    run that piece's installer again from `"$B"`.
@@ -36,7 +53,7 @@ GitHub Actions ([`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)) ru
 without `local.env` and without the binaries:
 
 - **`bash install/verify.sh --ci`:** syntax (bash, sh, fish 4, Python 3.14, XML), ShellCheck **0.11.0** (the same as
-  the machines: fixed by version and sha256, so a new release does not change the result), catalogs, links, the paths
+  the machines: fixed by version and sha256, so a new release does not change the result), catalogs, the inventory, links, the paths
   the docs cite, and a search for anything shaped like a MAC or a UUID in the tracked files (allowed: the made-up
   `02:00:00:…` / `0000…` ones and the kernel's public WMI GUIDs). It cannot look for the real values: that is
   `verify.sh --secrets`, here, before every commit.

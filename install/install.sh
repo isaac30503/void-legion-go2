@@ -52,6 +52,7 @@ sudo sh "$B/legion/udev-net.sh"'
 stage "5. SSH in both directions (docs/2-base-system/2-network.md)" run \
 '[ -f ~/.ssh/id_ed25519 ] || ssh-keygen -q -t ed25519 -N "" -C "$USER@$(hostname)" -f ~/.ssh/id_ed25519
 mkdir -p ~/.ssh && cp "$B/legion/ssh-config" ~/.ssh/config && chmod 600 ~/.ssh/config
+bash "$B/common/ssh-find/install-ssh-find.sh"
 cat ~/.ssh/id_ed25519.pub
 t "-> add that line to the IdeaPad'"'"'s ~/.ssh/authorized_keys; on the IdeaPad: ssh-keygen -R Legion-Go-Gen-2.local"'
 stage "6. Desktop: packages and Bluetooth (docs/5-desktop/1-xfce.md)" run \
@@ -105,6 +106,7 @@ stage "11. Boot: hidden GRUB, kernel held (docs/1-platform/3-boot.md); XS1000 co
 'sudo bash "$B/legion/grub-root.sh"
 sudo sh "$B/legion/grub-hidden.sh"
 sudo xbps-pkgdb -m hold linux linux-headers
+sudo sh "$B/common/boot/install-plymouth.sh"
 t "-> unmount the XS1000 if it is mounted (udisksctl unmount -b /dev/sda4) before the reboot"'
 stage "12. Steam (docs/6-game-mode/1-steam.md)" run \
 'sudo sh "$B/common/steam/install-steam.sh"
@@ -114,11 +116,14 @@ install -m 755 "$B/legion/steam/extest/libextest.so" ~/.local/lib/extest/'
 stage "13. By hand: log out and back in; open Steam FROM THE MENU, let it update, log in, close it" manual \
 '# (docs/6-game-mode/1-steam.md)'
 stage "14. Game Mode, the sessions and Xfce on Wayland (docs/6-game-mode/2-game-mode.md, docs/4-sessions/1-login-and-modes.md)" reboot \
-'sudo sh "$B/common/steam/install-game-mode.sh" --no-loading-screen
+'sudo sh "$B/common/steam/install-game-mode.sh"
 sudo sh "$B/common/power-button/install-power-button.sh"
 sudo sh "$B/common/steam/test-direct-session.sh"
 sudo sh "$B/common/steam/install-passwordless-switch.sh"
-sudo sh "$B/common/xfce-wayland/install-xfce-wayland.sh"'
+sudo sh "$B/common/xfce-wayland/install-xfce-wayland.sh"
+sudo bash "$B/common/xfce-wayland/xfdesktop-wallpaper/install-xfdesktop-wallpaper.sh"
+sudo bash "$B/common/xfce-wayland/thunar-wallpaper/install-thunar-wallpaper.sh"
+thunar -q || true'
 stage "15. Hardware and SteamOS parity (docs/3-hardware-support/, docs/6-game-mode/3-steamos-manager.md)" reboot \
 'sudo bash "$B/legion/install-inputplumber.sh"
 sudo bash "$B/legion/tdp/install-tdp.sh"
@@ -126,7 +131,8 @@ sudo sh "$B/common/steam/steamos-manager/install-steamos-manager.sh"
 sudo xbps-pkgdb -m manual speech-dispatcher
 sudo sh "$B/legion/gpu-overdrive.sh"
 sudo sh "$B/legion/brightness-on-wake.sh"
-sudo bash "$B/legion/like-steamos.sh"'
+sudo bash "$B/legion/like-steamos.sh"
+sudo sh "$B/common/systemd-compat/install-systemd-compat.sh"'
 stage "16. microSD (docs/2-base-system/3-storage.md) — with Steam CLOSED" run \
 'sudo sh "$B/legion/microsd-at-boot.sh"
 t "-> in Steam, add /mnt/microsd as a library"'

@@ -10,14 +10,14 @@ and leaving is in [login and modes](../4-sessions/1-login-and-modes.md).
 After [Steam](1-steam.md) was opened once:
 
 ```bash
-sudo sh "$B/common/steam/install-game-mode.sh" --no-loading-screen     # --remove undoes it
+sudo sh "$B/common/steam/install-game-mode.sh"     # --remove undoes it
 ```
 
-`--no-loading-screen`: no `steam-loading` splash (the launcher works without it; fewer screen handovers). With it,
-`steam-loading` shows the frames of the Plymouth theme in use (`Theme=` of `/etc/plymouth/plymouthd.conf`), with the
+Its loading screen, `steam-loading`, shows the frames of the Plymouth theme in use (`Theme=` of `/etc/plymouth/plymouthd.conf`), with the
 firmware logo only when the theme uses it and at the theme's height, or those of `/usr/local/share/steam-loading/`
 (`install-plymouth.sh --loading-…`, [boot](../1-platform/3-boot.md#the-loading-animations)); it opens at full screen
-size, so the first frames are never small in a corner. Then
+size, so the first frames are never small in a corner. Both machines use it since 2026-10-16 (Steam B, with
+Plymouth's "B with B"); `--no-loading-screen` leaves it out (as from 2026-10-04 to 16: the launcher works without it). Then
 the [session pieces](../4-sessions/1-login-and-modes.md) and [Xfce on Wayland](../5-desktop/1-xfce.md), and reboot:
 it enters Game Mode by itself.
 

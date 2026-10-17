@@ -8,7 +8,8 @@ Bluetooth audio through `libspa-bluetooth`, a fixed order of preferred devices, 
 
 `bluetoothd` is enabled by `desktop-1-root.sh` ([desktop](../5-desktop/1-xfce.md)); the two fish functions are
 copied by the desktop's user part. The Legion does not come with Bluetooth blocked (`rfkill`: `ideapad_bluetooth`
-and `hci0` unblocked).
+and `hci0` unblocked). The IdeaPad does (its firmware keeps the block across reboots): there,
+`sudo sh "$B/common/bluetooth/bluetooth-at-boot.sh"` adds `rfkill unblock bluetooth` to `/etc/rc.local` (its recipe, step 9).
 
 **Bluetooth name** (it announces itself as "BlueZ 5.86" from the factory: bluez takes the name from
 `systemd-hostnamed`, which Void does not have). Without root:

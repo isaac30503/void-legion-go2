@@ -50,7 +50,8 @@ sudo sh "$B/legion/udev-net.sh"
 ## 5. SSH both ways — [network and SSH](2-base-system/2-network.md)
 
 On the IdeaPad: `ssh-keygen -R legion-go-gen-2.local`. On the Legion, the key, `~/.ssh/config` and `ssh-find` (that
-page's block), and the new `id_ed25519.pub` into the IdeaPad's `authorized_keys`. Check: `ssh ideapad hostname`.
+page's block: `bash "$B/common/ssh-find/install-ssh-find.sh"`), and the new `id_ed25519.pub` into the IdeaPad's
+`authorized_keys`. Check: `ssh ideapad hostname`.
 
 ## 6–8. Desktop — [Xfce](5-desktop/1-xfce.md), [look and feel](5-desktop/2-look-and-feel.md)
 
@@ -81,7 +82,7 @@ udisksctl unmount -b /dev/sda4
 sudo reboot
 ```
 
-## 12–14. Steam, Game Mode and the sessions — [Steam](6-game-mode/1-steam.md), [Game Mode](6-game-mode/2-game-mode.md), [login and modes](4-sessions/1-login-and-modes.md)
+## 12–14. Steam, Game Mode and the sessions — [Steam](6-game-mode/1-steam.md), [Game Mode](6-game-mode/2-game-mode.md), [login and modes](4-sessions/1-login-and-modes.md), [wallpaper](5-desktop/4-wallpaper.md)
 
 ```bash
 sudo sh "$B/common/steam/install-steam.sh"
@@ -92,11 +93,13 @@ Log out and back in; the desktop launcher with `-steamdeck` and `extest` ([Steam
 Wayland must exist before the reboot (it is where "Switch to Desktop" goes):
 
 ```bash
-sudo sh "$B/common/steam/install-game-mode.sh" --no-loading-screen
+sudo sh "$B/common/steam/install-game-mode.sh"   # its loading screen: Steam B, from stage 11's Plymouth
 sudo sh "$B/common/power-button/install-power-button.sh"
 sudo sh "$B/common/steam/test-direct-session.sh"
 sudo sh "$B/common/steam/install-passwordless-switch.sh"
 sudo sh "$B/common/xfce-wayland/install-xfce-wayland.sh"
+sudo bash "$B/common/xfce-wayland/xfdesktop-wallpaper/install-xfdesktop-wallpaper.sh"   # wallpaper on Wayland
+sudo bash "$B/common/xfce-wayland/thunar-wallpaper/install-thunar-wallpaper.sh"; thunar -q
 sudo reboot                                   # straight into Game Mode
 ```
 
