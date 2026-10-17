@@ -55,3 +55,5 @@ generator again. To go back: `rm ~/.local/share/applications/dev.vencord.Vesktop
 and `rm -r ~/.var/app/dev.vencord.Vesktop/config/vesktop/userAssets`.
 
 **Check:** `desktop-file-validate ~/.local/share/applications/dev.vencord.Vesktop.desktop`; menu, Docklike and tray in blue.
+
+**Controller:** the same layout as Firefox's and xterm's ([Steam](../6-game-mode/1-steam.md#xterm-as-a-game)).
