@@ -2,8 +2,10 @@
 
 Like SteamOS's desktop mode: **Steam runs in the background** on the desktop (Wayland or X11) and the controller
 (InputPlumber's Valve one) drives the desktop with Steam's **"Disposición del escritorio"** ("Desktop Layout"): pointer
-with the right trackpad or right stick, clicks with the triggers (right = left click, left = right click), on-screen
-keyboard with RT+X. **Game Mode does not need any of this.**
+with the right trackpad or right stick, **the left stick as the mouse wheel** (up and down, taken from the "Web
+Browser" layout Steam gives Firefox), clicks with the triggers (right = left click, left = right click), on-screen
+keyboard with X (as in Valve's desktop template, `controller_base/desktop_neptune.vdf`; Steam + X, Valve's chord,
+opens it anywhere; the Legion's Steam button is the left Legion button). **Game Mode does not need any of this.**
 
 ## Install (as the user, with Steam closed)
 
@@ -31,7 +33,7 @@ layout.)
   Steam kept acting through XTest at the same time: discarded.)
 - **The trackpad's click:** the desktop template puts the left click on the right trackpad with the activator **"Pulsación
   suave" ("Soft Press")**, which the Legion's touchpad triggers with light touches. The saved layout uses **"Pulsación
-  doble" ("Double Press")** (325 ms), and the gyroscope as mouse ([controllers](../3-hardware-support/1-controllers.md)).
+  doble" ("Double Press")** (325 ms); the gyroscope is off, as in Firefox's layout.
   By hand: Steam → **Configuraciones de Steam → Control** (Steam Settings → Controller) → the desktop layout →
   **"Editar disposición"** ("Edit Layout") → right trackpad ("Como mouse" / "As Mouse") → its click → gear → activator.
 
@@ -60,8 +62,8 @@ grep '^N:' /proc/bus/input/devices | grep extest        # extest fake device
 pgrep -af 'steam.*-silent'
 ```
 
-On the desktop: the trackpad moves the pointer and clicks only with a double tap; the right stick moves it; RT+X opens
-the keyboard and types.
+On the desktop: the trackpad moves the pointer and clicks only with a double tap; the right stick moves it; the left
+stick scrolls; X opens the keyboard and types.
 
 ## Problems
 
@@ -72,7 +74,7 @@ the keyboard and types.
   layout again.
 - **After closing Steam's on-screen keyboard, the trackpad and sticks stop moving the pointer** (intermittent): Steam
   missed the keyboard's close (`Set OSK active 1` without its `0` in `~/.local/share/Steam/logs/controller_ui.txt`) and
-  kept the keyboard's action set. Open and close the keyboard again (RT+X). To capture it if it repeats (read-only,
+  kept the keyboard's action set. Open and close the keyboard again (X). To capture it if it repeats (read-only,
   event-driven): `bash "$B/legion/diag-steam-keyboard.sh"`, then `--stop`; results in `/tmp/diag-steam-keyboard/`
   (`grep -E 'OSK active|OnFocusWindowChanged' /tmp/diag-steam-keyboard/controller_ui.txt`).
 - **Steam's on-screen keyboard comes out huge or with a border:** the `type="utility"` exception is missing in labwc's
