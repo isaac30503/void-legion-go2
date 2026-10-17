@@ -24,7 +24,9 @@ item() {
 # is not used here. Known by PID 1, not by the absence of systemctl: systemd-compat installs one on Void
 # (common/systemd-compat; 2026-10-17), and its answers about runit services need root.
 runit=""
-if [ -d /var/service ] && [ "$(cat /proc/1/comm 2>/dev/null)" = runit ]; then
+# With /proc mounted hidepid, PID 1 cannot be read: then runit's own state folder decides (/run/runit, Void's).
+init=$(cat /proc/1/comm 2>/dev/null)
+if [ -d /var/service ] && { [ "$init" = runit ] || { [ -z "$init" ] && [ -d /run/runit ]; }; }; then
   runit=1
 fi
 
