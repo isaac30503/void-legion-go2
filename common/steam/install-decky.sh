@@ -19,6 +19,9 @@
 # .new → PluginLoader and, as the last step, gives it execute permission. "different version,
 # PluginLoader.new does not exist and PluginLoader is executable" = finished. Then it closes
 # PluginLoader and runit starts it again with the new version. (inotify-tools: inotifywait.)
+# Its output goes to /var/log/decky/current (svlogd: 1 MB × 2 files; 2026-10-17): systemd-compat's journalctl reads it
+# for "journalctl -u plugin_loader" (common/systemd-compat, docs/2-base-system/4-systemd-compat.md). Repeating the
+# installer with the latest version already there does not download it again.
 # Previous (Spanish) name: instalar-decky.sh (its FIFO was /run/decky-avisos).
 #   sudo sh common/steam/install-decky.sh            installs or updates
 #   sudo sh common/steam/install-decky.sh --remove   removes it (leaves ~/homebrew/plugins)
@@ -61,11 +64,15 @@ for r in json.load(sys.stdin):
         print(r["tag_name"], url); break')
 VER=${INFO% *}; URL=${INFO#* }
 echo "   $VER"
-[ -e /var/service/decky ] && sv stop decky >/dev/null 2>&1 || true
-curl -fL --progress-bar "$URL" -o "$HB/services/PluginLoader.download"
-mv "$HB/services/PluginLoader.download" "$HB/services/PluginLoader"
-chmod 755 "$HB/services/PluginLoader"
-echo "$VER" > "$HB/services/.loader.version"
+if [ "$(cat "$HB/services/.loader.version" 2>/dev/null)" = "$VER" ] && [ -x "$HB/services/PluginLoader" ]; then
+    t "   already installed"
+else
+    [ -e /var/service/decky ] && sv stop decky >/dev/null 2>&1 || true
+    curl -fL --progress-bar "$URL" -o "$HB/services/PluginLoader.download"
+    mv "$HB/services/PluginLoader.download" "$HB/services/PluginLoader"
+    chmod 755 "$HB/services/PluginLoader"
+    echo "$VER" > "$HB/services/.loader.version"
+fi
 
 t "== 4. runit service"
 mkdir -p "$SV/log"
@@ -99,9 +106,13 @@ finish
 EOF
 cat > "$SV/log/run" <<'EOF'
 #!/bin/sh
-exec vlogger -t decky -p daemon
+# Decky's output, for "journalctl -u plugin_loader" (systemd-compat). Without syslog, vlogger lost it.
+exec svlogd -tt /var/log/decky
 EOF
+mkdir -p /var/log/decky
+printf 's1000000\nn2\n' > /var/log/decky/config      # 1 MB per file, 2 files
 chmod 755 "$SV/run" "$SV/log/run"
+[ -e /var/service/decky ] && sv restart /var/service/decky/log >/dev/null 2>&1 || true   # the new log/run
 rm -f /run/decky-avisos                     # the old FIFO name, if it is left over
 if [ -e /var/service/decky ]; then sv restart decky >/dev/null; else ln -s "$SV" /var/service/; fi
 sleep 6

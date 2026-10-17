@@ -19,3 +19,6 @@ hide_tray_when_up_to_date=false
 tray_updates_per_page=30
 # Tray icon: light = white (dark panels) or dark = black (light panels).
 tray_icon_style=light
+# Folders whose subfolders are programs that may call systemd (":"-separated; "~" allowed). "void-update --systemd"
+# and the summary watch their code, to notice when one changes how it calls systemd (systemd-compat).
+systemd_compat_scan=~/homebrew/plugins

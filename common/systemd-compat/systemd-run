@@ -1,0 +1,125 @@
+#!/bin/sh
+# shellcheck disable=SC3043  # "local": dash (Void's /bin/sh) has it
+# systemd-run — systemd-compat (common/systemd-compat; docs/2-base-system/4-systemd-compat.md): a transient unit
+# is the command itself, started in a session of its own with the unit's lock held (see compat.sh); systemctl
+# then sees it (is-active, stop, show…) and journalctl reads its output. --pipe / --wait / --pty / --scope run it
+# in the foreground, connected to the caller, as systemd does.
+# Supported: --user, --unit, --description, --collect, --quiet, --nice, --setenv, --property (Nice=,
+# Environment=, WorkingDirectory=; resource limits such as CPUWeight= are accepted and noted in requests.log,
+# because without cgroups they are not applied), --same-dir, --working-directory, --uid/--gid (root),
+# --no-block, --slice (noted). Timers (--on-*) and anything else: refused, with a line in requests.log.
+# shellcheck disable=SC2034  # read by compat.sh
+SC_TOOL=systemd-run
+# shellcheck source=common/systemd-compat/compat.sh
+. "${SYSTEMD_COMPAT_LIB:-/usr/local/lib/systemd-compat}/compat.sh"
+sc_req "$@"
+
+scope=system unit='' desc='' quiet=0 nice='' fg='' wdir='' uid='' gid='' ignored=''
+envs=''   # K=V lines
+refuse() { echo "systemd-run: $1" >&2; sc_log unsupported "$1"; exit 1; }
+# shellcheck disable=SC2154  # _v: assigned by the eval
+add_env() {   # K=V, or K alone: the caller's value (like systemd-run)
+    case ${1%%=*} in ''|[0-9]*|*[!A-Za-z0-9_]*) refuse "invalid environment assignment" ;; esac
+    case $1 in
+        *=*) envs="$envs$1
+" ;;
+        *) eval "_v=\${$1-}"; envs="$envs$1=$_v
+" ;;
+    esac
+}
+
+while [ $# -gt 0 ]; do
+    case $1 in
+        --user) scope=user ;;
+        --system) scope=system ;;
+        -u|--unit) shift; unit=${1:-} ;;
+        --unit=*) unit=${1#--unit=} ;;
+        --description) shift; desc=${1:-} ;;
+        --description=*) desc=${1#--description=} ;;
+        -G|--collect|--no-ask-password|--no-block|-r|--remain-after-exit|--send-sighup) ;;
+        -q|--quiet) quiet=1 ;;
+        --nice) shift; nice=${1:-} ;;
+        --nice=*) nice=${1#--nice=} ;;
+        -E|--setenv) shift; add_env "${1:-}" ;;
+        --setenv=*) add_env "${1#--setenv=}" ;;
+        -p|--property) shift; set -- "--property=${1:-}" "$@"; continue ;;
+        --property=*)
+            p=${1#--property=}
+            case $p in
+                Nice=*) nice=${p#Nice=} ;;
+                Environment=*) add_env "${p#Environment=}" ;;
+                WorkingDirectory=*) wdir=${p#WorkingDirectory=} ;;
+                CPUWeight=*|IOWeight=*|MemoryMax=*|MemoryHigh=*|CPUQuota=*|TasksMax=*|AllowedCPUs=*) ignored="$ignored ${p%%=*}" ;;
+                Type=simple|Type=exec) ;;
+                *) refuse "unsupported property ${p%%=*}" ;;
+            esac ;;
+        --slice|--slice=*) [ "$1" = --slice ] && shift; ignored="$ignored slice" ;;
+        -P|--pipe|--wait|-t|--pty|--scope|-S|--shell) fg=${fg:-$1} ;;
+        -d|--same-dir) wdir=$PWD ;;
+        --working-directory) shift; wdir=${1:-} ;;
+        --working-directory=*) wdir=${1#--working-directory=} ;;
+        --uid) shift; uid=${1:-} ;;
+        --uid=*) uid=${1#--uid=} ;;
+        --gid) shift; gid=${1:-} ;;
+        --gid=*) gid=${1#--gid=} ;;
+        --version) echo "systemd-compat $SC_VERSION (runit + elogind; not systemd)"; exit 0 ;;
+        -h|--help) echo "systemd-run (systemd-compat $SC_VERSION): docs/2-base-system/4-systemd-compat.md of void-legion-go2"; exit 0 ;;
+        --) shift; break ;;
+        --on-*|--timer-property*|--path-property*|--socket-property*) refuse "timers and activation units are not supported ($1)" ;;
+        -H|-M|--host*|--machine*) refuse "remote units are not supported ($1)" ;;
+        -*) refuse "unrecognized option '$1'" ;;
+        *) break ;;
+    esac
+    shift
+done
+[ $# -gt 0 ] || { echo "systemd-run: command line to execute required." >&2; exit 1; }
+[ -n "$ignored" ] && sc_log partial "not applied without cgroups:$ignored"
+if { [ -n "$uid" ] || [ -n "$gid" ]; } && [ "$SC_UID" != 0 ]; then refuse "--uid/--gid need root"; fi
+
+# The command, as a line of sh: [cd] [setpriv] [nice] env -i … COMMAND ARGS
+cmdline() {
+    local a out=
+    for a in "$@"; do sc_q "$a"; out="$out $SC_Q"; done
+    pre=
+    [ -n "$uid$gid" ] && pre="setpriv${uid:+ --reuid=$uid}${gid:+ --regid=$gid} --init-groups"
+    [ -n "$nice" ] && pre="$pre${pre:+ }nice -n $nice"
+    CMD="${pre:+$pre }$out"
+}
+# shellcheck disable=SC2086  # the K=V lines: split on newlines only
+oldifs=$IFS; IFS='
+'; set -f; set -- $envs -- "$@"; set +f; IFS=$oldifs
+kvs=
+while [ "$1" != -- ]; do sc_q "$1"; kvs="$kvs $SC_Q"; shift; done; shift
+
+if [ -n "$fg" ]; then
+    cmdline "$@"
+    [ -n "$wdir" ] && { cd "$wdir" || exit 200; }
+    # A scope keeps the caller's environment; --pipe, --wait and --pty get the service environment
+    if [ "$fg" = --scope ]; then eval "exec env $kvs $CMD"; fi
+    sc_envline
+    eval "exec $SC_ENV $kvs $CMD"
+fi
+
+sc_base "$scope" || { echo "Failed to connect to user scope bus via local transport: \$DBUS_SESSION_BUS_ADDRESS and \$XDG_RUNTIME_DIR not defined" >&2; sc_log failed "no XDG_RUNTIME_DIR"; exit 1; }
+if [ -z "$unit" ]; then unit=run-u$$; else sc_norm "$unit"; unit=$SC_U; fi
+sc_valid "$unit" || refuse "invalid unit name '$unit'"
+sc_resolve "$scope" "$unit"
+if [ "$SC_TYPE" = runit ] || [ -n "$SC_CMD" ]; then
+    echo "Failed to start transient service unit: Unit $unit.service was already loaded or has a fragment file." >&2; exit 1
+fi
+d=$SC_BASE/units/$unit
+if sc_proc_active "$d"; then
+    echo "Failed to start transient service unit: Unit $unit.service was already loaded or has a fragment file." >&2; exit 1
+fi
+mkdir -p "$SC_BASE/units" "$d" && chmod 700 "$d" || { echo "systemd-run: cannot create $d" >&2; exit 1; }
+sc_envline
+cmdline "$@"
+{ printf '#!/bin/sh\n'
+  [ -n "$wdir" ] && { sc_q "$wdir"; printf 'cd %s || exit 200\n' "$SC_Q"; }
+  printf 'exec %s%s %s\n' "$SC_ENV" "$kvs" "$CMD"
+} > "$d/run.new" && chmod 700 "$d/run.new" && mv -f "$d/run.new" "$d/run" || exit 1
+: > "$d/transient"
+if [ -n "$desc" ]; then printf '%s\n' "$desc" > "$d/description"; else printf '%s\n' "$*" > "$d/description"; fi
+sc_proc_start "$d" || exit 1
+[ $quiet = 1 ] || { read -r inv < "$d/invocation"; echo "Running as unit: $unit.service; invocation ID: $inv" >&2; }
+exit 0

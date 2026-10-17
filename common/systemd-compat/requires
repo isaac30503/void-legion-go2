@@ -1,0 +1,9 @@
+# Void packages that systemd-compat needs, and the ones that SteamOS ships and Decky plugins take for granted.
+# Installed by install-systemd-compat.sh when missing; checked by "void-update --systemd".
+# One per line:   PACKAGE   what for
+util-linux     systemd-compat itself: flock, setsid, setpriv, kill
+elogind        systemd-inhibit (elogind-inhibit), loginctl (poweroff, reboot, suspend…), busctl
+pipewire       the filter-chain user unit (pipewire -c filter-chain.conf)
+python3-yaml   Panel de Control: remapping buttons (InputPlumber profiles go through the system Python's PyYAML)
+caps           Panel de Control: the equalizer's bass and loudness (LADSPA "C* Audio Plugin Suite", caps.so)
+hidapi         Colores: the controllers' RGB (libhidapi-hidraw.so.0, loaded with ctypes)

@@ -324,6 +324,9 @@ vu_summary() {
         else lines+=("WARNING|extest|$(t "%s problem(s)" "${#bad[@]}")|extest: $(printf '%s; ' "${bad[@]}" | sed 's/; $//')"); fi
     fi
 
+    # systemd-compat (lib/systemd.sh): programs written for systemd, and whether one changed how it calls it
+    l=$(vu_systemd_line); [ -n "$l" ] && lines+=("$l")
+
     # What the steps above already warned about, repeated here
     if [ "$VU_NEW_FILES" -gt 0 ] 2>/dev/null; then lines+=("WARNING|.new-*|$(t "%s in /etc" "$VU_NEW_FILES")|$(t "%s .new-* template(s) in /etc: compare, do not apply" "$VU_NEW_FILES")")
     else lines+=("OK|.new-*|$(t "none found")|$(t "no .new-* templates in /etc")"); fi

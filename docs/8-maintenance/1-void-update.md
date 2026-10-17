@@ -21,6 +21,7 @@ void-update --tray --enable      # starts the icon now and at every login (~/.co
 | `void-update -n [N]`, `--news [N]` | Void's latest N news (5 by default) |
 | `void-update -s`, `--services` | services running old code (asks to restart them) |
 | `void-update --summary [-v]` | only the summary, without syncing, `sudo` or changes (`-v`: the detail of every line) |
+| `void-update --systemd [--ack]` | [systemd-compat](../2-base-system/4-systemd-compat.md): its installation, the programs that call systemd (what changed in their code since the last review) and the requests not served; `--ack` marks it reviewed |
 | `void-update --tray [--enable\|--disable]` | the icon (Ayatana AppIndicator) |
 | `void-update --gen-config` · `--show-config` · `--edit-config` | `~/.config/void-update/void-update.conf` (interval, notifications, Flatpak, news, icon style; see `void-update.conf.example`) |
 
@@ -41,7 +42,8 @@ would (the TDP module for a new 6.18 kernel; gamescope's `cap_sys_nice`), and ch
 the kernel series Void recommends, gamescope's capability, **each package built here against Void's** (testing its
 patch: [own patches](2-own-patches.md)), InputPlumber's and the gamescope portal's libraries, steamos-manager (libraries,
 reference sha256, which package, build dependencies, upstream's latest tag), `extest` (libraries and its build tools),
-`.new-*` and whether to reboot. Without network it cannot know about upstream versions of what is not from xbps.
+`.new-*`, [systemd-compat](../2-base-system/4-systemd-compat.md) (a program that changed how it calls systemd, or a request
+not served) and whether to reboot. Without network it cannot know about upstream versions of what is not from xbps.
 
 ## Package tools
 

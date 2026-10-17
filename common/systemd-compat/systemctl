@@ -1,0 +1,323 @@
+#!/bin/sh
+# shellcheck disable=SC3043  # "local": dash (Void's /bin/sh) has it
+# systemctl — systemd-compat (common/systemd-compat; docs/2-base-system/4-systemd-compat.md): the systemctl that
+# programs written for systemd call, answered with runit, the session's processes and elogind (see compat.sh).
+#   system units  → runit services (/etc/sv, /var/service); names of units.d first (plugin_loader → decky)
+#   --user units  → exec units of units.d and transient units of systemd-run, as processes of the session
+#   poweroff, reboot, suspend, hibernate… → loginctl (elogind, with the same polkit rules)
+#   anything else → what systemctl prints on a machine not booted with systemd (and a line in requests.log)
+# Its output and exit codes are systemd's, because programs read them; they are not translated.
+# shellcheck disable=SC2034  # read by compat.sh
+SC_TOOL=systemctl
+# shellcheck source=common/systemd-compat/compat.sh
+. "${SYSTEMD_COMPAT_LIB:-/usr/local/lib/systemd-compat}/compat.sh"
+sc_req "$@"
+
+scope=system noblock=0 quiet=0 value=0 props='' legend=1 states='' all=0 types='' signal=TERM verb='' units=''
+not_booted() {
+    echo "System has not been booted with systemd as init system (PID 1). Can't operate." >&2
+    echo "Failed to connect to bus: Host is down" >&2
+}
+no_user_bus() { echo "Failed to connect to user scope bus via local transport: \$DBUS_SESSION_BUS_ADDRESS and \$XDG_RUNTIME_DIR not defined (consider using --machine=<user>@.host --user to connect to bus of other user)" >&2; }
+unsupported() {   # REASON
+    sc_log unsupported "$1"
+    if [ "$scope" = user ]; then echo "Failed to connect to bus: No medium found" >&2; else not_booted; fi
+    exit 1
+}
+
+set -f   # unit names may be patterns: never expand them against files
+while [ $# -gt 0 ]; do
+    case $1 in
+        --user) scope=user ;;
+        --system) scope=system ;;
+        --no-block) noblock=1 ;;
+        -q|--quiet) quiet=1 ;;
+        --value) value=1 ;;
+        -p|--property) shift; props="$props,${1:-}" ;;
+        --property=*) props="$props,${1#--property=}" ;;
+        -p?*) props="$props,${1#-p}" ;;
+        --no-legend|--legend=no|--legend=false) legend=0 ;;
+        --plain|--no-pager|--full|-l|--no-ask-password|--runtime|--force|-f|--wait|--show-types|--no-reload|--no-warn) ;;
+        -a|--all) all=1 ;;
+        --state=*) states="$states,${1#--state=}" ;;
+        --type=*) types="$types,${1#--type=}" ;;
+        -t|--type) shift; types="$types,${1:-}" ;;
+        -s|--signal) shift; signal=${1:-TERM} ;;
+        --signal=*) signal=${1#--signal=} ;;
+        --now) ;;   # enable --now / disable --now: refused below anyway
+        --version) verb=--version ;;
+        -h|--help) verb=--help ;;
+        --) shift; units="$units $*"; break ;;
+        -H|-M|--host|--host=*|--machine|--machine=*) unsupported "remote ($1)" ;;
+        -*) echo "systemctl: unrecognized option '$1'" >&2; sc_log unsupported "option $1"; exit 1 ;;
+        *) if [ -z "$verb" ]; then verb=$1; else units="$units $1"; fi ;;
+    esac
+    shift
+done
+# shellcheck disable=SC2086  # unit names have no spaces (sc_valid); globbing is off while they are split
+set -- $units
+set +f
+[ -n "$verb" ] || verb='list-units'
+
+if [ "$scope" = user ] && ! sc_base user; then
+    case $verb in --version|--help) ;; *) no_user_bus; sc_log failed "no XDG_RUNTIME_DIR"; exit 1 ;; esac
+fi
+is_root() { [ "$SC_UID" = 0 ]; }
+need_auth() { echo "Failed to $1 $2.service: Interactive authentication required." >&2; sc_log failed "not root"; exit 4; }
+
+# Messages and exit codes of systemd for a unit it does not know
+not_found() {   # VERB UNIT → exit code
+    sc_log not-found "$1 $2"
+    case $1 in
+        start|restart|try-restart|reload|reload-or-restart|try-reload-or-restart|condrestart)
+            echo "Failed to $1 $2.service: Unit $2.service not found." >&2; return 5 ;;
+        stop) echo "Failed to stop $2.service: Unit $2.service not loaded." >&2; return 5 ;;
+        status) echo "Unit $2.service could not be found." >&2; return 4 ;;
+        is-enabled) echo "Failed to get unit file state for $2.service: No such file or directory" >&2; return 1 ;;
+        reset-failed) echo "Failed to reset failed state of unit $2.service: Unit $2.service not loaded." >&2; return 1 ;;
+        kill) echo "Failed to kill unit $2.service: Unit $2.service not loaded." >&2; return 1 ;;
+        cat) echo "No files found for $2.service." >&2; return 1 ;;
+    esac
+    return 1
+}
+
+# state UNIT (after sc_resolve) → SC_ACTIVE, SC_SUB, SC_PID, SC_INV
+state() {
+    case $SC_TYPE in
+        runit) sc_runit_state "$SC_SVC"; SC_INV=
+               # runit has no invocation id: the main pid and its start time change on every restart
+               if [ "$SC_PID" != 0 ] && [ -r "/proc/$SC_PID/stat" ]; then
+                   local s; read -r s < "/proc/$SC_PID/stat"; s=${s##*) }
+                   # shellcheck disable=SC2086
+                   set -- $s; shift 19; SC_INV=$(printf '%08x%08x' "$SC_PID" "${1:-0}")   # field 22: starttime
+               fi ;;
+        proc) sc_proc_state "$SC_DIR" ;;
+        *) SC_ACTIVE=inactive SC_SUB=dead SC_PID=0 SC_INV= ;;
+    esac
+}
+description() {
+    case $SC_TYPE in
+        runit) SC_DESC="runit service $SC_SVC" ;;
+        proc) if [ -r "$SC_DIR/description" ]; then read -r SC_DESC < "$SC_DIR/description"
+              elif [ -n "$SC_CMD" ]; then SC_DESC="$SC_CMD"; else SC_DESC="$1"; fi ;;
+        *) SC_DESC=$1 ;;
+    esac
+}
+enabled_state() {
+    case $SC_TYPE in
+        runit) if sc_runit_enabled "$SC_SVC"; then SC_EN=enabled; else SC_EN=disabled; fi ;;
+        proc) if [ -f "$SC_DIR/transient" ] && [ -z "$SC_CMD" ]; then SC_EN=transient; else SC_EN=static; fi ;;
+        *) SC_EN= ;;
+    esac
+}
+
+# A control verb on one resolved unit
+control() {   # VERB UNIT
+    local v=$1
+    case $SC_TYPE in
+        runit)
+            is_root || need_auth "$v" "$2"
+            [ -e "$SC_SERVICE_DIR/$SC_SVC" ] || {
+                [ "$v" = stop ] && return 0
+                echo "Failed to $v $2.service: runit service $SC_SVC is not enabled ($SC_SERVICE_DIR/$SC_SVC does not exist)." >&2
+                sc_log failed "$v $2: not enabled"; return 1; }
+            case $v in
+                try-restart|condrestart|try-reload-or-restart)
+                    sc_runit_state "$SC_SVC"; [ "$SC_ACTIVE" = active ] || return 0; v=restart ;;
+                reload-or-restart) v=restart ;;
+            esac
+            sc_runit_do "$v" "$SC_SVC" "$noblock" || { echo "Job for $2.service failed." >&2; sc_log failed "$v $2"; return 1; }
+            ;;
+        proc)
+            case $v in
+                start) start_proc "$2" || return 1 ;;
+                stop) sc_proc_stop "$SC_DIR" "$noblock" ;;
+                restart|reload-or-restart) sc_proc_stop "$SC_DIR" 0; start_proc "$2" || return 1 ;;
+                try-restart|condrestart|try-reload-or-restart)
+                    sc_proc_active "$SC_DIR" || return 0; sc_proc_stop "$SC_DIR" 0; start_proc "$2" || return 1 ;;
+                reload) echo "Failed to reload $2.service: Job type reload is not applicable for unit $2.service." >&2; return 1 ;;
+            esac ;;
+    esac
+    return 0
+}
+start_proc() {
+    mkdir -p "$SC_DIR" 2>/dev/null && chmod 700 "$SC_DIR" || { echo "Failed to start $1.service: cannot create $SC_DIR" >&2; sc_log failed "mkdir $SC_DIR"; return 1; }
+    [ -n "$SC_CMD" ] && { sc_write_exec_run "$SC_DIR" "$SC_CMD" || return 1; }
+    [ -x "$SC_DIR/run" ] || { echo "Failed to start $1.service: Unit $1.service not found." >&2; return 5; }
+    sc_proc_start "$SC_DIR"
+}
+
+show_props() {   # UNIT
+    local all_p="Id Names Description LoadState ActiveState SubState MainPID ExecMainPID InvocationID UnitFileState FragmentPath CanStart CanStop" p v list
+    state; description "$1"; enabled_state
+    if [ -n "$props" ]; then list=$(printf '%s' "$props" | tr ',' ' '); else list=$all_p; fi
+    for p in $list; do
+        case $p in
+            Id) v=$1.service ;;
+            Names) v=$1.service ;;
+            Description) v=$SC_DESC ;;
+            LoadState) if [ "$SC_TYPE" = none ] || [ "$SC_TYPE" = deny ]; then v=not-found; else v=loaded; fi ;;
+            ActiveState) v=$SC_ACTIVE ;;
+            SubState) v=$SC_SUB ;;
+            MainPID|ExecMainPID) v=$SC_PID ;;
+            InvocationID) v=$SC_INV ;;
+            UnitFileState) v=$SC_EN ;;
+            FragmentPath) case $SC_TYPE in runit) v=$SC_SV_DIR/$SC_SVC/run ;; proc) v=$SC_DIR/run ;; *) v= ;; esac ;;
+            CanStart|CanStop) if [ "$SC_TYPE" = runit ] || [ "$SC_TYPE" = proc ]; then v=yes; else v=no; fi ;;
+            *) continue ;;   # a property not known here: systemd skips the ones without a value as well
+        esac
+        if [ $value = 1 ]; then printf '%s\n' "$v"; else printf '%s=%s\n' "$p" "$v"; fi
+    done
+}
+
+status_of() {   # UNIT → exit code
+    state; description "$1"; enabled_state
+    case $SC_TYPE in runit) frag=$SC_SV_DIR/$SC_SVC/run ;; *) frag=$SC_DIR/run ;; esac
+    printf '%s %s.service - %s\n' "$( [ "$SC_ACTIVE" = active ] && echo '●' || echo '○')" "$1" "$SC_DESC"
+    printf '     Loaded: loaded (%s; %s)\n' "$frag" "$SC_EN"
+    printf '     Active: %s (%s)\n' "$SC_ACTIVE" "$SC_SUB"
+    [ "$SC_PID" != 0 ] && printf '   Main PID: %s\n' "$SC_PID"
+    if [ "$SC_TYPE" = proc ] && [ -r "$SC_DIR/log" ]; then echo; grep -v '^-- start ' "$SC_DIR/log" | tail -n 10; fi
+    [ "$SC_ACTIVE" = active ] && return 0
+    [ "$SC_ACTIVE" = unknown ] && return 4
+    return 3
+}
+
+wanted_state() {   # ACTIVE SUB → true if --state / --all let it through
+    [ -z "$states" ] && { [ $all = 1 ] || [ "$1" = active ]; return; }
+    case ",$states," in *",$1,"*|*",$2,"*) return 0 ;; esac
+    return 1
+}
+list_units() {
+    local n svc d count=0
+    case ",${types:-service}," in *,service,*) ;; *) return 0 ;; esac
+    [ $legend = 1 ] && printf '  %-40s %-6s %-8s %-8s %s\n' UNIT LOAD ACTIVE SUB DESCRIPTION
+    if [ "$scope" = system ]; then
+        for d in "$SC_SERVICE_DIR"/*; do
+            [ -e "$d" ] || continue
+            svc=${d##*/}; sc_alias "$svc"
+            sc_resolve system "$SC_ALIAS"; [ "$SC_TYPE" = runit ] || continue
+            state; wanted_state "$SC_ACTIVE" "$SC_SUB" || continue
+            [ $# -gt 0 ] && ! matches "$SC_ALIAS" "$@" && continue
+            description "$SC_ALIAS"
+            printf '%s%-40s %-6s %-8s %-8s %s\n' "$( [ $legend = 1 ] && echo '  ')" "$SC_ALIAS.service" loaded "$SC_ACTIVE" "$SC_SUB" "$SC_DESC"
+            count=$((count + 1))
+        done
+    fi
+    if sc_base "$scope"; then
+        for d in "$SC_BASE"/units/*; do
+            [ -d "$d" ] || continue
+            n=${d##*/}; sc_resolve "$scope" "$n"; [ "$SC_TYPE" = proc ] || continue
+            state; wanted_state "$SC_ACTIVE" "$SC_SUB" || continue
+            [ $# -gt 0 ] && ! matches "$n" "$@" && continue
+            description "$n"
+            printf '%s%-40s %-6s %-8s %-8s %s\n' "$( [ $legend = 1 ] && echo '  ')" "$n.service" loaded "$SC_ACTIVE" "$SC_SUB" "$SC_DESC"
+            count=$((count + 1))
+        done
+    fi
+    [ $legend = 1 ] && printf '\n%s loaded units listed.\n' "$count"
+    return 0
+}
+matches() {   # NAME PATTERN...
+    local n=$1 p; shift
+    for p in "$@"; do sc_norm "$p"
+        # shellcheck disable=SC2254
+        case $n in $SC_U) return 0 ;; esac
+    done
+    return 1
+}
+list_unit_files() {
+    local d n
+    [ "$scope" = system ] || return 0
+    [ $legend = 1 ] && printf '%-40s %s\n' "UNIT FILE" STATE
+    for d in "$SC_SV_DIR"/*; do
+        [ -f "$d/run" ] || continue
+        n=${d##*/}; sc_alias "$n"
+        [ $# -gt 0 ] && ! matches "$SC_ALIAS" "$@" && continue
+        if sc_runit_enabled "$n"; then printf '%-40s %s\n' "$SC_ALIAS.service" enabled
+        else printf '%-40s %s\n' "$SC_ALIAS.service" disabled; fi
+    done
+}
+
+# Every verb that takes units runs on each one; the exit code is the worst one, like systemctl
+rc=0
+each() {   # VERB UNIT...
+    local v=$1 u r; shift
+    [ $# -gt 0 ] || { echo "Too few arguments." >&2; exit 1; }
+    for u in "$@"; do
+        sc_norm "$u"; u=$SC_U
+        if sc_is_pattern "$u"; then pattern_verb "$v" "$u"; continue; fi
+        sc_resolve "$scope" "$u"
+        if [ "$SC_TYPE" = none ] || [ "$SC_TYPE" = deny ]; then
+            case $v in
+                is-active) [ $quiet = 1 ] || echo inactive; sc_log not-found "$v $u"; r=3 ;;
+                is-failed) [ $quiet = 1 ] || echo inactive; sc_log not-found "$v $u"; r=1 ;;
+                show) show_props "$u"; sc_log not-found "$v $u"; r=0 ;;
+                *) not_found "$v" "$u"; r=$? ;;
+            esac
+            [ $r -gt $rc ] && rc=$r
+            continue
+        fi
+        r=0
+        case $v in
+            is-active) state; [ $quiet = 1 ] || echo "$SC_ACTIVE"
+                       case $SC_ACTIVE in active) ;; unknown) sc_log partial "$v $u: supervise/ not readable"; r=4 ;; *) r=3 ;; esac ;;
+            is-failed) state; [ $quiet = 1 ] || echo "$SC_ACTIVE"; r=1 ;;
+            is-enabled) enabled_state; [ $quiet = 1 ] || echo "$SC_EN"; case $SC_EN in disabled) r=1 ;; esac ;;
+            show) show_props "$u" ;;
+            status) status_of "$u"; r=$? ;;
+            cat) case $SC_TYPE in runit) echo "# $SC_SV_DIR/$SC_SVC/run"; cat "$SC_SV_DIR/$SC_SVC/run" ;;
+                                  proc) [ -n "$SC_CMD" ] && echo "# units.d: $SC_CMD"; [ -r "$SC_DIR/run" ] && cat "$SC_DIR/run" ;; esac ;;
+            reset-failed) ;;
+            kill) state
+                  if [ "$SC_PID" != 0 ]; then
+                      if [ "$SC_TYPE" = runit ] && ! is_root; then need_auth kill "$u"; fi
+                      if [ "$SC_TYPE" = proc ]; then "$SC_KILL" -s "$signal" -- "-$SC_PID" 2>/dev/null || r=1
+                      else "$SC_KILL" -s "$signal" "$SC_PID" 2>/dev/null || r=1; fi
+                  fi ;;
+            start|stop|restart|try-restart|condrestart|reload|reload-or-restart|try-reload-or-restart)
+                control "$v" "$u"; r=$? ;;
+        esac
+        [ $r -gt $rc ] && rc=$r
+    done
+}
+# A pattern (hhd@*.service): the units it matches; none → like a unit that is not active
+pattern_verb() {   # VERB PATTERN
+    local d n found=0 r=0
+    for d in "$SC_SERVICE_DIR"/*; do
+        [ "$scope" = system ] && [ -e "$d" ] || break
+        n=${d##*/}; sc_alias "$n"
+        # shellcheck disable=SC2254
+        case $SC_ALIAS in $2) found=1; each "$1" "$SC_ALIAS" ;; esac
+    done
+    if [ $found = 0 ]; then
+        sc_log not-found "$1 $2"
+        case $1 in is-active|is-failed) [ $quiet = 1 ] || echo inactive; r=3 ;; *) r=0 ;; esac
+        [ $r -gt $rc ] && rc=$r
+    fi
+}
+
+case $verb in
+    is-active|is-failed|is-enabled|show|status|cat|reset-failed|kill|start|stop|restart|try-restart|condrestart|reload|reload-or-restart|try-reload-or-restart)
+        if [ "$verb" = show ] && [ $# -eq 0 ]; then unsupported "show without a unit (the manager's properties)"; fi
+        if [ "$verb" = status ] && [ $# -eq 0 ]; then unsupported "status without a unit"; fi
+        each "$verb" "$@"; exit $rc ;;
+    list-units) list_units "$@"; exit 0 ;;
+    list-unit-files) list_unit_files "$@"; exit 0 ;;
+    daemon-reload|daemon-reexec) exit 0 ;;   # units.d and /etc/sv are read on every call: nothing to reload
+    is-system-running) [ $quiet = 1 ] || echo offline; exit 1 ;;   # what systemctl answers without systemd as PID 1
+    poweroff|reboot|halt|suspend|hibernate|hybrid-sleep|suspend-then-hibernate)
+        [ "$scope" = system ] || unsupported "$verb --user"
+        exec loginctl "$verb" ;;
+    enable|disable|mask|unmask|reenable|preset|link|revert|edit|set-property)
+        echo "systemd-compat: '$verb' is not supported: runit services are enabled by linking $SC_SV_DIR/<service> into $SC_SERVICE_DIR (by hand, on purpose)." >&2
+        sc_log unsupported "$verb $*"; exit 1 ;;
+    import-environment|unset-environment|set-environment|show-environment|list-jobs)
+        # Sessions ask this on every login (Xfce's xinitrc: "systemctl --user list-jobs"; labwc: import-environment)
+        # to know whether a systemd user manager runs. There is none: the answer is the failure, and it is not news.
+        if [ "$scope" = user ]; then echo "Failed to connect to bus: No medium found" >&2; else not_booted; fi
+        exit 1 ;;
+    --version) echo "systemd-compat $SC_VERSION (runit + elogind; not systemd)"; exit 0 ;;
+    --help) echo "systemctl (systemd-compat $SC_VERSION): docs/2-base-system/4-systemd-compat.md of void-legion-go2"; exit 0 ;;
+    *) unsupported "$verb" ;;
+esac

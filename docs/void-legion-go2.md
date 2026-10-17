@@ -26,6 +26,7 @@ layer. Every page has the same parts: what it is and why, how to install it, how
 - [System](2-base-system/1-system.md)
 - [Network and SSH](2-base-system/2-network.md)
 - [Storage](2-base-system/3-storage.md)
+- [systemd-compat: programs written for systemd](2-base-system/4-systemd-compat.md)
 
 ## 3. Hardware support
 

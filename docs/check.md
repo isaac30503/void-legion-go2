@@ -71,6 +71,9 @@ xbps-query -m | grep -c '^speech-dispatcher-[0-9]'   # 1
 xbps-query -m | grep -cE '^(glib-devel|eudev-libudev-devel|speech-dispatcher-devel|clang|pkg-config)-[0-9]'   # 5 (kept on purpose)
 sudo sv status decky                       # run
 xbps-query -p pkgver hidapi                # hidapi-… (Decky's Colores)
+readlink /usr/bin/systemctl; systemctl is-system-running   # /usr/local/lib/systemd-compat/systemctl · offline (systemd-compat)
+sudo systemctl is-active inputplumber.service plugin_loader.service   # active · active
+head -1 /etc/sv/decky/log/run; sudo tail -1 /var/log/decky/current   # svlogd · a line of Decky
 for p in pipewire-32bit libspa-videoconvert-32bit mesa-vaapi-32bit mesa-vaapi; do xbps-query -p pkgver $p; done   # the four (Remote Play)
 grep "Capture method set" ~/.local/share/Steam/logs/streaming_log.txt | grep -v Placeholder | tail -1   # after a stream: Desktop PipeWire NV12 DMABUF + VAAPI H264
 ls ~/.config/autostart/steam-background.desktop && pgrep -af 'steam.*-silent'   # Steam in the background
