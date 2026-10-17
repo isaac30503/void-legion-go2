@@ -4,6 +4,13 @@ The notable changes of the system and this repository, newest first. The full ac
 attempts, measurements) is in the private repository's archive and, until 2026-10-14, in the tag
 `recipe-single-file` (*History*).
 
+## 2026-10-16
+
+- Game Mode's loading screen (`steam-loading`) follows the Plymouth theme in use: its frames (any number), the
+  firmware logo only when the theme uses it and the theme's height; or a different screen of its own in
+  `/usr/local/share/steam-loading/`. It opens at full screen size: before, the first frames came out small and
+  cropped in the top-left corner.
+
 ## 2026-10-14
 
 - **CI** (GitHub Actions): `install/verify.sh --ci` and the new automated tests (`tests/run.sh`) on every push;

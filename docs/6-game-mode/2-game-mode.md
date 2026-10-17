@@ -13,7 +13,11 @@ After [Steam](1-steam.md) was opened once:
 sudo sh "$B/common/steam/install-game-mode.sh" --no-loading-screen     # --remove undoes it
 ```
 
-`--no-loading-screen`: no `steam-loading` splash (the launcher works without it; fewer screen handovers). Then
+`--no-loading-screen`: no `steam-loading` splash (the launcher works without it; fewer screen handovers). With it,
+`steam-loading` shows the frames of the Plymouth theme in use (`Theme=` of `/etc/plymouth/plymouthd.conf`), with the
+firmware logo only when the theme uses it and at the theme's height, or those of `/usr/local/share/steam-loading/` if
+a local theme script put a different one there; it opens at full screen size, so the first frames are never small in
+a corner. Then
 the [session pieces](../4-sessions/1-login-and-modes.md) and [Xfce on Wayland](../5-desktop/1-xfce.md), and reboot:
 it enters Game Mode by itself.
 
