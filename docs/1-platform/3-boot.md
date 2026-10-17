@@ -15,7 +15,7 @@ the copy of the font it installs. With the XS1000 connected.
 sudo bash "$B/legion/grub-root.sh"       # Windows entry, removes the ISO's kernel, silent boot, theme; log ~/grub-root.log
 sudo sh "$B/legion/grub-hidden.sh"       # hidden GRUB (0 s)
 sudo xbps-pkgdb -m hold linux linux-headers   # the kernel does not jump off the 6.18 series
-sudo sh "$B/common/boot/install-plymouth.sh" --void-b --loading-steam-b   # the animations (below)
+sudo sh "$B/common/boot/install-plymouth.sh"   # the animations (below): Void B, and Steam B while Steam loads
 udisksctl unmount -b /dev/sda4           # the XS1000's NTFS partition, before rebooting
 sudo reboot
 ```
@@ -59,17 +59,17 @@ all from vectors, so they are sharp on any screen:
 
 | Option | Animation | Firmware logo | Frames |
 |---|---|---|---|
-| `--steam-a` (default) | Steam's mechanism moving inside a blue circle, below the logo | yes | 124 (a cycle ~4.1 s) |
+| `--steam-a` | Steam's mechanism moving inside a blue circle, below the logo | yes | 124 (a cycle ~4.1 s) |
 | `--steam-b` | that circle, large (28 % of the height) and centred | no | 124 |
 | `--steam-c` | the whole mechanism in a blue rectangle with STEAM at the bottom left | no | 124 |
 | `--void-a` | Void's symbol spinning below the logo | yes | 54 (a turn ~1.8 s) |
-| `--void-b` | that symbol, large and centred | no | 54 |
+| `--void-b` (default) | that symbol, large and centred | no | 54 |
 | `--void-c` | Void's logo with its letters, the arcs spinning behind them | no | 54 |
 
-`--loading-steam-a` … `--loading-void-c` gives **Game Mode's loading screen** (`steam-loading`,
-[Game Mode](../6-game-mode/2-game-mode.md)) another one of the six (its frames in `/usr/local/share/steam-loading/`);
-without it, Game Mode shows the same one as the boot. The Legion uses `--void-b --loading-steam-b`. Running it again
-with other options changes them. It installs `plymouth` and `plymouth-data` (and `librsvg-utils`, `python3-Pillow`,
+`--loading-steam-a` … `--loading-void-c` chooses **Game Mode's loading screen** (`steam-loading`,
+[Game Mode](../6-game-mode/2-game-mode.md)), one of the six (its frames in `/usr/local/share/steam-loading/`);
+`--loading-same` shows the same one as the boot. **Without options it is "B with B"**, `--void-b --loading-steam-b`,
+what both machines use. Running it again with other options changes them. It installs `plymouth` and `plymouth-data` (and `librsvg-utils`, `python3-Pillow`,
 `void-artwork` if missing) and:
 
 1. Generates the theme in `/usr/share/plymouth/themes/` (`bgrt-steam`, `steam-grande`, `steam-mecanismo`, `bgrt-void`,
