@@ -9,8 +9,7 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
 - **A second screen at another scale (a 4K TV at scale 2):** `wallpaper-watcher` now puts the panels on the external
   screen (xfce4-panel cannot name screens on labwc: `monitor-N-Unknown`, Automatic again without one) and restarts
   `xfdesktop` when a scale changes (4.20.2 drew the Legion's screen zoomed in and ignored its new wallpaper).
-  `displays.xml` keeps two saved profiles, "Monitor MSI" and "Sala 4K", applied by themselves. On a scaled screen it
-  also undoes xfce4-panel's scale error (length, height and offset multiplied by the scale). The clock is alone in a
+  `displays.xml` keeps two saved profiles, "Monitor MSI" and "Sala 4K", applied by themselves. The clock is alone in a
   third, top-centre panel, so it sits in the middle of the screen.
 
 - **`ssh-find`** (`common/ssh-find/`, [network and SSH](docs/2-base-system/2-network.md#ssh-find-finding-the-machines)):
