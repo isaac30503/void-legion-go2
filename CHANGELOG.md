@@ -4,6 +4,13 @@ The notable changes of the system and this repository, newest first. The full ac
 attempts, measurements) is in the private repository's archive and, until 2026-10-14, in the tag
 `recipe-single-file` (*History*).
 
+## 2026-10-17
+
+- **Controller layouts:** xterm and Vesktop use a copy of the layout Steam gives Firefox (Web Browser template, left
+  stick as the mouse wheel), kept in `legion/steam/web-browser-layout-controller_steamos_handheld.vdf`
+  ([Steam](docs/6-game-mode/1-steam.md#xterm-as-a-game)); the desktop layout takes its left stick from it. The
+  keyboard opens with X, as in Valve's desktop template: the docs said RT+X, which no Valve layout has.
+
 ## 2026-10-16
 
 - **A second screen at another scale (a 4K TV at scale 2):** `wallpaper-watcher` now puts the panels on the external
