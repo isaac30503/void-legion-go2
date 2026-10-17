@@ -62,6 +62,23 @@ wrapper removes Steam's `LC_ALL=C` and `LD_PRELOAD`; in Game Mode it loads `.Xre
 library art: [library art](6-library-art.md). Inside it, fastfetch says `steamcompmgr (X11)` and
 `XDG_SESSION_TYPE=x11` (Steam forces it through Xwayland): Game Mode is not X11 (`pgrep Xorg` gives nothing).
 
+**Controller layout: Valve's "Web Browser" template**, the one Steam gives Firefox by itself (mouse, mouse buttons,
+scroll wheel and arrow keys). By default xterm got the gamepad template, and Steam's layout browser does not
+offer the Web Browser template for this shortcut, so it goes in the file. With **Steam closed** (it rewrites the file
+on exit), in `~/.local/share/Steam/steamapps/common/Steam Controller Configs/<accountid>/config/configset_<controller>.vdf`
+(the Legion's controller through InputPlumber is `configset_28de-12fb-35ae8cb8.vdf`), inside `"controller_config"`:
+
+```
+	"xterm"
+	{
+		"template"		"controller_neptune_webbrowser.vdf"
+	}
+```
+
+The key is the shortcut's name in lowercase. **Check:** after opening xterm from Steam, `controller_ui.txt` in
+`~/.local/share/Steam/logs/` says `Loaded Config for Local Selection Path for App ID <xterm's id> …
+controller_neptune_webbrowser.vdf` (before it was `Last Resort Path … controller_neptune_gamepad_fps.vdf`).
+
 ## Problems
 
 - **Steam takes ~1 min to enter Game Mode:** the desktop Steam was started without `-steamdeck` (e.g. `steam` from a
