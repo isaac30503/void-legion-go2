@@ -187,7 +187,9 @@ EOF
     pid=${tok2#* }
     sc systemctl --user stop filter-chain.service
     out=$(sc systemctl --user is-active filter-chain.service); check "sc: stopped exec unit" inactive "$out"
-    check "sc: its process is gone" gone "$(kill -0 "$pid" 2>/dev/null && echo alive || echo gone)"
+    # gone, or a zombie waiting for a parent that does not reap (some containers): not running either way
+    s=$(cut -d' ' -f3 "/proc/$pid/stat" 2>/dev/null)
+    check "sc: its process is gone" gone "$(case ${s:-Z} in Z|X) echo gone ;; *) echo "alive ($s)" ;; esac)"
 
     # a transient unit (the kiosk): nice, --setenv kept out of the log, its output through journalctl --since
     t0=$(date +%s)

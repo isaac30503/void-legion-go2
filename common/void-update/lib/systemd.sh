@@ -15,6 +15,11 @@
 VU_SC_LIB=${VU_SC_LIB:-/usr/local/lib/systemd-compat}
 VU_SC_ETC=${VU_SC_ETC:-/etc/systemd-compat}
 VU_SC_STATE="$VU_STATE/systemd-compat"
+# Scripts of the system that decide "is there systemd?" by whether systemctl exists (command -v, which, -x…): with
+# systemd-compat installed they take the systemd path. The ones that also check /run/systemd (dracut, resolvconf,
+# dhcpcd) are not affected; the others need a look once (vu_sc_detectors; 2026-10-17, after ssh-survey.sh did just that).
+VU_SC_DETECT_DIRS=${VU_SC_DETECT_DIRS:-/etc /usr/local /usr/bin /usr/sbin /usr/libexec $HOME/.local/bin}
+VU_SC_DETECT='(command -v|which|type -[pP]|hash)[[:space:]]+["'"'"']?(/usr)?(/s?bin/)?systemctl|-[xfe][[:space:]]+["'"'"']?/(usr/)?s?bin/systemctl|shutil\.which\(["'"'"']systemctl'
 # What counts as calling systemd. busctl and loginctl are left out: elogind provides them.
 VU_SC_PATTERN='systemctl|journalctl|systemd-run|systemd-inhibit|systemd-analyze|org\.freedesktop\.systemd1|/run/systemd|NOTIFY_SOCKET|sd_notify'
 
@@ -57,6 +62,27 @@ vu_sc_what() {   # UNIT → what it is here (a short text)
         pattern) t "pattern: matches the runit services of that name" ;;
         *) t "does not exist here (that program will see it as not installed)" ;;
     esac
+}
+
+# The detectors: "PATH<TAB>safe|review<TAB>the matching lines" (safe: it also checks /run/systemd), plus those of the
+# repository systemd-compat came from (its MANIFEST). /usr/bin and /usr/sbin are the same folder on Void: deduplicated.
+vu_sc_detectors() {
+    local dirs repo f lines
+    # shellcheck disable=SC2206  # a list of folders
+    dirs=($VU_SC_DETECT_DIRS)
+    repo=$(sed -n 's/^repo=//p' "$VU_SC_LIB/MANIFEST" 2>/dev/null)
+    [ -d "$repo" ] && dirs+=("$repo/common" "$repo/legion" "$repo/install")
+    grep -rlIE --exclude-dir=systemd-compat "$VU_SC_DETECT" "${dirs[@]}" 2>/dev/null | while read -r f; do readlink -f "$f"; done | sort -u |
+    while read -r f; do
+        case $f in */lib/void-update/lib/systemd.sh|*/common/void-update/lib/systemd.sh) continue ;; esac
+        lines=$(grep -hoE "$VU_SC_DETECT" "$f" | sort -u | paste -sd' ')
+        if grep -q '/run/systemd' "$f"; then printf '%s	safe	%s\n' "$f" "$lines"; else printf '%s	review	%s\n' "$f" "$lines"; fi
+    done
+}
+# Detectors to review that are not in the last review (or whose lines changed)
+vu_sc_new_detectors() {
+    local ack="$VU_SC_STATE/detectors.ack"
+    vu_sc_detectors | awk -F'\t' '$2 == "review"' | while IFS= read -r l; do grep -qxF "$l" "$ack" 2>/dev/null || printf '%s\n' "$l"; done
 }
 
 # Requests not served, since the last review: "COUNT<TAB>tool status request<TAB>detail<TAB>caller", most first
@@ -147,12 +173,14 @@ vu_systemd_line() {
     fi
     problems=$(vu_sc_problems)
     changed=$(vu_sc_changed | cut -f1 | paste -sd, | sed 's/,/, /g')
+    local det; det=$(vu_sc_new_detectors | grep -c .)
     reqs=$(vu_sc_new_requests); nreq=$(printf '%s' "$reqs" | grep -c .)
     if [ -n "$problems" ]; then
         echo "WARNING|systemd|$(t "%s problem(s)" "$(printf '%s\n' "$problems" | grep -c .)")|$(printf '%s\n' "$problems" | paste -sd'\t' | sed 's/\t/; /g')"
-    elif [ -n "$changed" ] || [ "$nreq" -gt 0 ]; then
+    elif [ -n "$changed" ] || [ "$nreq" -gt 0 ] || [ "$det" -gt 0 ]; then
         local why=()
         [ -n "$changed" ] && why+=("$(t "changed how they call systemd: %s" "$changed")")
+        [ "$det" -gt 0 ] && why+=("$(t "%s script(s) decide whether there is systemd by systemctl existing" "$det")")
         [ "$nreq" -gt 0 ] && why+=("$(t "%s kind(s) of request not served" "$nreq")")
         echo "WARNING|systemd|$(t "to review")|$(printf '%s; ' "${why[@]}" | sed 's/; $//'). $(t "See %s; once reviewed, %s" 'void-update --systemd' 'void-update --systemd --ack')"
     else
@@ -171,6 +199,7 @@ vu_systemd_report() {
         done < <(vu_sc_consumers)
         local boot f; boot=$(vu_sc_boot)
         while read -r f; do [ -r "$f" ] && printf '%s %s %s\n' "$f" "$boot" "$(wc -l < "$f")"; done < <(vu_sc_logs) > "$VU_SC_STATE/requests.ack"
+        vu_sc_detectors | awk -F'\t' '$2 == "review"' > "$VU_SC_STATE/detectors.ack"
         ok "Reviewed: void-update will warn again when a program changes how it calls systemd or asks something new"
         return 0
     fi
@@ -199,6 +228,17 @@ vu_systemd_report() {
         while read -r u; do [ -n "$u" ] && printf '   %-28s %s\n' "$u" "$(vu_sc_what "$u")"; done < <(vu_sc_units "$path")
     done < <(vu_sc_consumers)
     [ $any = 1 ] || info "None found"
+
+    step "Scripts that decide whether there is systemd by systemctl existing"
+    local det_all; det_all=$(vu_sc_detectors)
+    if [ -z "$det_all" ]; then ok "None"
+    else
+        while IFS=$'\t' read -r f cls lines; do
+            if [ "$cls" = safe ]; then printf '   ✓ %s — %s\n' "$f" "$(t "also checks /run/systemd: not affected")"
+            elif grep -qxF "$f"$'\t'"$cls"$'\t'"$lines" "$VU_SC_STATE/detectors.ack" 2>/dev/null; then printf '   ✓ %s — %s\n' "$f" "$(t "reviewed")"
+            else printf '   %s⚠ %s%s — %s\n      %s\n' "$c_yellow" "$f" "$c_off" "$(t "with systemd-compat it takes its systemd path: check that it still does the right thing")" "$lines" | cut -c1-200; fi
+        done <<< "$det_all"
+    fi
 
     step "Requests not served since the last review (this boot)"
     reqs=$(vu_sc_new_requests)

@@ -4041,3 +4041,23 @@ msgstr "units.d: %s ejecuta %s, que no está instalado (%s)"
 #: common/void-update/void-update
 msgid "who calls systemd and what was asked and not served; --ack marks it reviewed"
 msgstr "quién llama a systemd y qué se pidió y no se atendió; --ack lo marca como revisado"
+
+#: common/void-update/lib/systemd.sh
+msgid "%s script(s) decide whether there is systemd by systemctl existing"
+msgstr "%s script(s) deciden si hay systemd según exista systemctl"
+
+#: common/void-update/lib/systemd.sh
+msgid "also checks /run/systemd: not affected"
+msgstr "también mira /run/systemd: no le afecta"
+
+#: common/void-update/lib/systemd.sh
+msgid "reviewed"
+msgstr "revisado"
+
+#: common/void-update/lib/systemd.sh
+msgid "with systemd-compat it takes its systemd path: check that it still does the right thing"
+msgstr "con systemd-compat toma su camino de systemd: comprobar que sigue haciendo lo correcto"
+
+#: common/void-update/lib/systemd.sh
+msgid "Scripts that decide whether there is systemd by systemctl existing"
+msgstr "Scripts que deciden si hay systemd según exista systemctl"
