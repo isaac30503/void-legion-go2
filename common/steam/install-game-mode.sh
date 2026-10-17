@@ -17,9 +17,9 @@
 #   Xfce → "Game Mode" launcher (applications menu): switch-mode-root game.
 #   Without install-passwordless-switch.sh: it leaves the chosen session and logs out (login
 #   screen with password).
-# While Steam loads, steam-loading shows the firmware logo with Void's symbol spinning
-# (like Plymouth at power-on) and mangoapp starts when it closes (otherwise, it drew the overlay
-# on top).
+# While Steam loads, steam-loading shows the frames of the Plymouth theme in use, with the firmware logo
+# when the theme uses it (the same picture as at power-on, so one screen follows the other), and mangoapp
+# starts when it closes (otherwise, it drew the overlay on top).
 # Needs install-steam.sh first. Reversible.
 # Previous (Spanish) name: instalar-modo-juego.sh. Installing removes the old Spanish-named pieces
 # (/usr/local/bin/steam-modo-juego, steam-cargando, /usr/local/lib/steam-modo-juego,
@@ -36,8 +36,8 @@
 #   /usr/local/lib/steam-game-mode/bin/sudo             brightness from Steam: its "sudo -n tee …/brightness"
 #                                                       → elogind's SetBrightness (without privileges)
 #   /usr/local/bin/steam-loading                        loading screen while Steam starts
-#                                                       (firmware logo + Void's symbol spinning,
-#                                                       like Plymouth); it closes event-driven
+#                                                       (the Plymouth theme's frames, like at
+#                                                       power-on); it closes event-driven
 #   cap_sys_nice on /usr/bin/gamescope                  high priority, as in SteamOS (it is lost
 #                                                       when gamescope is updated: repeat this script)
 #   sudo sh common/steam/install-game-mode.sh [--no-loading-screen]   installs
@@ -393,9 +393,12 @@ else
 cat > "$CAR" <<'EOF'
 #!/usr/bin/python3
 # steam-loading — Game Mode's loading screen while Steam starts (installed by
-# common/steam/install-game-mode.sh; docs/6-game-mode/2-game-mode.md): the same as Plymouth at power-on (theme
-# bgrt-void), the firmware logo in its place and Void's symbol spinning below. Plymouth cannot
-# stay on screen here: lightdm closes it when the session starts and the screen belongs to gamescope.
+# common/steam/install-game-mode.sh; docs/6-game-mode/2-game-mode.md): the same as Plymouth at power-on,
+# the frames of the Plymouth theme in use (Theme= of /etc/plymouth/plymouthd.conf; bgrt-void if there is
+# none) at the same place as two-step draws them, with the firmware logo when the theme uses it
+# (UseFirmwareBackground) and at its height (VerticalAlignment).
+# Plymouth cannot stay on screen here: lightdm closes it when the session starts and the screen belongs
+# to gamescope.
 # It closes EVENT-DRIVEN: it listens to the list of windows that gamescope publishes in X
 # (GAMESCOPE_FOCUSABLE_WINDOWS: window, appid, pid…; xprop -spy only wakes up when it changes) and
 # ends when a window of another program that is not mangoapp appears (the first one of Steam).
@@ -410,9 +413,34 @@ import gi
 gi.require_version("Gtk", "3.0"); gi.require_version("GdkX11", "3.0")
 from gi.repository import Gtk, Gdk, GdkPixbuf, GLib, GdkX11
 
-THEME = "/usr/share/plymouth/themes/bgrt-void"
+def plymouth_theme():
+    try:
+        for line in open("/etc/plymouth/plymouthd.conf"):
+            if line.strip().startswith("Theme="):
+                return line.split("=", 1)[1].strip()
+    except OSError:
+        pass
+    return "bgrt-void"
+THEME = "/usr/share/plymouth/themes/" + plymouth_theme()
+# A loading screen of its own, different from the power-on one: frames and a steam-loading.plymouth (in
+# two-step's format) in this folder, put there by a local theme script. Without it, the Plymouth theme in use.
+if os.path.isfile("/usr/local/share/steam-loading/steam-loading.plymouth"):
+    THEME = "/usr/local/share/steam-loading"
+
+def theme_option(key, default):
+    # [two-step] options of the theme in use, so this screen matches Plymouth: with or without the
+    # firmware logo (UseFirmwareBackground) and the height of the animation (VerticalAlignment).
+    try:
+        for line in open(f"{THEME}/{os.path.basename(THEME)}.plymouth"):
+            if line.strip().startswith(key + "="):
+                return line.split("=", 1)[1].strip()
+    except OSError:
+        pass
+    return default
+FIRMWARE_LOGO = theme_option("UseFirmwareBackground", "true").lower() == "true"
+try: VALIGN = float(theme_option("VerticalAlignment", ".7"))
+except ValueError: VALIGN = .7
 BGRT = "/sys/firmware/acpi/bgrt"
-TURN = 36               # frames; two-step plays them at ~30 per second (like Plymouth)
 MAXIMUM = 180           # s: safety deadline
 IGNORE = {"mangoapp", "steam-loading", "python3"}
 
@@ -423,17 +451,32 @@ def read(n):
     except OSError: return ""
 
 frames = []
-for i in range(1, TURN + 1):
-    try: frames.append(GdkPixbuf.Pixbuf.new_from_file(f"{THEME}/throbber-{i:04d}.png"))
-    except GLib.Error: break
-try:
-    logo = GdkPixbuf.Pixbuf.new_from_file(f"{BGRT}/image")
-except GLib.Error:
-    logo = None
+i = 1
+while True:
+    p = f"{THEME}/throbber-{i:04d}.png"
+    if not os.path.exists(p):
+        break
+    try:
+        frames.append(GdkPixbuf.Pixbuf.new_from_file(p))
+        i += 1
+    except GLib.Error:
+        break
+logo = None
+if FIRMWARE_LOGO:
+    try:
+        logo = GdkPixbuf.Pixbuf.new_from_file(f"{BGRT}/image")
+    except GLib.Error:
+        pass
 lx, ly = int(read("xoffset") or -1), int(read("yoffset") or -1)
 
 win = Gtk.Window()
 win.set_decorated(False)
+# Screen size from the start: with the default window size (200x200) the first frames came out small in
+# the top-left corner, cropped, before the window became full screen (photo, Legion, 2026-10-16).
+_scr = Gdk.Screen.get_default()
+SW, SH = _scr.get_width(), _scr.get_height()
+win.set_default_size(SW, SH)
+win.move(0, 0)
 area = Gtk.DrawingArea()
 win.add(area)
 step = [0]
@@ -441,6 +484,8 @@ step = [0]
 def draw(w, cr):
     W, H = w.get_allocated_width(), w.get_allocated_height()
     cr.set_source_rgb(0, 0, 0); cr.paint()
+    if W < SW or H < SH:
+        return False                       # not full screen yet: only black, never a cropped logo
     if logo:
         x, y = lx, ly
         if x < 0 or y < 0 or x + logo.get_width() > W or y + logo.get_height() > H:
@@ -448,7 +493,8 @@ def draw(w, cr):
         Gdk.cairo_set_source_pixbuf(cr, logo, x, y); cr.paint()
     if frames:
         f = frames[step[0] % len(frames)]
-        Gdk.cairo_set_source_pixbuf(cr, f, (W - f.get_width()) // 2, (H - f.get_height()) * 7 // 10)
+        # Where two-step puts it: the centre at VerticalAlignment of the height (.7 in bgrt).
+        Gdk.cairo_set_source_pixbuf(cr, f, (W - f.get_width()) // 2, round(H * VALIGN) - f.get_height() // 2)
         cr.paint()
     return False
 area.connect("draw", draw)
