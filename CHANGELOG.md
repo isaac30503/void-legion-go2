@@ -6,6 +6,16 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
 
 ## 2026-10-17
 
+- **systemd-compat** (`common/systemd-compat/`, [systemd-compat](docs/2-base-system/4-systemd-compat.md)): Decky
+  plugins made for SteamOS (Hooandee's Panel de Control and Colores) call `/usr/bin/systemctl restart plugin_loader`
+  after updating themselves, `systemctl is-active inputplumber.service`, a `filter-chain` user unit and
+  `systemd-inhibit`; on Void none of that existed (the restart button did nothing, Panel hid its controller section).
+  Now `systemctl`, `journalctl` and `systemd-run` answer them with runit, the session's processes and elogind, without
+  modifying the plugins and without anything resident; `/run/systemd` is never created. Decky logs to
+  `/var/log/decky` (svlogd); `python3-yaml` and `caps` installed. `void-update --systemd [--ack]` reports what was not
+  served, plugins whose systemd calls changed, and scripts that decide "is there systemd?" by `systemctl` existing;
+  one line in the summary. `ssh-survey.sh` now knows runit by PID 1 (it was one of those scripts). 35 → 70 tests.
+
 - **Controller layouts:** xterm and Vesktop use a copy of the layout Steam gives Firefox (Web Browser template, left
   stick as the mouse wheel), kept in `legion/steam/web-browser-layout-controller_steamos_handheld.vdf`
   ([Steam](docs/6-game-mode/1-steam.md#xterm-as-a-game)); the desktop layout takes its left stick from it. The

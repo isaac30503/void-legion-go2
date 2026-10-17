@@ -87,8 +87,25 @@ Your own lines go in another file (`90-local.conf`, read later: the last match w
 **What stays as it was:** nothing creates `/run/systemd`, so programs that check whether systemd *runs* (dracut,
 mdadm, resolvconf, dhcpcd, e2scrub) still see that it does not. Xfce's `xinitrc` and labwc ask for a systemd user
 manager on every login (`systemctl --user list-jobs`, `import-environment`); they still get the failure (checked by the
-installer). Before installing it, everything on the Legion that looks for `systemctl` was reviewed (text files and
-binaries; 2026-10-17): none changes behavior because the file exists.
+installer).
+
+**What does change: a script that decides "is there systemd?" only by whether `systemctl` exists** (`command -v
+systemctl`, `which`, `[ -x /usr/bin/systemctl ]`) now takes its systemd path. The review of the Legion before installing
+(its text files and binaries) found none that mattered, but it missed this repository's own `ssh-survey.sh`, which is
+not installed anywhere (`ssh-setup` sends it over SSH): it showed `sshd active: unknown` on the Legion until it was
+changed to know runit by PID 1 (`/proc/1/comm` = `runit`; found by an outside review, 2026-10-17). That is the right
+test for any script here; and so that the next one does not go unnoticed, `void-update --systemd` looks for that
+pattern in `/etc`, `/usr/local`, `/usr/bin`, `/usr/sbin`, `/usr/libexec`, `~/.local/bin` and this repository (below).
+
+**Limits, on purpose:**
+
+- **As a normal user, `is-active` of a runit service answers `unknown`** (exit 4; logged as partial): its state is in
+  `supervise/`, which is root's only, and there is no other way to read it without root. Decky and its plugins run as
+  root and get the real state; for a user script, `sudo systemctl …`, or `pgrep`.
+- **`systemctl --version` prints `systemd-compat 1 (runit + elogind; not systemd)`.** A script that takes the second
+  field as systemd's version sees "1": older than any real one, so it chooses the most conservative path (no feature
+  of a modern systemd); one that checks the first field for `systemd` sees that it is not. Printing a real version
+  number would make scripts believe features exist that do not.
 
 ## Maintenance: `void-update --systemd`
 
@@ -102,7 +119,11 @@ at most; the values of `--setenv`/`Environment=` hidden). `void-update --systemd
   `~/homebrew/plugins`): how many lines, and **what changed since the last review** as a diff — a plugin update
   that calls systemd differently shows up here before anyone notices it failing; and the units each one names, with
   what they are here (runit service, unit of systemd-compat, hidden, does not exist);
-- **the requests not served** since the last review, grouped, with who asked.
+- **the requests not served** since the last review, grouped, with who asked;
+- **the scripts that decide whether there is systemd by `systemctl` existing**: the ones that also check `/run/systemd`
+  are marked as not affected; each of the others needs a look once (does its systemd path still do the right thing?)
+  and stays reviewed until its lines change. On the Legion (2026-10-17): Xfce's `xinitrc` (its `systemctl --user
+  list-jobs` still fails: fine) and `lvmdump` (an LVM diagnostic, not used). 0.3 s on the Legion's NVMe.
 
 `void-update --systemd --ack` marks it all reviewed. The **summary** of every update has one line: `✓ systemd` or
 `⚠ systemd` "to review" / "N problem(s)" / "not installed" (when programs call systemd and it is missing).

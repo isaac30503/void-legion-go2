@@ -20,10 +20,11 @@ item() {
   printf '  %s%*s%s\n' "$label" "$gap" '' "$2"
 }
 
-# Void uses runit, not systemd: systemctl does not exist and the active services are the
-# links in /var/service. sv status requires root, so it is not used here.
+# Void uses runit, not systemd: the active services are the links in /var/service. sv status requires root, so it
+# is not used here. Known by PID 1, not by the absence of systemctl: systemd-compat installs one on Void
+# (common/systemd-compat; 2026-10-17), and its answers about runit services need root.
 runit=""
-if [ -d /var/service ] && command -v sv >/dev/null 2>&1 && ! command -v systemctl >/dev/null 2>&1; then
+if [ -d /var/service ] && [ "$(cat /proc/1/comm 2>/dev/null)" = runit ]; then
   runit=1
 fi
 
