@@ -17,7 +17,8 @@ How, for the alias given by ssh (%n), in ~/.config/ssh-find/hosts.conf:
        link-local address without interface is tried on every interface that is up;
      - the neighbour table (ip neigh) entries with one of the machine's MAC addresses;
   2. if none answers: discovery — an IPv6 ping to all the nodes of the link (ff02::1) and a sweep of port 22
-     on the /24 of every interface fill the neighbour table, and its MAC addresses are looked for again;
+     on the /24 of every interface fill the neighbour table, and everything is tried again, in rounds, for up
+     to 15 s (SSH_FIND_TIMEOUT): the Wi-Fi mesh sometimes did not answer for a few seconds;
   3. then it relays ssh's stdin/stdout through that connection, and remembers the address and its MAC (so it
      learns the MACs of every interface the machine uses).
 The identity of the machine is checked by ssh itself: HostKeyAlias is fixed per machine, so a wrong machine at
@@ -48,6 +49,8 @@ except ImportError:
 CONF = os.path.expanduser("~/.config/ssh-find/hosts.conf")
 STATE = os.path.expanduser("~/.cache/ssh-find/state.json")
 CONNECT_TIMEOUT = 2.5        # s per round of attempts
+TOTAL_TIMEOUT = float(os.environ.get("SSH_FIND_TIMEOUT", "15"))   # s before giving up: the mesh sometimes
+                             # does not answer for a few seconds (roaming, a radio waking up) (2026-10-16)
 RESOLVE_TIMEOUT = 2.5        # s for the names (mDNS can take its time)
 VERBOSE = bool(os.environ.get("SSH_FIND_DEBUG"))
 
@@ -243,31 +246,48 @@ def find(alias, port):
     names = sec.get("names", "").split()
     macs = {m.lower() for m in sec.get("macs", "").split()} | set(state.get(alias, {}).get("macs", []))
     last = state.get(alias, {}).get("last")
-    pool = cf.ThreadPoolExecutor(max_workers=1)
+    end = time.monotonic() + TOTAL_TIMEOUT
+    pool = cf.ThreadPoolExecutor(max_workers=2)
     names_future = pool.submit(resolve, names)         # meanwhile: the names, in the background
-    neigh = neighbours()
-    cands = []
-    if last:
-        now = mac_of(last[0], last[1])
-        if now and macs and now not in macs:            # that address is another machine's today
-            debug(f"{last[0]} is now {now}: skipped")
+
+    def known():
+        cands = []
+        if last:
+            now = mac_of(last[0], last[1])
+            if now and macs and now not in macs:        # that address is another machine's today
+                debug(f"{last[0]} is now {now}: skipped")
+            else:
+                cands += candidates_for(last[0], last[1])
+        for a, i, m in neighbours():
+            if m in macs:
+                cands += candidates_for(a, i if a.startswith("fe80") else None)
+        return cands
+    # Round 1: what is already known (fast), while the names resolve; then the names too.
+    won = try_connect(known(), port)
+    rnd = 1
+    while not won and time.monotonic() < end:
+        resolved = []
+        if names_future.done():
+            resolved = names_future.result()
+            names_future = pool.submit(resolve, names)  # the next round asks again (mDNS may answer now)
         else:
-            cands += candidates_for(last[0], last[1])
-    for a, i, m in neigh:
-        if m in macs:
-            cands += candidates_for(a, i if a.startswith("fe80") else None)
-    # First what is already known (fast), while the names resolve.
-    won = try_connect(cands, port) if cands else None
-    if not won:
-        for a in names_future.result():
-            cands += candidates_for(a)
+            try:
+                resolved = names_future.result(timeout=max(0.1, min(RESOLVE_TIMEOUT, end - time.monotonic())))
+                names_future = pool.submit(resolve, names)
+            except cf.TimeoutError:
+                pass
+        cands = known() + [c for a in resolved for c in candidates_for(a)]
+        started = time.monotonic()
         won = try_connect(cands, port)
-    pool.shutdown(wait=False)
-    if not won and macs:
-        debug("discovery")
-        discover()
-        cands = [c for a, i, m in neighbours() if m in macs for c in candidates_for(a, i if a.startswith("fe80") else None)]
-        won = try_connect(cands, port)
+        if won or time.monotonic() >= end:
+            break
+        rnd += 1
+        if macs:                                        # fill the neighbour table and look for the MACs again
+            debug(f"round {rnd}: discovery")
+            discover()
+        elif time.monotonic() - started < 1:
+            time.sleep(1)                               # everything failed at once (no route): give the link a moment
+    pool.shutdown(wait=False, cancel_futures=True)
     if not won:
         say(_("%s not found (names: %s; known MAC addresses: %s)") %
             (alias, " ".join(names) or "-", " ".join(sorted(macs)) or "-"))

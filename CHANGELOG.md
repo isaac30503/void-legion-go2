@@ -8,8 +8,9 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
 
 - **`ssh-find`** (`common/ssh-find/`, [network and SSH](docs/2-base-system/2-network.md#ssh-find-finding-the-machines)):
   SSH between the machines no longer depends on one mDNS name. A `ProxyCommand` tries at once the last address that
-  worked, the neighbour table by MAC (IPv4 and IPv6 link-local with its interface) and every name, then a quick
-  discovery; it learns the machines' MACs; `HostKeyAlias` fixed per machine. Same on both machines, without root.
+  worked, the neighbour table by MAC (IPv4 and IPv6 link-local with its interface) and every name, then discovery,
+  in rounds for up to 15 s; it learns the machines' MACs; `HostKeyAlias` fixed per machine. Same on both machines,
+  without root.
 
 - **Plymouth again**, renewed (`common/boot/install-plymouth.sh`, [boot](docs/1-platform/3-boot.md#the-loading-animations)):
   six animations drawn from vectors at the panel's size — Steam A/B/C and Void A/B/C (A with the firmware logo, B the
