@@ -91,11 +91,14 @@ installer).
 
 **What does change: a script that decides "is there systemd?" only by whether `systemctl` exists** (`command -v
 systemctl`, `which`, `[ -x /usr/bin/systemctl ]`) now takes its systemd path. The review of the Legion before installing
-(its text files and binaries) found none that mattered, but it missed this repository's own `ssh-survey.sh`, which is
-not installed anywhere (`ssh-setup` sends it over SSH): it showed `sshd active: unknown` on the Legion until it was
-changed to know runit by PID 1 (`/proc/1/comm` = `runit`; found by an outside review, 2026-10-17). That is the right
-test for any script here; and so that the next one does not go unnoticed, `void-update --systemd` looks for that
-pattern in `/etc`, `/usr/local`, `/usr/bin`, `/usr/sbin`, `/usr/libexec`, `~/.local/bin` and this repository (below).
+(its text files and binaries) found none that mattered, but it missed this repository's own `ssh-survey.sh`
+(installed in `~/.config/fish/` by the desktop's user part; `ssh-setup` sends that copy over SSH): it showed `sshd
+active: unknown` on the Legion until it was changed to know runit by PID 1 (`/proc/1/comm` = `runit`; with `/proc`
+mounted `hidepid`, `/run/runit`), found by two outside reviews, 2026-10-17. That is the right test for any script
+here; and so that the next one does not go unnoticed, `void-update --systemd` looks for that pattern in `/etc`,
+`/usr/local`, `/usr/bin`, `/usr/sbin`, `/usr/libexec`, `/usr/lib`, `/usr/share`, `~/.local/bin`, `~/.config/fish` and
+this repository (below): `command -v/-q`, `which`, `type [-p/-q]`, `hash`, `test -x`, `systemctl --version`,
+`shutil.which`, `os.path.exists`, `os.access`.
 
 **Limits, on purpose:**
 
@@ -120,10 +123,12 @@ at most; the values of `--setenv`/`Environment=` hidden). `void-update --systemd
   that calls systemd differently shows up here before anyone notices it failing; and the units each one names, with
   what they are here (runit service, unit of systemd-compat, hidden, does not exist);
 - **the requests not served** since the last review, grouped, with who asked;
-- **the scripts that decide whether there is systemd by `systemctl` existing**: the ones that also check `/run/systemd`
-  are marked as not affected; each of the others needs a look once (does its systemd path still do the right thing?)
-  and stays reviewed until its lines change. On the Legion (2026-10-17): Xfce's `xinitrc` (its `systemctl --user
-  list-jobs` still fails: fine) and `lvmdump` (an LVM diagnostic, not used). 0.3 s on the Legion's NVMe.
+- **the scripts that decide whether there is systemd by `systemctl` existing**: the ones that also ask
+  `/run/systemd/system` or `/run/systemd/private` (what tells that systemd *runs*; another `/run/systemd` path proves
+  nothing) and dracut's modules (they run in the initramfs, without systemd-compat) are marked as not affected; each of
+  the others needs a look once (does its systemd path still do the right thing?) and stays reviewed until its lines
+  change. On the Legion (2026-10-17): Xfce's `xinitrc` (its `systemctl --user list-jobs` still fails: fine) and
+  `lvmdump` (an LVM diagnostic, not used). 5 s the first time, 0.6 s with the disk cache warm.
 
 `void-update --systemd --ack` marks it all reviewed. The **summary** of every update has one line: `✓ systemd` or
 `⚠ systemd` "to review" / "N problem(s)" / "not installed" (when programs call systemd and it is missing).

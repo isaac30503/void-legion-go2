@@ -4047,10 +4047,6 @@ msgid "%s script(s) decide whether there is systemd by systemctl existing"
 msgstr "%s script(s) deciden si hay systemd según exista systemctl"
 
 #: common/void-update/lib/systemd.sh
-msgid "also checks /run/systemd: not affected"
-msgstr "también mira /run/systemd: no le afecta"
-
-#: common/void-update/lib/systemd.sh
 msgid "reviewed"
 msgstr "revisado"
 
@@ -4061,3 +4057,7 @@ msgstr "con systemd-compat toma su camino de systemd: comprobar que sigue hacien
 #: common/void-update/lib/systemd.sh
 msgid "Scripts that decide whether there is systemd by systemctl existing"
 msgstr "Scripts que deciden si hay systemd según exista systemctl"
+
+#: common/void-update/lib/systemd.sh
+msgid "also checks that systemd runs, or runs in the initramfs: not affected"
+msgstr "también comprueba que systemd esté en marcha, o corre en el initramfs: no le afecta"

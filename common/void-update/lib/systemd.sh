@@ -18,8 +18,11 @@ VU_SC_STATE="$VU_STATE/systemd-compat"
 # Scripts of the system that decide "is there systemd?" by whether systemctl exists (command -v, which, -x…): with
 # systemd-compat installed they take the systemd path. The ones that also check /run/systemd (dracut, resolvconf,
 # dhcpcd) are not affected; the others need a look once (vu_sc_detectors; 2026-10-17, after ssh-survey.sh did just that).
-VU_SC_DETECT_DIRS=${VU_SC_DETECT_DIRS:-/etc /usr/local /usr/bin /usr/sbin /usr/libexec $HOME/.local/bin}
-VU_SC_DETECT='(command -v|which|type -[pP]|hash)[[:space:]]+["'"'"']?(/usr)?(/s?bin/)?systemctl|-[xfe][[:space:]]+["'"'"']?/(usr/)?s?bin/systemctl|shutil\.which\(["'"'"']systemctl'
+# The forms: sh/bash (command -v, which, type [-p], hash, test -x), fish (command -q, type -q), "does it answer?"
+# (systemctl --version, which systemd-compat answers), Python (shutil.which, os.path.exists, os.access).
+# /usr/lib and /usr/share: where packages keep helper scripts (5 s cold on the Legion, 0.6 s warm).
+VU_SC_DETECT_DIRS=${VU_SC_DETECT_DIRS:-/etc /usr/local /usr/bin /usr/sbin /usr/libexec /usr/lib /usr/share $HOME/.local/bin $HOME/.config/fish}
+VU_SC_DETECT='(command -[vq]|which|type( -[pPq])?|hash)[[:space:]]+["'"'"']?(/usr)?(/s?bin/)?systemctl|systemctl[[:space:]]+--version|-[xfe][[:space:]]+["'"'"']?/(usr/)?s?bin/systemctl|(shutil\.which|os\.path\.exists|os\.access)\(["'"'"'](/usr/s?bin/)?systemctl'
 # What counts as calling systemd. busctl and loginctl are left out: elogind provides them.
 VU_SC_PATTERN='systemctl|journalctl|systemd-run|systemd-inhibit|systemd-analyze|org\.freedesktop\.systemd1|/run/systemd|NOTIFY_SOCKET|sd_notify'
 
@@ -64,7 +67,7 @@ vu_sc_what() {   # UNIT → what it is here (a short text)
     esac
 }
 
-# The detectors: "PATH<TAB>safe|review<TAB>the matching lines" (safe: it also checks /run/systemd), plus those of the
+# The detectors: "PATH<TAB>safe|review<TAB>the matching lines", plus those of the
 # repository systemd-compat came from (its MANIFEST). /usr/bin and /usr/sbin are the same folder on Void: deduplicated.
 vu_sc_detectors() {
     local dirs repo f lines
@@ -76,7 +79,12 @@ vu_sc_detectors() {
     while read -r f; do
         case $f in */lib/void-update/lib/systemd.sh|*/common/void-update/lib/systemd.sh) continue ;; esac
         lines=$(grep -hoE "$VU_SC_DETECT" "$f" | sort -u | paste -sd' ')
-        if grep -q '/run/systemd' "$f"; then printf '%s	safe	%s\n' "$f" "$lines"; else printf '%s	review	%s\n' "$f" "$lines"; fi
+        # safe: it also asks what tells that systemd RUNS (/run/systemd/system or /run/systemd/private: any other
+        # /run/systemd path, like /run/systemd/resolve, proves nothing), or it runs in the initramfs (dracut's
+        # modules), where systemd-compat does not exist
+        if grep -qE '/run/systemd/(system|private)' "$f" || case $f in /usr/lib/dracut/*) true ;; *) false ;; esac; then
+            printf '%s\tsafe\t%s\n' "$f" "$lines"
+        else printf '%s\treview\t%s\n' "$f" "$lines"; fi
     done
 }
 # Detectors to review that are not in the last review (or whose lines changed)
@@ -234,7 +242,7 @@ vu_systemd_report() {
     if [ -z "$det_all" ]; then ok "None"
     else
         while IFS=$'\t' read -r f cls lines; do
-            if [ "$cls" = safe ]; then printf '   ✓ %s — %s\n' "$f" "$(t "also checks /run/systemd: not affected")"
+            if [ "$cls" = safe ]; then printf '   ✓ %s — %s\n' "$f" "$(t "also checks that systemd runs, or runs in the initramfs: not affected")"
             elif grep -qxF "$f"$'\t'"$cls"$'\t'"$lines" "$VU_SC_STATE/detectors.ack" 2>/dev/null; then printf '   ✓ %s — %s\n' "$f" "$(t "reviewed")"
             else printf '   %s⚠ %s%s — %s\n      %s\n' "$c_yellow" "$f" "$c_off" "$(t "with systemd-compat it takes its systemd path: check that it still does the right thing")" "$lines" | cut -c1-200; fi
         done <<< "$det_all"
