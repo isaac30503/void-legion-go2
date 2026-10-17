@@ -32,4 +32,60 @@
       </property>
     </property>
   </property>
+  <property name="e3ec2e518250cd7a0feefeaed3df9e2e2ae27f19" type="string" value="Monitor MSI">
+    <property name="DP-1" type="string" value="Microstep MAG 276CF E20 CE1M455A00063 (DP-1 via HDMI)">
+      <property name="EDID" type="string" value="3488c830f9acf868bd3c20284d8955fa972d34fb"/>
+      <property name="Active" type="bool" value="true"/>
+      <property name="Resolution" type="string" value="1920x1080"/>
+      <property name="RefreshRate" type="double" value="60"/>
+      <property name="Rotation" type="int" value="0"/>
+      <property name="Reflection" type="string" value="0"/>
+      <property name="Scale" type="double" value="1"/>
+      <property name="Position" type="empty">
+        <property name="X" type="int" value="0"/>
+        <property name="Y" type="int" value="0"/>
+      </property>
+    </property>
+    <property name="eDP-1" type="string" value="Portátil">
+      <property name="EDID" type="string" value="0b04883200721f77d54a5dfe3f3412599980e1c4"/>
+      <property name="Active" type="bool" value="true"/>
+      <property name="Resolution" type="string" value="1920x1200"/>
+      <property name="RefreshRate" type="double" value="144"/>
+      <property name="Rotation" type="int" value="0"/>
+      <property name="Reflection" type="string" value="0"/>
+      <property name="Scale" type="double" value="1"/>
+      <property name="Position" type="empty">
+        <property name="X" type="int" value="1920"/>
+        <property name="Y" type="int" value="0"/>
+      </property>
+    </property>
+  </property>
+  <property name="5a00adb23807c7f227f8d1948e024941b98a3558" type="string" value="Sala 4K">
+    <property name="DP-1" type="string" value="Pioneer Electronic Corporation PIO (DP-1 via HDMI)">
+      <property name="EDID" type="string" value="aa442d97cfea26ce6a77391004e462a5c749cb7f"/>
+      <property name="Active" type="bool" value="true"/>
+      <property name="Resolution" type="string" value="3840x2160"/>
+      <property name="RefreshRate" type="double" value="60"/>
+      <property name="Rotation" type="int" value="0"/>
+      <property name="Reflection" type="string" value="0"/>
+      <property name="Scale" type="double" value="2"/>
+      <property name="Position" type="empty">
+        <property name="X" type="int" value="1920"/>
+        <property name="Y" type="int" value="0"/>
+      </property>
+    </property>
+    <property name="eDP-1" type="string" value="Portátil">
+      <property name="EDID" type="string" value="0b04883200721f77d54a5dfe3f3412599980e1c4"/>
+      <property name="Active" type="bool" value="true"/>
+      <property name="Resolution" type="string" value="1920x1200"/>
+      <property name="RefreshRate" type="double" value="144"/>
+      <property name="Rotation" type="int" value="0"/>
+      <property name="Reflection" type="string" value="0"/>
+      <property name="Scale" type="double" value="1"/>
+      <property name="Position" type="empty">
+        <property name="X" type="int" value="0"/>
+        <property name="Y" type="int" value="0"/>
+      </property>
+    </property>
+  </property>
 </channel>
