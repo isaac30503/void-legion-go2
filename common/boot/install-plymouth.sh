@@ -21,9 +21,10 @@
 #     22.02 draws into the scanout buffer; amdgpu refuses its DirtyFB and the panel's power saving,
 #     PSR/Replay, already on after the session, repeats the last image).
 #   sudo sh common/boot/install-plymouth.sh [ANIMATION] [--loading-ANIMATION] [--shutdown-animation] [--debug]
-#       ANIMATION: --steam-a (default), --steam-b, --steam-c, --void-a, --void-b, --void-c
-#       --loading-steam-a … --loading-void-c: Game Mode's loading screen with another one (its frames go to
-#       /usr/local/share/steam-loading/); without it, the same as at power-on
+#       ANIMATION: --void-b (default), --void-a, --void-c, --steam-a, --steam-b, --steam-c
+#       --loading-steam-b (default) … --loading-void-c: Game Mode's loading screen (its frames go to
+#       /usr/local/share/steam-loading/); --loading-same: the same one as at power-on
+#       Without options: "B with B", Void B at power-on and Steam B while Steam loads (what both machines use)
 #       --debug: Plymouth's trace in /run/plymouth-trace.log (with "stream:": with "file:" alone, Plymouth
 #       22.02 also writes it ON THE SCREEN)
 #   sudo sh common/boot/install-plymouth.sh --remove   removes it (leaves the package installed)
@@ -52,13 +53,14 @@ theme_of() {   # variant → theme folder name
     esac
 }
 
-REMOVE=; VARIANT=steam-a; LOAD=; ANIM=; DEBUG=
+REMOVE=; VARIANT=void-b; LOAD=steam-b; ANIM=; DEBUG=
 for a in "$@"; do
     case $a in
         --remove) REMOVE=1 ;;
         --steam-a|--steam-b|--steam-c|--void-a|--void-b|--void-c) VARIANT=${a#--} ;;
         --loading-steam-a|--loading-steam-b|--loading-steam-c|--loading-void-a|--loading-void-b|--loading-void-c)
             LOAD=${a#--loading-} ;;
+        --loading-same) LOAD= ;;
         --shutdown-animation) ANIM=1 ;;
         --debug) DEBUG=1 ;;
         *) t "unknown option: %s" "$a"; exit 2 ;;

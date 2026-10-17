@@ -76,7 +76,7 @@ That page's block, and log in on the Legion itself.
 sudo bash "$B/legion/grub-root.sh"
 sudo sh "$B/legion/grub-hidden.sh"
 sudo xbps-pkgdb -m hold linux linux-headers
-sudo sh "$B/common/boot/install-plymouth.sh" --void-b --loading-steam-b
+sudo sh "$B/common/boot/install-plymouth.sh"     # Void B, and Steam B while Steam loads
 udisksctl unmount -b /dev/sda4
 sudo reboot
 ```

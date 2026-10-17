@@ -11,6 +11,9 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
   ([Steam](docs/6-game-mode/1-steam.md#xterm-as-a-game)); the desktop layout takes its left stick from it. The
   keyboard opens with X, as in Valve's desktop template: the docs said RT+X, which no Valve layout has.
 
+- **Plymouth's default is "B with B":** `install-plymouth.sh` without options installs Void B at power-on and Steam B
+  as Game Mode's loading screen (before: Steam A for both); `--loading-same` keeps the boot's one for Game Mode.
+
 ## 2026-10-16
 
 - **A second screen at another scale (a 4K TV at scale 2):** `wallpaper-watcher` now puts the panels on the external
