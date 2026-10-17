@@ -46,6 +46,7 @@ vu_sc_what() {   # UNIT → what it is here (a short text)
     local r
     # shellcheck disable=SC1091  # installed by install-systemd-compat.sh
     r=$( export SYSTEMD_COMPAT_ETC="$VU_SC_ETC"; . "$VU_SC_LIB/compat.sh"
+         sc_lookup system "$1"; [ "$SC_KIND" = deny ] && { echo "system deny"; exit; }   # before the pattern check: hhd@*
          case $1 in *[*?]*) echo "pattern"; exit ;; esac
          sc_resolve system "$1"; [ "$SC_TYPE" != none ] && { echo "system $SC_TYPE $SC_SVC"; exit; }
          sc_resolve user "$1"; echo "user $SC_TYPE" )
