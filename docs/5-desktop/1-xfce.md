@@ -107,7 +107,10 @@ Wayland" / "Escritorio X11". After editing `rc.xml`: `labwc --reconfigure` (or `
   screen plugged in: **"Monitor MSI"** (that layout) and **"Sala 4K"** (a 4K Pioneer TV, `3840x2160` at **scale 2**, to
   the right of the Legion's screen; 2026-10-16). Saving a new screen's layout in *Settings → Display* overwrites
   `Default`: save it as a **new profile** in the *Profiles* tab instead. **The panels go to the external screen** when
-  there is one (`wallpaper-watcher`, [wallpaper](4-wallpaper.md)). In the X11 session, arrange the screens once in *Configuración → Pantalla* (*Settings →
+  there is one (`wallpaper-watcher`, [wallpaper](4-wallpaper.md)).
+- **X11 programs (xterm) are blurry on a screen at scale 2:** labwc 0.20 (wlroots 0.20) draws Xwayland windows at
+  scale 1 and stretches them; it has no option for it. Native Wayland programs (GTK, the panel) are sharp. Left as it
+  is (the user's decision, 2026-10-16): xterm stays the terminal; it is sharp on the Legion's screen and the monitor. In the X11 session, arrange the screens once in *Configuración → Pantalla* (*Settings →
   Display*), monitor on the left.
 - **Copying from Claude Code over SSH:** `.Xresources` lets programs *put* text on the clipboard with OSC 52
   (`disallowedWindowOps` without `SetSelection`); Shift + drag selects over Claude Code.
