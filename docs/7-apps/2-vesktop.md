@@ -57,3 +57,19 @@ and `rm -r ~/.var/app/dev.vencord.Vesktop/config/vesktop/userAssets`.
 **Check:** `desktop-file-validate ~/.local/share/applications/dev.vencord.Vesktop.desktop`; menu, Docklike and tray in blue.
 
 **Controller:** the same layout as Firefox's and xterm's ([Steam](../6-game-mode/1-steam.md#xterm-as-a-game)).
+
+**Cursor:** the Flatpak does not get the session's `XCURSOR_THEME`, so Vesktop (Electron on Xwayland) drew the
+default cursor instead of Volantes. The theme is already visible inside (`/run/host/user-share/icons`, Flatpak's
+`XCURSOR_PATH`); it only needs the name and size, the same as the desktop's:
+
+```bash
+flatpak override --user --env=XCURSOR_THEME=volantes_cursors --env=XCURSOR_SIZE=24 dev.vencord.Vesktop
+mkdir -p ~/.var/app/dev.vencord.Vesktop/config/gtk-3.0
+printf '[Settings]\ngtk-cursor-theme-name=volantes_cursors\ngtk-cursor-theme-size=24\n' \
+    > ~/.var/app/dev.vencord.Vesktop/config/gtk-3.0/settings.ini
+```
+
+Then quit Vesktop from its tray icon and open it again. **Check:** `flatpak override --user --show dev.vencord.Vesktop`
+lists both variables, and the pointer over Vesktop is Volantes. To go back: `flatpak override --user --reset
+dev.vencord.Vesktop` (it also drops any other override of the app) and delete that `settings.ini`.
+
