@@ -103,7 +103,11 @@ Wayland" / "Escritorio X11". After editing `rc.xml`: `labwc --reconfigure` (or `
   `~/.config/xfce4/xfconf/xfce-perchannel-xml/`, `~/.config/xfce4/panel/` and `~/.config/gtk-3.0/gtk.css` to
   `legion/xfce/` (with their private values back to `@NAME@`: [sanitization](../sanitization.md)).
 - **`~/.config/xfce4/xfconf/xfce-perchannel-xml/displays.xml`** is the Wayland session's (outputs `DP-1` at `0,0` 1920×1080 60 Hz, `eDP-1` at `1920,0`
-  1920×1200 144 Hz). In the X11 session, arrange the screens once in *Configuración → Pantalla* (*Settings →
+  1920×1200 144 Hz), with **two saved profiles** that Xfce applies by itself (`AutoEnableProfiles` 3) according to the
+  screen plugged in: **"Monitor MSI"** (that layout) and **"Sala 4K"** (a 4K Pioneer TV, `3840x2160` at **scale 2**, to
+  the right of the Legion's screen; 2026-10-16). Saving a new screen's layout in *Settings → Display* overwrites
+  `Default`: save it as a **new profile** in the *Profiles* tab instead. **The panels go to the external screen** when
+  there is one (`wallpaper-watcher`, [wallpaper](4-wallpaper.md)). In the X11 session, arrange the screens once in *Configuración → Pantalla* (*Settings →
   Display*), monitor on the left.
 - **Copying from Claude Code over SSH:** `.Xresources` lets programs *put* text on the clipboard with OSC 52
   (`disallowedWindowOps` without `SetSelection`); Shift + drag selects over Claude Code.

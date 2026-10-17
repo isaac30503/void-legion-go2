@@ -6,10 +6,19 @@
 # wallpaper (black; cursor and windows are visible) until something redraws it: switching workspace
 # or "xfdesktop --reload" (checked on the Legion).
 # EVENT-DRIVEN: it waits for GTK's signals (screen added/removed, geometry or scale change);
-# half a second after the last notice (the changes arrive in a burst) it calls xfdesktop --reload.
+# half a second after the last notice (the changes arrive in a burst) it calls xfdesktop --reload; but when the
+# number of screens or a scale changed, it RESTARTS xfdesktop: 4.20.2 kept drawing a 1x screen at the other one's
+# scale (the Legion's screen at 2x, zoomed in, next to a 4K TV at scale 2) and ignored new wallpapers for it until
+# restarted; --reload did not help (2026-10-16).
+# It also puts Xfce's panels on the EXTERNAL screen when there is one, and back on the internal one when it goes
+# (2026-10-16): xfce4-panel 4.20 names the screens with GTK's model, which is "Unknown" for all of them on labwc
+# (wlroots no longer sends it), so "DP-1" never matches; it also takes "monitor-<index>-<model>", but a fixed one
+# HIDES the panel when that screen is unplugged. The internal screen is the one whose physical size is the eDP/LVDS
+# panel's (its EDID, within 4 mm): the panels go to the first other screen, or to Automatic when it is alone.
+# Without an internal panel (a desktop machine) the panels are left alone. PANELS_ON_EXTERNAL=0 turns it off.
 # Log (English; the checks of docs/ read it): ~/.local/state/wallpaper-watcher.log (redone every session).
 # Previous (Spanish) name: fondo-vigilante (log fondo-vigilante.log).
-import os, subprocess, time
+import glob, os, subprocess, time
 import gi
 gi.require_version("Gdk", "3.0")
 from gi.repository import Gdk, GLib
@@ -22,15 +31,79 @@ pending = None
 def note(msg):
     log.write(time.strftime("%H:%M:%S ") + msg + "\n")
 
+def layout():
+    d = Gdk.Display.get_default()
+    return tuple(d.get_monitor(i).get_scale_factor() for i in range(d.get_n_monitors()))
+
+last_layout = None
+
 def reload():
-    global pending
+    global pending, last_layout
     pending = None
-    if subprocess.run(["pgrep", "-x", "xfdesktop"], capture_output=True).returncode == 0:
+    place_panels()
+    now = layout()
+    changed, last_layout = (last_layout is not None and now != last_layout), now
+    if subprocess.run(["pgrep", "-x", "xfdesktop"], capture_output=True).returncode != 0:
+        note("xfdesktop is not running yet: nothing to reload")
+    elif changed:
+        subprocess.run(["xfdesktop", "--quit"], capture_output=True)
+        for _ in range(30):                           # until the old one has gone (at most 3 s)
+            if subprocess.run(["pgrep", "-x", "xfdesktop"], capture_output=True).returncode != 0:
+                break
+            time.sleep(0.1)
+        subprocess.Popen(["xfdesktop"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+        note(f"screens or scales changed {now}: xfdesktop restarted")
+    else:
         r = subprocess.run(["xfdesktop", "--reload"], capture_output=True, text=True)
         note(f"xfdesktop --reload (rc={r.returncode})")
-    else:
-        note("xfdesktop is not running yet: nothing to reload")
     return False
+
+def internal_mm():
+    """Physical size (mm) of the built-in panel, from its EDID; None if the machine has none."""
+    for e in glob.glob("/sys/class/drm/card*-eDP-*/edid") + glob.glob("/sys/class/drm/card*-LVDS-*/edid"):
+        try:
+            b = open(e, "rb").read()
+        except OSError:
+            continue
+        if len(b) >= 72:
+            dt = b[54:72]
+            return dt[12] | ((dt[14] & 0xf0) << 4), dt[13] | ((dt[14] & 0x0f) << 8)
+    return None
+
+def panels_output():
+    """The output-name the panels should have: the first external screen, or None (Automatic)."""
+    mm = internal_mm()
+    if mm is None:
+        return False                                   # no built-in panel: do not touch the panels
+    d = Gdk.Display.get_default()
+    for i in range(d.get_n_monitors()):
+        m = d.get_monitor(i)
+        if abs(m.get_width_mm() - mm[0]) <= 4 and abs(m.get_height_mm() - mm[1]) <= 4:
+            continue                                   # the internal screen
+        return f"monitor-{i}-{m.get_model()}"           # xfce4-panel's name for a screen without a usable model
+    return None
+
+def place_panels():
+    if os.environ.get("PANELS_ON_EXTERNAL") == "0":
+        return
+    want = panels_output()
+    if want is False:
+        return
+    try:
+        ids = subprocess.run(["xfconf-query", "-c", "xfce4-panel", "-p", "/panels"],
+                             capture_output=True, text=True).stdout.split()
+    except OSError:
+        return
+    for pid in [x for x in ids if x.isdigit()]:
+        prop = f"/panels/panel-{pid}/output-name"
+        now = subprocess.run(["xfconf-query", "-c", "xfce4-panel", "-p", prop],
+                             capture_output=True, text=True).stdout.strip()
+        if want is None and now:
+            subprocess.run(["xfconf-query", "-c", "xfce4-panel", "-p", prop, "-r"])
+            note(f"panel-{pid}: back to Automatic (no external screen)")
+        elif want and now != want:
+            subprocess.run(["xfconf-query", "-c", "xfce4-panel", "-p", prop, "-n", "-t", "string", "-s", want])
+            note(f"panel-{pid}: on the external screen ({want})")
 
 def notice(reason):
     global pending
@@ -54,4 +127,6 @@ for i in range(d.get_n_monitors()):
 d.connect("monitor-added", lambda _d, m: (watch(m), notice(f"added: {m.get_model()}")))
 d.connect("monitor-removed", lambda _d, m: notice(f"removed: {m.get_model()}"))
 note(f"watching {d.get_n_monitors()} screens")
+last_layout = layout()
+GLib.timeout_add(1500, lambda: (place_panels(), False)[1])   # at login, once xfce4-panel is up
 GLib.MainLoop().run()

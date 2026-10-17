@@ -11,6 +11,15 @@ labwc's `autostart`; installed by `install-xfce-wayland.sh`) waits **event-drive
 removed, geometry, scale) and, half a second after the last one, runs `xfdesktop --reload` once. Also when plugging
 the monitor in or out.
 
+**It also restarts `xfdesktop` when the number of screens or a scale changes** (2026-10-16): next to a 4K TV at
+scale 2, `xfdesktop` 4.20.2 drew the Legion's 1× screen at scale 2 (the wallpaper zoomed in) and ignored new wallpapers
+for it until restarted; `--reload` did not help. **And it puts the panels on the external screen:** xfce4-panel 4.20
+names the screens with GTK's model, `Unknown` for every one on labwc, so `output-name` `DP-1` never matches and the
+panel hides; it takes `monitor-<index>-<model>`, but a fixed one hides the panel when that screen is unplugged. So the
+watcher picks the first screen that is not the built-in one (its physical size is the eDP panel's, from its EDID) and
+sets `monitor-N-Unknown` on every panel, or removes `output-name` (Automatic) when the Legion's screen is alone.
+`PANELS_ON_EXTERNAL=0` turns that part off.
+
 **Check:** `~/.local/state/wallpaper-watcher.log` (redone every session), e.g. `vigilando 2 pantallas`, two
 `geometry:` lines and `xfdesktop --reload (rc=0)`. On the spot: `xfdesktop --reload` or switch workspace. (Ruled out while finding it: HDR/VRR/color properties and the panel's self-refresh; `sudo sh "$B/legion/diag-edp.sh" black|fine` compares amdgpu's state of the screen black and fine: identical.)
 

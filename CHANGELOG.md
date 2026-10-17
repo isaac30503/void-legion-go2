@@ -6,6 +6,11 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
 
 ## 2026-10-16
 
+- **A second screen at another scale (a 4K TV at scale 2):** `wallpaper-watcher` now puts the panels on the external
+  screen (xfce4-panel cannot name screens on labwc: `monitor-N-Unknown`, Automatic again without one) and restarts
+  `xfdesktop` when a scale changes (4.20.2 drew the Legion's screen zoomed in and ignored its new wallpaper).
+  `displays.xml` keeps two saved profiles, "Monitor MSI" and "Sala 4K", applied by themselves.
+
 - **`ssh-find`** (`common/ssh-find/`, [network and SSH](docs/2-base-system/2-network.md#ssh-find-finding-the-machines)):
   SSH between the machines no longer depends on one mDNS name. A `ProxyCommand` tries at once the last address that
   worked, the neighbour table by MAC (IPv4 and IPv6 link-local with its interface) and every name, then discovery,
