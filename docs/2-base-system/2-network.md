@@ -40,7 +40,8 @@ winning:
 3. its names through the system's resolver (mDNS, DNS, `/etc/hosts`), both families; a link-local address without
    interface is tried on every interface;
 4. if nothing answered: an IPv6 ping to all the nodes of the link and a sweep of port 22 on the `/24`s fill the
-   neighbour table, and its MACs are looked for again (~2.5 s).
+   neighbour table, and everything is tried again, in rounds, **for up to 15 s** (`SSH_FIND_TIMEOUT`): the mesh
+   sometimes did not answer at all for a few seconds, and a single round gave up too soon.
 
 It remembers the address that worked and the MAC behind it (`~/.cache/ssh-find/state.json`), so it learns every
 interface the machine uses. The machines are in `~/.config/ssh-find/hosts.conf` (created once, with the MACs of
