@@ -366,7 +366,7 @@
       <action name="SetDecorations" decorations="border" forceSSD="yes"/>
     </windowRule>
     <!-- Exception: Steam's on-screen keyboard ("Teclado en pantalla de Steam Input" / "Steam Input On-Screen
-         Keyboard", RT+X; type _NET_WM_WINDOW_TYPE_UTILITY, the main window is NORMAL) comes in as it wants: the
+         Keyboard", X; type _NET_WM_WINDOW_TYPE_UTILITY, the main window is NORMAL) comes in as it wants: the
          two rules above that apply to it are undone (the region "full" of identifier="*" and Steam's
          forced border). By type and not by title, which changes with the language. 2026-10-04. -->
     <windowRule identifier="steam" type="utility">

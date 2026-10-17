@@ -991,7 +991,26 @@
 					{
 						"bindings"
 						{
-							"binding"		"key_press UP_ARROW, , "
+							"binding"		"mouse_wheel SCROLL_UP, ⏫, , "
+						}
+						"settings"
+						{
+							"hold_repeats"		"1"
+							"repeat_rate"		"50"
+							"interruptable"		"0"
+						}
+					}
+					"Long_Press"
+					{
+						"bindings"
+						{
+							"binding"		"mouse_wheel SCROLL_UP, , "
+						}
+						"settings"
+						{
+							"hold_repeats"		"1"
+							"repeat_rate"		"74"
+							"haptic_intensity"		"0"
 						}
 					}
 				}
@@ -1007,39 +1026,26 @@
 					{
 						"bindings"
 						{
-							"binding"		"key_press DOWN_ARROW, , "
+							"binding"		"mouse_wheel SCROLL_DOWN, ⏬, , "
+						}
+						"settings"
+						{
+							"hold_repeats"		"1"
+							"repeat_rate"		"50"
+							"interruptable"		"0"
 						}
 					}
-				}
-				"disabled_activators"
-				{
-				}
-			}
-			"dpad_east"
-			{
-				"activators"
-				{
-					"Full_Press"
+					"Long_Press"
 					{
 						"bindings"
 						{
-							"binding"		"key_press RIGHT_ARROW, , "
+							"binding"		"mouse_wheel SCROLL_DOWN, , "
 						}
-					}
-				}
-				"disabled_activators"
-				{
-				}
-			}
-			"dpad_west"
-			{
-				"activators"
-				{
-					"Full_Press"
-					{
-						"bindings"
+						"settings"
 						{
-							"binding"		"key_press LEFT_ARROW, , "
+							"hold_repeats"		"1"
+							"repeat_rate"		"74"
+							"haptic_intensity"		"0"
 						}
 					}
 				}
@@ -1051,6 +1057,7 @@
 		"settings"
 		{
 			"requires_click"		"0"
+			"layout"		"0"
 		}
 	}
 	"group"
