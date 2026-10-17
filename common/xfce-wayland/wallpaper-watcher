@@ -16,9 +16,16 @@
 # HIDES the panel when that screen is unplugged. The internal screen is the one whose physical size is the eDP/LVDS
 # panel's (its EDID, within 4 mm): the panels go to the first other screen, or to Automatic when it is alone.
 # Without an internal panel (a desktop machine) the panels are left alone. PANELS_ON_EXTERNAL=0 turns it off.
+# On a screen at scale 2 (a 4K TV), xfce4-panel 4.20.7 on labwc multiplies by the scale a panel's length (a 100 %
+# panel was twice the screen: its right half, systray and clock, off screen), its size (height) and its offset inside
+# the screen (a top-centre panel ended at the right edge, a bottom-centre one below the screen). Measured on the Legion
+# (2026-10-16): with "p=0;x=X;y=Y" the panel's centre lands at screen_x + scale × (X − screen_x) (and the same for Y).
+# So on such a screen the watcher divides length and size by the scale and turns a top- or bottom-centre panel (p=9,
+# the clock's; p=10, the launchers') into "p=0" at the X and Y that land on the centre of that edge; on a 1× screen it
+# gives back what was there (kept in ~/.local/state/wallpaper-watcher-panels.json, saved while on a 1× screen).
 # Log (English; the checks of docs/ read it): ~/.local/state/wallpaper-watcher.log (redone every session).
 # Previous (Spanish) name: fondo-vigilante (log fondo-vigilante.log).
-import glob, os, subprocess, time
+import glob, json, os, subprocess, time
 import gi
 gi.require_version("Gdk", "3.0")
 from gi.repository import Gdk, GLib
@@ -71,24 +78,81 @@ def internal_mm():
     return None
 
 def panels_output():
-    """The output-name the panels should have: the first external screen, or None (Automatic)."""
+    """(output-name, GdkMonitor) for the panels: the first external screen, or (None, the internal one) for
+    Automatic; False when the machine has no built-in panel."""
     mm = internal_mm()
     if mm is None:
         return False                                   # no built-in panel: do not touch the panels
     d = Gdk.Display.get_default()
+    internal = None
     for i in range(d.get_n_monitors()):
         m = d.get_monitor(i)
         if abs(m.get_width_mm() - mm[0]) <= 4 and abs(m.get_height_mm() - mm[1]) <= 4:
-            continue                                   # the internal screen
-        return f"monitor-{i}-{m.get_model()}"           # xfce4-panel's name for a screen without a usable model
-    return None
+            internal = m                               # the internal screen
+            continue
+        return f"monitor-{i}-{m.get_model()}", m       # xfce4-panel's name for a screen without a usable model
+    return None, internal
+
+PANELS_STATE = os.path.expanduser("~/.local/state/wallpaper-watcher-panels.json")
+
+def xq(prop):
+    return subprocess.run(["xfconf-query", "-c", "xfce4-panel", "-p", prop],
+                          capture_output=True, text=True).stdout.strip()
+
+def xset(prop, kind, value):
+    subprocess.run(["xfconf-query", "-c", "xfce4-panel", "-p", prop, "-n", "-t", kind, "-s", str(value)],
+                   capture_output=True)
+
+def compensate(pid, mon):
+    """Undoes xfce4-panel's scale error on a scaled screen (see the header); gives the saved values back on 1×."""
+    try:
+        state = json.load(open(PANELS_STATE))
+    except (OSError, ValueError):
+        state = {}
+    key = f"panel-{pid}"
+    scale = mon.get_scale_factor() if mon is not None else 1
+    now = {k: xq(f"/panels/{key}/{k}") for k in ("position", "length", "size")}
+    kinds = {"position": "string", "length": "uint", "size": "uint"}
+    if scale <= 1:
+        base = state.get(key)
+        if base:                                       # back from a scaled screen: what there was
+            for k, v in base.items():
+                if v and now.get(k) != v:
+                    xset(f"/panels/{key}/{k}", kinds[k], v)
+                    note(f"{key}: {k} back to {v}")
+        else:
+            state[key] = now
+    else:
+        base = state.setdefault(key, now)
+        g = mon.get_geometry()
+        want = dict(base)
+        if base["length"].isdigit() and int(base["length"]) > 1 and xq(f"/panels/{key}/length-adjust") != "true":
+            want["length"] = str(max(1, round(int(base["length"]) / scale)))
+        # xfce4-panel takes no size under 16 (with 13 it exited: "out of range for property 'size'").
+        size = max(16, round(int(base["size"] or 26) / scale))
+        want["size"] = str(size)
+        h = size * scale                                # the height it really gets on this screen
+        # A centred panel: "p=0" at the X (and Y) that land, multiplied by the scale, on the centre of the edge.
+        if base["position"].startswith("p=9;"):         # top centre
+            x, y = g.x + g.width / 2 / scale, g.y + h / 2 / scale
+            want["position"] = f"p=0;x={round(x)};y={round(y)}"
+        elif base["position"].startswith("p=10;"):      # bottom centre
+            x, y = g.x + g.width / 2 / scale, g.y + (g.height - h / 2) / scale
+            want["position"] = f"p=0;x={round(x)};y={round(y)}"
+        for k, v in want.items():
+            if v and now.get(k) != v:
+                xset(f"/panels/{key}/{k}", kinds[k], v)
+                note(f"{key}: {k} {v} on a screen at scale {scale}")
+    os.makedirs(os.path.dirname(PANELS_STATE), exist_ok=True)
+    json.dump(state, open(PANELS_STATE, "w"), indent=1)
 
 def place_panels():
     if os.environ.get("PANELS_ON_EXTERNAL") == "0":
         return
-    want = panels_output()
-    if want is False:
+    found = panels_output()
+    if found is False:
         return
+    want, mon = found
     try:
         ids = subprocess.run(["xfconf-query", "-c", "xfce4-panel", "-p", "/panels"],
                              capture_output=True, text=True).stdout.split()
@@ -104,6 +168,7 @@ def place_panels():
         elif want and now != want:
             subprocess.run(["xfconf-query", "-c", "xfce4-panel", "-p", prop, "-n", "-t", "string", "-s", want])
             note(f"panel-{pid}: on the external screen ({want})")
+        compensate(pid, mon)
 
 def notice(reason):
     global pending

@@ -108,6 +108,9 @@ Wayland" / "Escritorio X11". After editing `rc.xml`: `labwc --reconfigure` (or `
   the right of the Legion's screen; 2026-10-16). Saving a new screen's layout in *Settings → Display* overwrites
   `Default`: save it as a **new profile** in the *Profiles* tab instead. **The panels go to the external screen** when
   there is one (`wallpaper-watcher`, [wallpaper](4-wallpaper.md)).
+- **The clock in the middle of the screen:** it is alone in a third panel (`panel-3`: top centre, `p=9`, size 26, no
+  struts, the same black), not in the top bar, where it sat in the middle of the free space between the widgets of
+  each side (2026-10-16).
 - **X11 programs (xterm) are blurry on a screen at scale 2:** labwc 0.20 (wlroots 0.20) draws Xwayland windows at
   scale 1 and stretches them; it has no option for it. Native Wayland programs (GTK, the panel) are sharp. Left as it
   is (the user's decision, 2026-10-16): xterm stays the terminal; it is sharp on the Legion's screen and the monitor. In the X11 session, arrange the screens once in *Configuración → Pantalla* (*Settings →
