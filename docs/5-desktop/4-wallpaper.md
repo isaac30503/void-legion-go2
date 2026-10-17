@@ -18,12 +18,12 @@ names the screens with GTK's model, `Unknown` for every one on labwc, so `output
 panel hides; it takes `monitor-<index>-<model>`, but a fixed one hides the panel when that screen is unplugged. So the
 watcher picks the first screen that is not the built-in one (its physical size is the eDP panel's, from its EDID) and
 sets `monitor-N-Unknown` on every panel, or removes `output-name` (Automatic) when the Legion's screen is alone.
-`PANELS_ON_EXTERNAL=0` turns that part off. **On a screen at scale 2** xfce4-panel 4.20.7 also multiplies by the scale a
-panel's length, height and offset (the top bar was twice the TV, its right half off screen; the centred panels ended
-at the right edge or below the screen): measured, a panel at `p=0;x=X;y=Y` gets its centre at
-`screen + scale × (X − screen)`. So there the watcher divides length and size by the scale (size never under 16, or the
-panel exits) and turns the top- and bottom-centre panels into `p=0` at the X and Y that land on the centre of that
-edge; on a 1× screen it gives back the values it saved (`~/.local/state/wallpaper-watcher-panels.json`).
+`PANELS_ON_EXTERNAL=0` turns that part off.
+
+**Screenshots lie about a scaled screen:** `xfce4-screenshooter -f` on labwc showed the panels of the TV at scale 2 at
+twice their length and offset (the top bar's right half off screen, a centred panel at the right edge), while the TV
+itself showed them right. A "fix" made from those captures broke the real panels (2026-10-16, undone): on a scaled
+screen, check by looking at it, not with a capture.
 
 **Check:** `~/.local/state/wallpaper-watcher.log` (redone every session), e.g. `vigilando 2 pantallas`, two
 `geometry:` lines and `xfdesktop --reload (rc=0)`. On the spot: `xfdesktop --reload` or switch workspace. (Ruled out while finding it: HDR/VRR/color properties and the panel's self-refresh; `sudo sh "$B/legion/diag-edp.sh" black|fine` compares amdgpu's state of the screen black and fine: identical.)
