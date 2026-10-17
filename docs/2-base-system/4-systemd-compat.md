@@ -58,7 +58,9 @@ filter-chain    user    exec   pipewire -c filter-chain.conf
   environment (the caller's `HOME`, `XDG_RUNTIME_DIR`, D-Bus, display…), its output in its folder for `journalctl`,
   stopped by signalling its process group (SIGTERM, SIGKILL after 10 s). `show` gives a new `InvocationID` and the
   `MainPID` on every start, as Panel's equalizer expects.
-- **deny:** the unit does not exist even if a runit service has that name.
+- **deny:** the unit does not exist even if a runit service has that name, and asking for it is not logged (it is
+  absent on purpose). Used for HHD (`hhd`, `hhd@*`, `hhd_local@*`): Panel de Control asks for it on every start to
+  choose between HHD and InputPlumber; without `deny` those questions came back as "to review" after every boot.
 
 Your own lines go in another file (`90-local.conf`, read later: the last match wins); the installer only replaces
 `50-void-legion.conf`. Changes apply on the next call (`daemon-reload` is a no-op on purpose).
