@@ -66,8 +66,8 @@ is_root() { [ "$SC_UID" = 0 ]; }
 need_auth() { echo "Failed to $1 $2.service: Interactive authentication required." >&2; sc_log failed "not root"; exit 4; }
 
 # Messages and exit codes of systemd for a unit it does not know
-not_found() {   # VERB UNIT → exit code
-    sc_log not-found "$1 $2"
+not_found() {   # VERB UNIT → exit code (a unit of "deny" is absent on purpose: not news, not logged)
+    [ "$SC_TYPE" = deny ] || sc_log not-found "$1 $2"
     case $1 in
         start|restart|try-restart|reload|reload-or-restart|try-reload-or-restart|condrestart)
             echo "Failed to $1 $2.service: Unit $2.service not found." >&2; return 5 ;;
@@ -250,11 +250,12 @@ each() {   # VERB UNIT...
         sc_resolve "$scope" "$u"
         if [ "$SC_TYPE" = none ] || [ "$SC_TYPE" = deny ]; then
             case $v in
-                is-active) [ $quiet = 1 ] || echo inactive; sc_log not-found "$v $u"; r=3 ;;
-                is-failed) [ $quiet = 1 ] || echo inactive; sc_log not-found "$v $u"; r=1 ;;
-                show) show_props "$u"; sc_log not-found "$v $u"; r=0 ;;
+                is-active) [ $quiet = 1 ] || echo inactive; r=3 ;;
+                is-failed) [ $quiet = 1 ] || echo inactive; r=1 ;;
+                show) show_props "$u"; r=0 ;;
                 *) not_found "$v" "$u"; r=$? ;;
             esac
+            case $v in is-active|is-failed|show) [ "$SC_TYPE" = deny ] || sc_log not-found "$v $u" ;; esac
             [ $r -gt $rc ] && rc=$r
             continue
         fi
@@ -291,7 +292,7 @@ pattern_verb() {   # VERB PATTERN
         case $SC_ALIAS in $2) found=1; each "$1" "$SC_ALIAS" ;; esac
     done
     if [ $found = 0 ]; then
-        sc_log not-found "$1 $2"
+        sc_lookup "$scope" "$2"; [ "$SC_KIND" = deny ] || sc_log not-found "$1 $2"
         case $1 in is-active|is-failed) [ $quiet = 1 ] || echo inactive; r=3 ;; *) r=0 ;; esac
         [ $r -gt $rc ] && rc=$r
     fi

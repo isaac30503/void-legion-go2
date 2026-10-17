@@ -148,7 +148,8 @@ EOF
     out=$(sc systemctl is-active plugin_loader); check "sc: alias of units.d (plugin_loader → decky)" "active 0" "$out $?"
     out=$(sc systemctl is-active steamos-manager); check "sc: service not linked in /var/service" "inactive 3" "$out $?"
     out=$(sc systemctl is-active hhd@0.service); check "sc: deny" "inactive 3" "$out $?"
-    out=$(sc systemctl is-active 'hhd@*.service'); check "sc: pattern without matches" "inactive 3" "$out $?"
+    out=$(sc systemctl is-active 'hhd@*.service'); check "sc: pattern of deny" "inactive 3" "$out $?"
+    out=$(sc systemctl is-active 'foo@*.service'); check "sc: pattern without matches" "inactive 3" "$out $?"
     out=$(sc systemctl start nope 2>&1); check "sc: start of a unit not found (systemd's text, exit 5)" "Failed to start nope.service: Unit nope.service not found. 5" "$out $?"
     out=$(sc systemctl show nope -p LoadState --value); check "sc: show of a unit not found" "not-found" "$out"
     out=$(sc systemctl restart plugin_loader 2>&1); check "sc: control without root" "Failed to restart plugin_loader.service: Interactive authentication required. 4" "$out $?"
@@ -159,6 +160,7 @@ EOF
     sc systemctl daemon-reload; check "sc: daemon-reload" 0 $?
     check "sc: requests.log has the unit not found" yes "$(grep -q $'\tnot-found\tstart nope\t' "$S/xdg/systemd-compat/requests.log" && echo yes)"
     check "sc: the session probe is not logged" "" "$(grep 'list-jobs' "$S/xdg/systemd-compat/requests.log")"
+    check "sc: a unit of deny is not logged (name and pattern)" "" "$(grep 'hhd' "$S/xdg/systemd-compat/requests.log")"
 
     # as root (a user namespace): sv is called, and detached when the caller runs inside the service
     if unshare -r true 2>/dev/null; then
