@@ -9,10 +9,12 @@ system**, step by step, without inferring anything.
 What the machine ends up with: Void (glibc, runit) with Xfce on Wayland (labwc) and Xfce X11 as a backup;
 **Game Mode like SteamOS** (gamescope on the screen, Steam's SteamOS interface, autologin into the last
 mode, switching without password, clean Steam shutdown); InputPlumber (Valve controller, gyroscope),
-fine **TDP** through DKMS, **steamos-manager** (patched), Decky, screen sharing in both modes (patched
-wlroots portal, own chooser, SteamOS's gamescope portal, patched gamescope), hidden GRUB with a themed
-menu, and **`void-update`** (like CachyOS's cachy-update: panel icon, rootless checks, notifications, Void's
-news, services to restart) that also **tests whether each own patch is still needed**.
+fine **TDP** through DKMS, **steamos-manager** (patched), Decky with plugins made for SteamOS working as they are
+(**systemd-compat**: `systemctl` and friends answered with runit and elogind), screen sharing in both modes (patched
+wlroots portal, own chooser, SteamOS's gamescope portal, patched gamescope), a hidden GRUB and the boot and loading
+animations below, `ssh-find` (SSH between the home machines by every way at once), and **`void-update`** (like
+CachyOS's cachy-update: panel icon, rootless checks, notifications, Void's news, services to restart) that also
+**tests whether each own patch is still needed**.
 
 ![The boot and Game Mode loading animations: Steam A, B, C (top) and Void A, B, C (bottom); the default is Void B at power-on and Steam B while Game Mode loads](common/boot/plymouth-void/preview.png)
 
@@ -46,7 +48,8 @@ Verified on the hardware (checks in [docs/check.md](docs/check.md); dates in [CH
 | Power button like the Steam Deck (press = suspend, held = power menu) | ✓ held ~3 s (the firmware's threshold, not 1 s) |
 | Screen sharing in Game Mode and on the desktop (Vesktop) | ✓ with patched gamescope and xdg-desktop-portal-wlr |
 | Gyroscope of each detached controller | ✗ left as is (no `hid_lenovo_go`; the detached controllers work) |
-| Windows games through Proton | ✓ (Borderlands 3, Proton 9.0-2RC) |
+| Windows games through Proton | ✓ (Borderlands 3, Proton 9.0-2RC; Monster Hunter Wilds) |
+| Decky and its plugins made for SteamOS (Panel de Control, Colores…) | ✓ through systemd-compat |
 
 ## Start here
 
@@ -65,11 +68,16 @@ Verified on the hardware (checks in [docs/check.md](docs/check.md); dates in [CH
 ## Layout
 
 ```
-docs/       the documentation by layers (1-platform … 8-maintenance), reinstall, check, glossary, i18n, sanitization
-legion/     pieces only for the Legion (system scripts, Xfce config, TDP DKMS, portal patches, screen-share…)
-common/     pieces shared with the IdeaPad (Game Mode, Xfce Wayland, power button, void-update, GRUB theme, fish…)
-install/    fetch-assets, render, install (stages), migrate, secrets, verify, i18n; assets.tsv
-tests/      automated tests (render, void-update's helpers, translations): bash tests/run.sh
+docs/       the documentation by layers (1-platform … 8-maintenance), the tour (screenshots), reinstall, check,
+            glossary, i18n, sanitization
+legion/     pieces only for the Legion (system scripts, Xfce config, TDP DKMS, portal patches, screen-share…);
+            legion/diag/: diagnostic scripts, not installed
+common/     pieces shared with the IdeaPad (Game Mode, Xfce Wayland, power button, void-update, systemd-compat,
+            ssh-find, boot animations, GRUB theme, fish…); common/diag/: diagnostic scripts
+install/    the inventory (pieces.tsv: every piece, enforced by verify), fetch-assets, render, install (stages),
+            migrate, secrets, verify, i18n; assets.tsv
+tests/      automated tests (render, the inventory, systemd-compat, ssh-find, void-update's helpers, translations):
+            bash tests/run.sh
 .github/    CI: verify.sh --ci and the tests on every push
 lib/        common.sh (helpers), i18n.sh and void_legion_i18n.py (translations)
 locale/     message catalogs (es)
@@ -97,7 +105,7 @@ Translated and organized from the Spanish documentation kept on an external disk
 item by item); the dated notes and diagnoses are in the private archive and in the tag `recipe-single-file`.
 
 Most of the text and code was written with **Claude Code** (Anthropic's coding agent) working on the machines
-under the author's direction; commits say so (`Co-Authored-By`). The goals, the choices (every "the user's
+under the author's direction; commits say so (`Assisted-by: Claude Opus 5.5`). The goals, the choices (every "the user's
 decision" in the documentation), the testing on the hardware and the final word on each change are the
 author's; the agent proposed, wrote, diagnosed with read-only tools and documented. What is not ours at all is
 credited in [THIRD_PARTY.md](THIRD_PARTY.md).
