@@ -14,6 +14,7 @@ SRC="$(dirname "$(readlink -f "$0")")/$N"
 MODS="lenovo-wmi-gamezone lenovo-wmi-other lenovo-wmi-capdata01 lenovo-wmi-events lenovo-wmi-helpers"
 
 if is_remove "${1:-}"; then
+    # shellcheck disable=SC2086  # a list of module names
     modprobe -r $MODS || true
     dkms remove -m $N -v $V --all || true
     rm -rf "/usr/src/$N-$V"

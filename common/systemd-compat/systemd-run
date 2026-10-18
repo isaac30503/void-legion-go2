@@ -85,9 +85,12 @@ cmdline() {
     [ -n "$nice" ] && pre="$pre${pre:+ }nice -n $nice"
     CMD="${pre:+$pre }$out"
 }
-# shellcheck disable=SC2086  # the K=V lines: split on newlines only
 oldifs=$IFS; IFS='
-'; set -f; set -- $envs -- "$@"; set +f; IFS=$oldifs
+'
+set -f
+# shellcheck disable=SC2086  # the K=V lines: split on newlines only
+set -- $envs -- "$@"
+set +f; IFS=$oldifs
 kvs=
 while [ "$1" != -- ]; do sc_q "$1"; kvs="$kvs $SC_Q"; shift; done; shift
 
@@ -111,7 +114,7 @@ d=$SC_BASE/units/$unit
 if sc_proc_active "$d"; then
     echo "Failed to start transient service unit: Unit $unit.service was already loaded or has a fragment file." >&2; exit 1
 fi
-mkdir -p "$SC_BASE/units" "$d" && chmod 700 "$d" || { echo "systemd-run: cannot create $d" >&2; exit 1; }
+{ mkdir -p "$SC_BASE/units" "$d" && chmod 700 "$d"; } || { echo "systemd-run: cannot create $d" >&2; exit 1; }
 sc_envline
 cmdline "$@"
 { printf '#!/bin/sh\n'

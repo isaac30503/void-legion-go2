@@ -133,7 +133,7 @@ sc_base() {
 #   runit: SC_SVC (the service), SC_LOGFILE (its log for journalctl, if known)
 #   proc:  SC_DIR (state folder), SC_CMD (the command of an exec unit; empty for a transient one)
 sc_resolve() {
-    local scope=$1 unit=$2 o
+    local scope="$1" unit="$2" o
     SC_TYPE=none SC_SVC='' SC_LOGFILE='' SC_DIR='' SC_CMD=''
     sc_lookup "$scope" "$unit"
     case $SC_KIND in
@@ -161,7 +161,7 @@ sc_resolve() {
 # ---- runit ----------------------------------------------------------------------------------------------
 # sc_runit_state SERVICE → SC_ACTIVE (active | inactive | activating | deactivating | unknown), SC_SUB, SC_PID
 sc_runit_state() {
-    local w rest st=$SC_SERVICE_DIR/$1/supervise
+    local w rest st="$SC_SERVICE_DIR/$1/supervise"
     SC_PID=0
     if [ ! -e "$SC_SERVICE_DIR/$1" ]; then SC_ACTIVE=inactive SC_SUB=dead; return 0; fi
     if [ ! -r "$st/stat" ]; then SC_ACTIVE=unknown SC_SUB=unknown; return 0; fi   # supervise/ is root's only
@@ -193,7 +193,7 @@ sc_ancestor() {
 # asked (--no-block) or when the caller runs inside that service: a Decky plugin restarting Decky would be killed
 # halfway; systemd does it as a job of its own, and so does this.
 sc_runit_do() {
-    local pid detach=$3
+    local pid detach="$3"
     if [ -r "$SC_SERVICE_DIR/$2/supervise/pid" ]; then
         read -r pid < "$SC_SERVICE_DIR/$2/supervise/pid" || pid=
         [ -n "$pid" ] && sc_ancestor "$pid" && detach=1
@@ -235,7 +235,7 @@ sc_write_exec_run() {
 # sc_proc_start DIR — starts DIR/run in a session of its own (its process group is the unit), with the lock held
 # from before it exists until its last process ends. Already active: nothing.
 sc_proc_start() {
-    local d=$1 i inv='' rest
+    local d="$1" i inv='' rest
     exec 9>>"$d/lock"
     if ! flock -w 1 9; then exec 9>&-; return 0; fi
     if [ -s "$d/log" ] && [ "$(wc -c < "$d/log")" -gt 1048576 ]; then mv -f "$d/log" "$d/log.1"; fi
@@ -253,7 +253,7 @@ sc_proc_start() {
 # sc_proc_stop DIR NOBLOCK — SIGTERM to its process group, then waits for the lock (the kernel releases it when the
 # last process ends: no polling); after 10 s, SIGKILL.
 sc_proc_stop() {
-    local d=$1 pid
+    local d="$1" pid
     sc_proc_active "$d" || return 0
     read -r pid < "$d/pid" 2>/dev/null || return 0
     "$SC_KILL" -s TERM -- "-$pid" 2>/dev/null || "$SC_KILL" -s TERM "$pid" 2>/dev/null

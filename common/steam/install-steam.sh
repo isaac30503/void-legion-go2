@@ -35,6 +35,7 @@ if is_remove "${1:-}"; then
     rm -f "$LIM" "$SYS"; t "== removed %s and %s (valid on reboot)" "$LIM" "$SYS"
     # shellcheck disable=SC2046  # one package name per line: the word splitting is wanted
     xbps-remove -R $(cat "$LIST")
+    # shellcheck disable=SC2086  # a list of package names
     xbps-remove $REPOS 2>/dev/null || true
     xbps-install -S >/dev/null
     rm -f "$LIST"; t "== done (the games library in ~/.local/share/Steam is not deleted)"
@@ -44,6 +45,7 @@ fi
 BEFORE=$(xbps-query -m | xargs -n1 xbps-uhelper getpkgname | sort)
 
 t "== 1. repositories"
+# shellcheck disable=SC2086  # a list of package names
 xbps-install -Sy $REPOS
 xbps-install -S >/dev/null
 xbps-query -L | sed 's/^/   /'
@@ -69,6 +71,7 @@ for p in $PKGS; do
     else t "   (not in the repo, skipped: %s)" "$p"; fi
 done
 if [ -n "$OK" ]; then
+    # shellcheck disable=SC2086  # a list of package names
     xbps-install $OK      # without -y: it shows the list and the size, and asks to confirm
 else
     t "   everything already installed"

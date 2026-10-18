@@ -93,9 +93,9 @@ After a switch or a reboot with Steam open, `~/.local/share/Steam/logs/` shows `
   full check after one dirty close is normal and fixes itself.
 - **Stuck:** Ctrl+Alt+F2, log in, `pkill -KILL -x gamescope-wl` (gamescope's process name) and
   `sudo sv restart lightdm` (it logs into the autologin mode). Logs: `~/.local/state/steam-game-mode.log`,
-  `~/.local/state/steamos-session-select.log`; lightdm's, with `sudo sh "$B/common/steam/diag-lightdm.sh"`.
+  `~/.local/state/steamos-session-select.log`; lightdm's, with `sudo sh "$B/common/diag/diag-lightdm.sh"`.
 - **Old messages on the screen for an instant when switching** (the firmware logo, a `unix_chkpwd` line): leftovers
   in the console's memory (the kernel has `FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER`; without `/dev/log`, syslog writes
-  to the console). To see who sends them: `common/steam/capture-syslog.sh` (a temporary runit service).
+  to the console). To see who sends them: `common/diag/capture-syslog.sh` (a temporary runit service).
 - **Harmless in logs:** `[libseat] … Could not close device: Unknown object '/org/freedesktop/login1/session/cN'`
   when a session closes (the session no longer exists when the compositor releases its devices).

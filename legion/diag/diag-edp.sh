@@ -1,8 +1,8 @@
 #!/bin/sh
 # Legion Go 2: state of the internal screen (eDP-1) according to amdgpu, to compare "black" against
 # "fine" when going from Game Mode to the desktop (2026-10-04). Read-only (mounts debugfs if missing).
-#   sudo sh legion/diag-edp.sh black      (with the internal screen black)
-#   sudo sh legion/diag-edp.sh fine       (after switching workspace)
+#   sudo sh legion/diag/diag-edp.sh black      (with the internal screen black)
+#   sudo sh legion/diag/diag-edp.sh fine       (after switching workspace)
 # Leaves ~/diag-edp-<label>.txt. Previous name: diag-edp.sh (unchanged; its labels were negra|bien, and
 # the two results of 2026-10-04 are archived with those names in the private repository, archive/2026-10-14/logs/legion-diagnostics-2026-10-04/).
 # The report is written in English (it is a data file).

@@ -123,6 +123,7 @@ vu_steps() {
         echo
         printf '%s' "$c_yellow"
         echo "⚠ $(t "New configuration templates (do NOT apply them without comparing them; the current file is the good one):")"
+        # shellcheck disable=SC2086  # one path per line, no spaces (/etc)
         printf '  %s\n' $new_files
         echo "  $(t "Compare: %s   ·   Careful with passwd: the template has no users." "diff <file> <file>.new-*")"
         printf '%s' "$c_off"

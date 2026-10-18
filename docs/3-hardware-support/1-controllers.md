@@ -38,7 +38,7 @@ Then close Steam completely and open it again.
 pgrep -a inputplumber
 ls /sys/bus/hid/devices/ | grep 28DE           # 0003:28DE:12FB… (HID_NAME=Legion Go 2 Controller)
 inputplumber device 0 capabilities | tr ',' '\n' | grep -iE 'gyro|accel'   # Gamepad:Gyro and Gamepad:Accelerometer
-sh "$B/legion/diag-gyro.sh"                    # without root; turn the console for 20 s
+sh "$B/legion/diag/diag-gyro.sh"                    # without root; turn the console for 20 s
 ```
 
 In `/proc/bus/input/devices`: `InputPlumber Mouse/Keyboard/Touchpad` and, with Steam open, **a single**
@@ -75,12 +75,12 @@ of systemd's `inputplumber-suspend.service` is needed).
   IMUs (it opens and closes their sysfs files ~389 times/s) and from writing the virtual controller
   (`/dev/uhid`). Left as is: lowering the IMUs' rate (`AngvelSampleRate`/`AccelSampleRate`, D-Bus) to 100 would
   save about half, but is not persistent and costs gyroscope samples. Measure with
-  `sudo bash "$B/legion/diag-inputplumber-cpu.sh" <label>` (read-only, ~65 s; uses `strace` if installed; result
+  `sudo bash "$B/legion/diag/diag-inputplumber-cpu.sh" <label>` (read-only, ~65 s; uses `strace` if installed; result
   in `/tmp/medir-inputplumber-<label>.txt`).
 - **The gyroscope of each detached controller is not used** (only the tablet's): each controller has a full IMU,
   but it is off without `hid-lenovo-go`, and InputPlumber 0.81 filters it; making Steam use the right controller's
   would mean changing and building InputPlumber. Tools that were written to study it (read-only or reversible):
-  `sudo sh "$B/legion/diag-controller-gyros.sh"` (reads the controller's three `hidraw`), `sudo sh "$B/legion/test-controller-imu.sh" [--keep]` (turns
+  `sudo sh "$B/legion/diag/diag-controller-gyros.sh"` (reads the controller's three `hidraw`), `sudo sh "$B/legion/diag/test-controller-imu.sh" [--keep]` (turns
   each controller's IMU "bypass" on and back off; command from the kernel's `drivers/hid/hid-lenovo-go.c`: output
   report `0x05`, `05 00 04 <setting> <controller> <value>`) and `right-controller-gyro.sh [--undo]` (does **not**
   work with 0.81: `Failed to set filtered events`).

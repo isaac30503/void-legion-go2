@@ -82,7 +82,7 @@ for p in "$@"; do
 done
 
 T=$(mktemp -d "${TMPDIR:-/tmp}/patch-test.XXXXXX") || exit 1
-trap 'rm -rf "$T"' EXIT
+trap 'rm -rf "${T:?}"' EXIT
 unchecked() { echo "RESULT $NAME ${VERSION:-?} UNCHECKED $*"; exit 0; }
 
 # "test-2": changes if the way of testing changes; the language, because the cache keeps the <detail> text
@@ -99,8 +99,8 @@ look_cache() {
 [ "$mode" = void ] && [ -n "$HINT" ] && look_cache "$HINT"
 mkdir "$T/code"
 if [ "$mode" = void ]; then
-    git clone -q --depth 1 --filter=blob:none --sparse "$VP_URL" "$T/vp" 2>/dev/null \
-        && git -C "$T/vp" sparse-checkout set "srcpkgs/$NAME" 2>/dev/null \
+    { git clone -q --depth 1 --filter=blob:none --sparse "$VP_URL" "$T/vp" 2>/dev/null \
+        && git -C "$T/vp" sparse-checkout set "srcpkgs/$NAME" 2>/dev/null; } \
         || unchecked "$(tr_ "without network or without access to void-packages")"
     PL="$T/vp/srcpkgs/$NAME/template"
     [ -f "$PL" ] || unchecked "$(tr_ "void-packages has no srcpkgs/%s/template" "$NAME")"
@@ -161,8 +161,8 @@ fi
 # ---- test our own patches, in order --------------------------------------------------------------
 # try [--reverse]: 0 if the patch $p applies; writes ",reduced_context" if only with -C1
 try() {
-    ( cd "$SRC" && git apply --check $1 "$p" 2>/dev/null ) && return 0
-    ( cd "$SRC" && git apply --check -C1 $1 "$p" 2>/dev/null ) && { echo ",reduced_context"; return 0; }
+    ( cd "$SRC" && git apply --check ${1:+"$1"} "$p" 2>/dev/null ) && return 0
+    ( cd "$SRC" && git apply --check -C1 ${1:+"$1"} "$p" 2>/dev/null ) && { echo ",reduced_context"; return 0; }
     return 1
 }
 OUT=(); n_needed=0; n_incl=0; n_conf=0; needed=(); incl=(); conf=()

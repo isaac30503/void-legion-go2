@@ -11,7 +11,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 COLS = ["id", "machines", "stage", "how", "installer", "doc", "sources", "installs", "undo"]
 
 
-def load(path=os.path.join(ROOT, "install", "pieces.tsv")):
+def load(path=None):
+    path = path or os.path.join(ROOT, "install", "pieces.tsv")
     rows, bad = [], []
     with open(path, encoding="utf-8") as f:
         text = f.read().splitlines()

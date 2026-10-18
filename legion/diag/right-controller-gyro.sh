@@ -12,9 +12,9 @@
 # Result on 2026-10-05: it does NOT work like this (InputPlumber 0.81 does not apply the whole filter;
 # docs/3-hardware-support/1-controllers.md, Known limits).
 # Previous (Spanish) name: giro-mando-derecho.sh (its log of 2026-10-05 is archived in the private repository, archive/2026-10-14/logs/legion/).
-#   sudo sh legion/right-controller-gyro.sh          # apply
-#   sudo sh legion/right-controller-gyro.sh --undo   # back to the tablet (saved filter + bypass: no)
-# Check: sh legion/diag-gyro.sh turning the right controller DETACHED (what reaches Steam must move)
+#   sudo sh legion/diag/right-controller-gyro.sh          # apply
+#   sudo sh legion/diag/right-controller-gyro.sh --undo   # back to the tablet (saved filter + bypass: no)
+# Check: sh legion/diag/diag-gyro.sh turning the right controller DETACHED (what reaches Steam must move)
 # and, in Steam, the gyroscope as mouse. Log: ~/right-controller-gyro.log.
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"
@@ -90,5 +90,5 @@ else:
     print(_("Right controller, IMU bypass →"), right_bypass(0x01))
     set_filter(f)
 print(_("InputPlumber's filter now:"), json.dumps(prop('FilteredEvents')))
-print(_("Done.") + ("" if undo else " " + _("Test: sh legion/diag-gyro.sh turning the right controller detached.")))
+print(_("Done.") + ("" if undo else " " + _("Test: sh legion/diag/diag-gyro.sh turning the right controller detached.")))
 EOF

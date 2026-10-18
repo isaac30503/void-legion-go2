@@ -4,6 +4,8 @@
 # Run by GitHub Actions (.github/workflows/ci.yml) and by hand: bash tests/run.sh   (exit 1 if a test fails)
 # shellcheck disable=SC2034,SC2154  # void-update's configuration and colors: set and read by its libraries (base.sh)
 set -uo pipefail
+# The scripts refuse root on purpose (need_user): as root half of these would fail for that reason, not for a bug
+[ "$(id -u)" = 0 ] && { echo "tests/run.sh: run it as your normal user, not as root" >&2; exit 2; }
 REPO=$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)
 TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
 pass=0; failed=0

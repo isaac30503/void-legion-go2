@@ -5,7 +5,7 @@
 # stays in the keyboard's action set (basicui_neptune.vdf).
 # Previous (Spanish) name: diag-teclado-steam.sh.
 #
-# Usage:  cp "<repo>/legion/diag-steam-keyboard.sh" /tmp/ && bash /tmp/diag-steam-keyboard.sh
+# Usage:  cp "<repo>/legion/diag/diag-steam-keyboard.sh" /tmp/ && bash /tmp/diag-steam-keyboard.sh
 #         bash /tmp/diag-steam-keyboard.sh --stop       
 #         Results in /tmp/diag-steam-keyboard/ (deleted on reboot).
 # Everything is event-driven (tail -F, xprop -spy): it spends nothing while nothing happens. When the

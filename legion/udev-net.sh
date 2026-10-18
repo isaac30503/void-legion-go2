@@ -16,7 +16,7 @@ R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = 
 need_root
 SV=/etc/sv/udev-net
 if is_remove "${1:-}"; then
-    rm -f /var/service/udev-net /var/service/udev-red; sleep 6; rm -rf "$SV" /etc/sv/udev-red; t "removed"; exit 0
+    rm -f /var/service/udev-net /var/service/udev-red; sleep 6; rm -rf "${SV:?}" /etc/sv/udev-red; t "removed"; exit 0
 fi
 # The old Spanish-named service, if it is there (same job): only one of them.
 if [ -e /etc/sv/udev-red ]; then rm -f /var/service/udev-red; sleep 6; rm -rf /etc/sv/udev-red; fi

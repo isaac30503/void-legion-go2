@@ -36,7 +36,7 @@ reload_dbus() {
 if is_remove "${1:-}"; then
     rm -f /var/service/steamos-manager; sleep 6
     for m in "$MAN" "$MAN_OLD"; do [ -f "$m" ] && xargs -d '\n' rm -f < "$m"; done
-    rm -rf "$SV" "${MAN%/*}" /usr/share/steamos-manager /etc/steamos-manager
+    rm -rf "${SV:?}" "${MAN%/*}" /usr/share/steamos-manager /etc/steamos-manager
     reload_dbus
     t "removed (logs in /var/log/steamos-manager)"; exit 0
 fi
@@ -45,11 +45,11 @@ fi
 # its two libraries (libspeechd, glib); xbps gives an error if they are already installed
 for p in speech-dispatcher glib; do xbps-query "$p" >/dev/null || xbps-install -Sy "$p"; done
 
-T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
+T=$(mktemp -d); trap 'rm -rf "${T:?}"' EXIT
 tar xzf "$TAR" -C "$T"
 # Out: systemd units, the sddm setting and D-Bus activation (Exec=/bin/false +
 # SystemdService: without systemd they start nothing; runit and the launcher start the processes).
-rm -rf "$T/usr/lib/systemd" "$T/usr/share/dbus-1/services" "$T/usr/share/dbus-1/system-services"
+rm -rf "${T:?}/usr/lib/systemd" "${T:?}/usr/share/dbus-1/services" "${T:?}/usr/share/dbus-1/system-services"
 mkdir -p "${MAN%/*}" /etc/steamos-manager/remotes.d
 ( cd "$T" && find . -type f | sed 's|^\.||' ) > "$MAN"
 rm -f "$MAN_OLD" "${MAN%/*}/paquete"            # the old Spanish names: only one copy

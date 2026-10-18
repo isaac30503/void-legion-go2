@@ -16,6 +16,12 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
   matched as a whole name in `install.sh` and the docs, not as a substring. From a fourth: `test-direct-session.sh` is
   now `install-direct-session.sh` (an installer named `test-…` was confusing; the old marker in `lightdm.conf` is still
   recognized), and a `grep:` proof that cannot be read without root says "not verifiable" instead of passing.
+  From a fifth: `tests/run.sh` stops with a message as root (the scripts refuse root on purpose: 11 tests "failed" for
+  that); `THIRD_PARTY.md` says the six Plymouth themes are in use again and what they take from Plymouth's `bgrt` and
+  `spinner`; every `rm -rf` of a variable uses `${VAR:?}`; ShellCheck's SC2086 and SC2015 notes are now enforced by
+  `verify.sh` (the `a && b || c` became `if`, the splitting on purpose says why); `like-steamos.sh` runs with
+  `set -euo pipefail`; the diagnostic scripts moved to `legion/diag/` and `common/diag/`; Python: an unused import,
+  `zip(strict=True)`, and the bubbles' opacity written so that it is plainly one per bubble (it already was).
 
 - **The inventory, `install/pieces.tsv`** ([this repository](docs/8-maintenance/4-this-repository.md#the-inventory-installpiecestsv)):
   every piece the repository installs, one per line, enforced by `verify.sh` (every file has its piece, every installer

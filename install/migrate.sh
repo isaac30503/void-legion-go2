@@ -112,7 +112,7 @@ fi
 
 # Rewrites the Xfce X11 shortcuts that call the old window scripts (xfconf, live; needs the session's bus)
 fix_shortcuts() {
-    command -v xfconf-query >/dev/null && session_bus || { t "   (shortcuts: no Xfce session here; run again from the session)"; return 0; }
+    { command -v xfconf-query >/dev/null && session_bus; } || { t "   (shortcuts: no Xfce session here; run again from the session)"; return 0; }
     local p v
     xfconf-query -c xfce4-keyboard-shortcuts -lv 2>/dev/null | grep -E 'ventana-(acoplar|foco)' | while read -r p v; do
         v=${v//ventana-acoplar/window-snap}; v=${v//ventana-foco/window-focus}

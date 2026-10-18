@@ -1,7 +1,7 @@
 #!/bin/sh
 # Legion Go 2: diagnosis of "I boot with the monitor connected and no image comes out until I disconnect and
 # connect the cable" (2026-10-04). Run it AT THAT MOMENT, without touching the cable, from another machine:
-#   ssh lego   and then   sudo sh <repo>/legion/diag-monitor.sh
+#   ssh lego   and then   sudo sh <repo>/legion/diag/diag-monitor.sh
 # It leaves everything in ~/diag-monitor.log (of the user who called sudo). The report is in English.
 # Previous name: diag-monitor.sh (unchanged).
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done

@@ -45,7 +45,8 @@ installed and removed as a unit, whose files nobody else owns, and that says wha
    its line. Do not split one installer into several pieces.
 2. **Every file of the repository has exactly one owner** (`verify.sh` fails on none or on two), as a file belongs to one
    package. Tools that are not installed (diagnostics, generators, the repository's own scripts) also have an owner, with
-   `how` = `tool`.
+   `how` = `tool`; diagnostic and test scripts live in `legion/diag/` and `common/diag/` (owned by `diagnostics`), so
+   that nothing next to the installers looks installable.
 3. **`installs` lists what proves the piece is there**, as `xbps-query -f` would, but only the identifying paths: the
    program it puts in the `PATH` (`/usr/local/bin/…`, `~/.local/bin/…`), its runit service (`/etc/sv/<name>/run`, and
    `/var/service/<name>` when it is enabled), its own configuration (`/etc/…/conf.d/…`, `/etc/sudoers.d/…`, `~/.config/…`)

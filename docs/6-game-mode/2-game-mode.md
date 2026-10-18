@@ -86,7 +86,7 @@ end, as on SteamOS. **TDP, power profiles and the manual GPU clock** come from
 - **Stuck:** Ctrl+Alt+F2, log in, `pkill -KILL -x gamescope-wl`, `sudo sv restart lightdm`.
 - **The external monitor stays black at boot** (seen once: gamescope chose `DP-1` at 1920×1080@60 without errors,
   but no image until the cable was replugged). Without touching the cable, from another machine: `ssh lego` and
-  `sudo sh "$B/legion/diag-monitor.sh"` (leaves `~/diag-monitor.log`: connectors, GPU, processes, `dmesg`).
+  `sudo sh "$B/legion/diag/diag-monitor.sh"` (leaves `~/diag-monitor.log`: connectors, GPU, processes, `dmesg`).
 - **When testing anything shown inside gamescope, use `-e`:** with it a window without `STEAM_GAME` and without
   `GAMESCOPECTRL_BASELAYER_APPID` on the root is not shown at all.
 - **Harmless in the log:** `[MANGOHUD] … Unknown option 'nis_steam_sharpness'` (Void's `mangoapp` 0.8.4 does not know

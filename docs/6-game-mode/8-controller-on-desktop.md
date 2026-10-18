@@ -75,7 +75,7 @@ stick scrolls; X opens the keyboard and types.
 - **After closing Steam's on-screen keyboard, the trackpad and sticks stop moving the pointer** (intermittent): Steam
   missed the keyboard's close (`Set OSK active 1` without its `0` in `~/.local/share/Steam/logs/controller_ui.txt`) and
   kept the keyboard's action set. Open and close the keyboard again (X). To capture it if it repeats (read-only,
-  event-driven): `bash "$B/legion/diag-steam-keyboard.sh"`, then `--stop`; results in `/tmp/diag-steam-keyboard/`
+  event-driven): `bash "$B/legion/diag/diag-steam-keyboard.sh"`, then `--stop`; results in `/tmp/diag-steam-keyboard/`
   (`grep -E 'OSK active|OnFocusWindowChanged' /tmp/diag-steam-keyboard/controller_ui.txt`).
 - **Steam's on-screen keyboard comes out huge or with a border:** the `type="utility"` exception is missing in labwc's
   `rc.xml` ([windows](../5-desktop/3-windows-and-shortcuts.md)).

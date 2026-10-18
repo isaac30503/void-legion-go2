@@ -73,7 +73,7 @@ if is_remove "${1:-}"; then
     t "== removed %s, %s, %s, %s, %s and gamescope's cap_sys_nice" "$BIN" "$SES" "$SEL" "$UPD" "$LAN"
     exit 0
 fi
-command -v gamescope >/dev/null && command -v steam >/dev/null || { t "gamescope or steam is missing: first, install-steam.sh"; exit 1; }
+{ command -v gamescope >/dev/null && command -v steam >/dev/null; } || { t "gamescope or steam is missing: first, install-steam.sh"; exit 1; }
 command -v mangoapp >/dev/null || t "!! mangoapp is missing (MangoHud-mangoapp): without performance overlay. Repeat install-steam.sh"
 remove_old
 

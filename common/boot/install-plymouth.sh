@@ -86,7 +86,7 @@ if [ -n "$REMOVE" ]; then
     for n in $THEMES; do rm -rf "/usr/share/plymouth/themes/$n"; done
     t "   themes removed"
     [ -f "$CONF" ] && sed -i '/^DeviceScale=1$/d' "$CONF"
-    rm -rf "$LOADING" "$ANIM_FLAG" "$HOOK"
+    rm -rf "${LOADING:?}" "${ANIM_FLAG:?}" "${HOOK:?}"
     [ -e "$TTY1" ] || ln -s /etc/sv/agetty-tty1 "$TTY1"
     t "   text login of console 1 given back"
 else
@@ -112,7 +112,7 @@ else
     grep -A3 '^\[Daemon\]' "$CONF" | sed 's/^/   /'
     [ "$(plymouth-set-default-theme)" = "$NAME" ] || { t "!! Plymouth does not see the theme %s: the initramfs is NOT rebuilt" "$NAME"; exit 1; }
 
-    rm -rf "$LOADING"
+    rm -rf "${LOADING:?}"
     if [ -n "$LOAD" ]; then
         t "   Game Mode's loading screen: %s (%s)" "$LOAD" "$LOADING"
         python3 "$HERE/plymouth-void/generate.py" "$LOADING" "$LOAD" "${HEIGHT:-768}"
@@ -178,5 +178,5 @@ else
 fi
 t "== check"
 for i in /boot/initramfs-*.img; do
-    printf '   %s: ' "$i"; lsinitrd "$i" 2>/dev/null | grep -q 'plymouthd' && t "with Plymouth" || t "without Plymouth"
+    printf '   %s: ' "$i"; if lsinitrd "$i" 2>/dev/null | grep -q 'plymouthd'; then t "with Plymouth"; else t "without Plymouth"; fi
 done

@@ -34,6 +34,8 @@
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"
 need_root
+# Stop at the first failure; the commands that may fail on purpose say so (|| true)
+set -euo pipefail
 U=$TARGET_USER
 H=$TARGET_HOME
 exec > >(tee "$H/like-steamos.log") 2>&1
@@ -71,9 +73,10 @@ fi
 if pgrep -u "$U" -x steam >/dev/null; then
     t "== closing Steam (steam -shutdown)"
     _p=$(pgrep -u "$U" -x steam | head -1)
-    _e=$(tr '\0' '\n' < "/proc/$_p/environ" 2>/dev/null | grep -E '^(HOME|USER|LOGNAME|DISPLAY|XDG_RUNTIME_DIR|DBUS_SESSION_BUS_ADDRESS)=' | tr '\n' ' ')
+    _e=$(tr '\0' '\n' < "/proc/$_p/environ" 2>/dev/null | grep -E '^(HOME|USER|LOGNAME|DISPLAY|XDG_RUNTIME_DIR|DBUS_SESSION_BUS_ADDRESS)=' | tr '\n' ' ' || true)
+    # shellcheck disable=SC2086  # VAR=value pairs, without spaces
     chpst -u "$U" env -i PATH=/usr/bin:/bin $_e /usr/bin/steam -shutdown </dev/null >/dev/null 2>&1 &
-    timeout 30 pidwait -u "$U" -x steam 2>/dev/null
+    timeout 30 pidwait -u "$U" -x steam 2>/dev/null || true   # the next line checks whether it closed
     if pgrep -u "$U" -x steam >/dev/null; then t "Steam did not close: close it by hand and repeat."; exit 1; fi
     t "   Steam closed (it starts again by itself in the next session, or open it from the menu)"
 fi
@@ -100,6 +103,7 @@ cat /sys/kernel/mm/transparent_hugepage/enabled
 
 t "== 3-5. packages (only the missing ones)"
 F=""; for p in rtkit earlyoom gamemode libgamemode-32bit gamescope-32bit; do xbps-query "$p" >/dev/null || F="$F $p"; done
+# shellcheck disable=SC2086  # a list of package names
 [ -n "$F" ] && xbps-install -Sy $F
 printf 'OPTS="-M 409600,307200 -S 409600,307200 -r 3600"\n' > /etc/sv/earlyoom/conf
 [ -L /var/service/earlyoom ] || ln -s /etc/sv/earlyoom /var/service/
@@ -124,7 +128,7 @@ else
 fi
 grep -E '^GRUB_CMDLINE_LINUX(_DEFAULT)?=' "$GRUB"
 update-grub
-grep -c 'preempt=full' /boot/grub/grub.cfg
+grep -c 'preempt=full' /boot/grub/grub.cfg || t "!! preempt=full is not in grub.cfg"
 
 t "== 8. memlock 8 MiB (from the next session)"
 printf '%s\n' "# Like SteamOS (set by legion/like-steamos.sh; docs/6-game-mode/4-steamos-parity.md)." "$U - memlock 8192" > "$LIM"

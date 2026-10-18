@@ -162,7 +162,7 @@ emit() {   # TYPE ARG
     case $1 in
         kernel)
             set -- dmesg
-            [ "$output" = cat ] && set -- "$@" -t || set -- "$@" -T
+            if [ "$output" = cat ]; then set -- "$@" -t; else set -- "$@" -T; fi
             [ -n "$prio" ] && set -- "$@" --level="$(levels "$prio")"
             [ -n "$from" ] && set -- "$@" --since "@$from"
             [ -n "$to" ] && set -- "$@" --until "@$to"

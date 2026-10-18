@@ -27,7 +27,7 @@ if xbps-uhelper cmpver "$LW" 4.20.6; [ $? = 255 ]; then
     t "!! the patch needs libxfce4windowing >= 4.20.6 (there is %s): update first (void-update)" "$LW"; exit 1
 fi
 REPO=$(mktemp -d /tmp/xfdesktop-repo.XXXXXX)
-trap 'rm -rf "$REPO"' EXIT
+trap 'rm -rf "${REPO:?}"' EXIT
 cp "$PKG" "$REPO/"
 xbps-rindex -a "$REPO"/*.xbps
 xbps-install -R "$REPO" "$VER"     # asks to confirm
@@ -35,7 +35,8 @@ echo
 t "== check"
 xbps-query -p pkgver xfdesktop
 xbps-query -p repository xfdesktop
-[ "$(xbps-query -p pkgver xfdesktop)" = "$VER" ] && t "OK: installed %s" "$VER" || { t "!! %s was not left installed" "$VER"; exit 1; }
+if [ "$(xbps-query -p pkgver xfdesktop)" = "$VER" ]; then t "OK: installed %s" "$VER"
+else t "!! %s was not left installed" "$VER"; exit 1; fi
 echo
 t "Now, in the Xfce Wayland session: close the wallpaper dialog if it was open, open in a terminal"
 t "  xfconf-query -c xfce4-desktop -m      (it watches the changes)"

@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2015  # "check && ok … || fail …": ok and fail only print, so fail runs only when the check fails
 # verify.sh — checks of the clone (without root; changes nothing):
 #   bash install/verify.sh              all: syntax, ShellCheck, catalogs, the inventory, links, paths cited by docs/, binaries,
 #                                       private values
@@ -121,7 +122,9 @@ if command -v shellcheck >/dev/null; then
         case "$f" in *.sh) sh_files+=("$f") ;;
             *) [ -f "$f" ] && head -c 40 "$f" | grep -qE '^#!(/bin/(ba)?sh|/usr/bin/env (ba)?sh)' && sh_files+=("$f") ;; esac
     done < <(git ls-files --cached --others --exclude-standard 2>/dev/null)
-    if out=$(shellcheck -S warning "${sh_files[@]}" 2>&1); then ok "shellcheck (${#sh_files[@]})"
+    # Besides errors and warnings, two notes that catch real bugs: SC2086 (an unquoted variable split or globbed) and
+    # SC2015 ("a && b || c" runs c when b fails). Splitting on purpose carries its "disable" with the reason.
+    if out=$( { shellcheck -S warning "${sh_files[@]}"; shellcheck -S info -i SC2086,SC2015 "${sh_files[@]}"; } 2>&1 ); then ok "shellcheck (${#sh_files[@]})"
     else printf '%s\n' "$out" | grep -E '^In |SC[0-9]+' | head -20; fail "shellcheck"; fi
 elif [ -n "$ci" ]; then
     fail "shellcheck is not installed"

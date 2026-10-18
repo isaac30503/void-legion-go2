@@ -28,7 +28,7 @@ sudo sv status inputplumber steamos-manager udev-net   # all three in "run"
 ls /sys/bus/hid/devices/ | grep 28DE       # 0003:28DE:12FB… (InputPlumber's Valve controller)
 grep -c 'Failed to hide' /var/log/inputplumber/current   # does not grow when the service restarts
 inputplumber device 0 capabilities | tr ',' '\n' | grep -iE 'gyro|accel'   # Gamepad:Gyro and Gamepad:Accelerometer
-sh "$B/legion/diag-gyro.sh"                # turning the console: rotation from hundreds to ~1500
+sh "$B/legion/diag/diag-gyro.sh"                # turning the console: rotation from hundreds to ~1500
 dkms status                                # lenovo-wmi-tdp/6.18.55 …: installed
 ls /sys/class/firmware-attributes/lenovo-wmi-other-0/attributes   # ppt_pl1_spl ppt_pl2_sppt ppt_pl3_fppt
 cat /sys/module/amdgpu/parameters/ppfeaturemask   # 0xfff7ffff (overdrive)

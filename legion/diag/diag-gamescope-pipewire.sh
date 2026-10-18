@@ -8,7 +8,7 @@
 # No core dump is possible: gamescope has cap_sys_nice and with fs.suid_dumpable=0 the kernel does not
 # dump it; that is why gdb is attached to it (as root: ptrace of a program with capabilities).
 # Usage, already inside Game Mode (from the IdeaPad: ssh -t lego sudo bash /tmp/diag-gamescope-pipewire.sh):
-#   sudo bash legion/diag-gamescope-pipewire.sh
+#   sudo bash legion/diag/diag-gamescope-pipewire.sh
 # Requirements (root, once; Void's "debug" repository only for the symbols):
 #   sudo xbps-install -S gdb
 #   sudo xbps-install -S --repository=https://repo-default.voidlinux.org/current/debug gamescope-dbg

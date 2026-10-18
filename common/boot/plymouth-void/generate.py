@@ -158,10 +158,10 @@ def mech_mask(theta, size, scale, turn, ref, target, ss=4):
                    at((q[0] - nx * w2, q[1] - ny * w2)), at((p[0] - nx * w1, p[1] - ny * w1))], fill=255)
     joint, end = mech_positions(theta)
     bar(MECH_BIG, joint, *MECH_LINK)
-    for r, v in zip(reversed(MECH_RB), (255, 0, 255)):
+    for r, v in zip(reversed(MECH_RB), (255, 0, 255), strict=True):
         circle(MECH_BIG, r, v)
     for p in (joint, end):
-        for r, v in zip(reversed(MECH_RS), (255, 0, 255)):
+        for r, v in zip(reversed(MECH_RS), (255, 0, 255), strict=True):
             circle(p, r, v)
     bar(joint, end, MECH_BAR, MECH_BAR)
     return im.resize((w, h), Image.LANCZOS)

@@ -38,7 +38,7 @@ Previous (Spanish) name: arte-vesktop/generar.py. Its messages follow the system
   python3 common/steam/art-vesktop/generate.py --desktop    only the desktop icon and launcher (Steam may be open)
 docs/7-apps/2-vesktop.md (Library art).
 """
-import glob, json, math, os, random, re, shutil, subprocess, sys, tempfile
+import glob, json, os, random, re, shutil, subprocess, sys, tempfile
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "lib"))
 try:
     from void_legion_i18n import _
@@ -147,7 +147,7 @@ def tray():
                     # of the "unread" dot has b ≈ g and is not touched
                     if a and r > g + 40 and b > g + 15:
                         t = max(0.0, min(1.0, (r - dark[0]) / (235 - dark[0])))
-                        px[x, y] = tuple(round(t * c + (1 - t) * o) for c, o in zip(BLUE, DARK)) + (a,)
+                        px[x, y] = tuple(round(t * c + (1 - t) * o) for c, o in zip(BLUE, DARK, strict=True)) + (a,)
             im.save(os.path.join(dest, name + ".tmp"), "PNG")
             os.replace(os.path.join(dest, name + ".tmp"), os.path.join(dest, name))
     print(_("tray: %s/tray and trayUnread (they show when opening Vesktop again)") % dest)
@@ -180,7 +180,8 @@ def flat(w, h, cx=0.5, cy=0.5, free=(), seed=7):
         if any(x0 * w - m < x < x1 * w + m and y0 * h - m < y < y1 * h + m for x0, y0, x1, y1 in free):
             continue
         g = bubble(side).rotate(rnd.uniform(-35, 35), resample=Image.BICUBIC, expand=True)
-        a = g.getchannel("A").point(lambda v, k=rnd.uniform(0.10, 0.22): int(v * k))
+        k = rnd.uniform(0.10, 0.22)           # this bubble's opacity (a new one for each bubble)
+        a = g.getchannel("A").point(lambda v: int(v * k))
         g.putalpha(a)
         im.alpha_composite(g, (int(x - g.width / 2), int(y - g.height / 2)))
         n -= 1

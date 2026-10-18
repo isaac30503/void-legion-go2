@@ -22,9 +22,9 @@
 #   input may be somewhat slower; when it is released (SIGINT) it goes back to normal.
 #
 # USAGE (on the Legion, as root; from the IdeaPad: ssh -t lego sudo bash /tmp/diag-inputplumber-cpu.sh <label>):
-#   sudo bash legion/diag-inputplumber-cpu.sh game-mode              # Game Mode idle, WITHOUT touching the controller
-#   sudo bash legion/diag-inputplumber-cpu.sh desktop                # Xfce Wayland with Steam in the background + extest
-#   sudo bash legion/diag-inputplumber-cpu.sh game-mode-controller   # optional: moving the controller all the time
+#   sudo bash legion/diag/diag-inputplumber-cpu.sh game-mode              # Game Mode idle, WITHOUT touching the controller
+#   sudo bash legion/diag/diag-inputplumber-cpu.sh desktop                # Xfce Wayland with Steam in the background + extest
+#   sudo bash legion/diag/diag-inputplumber-cpu.sh game-mode-controller   # optional: moving the controller all the time
 #   DUR=30 sudo -E ...   changes the duration of each pass (20 s by default).
 # Needs strace (sudo xbps-install -S strace; it can be removed afterwards). Without strace it does only step 1.
 #
@@ -44,7 +44,7 @@ LABEL=$(printf '%s' "$LABEL" | tr -c 'A-Za-z0-9_.-' '_')
 DUR=${DUR:-20}
 OUT=/tmp/measure-inputplumber-$LABEL.txt
 TMP=$(mktemp -d /tmp/measure-ip.XXXXXX)
-trap 'rm -rf "$TMP"' EXIT
+trap 'rm -rf "${TMP:?}"' EXIT
 
 if [ "$(id -u)" -ne 0 ]; then t "It has to be run with sudo." >&2; exit 1; fi
 PID=$(pgrep -xo inputplumber) || { t "InputPlumber is not running." >&2; exit 1; }

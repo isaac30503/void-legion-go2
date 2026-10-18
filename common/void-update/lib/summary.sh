@@ -72,6 +72,7 @@ vu_test_patch() {
     r=$(timeout 900 "$VU_PATCH_TEST" "${args[@]}" void "$b" "${patches[@]}" 2>/dev/null | grep '^RESULT ' | tail -1)
     [ -n "$r" ] || { echo "UNCHECKED|?|$(t "the test did not finish")"; return 0; }
     # RESULT <name> <version> <STATE> <detail…>
+    # shellcheck disable=SC2086  # RESULT <name> <version> <state> <detail>: split on purpose
     set -- $r
     local st=$4 ver=$3; shift 4
     echo "$st|$ver|$*"
@@ -294,6 +295,7 @@ vu_summary() {
         elif [ -n "$tag" ] && [ "$newest" != "$tag" ]; then
             if [ -x "$VU_PATCH_TEST" ] && [ ${#smp[@]} -gt 0 ]; then
                 r=$(timeout 900 "$VU_PATCH_TEST" git "$url" "$newest" steamos-manager "${smp[@]}" 2>/dev/null | grep '^RESULT ' | tail -1)
+                # shellcheck disable=SC2086  # RESULT <name> <version> <state> <detail>: split on purpose
                 set -- $r
                 case "${4:-}" in
                     STILL_NEEDED) note=$(t "; NOTE: upstream published %s and the patch is still needed (tested): to move to it, rebuild with %s changing VER and COMMIT" "$newest" build-steamos-manager.sh) ;;

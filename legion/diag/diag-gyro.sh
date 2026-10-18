@@ -5,7 +5,7 @@
 # Steam (hidraw of 28DE:12FB, the Deck's report 0x09: int16 gyroscope in bytes 30-35,
 # 0.0625 °/s per unit; accelerometer in 24-29, 1 g = 16384). Before that, InputPlumber's capabilities.
 # Previous (Spanish) name: diag-giroscopio.sh.
-# Usage: sh legion/diag-gyro.sh   (over SSH or on the Legion)
+# Usage: sh legion/diag/diag-gyro.sh   (over SSH or on the Legion)
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"
 t "== capabilities (Gamepad:Gyro and Gamepad:Accelerometer must show)"

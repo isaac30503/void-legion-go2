@@ -38,14 +38,14 @@ DIR=/usr/local/share/xdg-desktop-portal/gamescope-portals
 
 if is_remove "${1:-}"; then
     pkill -f "^$BIN" 2>/dev/null || true
-    rm -f "$BIN" "$ENV" "$SRV"; rm -rf "$DIR"
+    rm -f "$BIN" "$ENV" "$SRV"; rm -rf "${DIR:?}"
     t "removed (Game Mode goes back to having no capture portal from the next entry)"; exit 0
 fi
 
 [ -f "$PKG" ] || { t "missing %s (install/fetch-assets.sh downloads it)" "$PKG"; exit 1; }
 echo "$SUM  $PKG" | sha256sum -c -
 T=$(mktemp -d)
-trap 'rm -rf "$T"' EXIT
+trap 'rm -rf "${T:?}"' EXIT
 python3 -I - "$PKG" "$T" <<'PY'
 import io, sys, tarfile
 from compression import zstd

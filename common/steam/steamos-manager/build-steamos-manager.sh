@@ -34,7 +34,7 @@ OUTDIR=$(readlink -f "${1:-/tmp}")
 TAR="$OUTDIR/steamos-manager-$VER-void-2.tar.gz"
 SRC="$HOME/src/steamos-manager"
 ROOTDIR=$(mktemp -d /tmp/steamos-manager-root.XXXXXX)
-trap 'rm -rf "$ROOTDIR"' EXIT
+trap 'rm -rf "${ROOTDIR:?}"' EXIT
 export PATH="$HOME/.cargo/bin:$PATH"
 
 [ "$(id -u)" != 0 ] || { t "without root"; exit 1; }
@@ -100,5 +100,5 @@ fi
 sha256sum "$TAR" "$ROOTDIR/usr/lib/steamos-manager"
 
 cd /
-case "${2:-}" in --keep) t "code in %s" "$SRC" ;; *) rm -rf "$SRC" ;; esac
+case "${2:-}" in --keep) t "code in %s" "$SRC" ;; *) rm -rf "${SRC:?}" ;; esac
 t "Done: %s (cargo cache in ~/.cargo/registry: %s)" "$TAR" "$(du -sh ~/.cargo/registry | cut -f1)"

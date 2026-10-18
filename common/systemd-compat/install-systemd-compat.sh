@@ -33,7 +33,7 @@ restart_decky() {
 
 if is_remove "${1:-}"; then
     for n in $CMDS systemd-inhibit; do ours "/usr/bin/$n" && rm -f "/usr/bin/$n"; done
-    rm -rf "$LIB"
+    rm -rf "${LIB:?}"
     rm -f "$ETC/units.d/50-void-legion.conf"
     rmdir "$ETC/units.d" "$ETC" 2>/dev/null || true
     rm -rf /run/systemd-compat
@@ -105,7 +105,8 @@ fi
 t "== 7. check"
 fail=0
 v=$(systemctl is-system-running 2>/dev/null || true)
-[ "$v" = offline ] && t "   ok  systemctl is-system-running = offline (programs still see that systemd is not running)" || { t "!!  systemctl is-system-running = %s" "$v"; fail=1; }
+if [ "$v" = offline ]; then t "   ok  systemctl is-system-running = offline (programs still see that systemd is not running)"
+else t "!!  systemctl is-system-running = %s" "$v"; fail=1; fi
 if [ -n "$TARGET_USER" ] && [ -d "/run/user/$(id -u "$TARGET_USER")" ]; then
     if sudo -u "$TARGET_USER" XDG_RUNTIME_DIR="/run/user/$(id -u "$TARGET_USER")" systemctl --user list-jobs >/dev/null 2>&1; then
         t "!!  systemctl --user list-jobs answers: Xfce's xinitrc would believe there is a systemd user session"; fail=1
@@ -113,12 +114,16 @@ if [ -n "$TARGET_USER" ] && [ -d "/run/user/$(id -u "$TARGET_USER")" ]; then
 fi
 if [ -e /var/service/inputplumber ]; then
     v=$(systemctl is-active inputplumber.service 2>/dev/null || true)
-    [ "$v" = active ] && t "   ok  systemctl is-active inputplumber.service = active" || { t "!!  systemctl is-active inputplumber.service = %s" "$v"; fail=1; }
+    if [ "$v" = active ]; then t "   ok  systemctl is-active inputplumber.service = active"
+    else t "!!  systemctl is-active inputplumber.service = %s" "$v"; fail=1; fi
 fi
 if [ -e /var/service/decky ]; then
     v=$(systemctl is-active plugin_loader.service 2>/dev/null || true)
-    [ "$v" = active ] && t "   ok  systemctl is-active plugin_loader.service = active (Decky)" || { t "!!  systemctl is-active plugin_loader.service = %s" "$v"; fail=1; }
+    if [ "$v" = active ]; then t "   ok  systemctl is-active plugin_loader.service = active (Decky)"
+    else t "!!  systemctl is-active plugin_loader.service = %s" "$v"; fail=1; fi
 fi
-systemd-inhibit --list --no-pager >/dev/null 2>&1 && t "   ok  systemd-inhibit (elogind)" || { t "!!  systemd-inhibit --list fails"; fail=1; }
+if systemd-inhibit --list --no-pager >/dev/null 2>&1; then t "   ok  systemd-inhibit (elogind)"
+else t "!!  systemd-inhibit --list fails"; fail=1; fi
 restart_decky
-[ $fail = 0 ] && t "== done: void-update --systemd shows what programs ask for" || { t "!! something failed: see above"; exit 1; }
+if [ $fail = 0 ]; then t "== done: void-update --systemd shows what programs ask for"
+else t "!! something failed: see above"; exit 1; fi

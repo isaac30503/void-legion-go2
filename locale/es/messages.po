@@ -74,7 +74,7 @@ msgstr "(%d servicios; avisos: %d)"
 msgid "2. Packages"
 msgstr "2. Paquetes"
 
-#: common/agent/audit-void.sh common/ssh-setup/ssh-survey.sh legion/diag-controller-gyros.sh legion/steps-1-to-3.sh
+#: common/agent/audit-void.sh common/ssh-setup/ssh-survey.sh legion/diag/diag-controller-gyros.sh legion/steps-1-to-3.sh
 msgid "none"
 msgstr "ninguno"
 
@@ -1330,7 +1330,7 @@ msgstr "== Reiniciar para que lightdm deje de usar el envoltorio."
 msgid "!! /usr/local/bin/steam-game-mode is an old one: run install-game-mode.sh first"
 msgstr "!! /usr/local/bin/steam-game-mode es de antes: correr primero install-game-mode.sh"
 
-#: common/grub-theme/install-theme.sh common/steam/install-direct-session.sh common/steam/test-autologin.sh
+#: common/diag/test-autologin.sh common/grub-theme/install-theme.sh common/steam/install-direct-session.sh
 msgid "== differences in %s:"
 msgstr "== diferencias en %s:"
 
@@ -1338,7 +1338,7 @@ msgstr "== diferencias en %s:"
 msgid "== Reboot and, at the login screen, choose 'Steam (Game Mode, direct screen)'."
 msgstr "== Reiniciar y, en la pantalla de inicio, elegir 'Steam (Modo Juego, pantalla directa)'."
 
-#: common/steam/test-autologin.sh
+#: common/diag/test-autologin.sh
 msgid "== Reboot to test it."
 msgstr "== Reiniciar para probarlo."
 
@@ -1350,19 +1350,19 @@ msgstr "== diferencias:"
 msgid "== Reboot so that no old login screen is left hanging (there is one from before)."
 msgstr "== Reiniciar para que no quede ninguna pantalla de inicio vieja colgada (hay una de antes)."
 
-#: common/steam/capture-syslog.sh
+#: common/diag/capture-syslog.sh
 msgid "== stopped. Log:"
 msgstr "== parado. Registro:"
 
-#: common/steam/capture-syslog.sh
+#: common/diag/capture-syslog.sh
 msgid "!! it is already running"
 msgstr "!! ya corre"
 
-#: common/steam/capture-syslog.sh
+#: common/diag/capture-syslog.sh
 msgid "== Listening. Switch mode (there and back) and then: sudo sh %s --stop"
 msgstr "== Escuchando. Cambia de modo (ida y vuelta) y luego: sudo sh %s --stop"
 
-#: common/steam/diag-lightdm.sh
+#: common/diag/diag-lightdm.sh
 msgid "saved in %s (%s lines)"
 msgstr "guardado en %s (%s líneas)"
 
@@ -1494,7 +1494,7 @@ msgstr "== quitado; diferencias en %s:"
 msgid "== Reboot: the login screen with password comes back."
 msgstr "== Reiniciar: vuelve la pantalla de inicio con contraseña."
 
-#: common/steam/install-passwordless-switch.sh common/steam/test-autologin.sh
+#: common/diag/test-autologin.sh common/steam/install-passwordless-switch.sh
 msgid "!! The direct session is missing: run install-direct-session.sh first"
 msgstr "!! Falta la sesión directa: correr antes install-direct-session.sh"
 
@@ -2158,363 +2158,363 @@ msgstr "== en grub.cfg:"
 msgid "== it will boot: %s"
 msgstr "== arrancará: %s"
 
-#: legion/diag-inputplumber-cpu.sh
+#: legion/diag/diag-inputplumber-cpu.sh
 msgid "It has to be run with sudo."
 msgstr "Hay que correrlo con sudo."
 
-#: legion/diag-inputplumber-cpu.sh
+#: legion/diag/diag-inputplumber-cpu.sh
 msgid "InputPlumber is not running."
 msgstr "InputPlumber no está corriendo."
 
-#: legion/diag-inputplumber-cpu.sh
+#: legion/diag/diag-inputplumber-cpu.sh
 msgid ">> Measuring InputPlumber (PID %s), label '%s', 3 passes of %s s."
 msgstr ">> Midiendo InputPlumber (PID %s), etiqueta '%s', 3 pasadas de %s s."
 
-#: legion/diag-inputplumber-cpu.sh
+#: legion/diag/diag-inputplumber-cpu.sh
 msgid ">> Do not touch the controller (unless the label is the 'moving the controller' one)."
 msgstr ">> No toques el mando (salvo si la etiqueta es la de 'moviendo el mando')."
 
-#: legion/diag-inputplumber-cpu.sh
+#: legion/diag/diag-inputplumber-cpu.sh
 msgid ">> 1/3: without strace (%s s)…"
 msgstr ">> 1/3: sin strace (%s s)…"
 
-#: legion/diag-inputplumber-cpu.sh
+#: legion/diag/diag-inputplumber-cpu.sh
 msgid ">> strace is not there: only pass 1 done. Result in %s"
 msgstr ">> strace no está: hecha solo la pasada 1. Resultado en %s"
 
-#: legion/diag-inputplumber-cpu.sh
+#: legion/diag/diag-inputplumber-cpu.sh
 msgid ">> 2/3: strace -c (%s s; the input may be somewhat slower)…"
 msgstr ">> 2/3: strace -c (%s s; la entrada puede ir algo más lenta)…"
 
-#: legion/diag-inputplumber-cpu.sh
+#: legion/diag/diag-inputplumber-cpu.sh
 msgid ">> 3/3: strace per descriptor (%s s)…"
 msgstr ">> 3/3: strace por descriptor (%s s)…"
 
-#: legion/diag-inputplumber-cpu.sh
+#: legion/diag/diag-inputplumber-cpu.sh
 msgid ">> Done. Result: %s"
 msgstr ">> Hecho. Resultado: %s"
 
-#: common/steam/steamos-manager/diag-steamos-manager.sh legion/diag-edp.sh legion/diag-monitor.sh
+#: common/steam/steamos-manager/diag-steamos-manager.sh legion/diag/diag-edp.sh legion/diag/diag-monitor.sh
 msgid "done: %s"
 msgstr "listo: %s"
 
-#: legion/diag-gamescope-pipewire.sh
+#: legion/diag/diag-gamescope-pipewire.sh
 msgid "gdb is missing: sudo xbps-install -S gdb"
 msgstr "falta gdb: sudo xbps-install -S gdb"
 
-#: legion/diag-gamescope-pipewire.sh
+#: legion/diag/diag-gamescope-pipewire.sh
 msgid "!! without gamescope-dbg: the trace will come out without function names or lines"
 msgstr "!! sin gamescope-dbg: la traza saldrá sin nombres de función ni líneas"
 
-#: legion/diag-gamescope-pipewire.sh
+#: legion/diag/diag-gamescope-pipewire.sh
 msgid "gamescope is not running: enter Game Mode first"
 msgstr "gamescope no está en marcha: entrar antes al Modo Juego"
 
-#: legion/diag-gamescope-pipewire.sh
+#: legion/diag/diag-gamescope-pipewire.sh
 msgid "gdb waiting (pid %s). Now: stream in Vesktop and change a setting."
 msgstr "gdb esperando (pid %s). Ahora: transmitir en Vesktop y cambiar un ajuste."
 
-#: legion/diag-gamescope-pipewire.sh
+#: legion/diag/diag-gamescope-pipewire.sh
 msgid "Trace: %s"
 msgstr "Traza: %s"
 
-#: legion/diag-gamescope-pipewire.sh
+#: legion/diag/diag-gamescope-pipewire.sh
 msgid "gdb did not stay attached:"
 msgstr "gdb no se quedó enganchado:"
 
-#: legion/diag-gyro.sh
+#: legion/diag/diag-gyro.sh
 msgid "== capabilities (Gamepad:Gyro and Gamepad:Accelerometer must show)"
 msgstr "== capacidades (deben salir Gamepad:Gyro y Gamepad:Accelerometer)"
 
-#: legion/diag-gyro.sh
+#: legion/diag/diag-gyro.sh
 msgid "  NONE: imu sources with blocked: true in the profile?"
 msgstr "  NINGUNA: ¿fuentes imu con blocked: true en el perfil?"
 
-#: legion/diag-gyro.sh
+#: legion/diag/diag-gyro.sh
 msgid "there is no gyro_3d (amd_sfh)"
 msgstr "no hay gyro_3d (amd_sfh)"
 
-#: legion/diag-gyro.sh
+#: legion/diag/diag-gyro.sh
 msgid "== sensor: %s, declared scale %s"
 msgstr "== sensor: %s, escala declarada %s"
 
-#: legion/diag-gyro.sh
+#: legion/diag/diag-gyro.sh
 msgid "the virtual controller 28DE:12FB is not there (InputPlumber stopped?)"
 msgstr "no está el mando virtual 28DE:12FB (¿InputPlumber parado?)"
 
-#: legion/diag-gyro.sh
+#: legion/diag/diag-gyro.sh
 msgid "== virtual controller: %s. TURN THE CONSOLE for 20 s"
 msgstr "== mando virtual: %s. GIRA LA CONSOLA durante 20 s"
 
-#: legion/diag-gyro.sh
+#: legion/diag/diag-gyro.sh
 msgid "s%02d  to Steam: max rotation %s  acceleration %s  | sensor (°/s): %s"
 msgstr "s%02d  a Steam: giro máx %s  aceleración %s  | sensor (°/s): %s"
 
-#: legion/diag-gyro.sh
+#: legion/diag/diag-gyro.sh
 msgid "Fine: when turning, 'max rotation' from hundreds to ~1500; acceleration with magnitude ~16384 (1 g)."
 msgstr "Bien: al girar, 'giro máx' de cientos a ~1500; aceleración con módulo ~16384 (1 g)."
 
-#: legion/diag-gyro.sh
+#: legion/diag/diag-gyro.sh
 msgid "If the rotation stays at ~15: the profile's ×100 mount_matrix is missing (the kernel's scale)."
 msgstr "Si el giro se queda en ~15: falta la mount_matrix ×100 del perfil (escala del kernel)."
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "I cannot find the controller (17ef:61eb…61ee)"
 msgstr "no encuentro el mando (17ef:61eb…61ee)"
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "%s (interface %s)"
 msgstr "%s (interfaz %s)"
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "leave BOTH controllers detached and still on the table, and the tablet still"
 msgstr "deja los DOS mandos separados y quietos sobre la mesa, y la tableta quieta"
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "turn the LEFT controller in all directions (the right one and the tablet, still)"
 msgstr "gira el mando IZQUIERDO en todas direcciones (el derecho y la tableta, quietos)"
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "turn the RIGHT controller in all directions (the left one and the tablet, still)"
 msgstr "gira el mando DERECHO en todas direcciones (el izquierdo y la tableta, quietos)"
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "turn the TABLET (the controllers, still on the table)"
 msgstr "gira la TABLETA (los mandos, quietos sobre la mesa)"
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "Interfaces: %s. %.0f s per phase. Read-only."
 msgstr "Interfaces: %s. %.0f s por fase. Solo lectura."
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "Starting in %d…  (detach both controllers)   "
 msgstr "Empieza en %d…  (separa los dos mandos)   "
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "NOW: %s"
 msgstr "AHORA: %s"
 
-#: legion/diag-controller-gyros.sh legion/test-controller-imu.sh
+#: legion/diag/diag-controller-gyros.sh legion/diag/test-controller-imu.sh
 msgid "%4.1f s left "
 msgstr "quedan %4.1f s "
 
-#: legion/diag-controller-gyros.sh legion/test-controller-imu.sh
+#: legion/diag/diag-controller-gyros.sh legion/diag/test-controller-imu.sh
 msgid "done."
 msgstr "hecho."
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "Finished: you can leave everything now."
 msgstr "Terminado: ya puedes dejar todo."
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "== %s: %d messages of %d bytes, starting with %s"
 msgstr "== %s: %d mensajes de %d bytes, empiezan por %s"
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "example: "
 msgstr "ejemplo: "
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "(none arrived)"
 msgstr "(no llegó ninguno)"
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "byte %d (±%d)"
 msgstr "byte %d (±%d)"
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "nothing"
 msgstr "nada"
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "change more than at rest → %s"
 msgstr "cambian más que en reposo → %s"
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "bytes that already change when still → %s"
 msgstr "bytes que ya cambian quietos → %s"
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "== XInput report (InputPlumber's format), variation per phase:"
 msgstr "== Informe XInput (formato de InputPlumber), variación por fase:"
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "(No report with InputPlumber's XInput format: id 0x04, command 0x74, 60 bytes.)"
 msgstr "(Ningún informe con el formato XInput de InputPlumber: id 0x04, orden 0x74, 60 bytes.)"
 
-#: legion/diag-controller-gyros.sh
+#: legion/diag/diag-controller-gyros.sh
 msgid "Reading: if in the 'left' phase bytes change that do not change in 'right' (and the other way round), each\ncontroller sends its IMU. If nothing changes when turning a controller, its IMU is off."
 msgstr "Lectura: si en la fase 'left' (izquierdo) cambian bytes que no cambian en 'right' (derecho) (y al revés), cada\nmando manda su IMU. Si al girar un mando no cambia nada, su IMU está apagado."
 
-#: legion/right-controller-gyro.sh
+#: legion/diag/right-controller-gyro.sh
 msgid "I cannot find the controller's configuration interface (endpoint 0x83)"
 msgstr "no encuentro la interfaz de configuración del mando (endpoint 0x83)"
 
-#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+#: legion/diag/right-controller-gyro.sh legion/diag/test-controller-imu.sh
 msgid "yes"
 msgstr "sí"
 
-#: legion/right-controller-gyro.sh legion/test-controller-imu.sh
+#: legion/diag/right-controller-gyro.sh legion/diag/test-controller-imu.sh
 msgid "no"
 msgstr "no"
 
-#: legion/right-controller-gyro.sh
+#: legion/diag/right-controller-gyro.sh
 msgid "no answer (%s)"
 msgstr "sin respuesta (%s)"
 
-#: legion/right-controller-gyro.sh
+#: legion/diag/right-controller-gyro.sh
 msgid "InputPlumber's filter before:"
 msgstr "Filtro de InputPlumber antes:"
 
-#: legion/right-controller-gyro.sh
+#: legion/diag/right-controller-gyro.sh
 msgid "Right controller, IMU bypass →"
 msgstr "Mando derecho, IMU bypass →"
 
-#: legion/right-controller-gyro.sh
+#: legion/diag/right-controller-gyro.sh
 msgid "The filter could not be set:"
 msgstr "No se pudo poner el filtro:"
 
-#: legion/right-controller-gyro.sh
+#: legion/diag/right-controller-gyro.sh
 msgid "InputPlumber 0.81 fails when changing filters (\"failed to send command to device\") and may"
 msgstr "InputPlumber 0.81 falla al cambiar filtros (\"failed to send command to device\") y puede"
 
-#: legion/right-controller-gyro.sh
+#: legion/diag/right-controller-gyro.sh
 msgid "leave something half done: rebooting the Legion leaves everything as from the factory."
 msgstr "dejar algo a medias: reiniciar la Legion lo deja todo de fábrica."
 
-#: legion/right-controller-gyro.sh
+#: legion/diag/right-controller-gyro.sh
 msgid "InputPlumber does not have the controller's source with Gyroscope:Right: nothing is changed"
 msgstr "InputPlumber no tiene la fuente del mando con Gyroscope:Right: no se cambia nada"
 
-#: legion/right-controller-gyro.sh
+#: legion/diag/right-controller-gyro.sh
 msgid "InputPlumber's filter now:"
 msgstr "Filtro de InputPlumber ahora:"
 
-#: legion/right-controller-gyro.sh
+#: legion/diag/right-controller-gyro.sh
 msgid "Done."
 msgstr "Listo."
 
-#: legion/right-controller-gyro.sh
-msgid "Test: sh legion/diag-gyro.sh turning the right controller detached."
-msgstr "Prueba: sh legion/diag-gyro.sh girando el mando derecho separado."
+#: legion/diag/right-controller-gyro.sh
+msgid "Test: sh legion/diag/diag-gyro.sh turning the right controller detached."
+msgstr "Prueba: sh legion/diag/diag-gyro.sh girando el mando derecho separado."
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "I cannot find the controller's configuration interface (17ef:61eb…61ee, endpoint 0x83)"
 msgstr "no encuentro la interfaz de configuración del mando (17ef:61eb…61ee, endpoint 0x83)"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "IMU on"
 msgstr "IMU encendido"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "IMU bypass"
 msgstr "IMU bypass"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "left"
 msgstr "izquierdo"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "right"
 msgstr "derecho"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "unknown"
 msgstr "desconocido"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "   → %s … (%d bytes)"
 msgstr "   → %s … (%d bytes)"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "NOW: turn the RIGHT controller in all directions (%.0f s) — %s"
 msgstr "AHORA: gira el mando DERECHO en todas direcciones (%.0f s) — %s"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "no report from the controller arrived"
 msgstr "no llegó ningún informe del mando"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "%d reports. Variation of the right IMU (bytes 48–59: accel ×3, gyro ×3): %s"
 msgstr "%d informes. Variación IMU derecho (bytes 48–59: accel ×3, giro ×3): %s"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "Variation of the low-resolution rotation (bytes 30–33: left x,y · right x,y): %s"
 msgstr "Variación giro de baja resolución (bytes 30–33: izq x,y · der x,y): %s"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "Configuration interface: %s. Only the RIGHT controller is changed."
 msgstr "Interfaz de configuración: %s. Solo se cambia el mando DERECHO."
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "== Current state"
 msgstr "== Estado actual"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "controller %-9s %-13s: %s"
 msgstr "mando %-9s %-13s: %s"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "no answer"
 msgstr "sin respuesta"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "as is"
 msgstr "tal cual"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "== Right controller: %s → yes"
 msgstr "== Mando derecho: %s → sí"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "now: %s"
 msgstr "ahora: %s"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "with %s"
 msgstr "con %s"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "and IMU on"
 msgstr "y IMU encendido"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "== Result: "
 msgstr "== Resultado: "
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "the right controller's IMU MOVES (bytes 48–59)."
 msgstr "el IMU del mando derecho SE MUEVE (bytes 48–59)."
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "the right controller's IMU does NOT move with either of the two commands."
 msgstr "el IMU del mando derecho NO se mueve con ninguna de las dos órdenes."
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "--keep: the right controller stays as it is now."
 msgstr "--keep (--dejar): el mando derecho se queda como está ahora."
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "== Putting the right controller back as it was"
 msgstr "== Devolviendo el mando derecho a como estaba"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "%s: %s → now %s"
 msgstr "%s: %s → ahora %s"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "%s: the original state could not be read; it is left as is (to turn it off: value 02)"
 msgstr "%s: no se pudo leer el estado original; se deja como está (para apagarlo: valor 02)"
 
-#: legion/test-controller-imu.sh
+#: legion/diag/test-controller-imu.sh
 msgid "Log: ~/test-controller-imu.log"
 msgstr "Registro: ~/test-controller-imu.log"
 
-#: legion/diag-steam-keyboard.sh
+#: legion/diag/diag-steam-keyboard.sh
 msgid "Stopped. Results in %s/"
 msgstr "Parada. Resultados en %s/"
 
-#: legion/diag-steam-keyboard.sh
+#: legion/diag/diag-steam-keyboard.sh
 msgid "Capturing in %s/ (stop: bash %s --stop)"
 msgstr "Capturando en %s/ (parar: bash %s --stop)"
 
@@ -4085,3 +4085,7 @@ msgstr "%s piezas; cada fichero tiene su pieza y cada instalador su sitio"
 #: common/agent/audit-void.sh
 msgid "%s: not verifiable without root"
 msgstr "%s: no verificable sin root"
+
+#: legion/like-steamos.sh
+msgid "!! preempt=full is not in grub.cfg"
+msgstr "!! preempt=full no está en grub.cfg"

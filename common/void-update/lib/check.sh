@@ -56,7 +56,7 @@ vu_check() {
             cp "$VU_STATE/all" "$VU_STATE/notified"
             vu_notify "$n"
         fi
-        [ -n "$quiet" ] || { [ "$n" = 1 ] && info "1 update available" || info "%s updates available" "$n"; }
+        if [ -z "$quiet" ]; then if [ "$n" = 1 ]; then info "1 update available"; else info "%s updates available" "$n"; fi; fi
     else
         vu_set_state up-to-date
         : > "$VU_STATE/notified"

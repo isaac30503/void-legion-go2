@@ -17,7 +17,7 @@ CHECK=; [ "${1:-}" = --check ] && CHECK=1
 LIST="$REPO_ROOT/install/assets.tsv"
 TAG=$(sed -n 's/^# release: //p' "$LIST")
 SLUG=${VOID_LEGION_GITHUB:-$(git -C "$REPO_ROOT" remote get-url origin 2>/dev/null | sed -E 's#^(https://github.com/|git@github.com:)##; s#\.git$##')}
-DL=$(mktemp -d); trap 'rm -rf "$DL"' EXIT
+DL=$(mktemp -d); trap 'rm -rf "${DL:?}"' EXIT
 
 download() {   # $1 = asset name → $DL/$1
     # A public repository: a plain download, no login (the sha256 is checked afterwards anyway)

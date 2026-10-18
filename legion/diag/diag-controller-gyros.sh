@@ -10,7 +10,7 @@
 # messages through interface 2 and none with that format: that is why everything is looked at raw.
 # Previous (Spanish) name: diag-giroscopio-mandos.sh (its log of 2026-10-05, diag-giroscopio-mandos.log,
 # is archived in the private repository, archive/2026-10-14/logs/legion/).
-#   sudo sh legion/diag-controller-gyros.sh [seconds per phase]     (8 by default)
+#   sudo sh legion/diag/diag-controller-gyros.sh [seconds per phase]     (8 by default)
 # Log: ~/diag-controller-gyros.log. docs/3-hardware-support/1-controllers.md, Known limits (2026-10-05).
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"
@@ -22,6 +22,7 @@ for h in /sys/class/hidraw/hidraw*; do
     DEVS="$DEVS /dev/${h##*/}:$(cat "$h/device/../bInterfaceNumber" 2>/dev/null)"
 done
 [ -n "$DEVS" ] || { t "I cannot find the controller (17ef:61eb…61ee)"; exit 1; }
+# shellcheck disable=SC2086  # a list of device paths
 VL_LIB="$REPO_ROOT/lib" python3 - "$SEC" "$TARGET_HOME/diag-controller-gyros.log" $DEVS <<'EOF'
 import os, sys, time, select, struct, collections
 sys.path.insert(0, os.environ.get("VL_LIB", ""))

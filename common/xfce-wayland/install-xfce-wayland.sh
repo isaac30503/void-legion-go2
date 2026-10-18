@@ -37,8 +37,9 @@ OLD="/usr/share/applications/escritorio-wayland.desktop /usr/share/applications/
      $H/.local/bin/brillo $H/.local/bin/fondo-vigilante"
 
 if is_remove "${1:-}"; then
+    # shellcheck disable=SC2086  # OLD: a list of old paths, without spaces
     rm -f "$LW" "$LX" "$H/.local/bin/brightness" "$H/.local/bin/wallpaper-watcher" $OLD
-    rm -rf "$CFG" "$H/.local/share/themes/Orchis-Teal-Dark-Compact/labwc"
+    rm -rf "${CFG:?}" "${H:?}/.local/share/themes/Orchis-Teal-Dark-Compact/labwc"
     t "== removed the launchers, %s and ~/.local/bin/brightness (labwc stays installed:" "$CFG"
     t "   sudo xbps-remove labwc). CAREFUL: \"desktop\" is still Wayland in switch-mode-root;"
     t "   to go back to X11: sudo /usr/local/bin/switch-mode-root desktop-x11"
@@ -71,6 +72,7 @@ grep '^XKB_' "$CFG/environment" | sed 's/^/   /'
 sudo -u "$U" touch "$CFG/lock"
 sudo -u "$U" install -m 755 "$D/brightness" "$H/.local/bin/brightness"
 sudo -u "$U" install -m 755 "$D/wallpaper-watcher" "$H/.local/bin/wallpaper-watcher"
+# shellcheck disable=SC2086  # a list of old paths, without spaces
 rm -f $OLD
 ls -la "$CFG" "$H/.local/bin/brightness" "$H/.local/bin/wallpaper-watcher"
 

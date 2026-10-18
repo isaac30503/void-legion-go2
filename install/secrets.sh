@@ -27,7 +27,7 @@ API="repos/$SR/contents/$AGE"
 hash_of() { [ -f "$1" ] && sha256sum "$1" | cut -d' ' -f1 || echo -; }
 stamp()   { printf '%s %s\n' "$(hash_of $ENV)" "$(hash_of $AGE)" > $STAMP; }
 need_age() { command -v age >/dev/null || { t "!! age is not installed: sudo xbps-install -S age"; exit 1; }; }
-need_gh()  { command -v gh >/dev/null && gh auth status >/dev/null 2>&1 || { t "!! gh is needed, logged in (gh auth login): the copy is in the private repository %s" "$SR"; exit 1; }; }
+need_gh()  { { command -v gh >/dev/null && gh auth status >/dev/null 2>&1; } || { t "!! gh is needed, logged in (gh auth login): the copy is in the private repository %s" "$SR"; exit 1; }; }
 # fetch FILE: the private repository's copy into FILE (returns 1 if there is none)
 fetch() { gh api "$API" --jq .content 2>/dev/null | base64 -d > "$1" 2>/dev/null && [ -s "$1" ]; }
 

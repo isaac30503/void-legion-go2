@@ -51,7 +51,7 @@ remove_old() {
 cp "$CONF" "$CONF.bak"
 if is_remove "${1:-}"; then
     rm -f "$DROP" "$OLD_DROP" "$HELP" "$SUDO" "$SHUTDOWN" "$SESSION_WRAPPER"
-    rm -f /var/service/mode-switch; rm -rf "${RESTART%/*}" "$SV_SWITCH"
+    rm -f /var/service/mode-switch; rm -rf "${RESTART%/*}" "${SV_SWITCH:?}"
     remove_old
     # The ISO's two lines, as they came (nonexistent user: no autologin).
     sed -i 's/^#*autologin-user=.*/autologin-user=anon/; s/^#*autologin-session=.*/autologin-session=xfce/' "$CONF"

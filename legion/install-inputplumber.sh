@@ -35,7 +35,7 @@ if is_remove "${1:-}"; then
     rm -f /var/service/inputplumber
     sleep 6                                    # runsvdir lets go of the service in ≤5 s
     for m in "$MAN" "$MAN_OLD"; do [ -f "$m" ] && xargs -d '\n' rm -f < "$m"; done
-    rm -rf "$SV" "${MAN%/*}" "${BIN%/bin}" /usr/share/inputplumber "$PROFILE"
+    rm -rf "${SV:?}" "${MAN%/*}" "${BIN%/bin}" /usr/share/inputplumber "${PROFILE:?}"
     rm -f /run/udev/rules.d/*-inputplumber-hide-*.rules     # its rules for hiding
     rmdir /etc/inputplumber/devices.d /etc/inputplumber 2>/dev/null || true
     reload
@@ -52,10 +52,10 @@ echo "$SHA  $TAR" | sha256sum -c --quiet && t "inputplumber-x86_64.tar.gz: v%s, 
 for p in libiio acl-progs; do xbps-query "$p" >/dev/null || xbps-install -Sy "$p"; done
 
 # 2. The package's files, except the systemd things (units and udev's autostart rule)
-T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
+T=$(mktemp -d); trap 'rm -rf "${T:?}"' EXIT
 tar xzf "$TAR" -C "$T"
 P="$T/inputplumber"
-rm -rf "$P/usr/lib/systemd" "$P/usr/lib/udev/rules.d/90-inputplumber-autostart.rules"
+rm -rf "${P:?}/usr/lib/systemd" "${P:?}/usr/lib/udev/rules.d/90-inputplumber-autostart.rules"
 mkdir -p "${MAN%/*}"
 ( cd "$P" && find . -type f | sed 's|^\.||' ) > "$MAN"
 rm -f "$MAN_OLD"                               # the same list under the old name: only one

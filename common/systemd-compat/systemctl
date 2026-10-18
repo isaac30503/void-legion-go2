@@ -113,7 +113,7 @@ enabled_state() {
 
 # A control verb on one resolved unit
 control() {   # VERB UNIT
-    local v=$1
+    local v="$1"
     case $SC_TYPE in
         runit)
             is_root || need_auth "$v" "$2"
@@ -141,7 +141,7 @@ control() {   # VERB UNIT
     return 0
 }
 start_proc() {
-    mkdir -p "$SC_DIR" 2>/dev/null && chmod 700 "$SC_DIR" || { echo "Failed to start $1.service: cannot create $SC_DIR" >&2; sc_log failed "mkdir $SC_DIR"; return 1; }
+    { mkdir -p "$SC_DIR" 2>/dev/null && chmod 700 "$SC_DIR"; } || { echo "Failed to start $1.service: cannot create $SC_DIR" >&2; sc_log failed "mkdir $SC_DIR"; return 1; }
     [ -n "$SC_CMD" ] && { sc_write_exec_run "$SC_DIR" "$SC_CMD" || return 1; }
     [ -x "$SC_DIR/run" ] || { echo "Failed to start $1.service: Unit $1.service not found." >&2; return 5; }
     sc_proc_start "$SC_DIR"
@@ -219,7 +219,7 @@ list_units() {
     return 0
 }
 matches() {   # NAME PATTERN...
-    local n=$1 p; shift
+    local n="$1" p; shift
     for p in "$@"; do sc_norm "$p"
         # shellcheck disable=SC2254
         case $n in $SC_U) return 0 ;; esac
@@ -242,7 +242,7 @@ list_unit_files() {
 # Every verb that takes units runs on each one; the exit code is the worst one, like systemctl
 rc=0
 each() {   # VERB UNIT...
-    local v=$1 u r; shift
+    local v="$1" u r; shift
     [ $# -gt 0 ] || { echo "Too few arguments." >&2; exit 1; }
     for u in "$@"; do
         sc_norm "$u"; u=$SC_U

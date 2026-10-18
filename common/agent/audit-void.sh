@@ -205,7 +205,7 @@ PY
 NEW=$(ls /etc/*.new-* /etc/default/*.new-* 2>/dev/null); echo "   $(t ".new-* in /etc: %s (do not apply them: the good one is the current one)" "${NEW:-$(t "none")}")"
 command -v gamescope >/dev/null && echo "   gamescope: $(getcap /usr/bin/gamescope 2>/dev/null || t 'WITHOUT cap_sys_nice')"
 for b in /usr/local/bin/* /usr/local/lib/* /usr/lib/steamos-manager /usr/bin/inputplumber "$HOME"/.local/lib/*/*.so; do
-    [ -f "$b" ] && file -b "$b" 2>/dev/null | grep -q ELF || continue
+    { [ -f "$b" ] && file -b "$b" 2>/dev/null | grep -q ELF; } || continue
     ldd "$b" 2>/dev/null | grep -q 'not found' && echo "!! $(t "%s: libraries missing: %s" "$b" "$(ldd "$b" | grep 'not found' | awk '{print $1}' | tr '\n' ' ')")"
 done
 

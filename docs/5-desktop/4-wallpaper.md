@@ -26,7 +26,7 @@ itself showed them right. A "fix" made from those captures broke the real panels
 screen, check by looking at it, not with a capture.
 
 **Check:** `~/.local/state/wallpaper-watcher.log` (redone every session), e.g. `vigilando 2 pantallas`, two
-`geometry:` lines and `xfdesktop --reload (rc=0)`. On the spot: `xfdesktop --reload` or switch workspace. (Ruled out while finding it: HDR/VRR/color properties and the panel's self-refresh; `sudo sh "$B/legion/diag-edp.sh" black|fine` compares amdgpu's state of the screen black and fine: identical.)
+`geometry:` lines and `xfdesktop --reload (rc=0)`. On the spot: `xfdesktop --reload` or switch workspace. (Ruled out while finding it: HDR/VRR/color properties and the panel's self-refresh; `sudo sh "$B/legion/diag/diag-edp.sh" black|fine` compares amdgpu's state of the screen black and fine: identical.)
 
 ## The wallpaper dialog does nothing: patched xfdesktop
 

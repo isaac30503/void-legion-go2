@@ -48,13 +48,13 @@ cp "$CONF" "$CONF.bak"
 remove_block
 
 if is_remove "${1:-}"; then
-    rm -rf "$DEST" /etc/kernel.d/post-install/60-grub-theme /etc/kernel.d/post-remove/60-grub-theme
+    rm -rf "${DEST:?}" /etc/kernel.d/post-install/60-grub-theme /etc/kernel.d/post-remove/60-grub-theme
     remove_old
-    [ "$HERE" = "$LIB" ] || rm -rf "$LIB"
+    [ "$HERE" = "$LIB" ] || rm -rf "${LIB:?}"
     t "== theme, hooks and scripts removed"
     t "== differences in %s:" "$CONF"; diff "$CONF.bak" "$CONF" || true
     update-grub
-    [ "$HERE" = "$LIB" ] && rm -rf "$LIB"      # last, when it runs from its installed copy
+    [ "$HERE" = "$LIB" ] && rm -rf "${LIB:?}"      # last, when it runs from its installed copy
     exit 0
 fi
 
@@ -101,7 +101,7 @@ done
 ls -la /etc/kernel.d/post-install/60-grub-theme /etc/kernel.d/post-remove/60-grub-theme
 
 t "== 5. theme and menu"
-rm -rf "$DEST"; mkdir -p "$DEST"
+rm -rf "${DEST:?}"; mkdir -p "${DEST:?}"
 python3 "$LIB/build.py" "$DEST" "preparing"     # creates the files (fonts: console, countdown) before update-grub
 update-grub                                     # loads those fonts; menu without submenu
 if ! python3 "$LIB/build.py" "$DEST" --from-grub; then   # background with the final entries
@@ -113,5 +113,5 @@ sed 's/^/   /' "$DEST/entries.txt"
 t "== check"
 grub-script-check /boot/grub/grub.cfg && t "   syntax of grub.cfg: fine"
 grep -E 'loadfont|set theme|gfxmode' /boot/grub/grub.cfg | sed 's/^/   /' | head -8
-grep -q 'submenu ' /boot/grub/grub.cfg && t "   CAREFUL: there is still a submenu!" || t "   no submenus: fine"
+if grep -q 'submenu ' /boot/grub/grub.cfg; then t "   CAREFUL: there is still a submenu!"; else t "   no submenus: fine"; fi
 t "   theme files: %s" "$(ls "$DEST" | tr '\n' ' ')"

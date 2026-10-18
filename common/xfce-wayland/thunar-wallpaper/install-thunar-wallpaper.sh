@@ -24,7 +24,7 @@ if xbps-uhelper cmpver "$LW" 4.20.6; [ $? = 255 ]; then
     t "!! the patch needs libxfce4windowing >= 4.20.6 (there is %s): update first (void-update)" "$LW"; exit 1
 fi
 REPO=$(mktemp -d /tmp/thunar-repo.XXXXXX)
-trap 'rm -rf "$REPO"' EXIT
+trap 'rm -rf "${REPO:?}"' EXIT
 cp "$PKG" "$REPO/"
 xbps-rindex -a "$REPO"/*.xbps
 xbps-install -R "$REPO" "$VER"     # asks to confirm
@@ -34,8 +34,8 @@ xbps-query -p pkgver Thunar
 xbps-query -p repository Thunar
 [ "$(xbps-query -p pkgver Thunar)" = "$VER" ] || { t "!! %s was not left installed" "$VER"; exit 1; }
 LDD=$(ldd /usr/lib/thunarx-3/thunar-wallpaper-plugin.so)
-grep -q 'libxfce4windowing-0.so.0 => /' <<<"$LDD" && t "OK: installed %s (the wallpaper plugin uses libxfce4windowing)" "$VER" \
-    || { t "!! the wallpaper plugin does not link libxfce4windowing"; exit 1; }
+if grep -q 'libxfce4windowing-0.so.0 => /' <<<"$LDD"; then t "OK: installed %s (the wallpaper plugin uses libxfce4windowing)" "$VER"
+else t "!! the wallpaper plugin does not link libxfce4windowing"; exit 1; fi
 echo
 t "Now, AS THE USER (without sudo): thunar -q ; then, in Xfce Wayland, in an xterm:"
 t "  xfconf-query -c xfce4-desktop -m      (it watches the changes)"

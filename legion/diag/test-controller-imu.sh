@@ -12,7 +12,7 @@
 # with "bypass" as well; it stops as soon as they move. At the end it PUTS the right controller BACK as it was
 # (with --keep, it leaves it on for the next step). It only touches the right controller.
 # Previous (Spanish) name: probar-imu-mando.sh (its log of 2026-10-05 is archived in the private repository, archive/2026-10-14/logs/legion/).
-#   sudo sh legion/test-controller-imu.sh [--keep]     
+#   sudo sh legion/diag/test-controller-imu.sh [--keep]     
 # Log: ~/test-controller-imu.log. docs/3-hardware-support/1-controllers.md, Known limits (2026-10-05).
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"

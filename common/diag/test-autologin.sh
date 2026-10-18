@@ -12,8 +12,8 @@
 # user that does not exist, and autologin-session=xfce); --remove puts them back as they were. Leaves .bak.
 # Needs install-direct-session.sh (the session steam-game-mode-direct). docs/4-sessions/1-login-and-modes.md.
 # Previous (Spanish) name: probar-inicio-automatico.sh.
-#   sudo sh common/steam/test-autologin.sh            enables (valid on reboot)
-#   sudo sh common/steam/test-autologin.sh --remove   leaves it as it came
+#   sudo sh common/diag/test-autologin.sh            enables (valid on reboot)
+#   sudo sh common/diag/test-autologin.sh --remove   leaves it as it came
 set -e
 R=$(dirname "$(readlink -f "$0")"); until [ -f "$R/lib/common.sh" ] || [ "$R" = / ]; do R=$(dirname "$R"); done
 . "$R/lib/common.sh"

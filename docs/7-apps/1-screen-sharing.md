@@ -101,7 +101,7 @@ If Void's template is still at 3.16.30_1, the Release's `.xbps` works too, with 
   `src/pipewire.cpp` (`request_buffer()` takes a buffer and marks it afterwards; a PipeWire renegotiation in between
   freed it) crashed gamescope when starting or reconfiguring a stream (`Segmentation fault` after
   `pipewire: warning: out of buffers`). A mutex between "take + mark" and "remove" fixes it. The build is
-  reproducible (same `/usr/bin/gamescope` sha256). Diagnosis tool: `legion/diag-gamescope-pipewire.sh` (attaches `gdb`
+  reproducible (same `/usr/bin/gamescope` sha256). Diagnosis tool: `legion/diag/diag-gamescope-pipewire.sh` (attaches `gdb`
   in the background; needs `gamescope-dbg` from Void's debug repository).
 - **Vesktop's launch options in Steam** (Propiedades → Opciones de lanzamiento / Properties → Launch Options), so that
   Chromium uses the portal: `"run" "--branch=stable" "--arch=x86_64" "--command=startvesktop" "--file-forwarding" "--env=XDG_SESSION_TYPE=wayland" "--env=WAYLAND_DISPLAY=gamescope-0" "dev.vencord.Vesktop" "--ozone-platform=x11" "@@u" "@@"`.

@@ -39,7 +39,7 @@ CEF="$H/.steam/steam/.cef-enable-remote-debugging"
 if is_remove "${1:-}"; then
     rm -f /var/service/decky
     sleep 2
-    rm -rf "$SV" "$HB/services"
+    rm -rf "${SV:?}" "${HB:?}/services"
     rm -f "$CEF"
     [ -L /home/deck ] && rm -f /home/deck
     t "== removed (the plugins stay in %s/plugins; restart Steam)" "$HB"

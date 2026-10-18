@@ -29,7 +29,7 @@ COMP=~/.config/fish/completions
 if is_remove "${1:-}"; then
     "$BIN/void-update" --tray --disable 2>/dev/null || true
     pkill -u "$(id -u)" -f void-update-tray 2>/dev/null || true
-    rm -rf "$LIB"; rm -f "$BIN/void-update" "$APPS/void-update.desktop" "$COMP/void-update.fish" ~/.local/share/icons/hicolor/scalable/apps/void-update.svg
+    rm -rf "${LIB:?}"; rm -f "${BIN:?}/void-update" "${APPS:?}/void-update.desktop" "${COMP:?}/void-update.fish" ~/.local/share/icons/hicolor/scalable/apps/void-update.svg
     t "void-update removed (state and configuration kept in ~/.local/state/void-update and ~/.config/void-update)"
     exit 0
 fi
@@ -47,7 +47,7 @@ fi
 t "== void-update"
 mkdir -p "$LIB/lib.new" "$BIN" "$APPS" "$COMP"
 install -m 644 "$HERE"/lib/*.sh "$LIB/lib.new/"
-rm -rf "${LIB:?}/lib"; mv "$LIB/lib.new" "$LIB/lib"
+rm -rf "${LIB:?}/lib"; mv "${LIB:?}/lib.new" "${LIB:?}/lib"
 install -m 755 "$HERE/void-update-tray" "$LIB/void-update-tray.new" && mv "$LIB/void-update-tray.new" "$LIB/void-update-tray"
 install -m 644 "$HERE/void-update.conf.example" "$LIB/"
 mkdir -p "$LIB/icons" ~/.local/share/icons/hicolor/scalable/apps
