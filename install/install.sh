@@ -118,7 +118,7 @@ stage "13. By hand: log out and back in; open Steam FROM THE MENU, let it update
 stage "14. Game Mode, the sessions and Xfce on Wayland (docs/6-game-mode/2-game-mode.md, docs/4-sessions/1-login-and-modes.md)" reboot \
 'sudo sh "$B/common/steam/install-game-mode.sh"
 sudo sh "$B/common/power-button/install-power-button.sh"
-sudo sh "$B/common/steam/test-direct-session.sh"
+sudo sh "$B/common/steam/install-direct-session.sh"
 sudo sh "$B/common/steam/install-passwordless-switch.sh"
 sudo sh "$B/common/xfce-wayland/install-xfce-wayland.sh"
 sudo bash "$B/common/xfce-wayland/xfdesktop-wallpaper/install-xfdesktop-wallpaper.sh"

@@ -15,7 +15,7 @@
 # As there is never a login screen in between, the direct Wayland session works in both
 # directions (the boot's login screen was what broke it, see docs/4-sessions/1-login-and-modes.md).
 # CAREFUL: a password is never asked to log in; at power-on it enters the last mode used.
-# Needs test-direct-session.sh (the session steam-game-mode-direct). docs/4-sessions/1-login-and-modes.md.
+# Needs install-direct-session.sh (the session steam-game-mode-direct). docs/4-sessions/1-login-and-modes.md.
 # Previous (Spanish) name: instalar-cambio-sin-contrasena.sh. The pieces it installed had Spanish names
 # (cambiar-modo-root juego|escritorio|escritorio-x11 --puede, 60-modo-steam.conf, zz-cambiar-modo,
 # 05-cerrar-steam.sh, /usr/local/lib/cambiar-modo/reiniciar-lightdm, service cambio-modo,
@@ -60,7 +60,7 @@ if is_remove "${1:-}"; then
     exit 0
 fi
 [ -f /usr/share/wayland-sessions/steam-game-mode-direct.desktop ] || {
-    t "!! The direct session is missing: run test-direct-session.sh first"; exit 1; }
+    t "!! The direct session is missing: run install-direct-session.sh first"; exit 1; }
 grep -q 'switch-mode-root' /usr/local/bin/steamos-session-select 2>/dev/null || {
     t "!! steamos-session-select is an old one: run install-game-mode.sh first"; exit 1; }
 

@@ -7,7 +7,7 @@
 # them it also tries to set up the machine like a Deck (TDP, charging, "wifi power management"…) through
 # steamos-manager, which does nothing here unless it is installed (steam/steamos-manager/).
 # The launcher works for two sessions: without DISPLAY (the Wayland session "direct screen" of
-# test-direct-session.sh, the normal one) gamescope handles the screen itself; with DISPLAY (the X
+# install-direct-session.sh, the normal one) gamescope handles the screen itself; with DISPLAY (the X
 # session of this script, as a fallback) it goes nested in full screen. From lightdm's login screen,
 # the direct one was lost after ~20 s (docs/6-game-mode/2-game-mode.md 2): that is why it is always entered
 # with autologin (install-passwordless-switch.sh).
@@ -129,7 +129,7 @@ fi
 export PATH="/usr/local/lib/steam-game-mode/bin:$PATH"
 # Two ways, depending on the session that launches it:
 #   - X session (the fallback): gamescope nested full screen in the session's X;
-#   - Wayland session "direct screen" (test-direct-session.sh; the normal one): without DISPLAY, gamescope
+#   - Wayland session "direct screen" (install-direct-session.sh; the normal one): without DISPLAY, gamescope
 #     handles the screen itself (DRM/KMS), as in SteamOS (VRR, HDR, refresh rate).
 if [ -n "$DISPLAY" ]; then
     # No window manager or screensaver: so that X does not turn off the screen after 10 min (Steam

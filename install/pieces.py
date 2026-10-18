@@ -22,7 +22,7 @@ def load(path=os.path.join(ROOT, "install", "pieces.tsv")):
         if len(f) != len(COLS):
             bad.append("pieces.tsv:%d: %d columns, not %d" % (n, len(f), len(COLS)))
             continue
-        rows.append(dict(zip(COLS, f), line=n))
+        rows.append(dict(zip(COLS, f, strict=True), line=n))
     return rows, bad
 
 

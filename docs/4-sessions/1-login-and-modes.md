@@ -26,13 +26,13 @@ together with [Xfce on Wayland](../5-desktop/1-xfce.md) (otherwise "Switch to De
 without labwc):
 
 ```bash
-sudo sh "$B/common/steam/test-direct-session.sh"          # the Game Mode Wayland session
+sudo sh "$B/common/steam/install-direct-session.sh"          # the Game Mode Wayland session
 sudo sh "$B/common/steam/install-passwordless-switch.sh"  # autologin, switch without password, clean Steam shutdown
 ```
 
 (`--remove` undoes each one; without autologin, the login screen with password comes back.)
 
-**`test-direct-session.sh`:** the session `/usr/share/wayland-sessions/steam-game-mode-direct.desktop` (gamescope on
+**`install-direct-session.sh`:** the session `/usr/share/wayland-sessions/steam-game-mode-direct.desktop` (gamescope on
 the screen) and `/usr/local/bin/lightdm-greeter-wrapper` (`NO_AT_BRIDGE=1`, `greeter-wrapper=…` in
 `/etc/lightdm/lightdm.conf`).
 

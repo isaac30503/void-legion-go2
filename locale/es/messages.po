@@ -1322,19 +1322,19 @@ msgstr "   Cerrar y volver a abrir Steam (o entrar en el Modo Juego) para que le
 msgid "   In Game Mode: quick menu (Ctrl+Shift+Tab) → plug icon = Decky."
 msgstr "   En el Modo Juego: menú rápido (Ctrl+Shift+Tab) → ícono del enchufe = Decky."
 
-#: common/steam/test-direct-session.sh
+#: common/steam/install-direct-session.sh
 msgid "== Reboot so that lightdm stops using the wrapper."
 msgstr "== Reiniciar para que lightdm deje de usar el envoltorio."
 
-#: common/steam/test-direct-session.sh
+#: common/steam/install-direct-session.sh
 msgid "!! /usr/local/bin/steam-game-mode is an old one: run install-game-mode.sh first"
 msgstr "!! /usr/local/bin/steam-game-mode es de antes: correr primero install-game-mode.sh"
 
-#: common/grub-theme/install-theme.sh common/steam/test-autologin.sh common/steam/test-direct-session.sh
+#: common/grub-theme/install-theme.sh common/steam/install-direct-session.sh common/steam/test-autologin.sh
 msgid "== differences in %s:"
 msgstr "== diferencias en %s:"
 
-#: common/steam/test-direct-session.sh
+#: common/steam/install-direct-session.sh
 msgid "== Reboot and, at the login screen, choose 'Steam (Game Mode, direct screen)'."
 msgstr "== Reiniciar y, en la pantalla de inicio, elegir 'Steam (Modo Juego, pantalla directa)'."
 
@@ -1486,7 +1486,7 @@ msgstr "Listo: %s (caché de cargo en ~/.cargo/registry: %s)"
 msgid "Run it with sudo from the user's account (or set TARGET_USER in local.env)."
 msgstr "Correr con sudo desde la cuenta del usuario (o poner TARGET_USER en local.env)."
 
-#: common/steam/install-passwordless-switch.sh common/steam/test-direct-session.sh
+#: common/steam/install-direct-session.sh common/steam/install-passwordless-switch.sh
 msgid "== removed; differences in %s:"
 msgstr "== quitado; diferencias en %s:"
 
@@ -1495,8 +1495,8 @@ msgid "== Reboot: the login screen with password comes back."
 msgstr "== Reiniciar: vuelve la pantalla de inicio con contraseña."
 
 #: common/steam/install-passwordless-switch.sh common/steam/test-autologin.sh
-msgid "!! The direct session is missing: run test-direct-session.sh first"
-msgstr "!! Falta la sesión directa: correr antes test-direct-session.sh"
+msgid "!! The direct session is missing: run install-direct-session.sh first"
+msgstr "!! Falta la sesión directa: correr antes install-direct-session.sh"
 
 #: common/steam/install-passwordless-switch.sh
 msgid "!! steamos-session-select is an old one: run install-game-mode.sh first"
@@ -4081,3 +4081,7 @@ msgstr "== el inventario (install/pieces.tsv)"
 #: install/verify.sh
 msgid "%s pieces; every file has its piece and every installer its place"
 msgstr "%s piezas; cada fichero tiene su pieza y cada instalador su sitio"
+
+#: common/agent/audit-void.sh
+msgid "%s: not verifiable without root"
+msgstr "%s: no verificable sin root"

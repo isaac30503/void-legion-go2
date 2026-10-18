@@ -10,7 +10,7 @@
 # CAREFUL: whoever turns on the machine enters the user's session without password.
 # It changes two lines that /etc/lightdm/lightdm.conf already brought from the ISO (autologin-user=anon, a
 # user that does not exist, and autologin-session=xfce); --remove puts them back as they were. Leaves .bak.
-# Needs test-direct-session.sh (the session steam-game-mode-direct). docs/4-sessions/1-login-and-modes.md.
+# Needs install-direct-session.sh (the session steam-game-mode-direct). docs/4-sessions/1-login-and-modes.md.
 # Previous (Spanish) name: probar-inicio-automatico.sh.
 #   sudo sh common/steam/test-autologin.sh            enables (valid on reboot)
 #   sudo sh common/steam/test-autologin.sh --remove   leaves it as it came
@@ -25,7 +25,7 @@ if is_remove "${1:-}"; then
     sed -i 's/^autologin-user=.*/autologin-user=anon/; s/^autologin-session=.*/autologin-session=xfce/' "$CONF"
 else
     [ -f /usr/share/wayland-sessions/steam-game-mode-direct.desktop ] || {
-        t "!! The direct session is missing: run test-direct-session.sh first"; exit 1; }
+        t "!! The direct session is missing: run install-direct-session.sh first"; exit 1; }
     sed -i "s/^autologin-user=.*/autologin-user=$U/; s/^autologin-session=.*/autologin-session=steam-game-mode-direct/" "$CONF"
 fi
 t "== differences in %s:" "$CONF"; diff "$CONF.bak" "$CONF" || true

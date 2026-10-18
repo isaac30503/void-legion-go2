@@ -68,7 +68,7 @@ if has /usr/local/bin/steam-modo-juego; then
     add root "Game Mode: steam-modo-juego → steam-game-mode $lsflag" "sudo sh \"\$B/common/steam/install-game-mode.sh\" $lsflag"
 fi
 if has /usr/share/wayland-sessions/steam-modo-juego-directo.desktop || has /usr/local/bin/lightdm-greeter-envoltorio; then
-    add root "Game Mode direct session" 'sudo sh "$B/common/steam/test-direct-session.sh"'
+    add root "Game Mode direct session" 'sudo sh "$B/common/steam/install-direct-session.sh"'
 fi
 if has /etc/sv/cambio-modo || has /etc/sudoers.d/zz-cambiar-modo; then
     add root "mode switch: cambiar-modo-root → switch-mode-root (keeps the current mode)" 'sudo sh "$B/common/steam/install-passwordless-switch.sh"'

@@ -95,7 +95,7 @@ Wayland must exist before the reboot (it is where "Switch to Desktop" goes):
 ```bash
 sudo sh "$B/common/steam/install-game-mode.sh"   # its loading screen: Steam B, from stage 11's Plymouth
 sudo sh "$B/common/power-button/install-power-button.sh"
-sudo sh "$B/common/steam/test-direct-session.sh"
+sudo sh "$B/common/steam/install-direct-session.sh"
 sudo sh "$B/common/steam/install-passwordless-switch.sh"
 sudo sh "$B/common/xfce-wayland/install-xfce-wayland.sh"
 sudo bash "$B/common/xfce-wayland/xfdesktop-wallpaper/install-xfdesktop-wallpaper.sh"   # wallpaper on Wayland

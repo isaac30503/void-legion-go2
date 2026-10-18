@@ -13,7 +13,9 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
   pairings, Vesktop). 60 pieces. (After the tag `v2026.10.17`.) From a third outside review: every installed piece
   now needs its proof (the rule compared with "" and the table writes "-": `grub-hidden`, `direct-session` and the
   wallpaper patch had none), with two new forms, `grep:<file>:<regex>` and `xbps-local:<package>`; an installer is
-  matched as a whole name in `install.sh` and the docs, not as a substring.
+  matched as a whole name in `install.sh` and the docs, not as a substring. From a fourth: `test-direct-session.sh` is
+  now `install-direct-session.sh` (an installer named `test-…` was confusing; the old marker in `lightdm.conf` is still
+  recognized), and a `grep:` proof that cannot be read without root says "not verifiable" instead of passing.
 
 - **The inventory, `install/pieces.tsv`** ([this repository](docs/8-maintenance/4-this-repository.md#the-inventory-installpiecestsv)):
   every piece the repository installs, one per line, enforced by `verify.sh` (every file has its piece, every installer

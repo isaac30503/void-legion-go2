@@ -288,7 +288,7 @@ hn = open("/etc/hostname").read().strip().lower()
 me = "L" if "legion" in hn else "I" if "ideapad" in hn else "?"
 mine = [p[:8] for p in pieces if len(p) >= 8 and me in p[1] and p[3] != "tool"]
 print("   " + _("pieces of this machine (install/pieces.tsv): %d") % len(mine))
-gone = 0
+gone = 0; unverifiable = []
 for pid, mach, stage, how, inst, doc, srcs, installs in mine:
     lost = []
     for q in installs.split():
@@ -301,12 +301,13 @@ for pid, mach, stage, how, inst, doc, srcs, installs in mine:
             try:
                 with open(f) as h:
                     if not any(re.search(rx, line) for line in h): lost.append(q)
-            except PermissionError: pass
+            except PermissionError: unverifiable.append(f"{pid}: {q}")
             except OSError: lost.append(q)
         elif not glob.glob(os.path.expanduser(q)): lost.append(q)
     if lost:
         gone += 1
         print("!! " + _("%s: missing %s (installer: %s; %s)") % (pid, " ".join(lost), inst, doc))
+for u in unverifiable: print("   " + _("%s: not verifiable without root") % u)
 print("   " + _("(pieces with something missing: %d)") % gone)
 PY
 } | python3 -I - "$INDEX"

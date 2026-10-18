@@ -41,7 +41,7 @@ logs (in the private repository) keep their original names.
 | `fish/void/steam/instalar-cambio-sin-contrasena.sh` | `common/steam/install-passwordless-switch.sh` |
 | `fish/void/steam/instalar-steam.sh` | `common/steam/install-steam.sh` |
 | `fish/void/steam/instalar-decky.sh` | `common/steam/install-decky.sh` |
-| `fish/void/steam/probar-sesion-directa.sh` | `common/steam/test-direct-session.sh` |
+| `fish/void/steam/probar-sesion-directa.sh` | `common/steam/install-direct-session.sh` (`test-direct-session.sh` until 2026-10-17) |
 | `fish/void/steam/probar-inicio-automatico.sh` | `common/steam/test-autologin.sh` |
 | `fish/void/steam/greeter-sin-atspi.sh` | `common/steam/greeter-without-atspi.sh` |
 | `fish/void/steam/capturar-avisos.sh` | `common/steam/capture-syslog.sh` |
