@@ -14,6 +14,10 @@ wlroots portal, own chooser, SteamOS's gamescope portal, patched gamescope), hid
 menu, and **`void-update`** (like CachyOS's cachy-update: panel icon, rootless checks, notifications, Void's
 news, services to restart) that also **tests whether each own patch is still needed**.
 
+![The boot and Game Mode loading animations: Steam A, B, C (top) and Void A, B, C (bottom); the default is Void B at power-on and Steam B while Game Mode loads](common/boot/plymouth-void/preview.png)
+
+*The six boot and loading animations, drawn by the repository's own generator ([boot](docs/1-platform/3-boot.md#the-loading-animations)). Steam's logo is Valve's trademark ([THIRD_PARTY.md](THIRD_PARTY.md#inspired-by-no-code-taken)).*
+
 > A personal setup, published as a reference: it reproduces **one** machine, not a distribution. Private values
 > (MACs, UUIDs, Wi-Fi name, serial numbers, Steam account id) are written as `@NAME@`; the real ones live in
 > `local.env`, which is not in this repository ([docs/sanitization.md](docs/sanitization.md)). Another Legion Go 2
@@ -40,6 +44,7 @@ Verified on the hardware (checks in [docs/check.md](docs/check.md); dates in [CH
 | | |
 |---|---|
 | **The documentation** | [docs/void-legion-go2.md](docs/void-legion-go2.md) — the system by layers (platform → base system → hardware → sessions → desktop → Game Mode → apps → maintenance), one page per topic: what it is, install, check, problems |
+| **How it compares with SteamOS** | [docs/6-game-mode/4-steamos-parity.md](docs/6-game-mode/4-steamos-parity.md) — measured live against a Steam Deck, value by value: what was applied to match it, and what differs on purpose |
 | **Reinstalling** | [docs/reinstall.md](docs/reinstall.md) — the order of execution, stage by stage; [install/](install/README.md) runs it (`install.sh`) |
 | Checking a system | [docs/check.md](docs/check.md) |
 | Names | [docs/glossary.md](docs/glossary.md) — the original was in Spanish; old name → new name of every script, command, service and file |
