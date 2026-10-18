@@ -4,6 +4,13 @@ The notable changes of the system and this repository, newest first. The full ac
 attempts, measurements) is in the private repository's archive and, until 2026-10-14, in the tag
 `recipe-single-file` (*History*).
 
+## 2026-10-18
+
+- **A tour, with screenshots** ([docs/tour.md](docs/tour.md); two of them in the README): power-on, the Xfce
+  desktop and its window snapping, Game Mode with SteamOS's interface, Decky, the controller seen as a Steam Deck's,
+  and a light and a heavy game. Seven screenshots of the real machine in `docs/images/` (WebP, 736 KB; the Steam avatar
+  and the controller's id blurred); their third-party content credited in `THIRD_PARTY.md`.
+
 ## 2026-10-17
 
 - **Tests for `ssh-find`** (`tests/ssh_find_test.py`, 31 checks, run by `tests/run.sh`; 106 in all): without a network,

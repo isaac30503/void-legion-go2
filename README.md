@@ -23,6 +23,15 @@ news, services to restart) that also **tests whether each own patch is still nee
 > `local.env`, which is not in this repository ([docs/sanitization.md](docs/sanitization.md)). Another Legion Go 2
 > owner can fill in their own from `local.env.example`.
 
+## What it looks like
+
+| The desktop (Xfce on Wayland) | Game Mode (SteamOS's interface) |
+|---|---|
+| ![Three windows snapped with even gaps on the Xfce desktop](docs/images/desktop-windows.webp) | ![Steam's Game Mode library](docs/images/game-mode-library.webp) |
+
+More in **[the tour](docs/tour.md)**: power-on, the desktop and its window snapping, Game Mode with Decky, the controller as
+a Steam Deck's, and a light and a heavy game.
+
 ## Status on the Legion Go 2 (83N0)
 
 Verified on the hardware (checks in [docs/check.md](docs/check.md); dates in [CHANGELOG.md](CHANGELOG.md) and the private archive):
@@ -44,6 +53,7 @@ Verified on the hardware (checks in [docs/check.md](docs/check.md); dates in [CH
 | | |
 |---|---|
 | **The documentation** | [docs/void-legion-go2.md](docs/void-legion-go2.md) — the system by layers (platform → base system → hardware → sessions → desktop → Game Mode → apps → maintenance), one page per topic: what it is, install, check, problems |
+| **What it is like to use** | [docs/tour.md](docs/tour.md) — screenshots from power-on to playing, each with the page that explains it |
 | **How it compares with SteamOS** | [docs/6-game-mode/4-steamos-parity.md](docs/6-game-mode/4-steamos-parity.md) — measured live against a Steam Deck, value by value: what was applied to match it, and what differs on purpose |
 | **Reinstalling** | [docs/reinstall.md](docs/reinstall.md) — the order of execution, stage by stage; [install/](install/README.md) runs it (`install.sh`) |
 | Checking a system | [docs/check.md](docs/check.md) |

@@ -3,6 +3,7 @@
 The system is described **by layers, from the bottom up**: each layer builds on the ones below it. To rebuild it from
 an empty disk, follow **[reinstall.md](reinstall.md)** (the order of execution); to understand or fix a piece, go to its
 layer. Every page has the same parts: what it is and why, how to install it, how to check it, and its known problems.
+To see first what it is like to use, with screenshots: **[the tour](tour.md)**.
 
 ```
  8  maintenance     void-update · own patches · Claude Code · this repository

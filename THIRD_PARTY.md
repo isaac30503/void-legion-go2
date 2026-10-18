@@ -65,6 +65,14 @@ a5a32b51028dc821155e44cdec025fe70398bae193c619ae6ba8b1babf6f49f1  source-thunar-
 1d9bd76015fb6e9aca05e73cd998c7c66ed4fc8c10b626e08fc2eb7c39df3f7b  source-xfdesktop-4.20.2.tar.bz2
 ```
 
+## Screenshots
+
+`docs/images/` and the tour ([docs/tour.md](docs/tour.md)) show third parties' work in use, on this machine: Steam's
+interface and logo (Valve), the games and their art (Nuclear Throne: Vlambeer; Monster Hunter Wilds: Capcom; the
+library's covers: their publishers), Xfce's wallpaper `xfce-mouserace.svg` (xfdesktop, `GPL-2.0-or-later`) and
+Firefox. They remain theirs; this repository's MIT license covers only its own work in them (the desktop's setup, the
+library art of Vesktop and xterm).
+
 ## Inspired by (no code taken)
 
 - **Steam's logo** (Valve): `common/boot/plymouth-void/generate.py` draws the mechanism of Steam's old loading
