@@ -181,7 +181,7 @@ def flat(w, h, cx=0.5, cy=0.5, free=(), seed=7):
             continue
         g = bubble(side).rotate(rnd.uniform(-35, 35), resample=Image.BICUBIC, expand=True)
         k = rnd.uniform(0.10, 0.22)           # this bubble's opacity (a new one for each bubble)
-        a = g.getchannel("A").point(lambda v: int(v * k))
+        a = g.getchannel("A").point([int(v * k) for v in range(256)])   # a table, not a closure over k
         g.putalpha(a)
         im.alpha_composite(g, (int(x - g.width / 2), int(y - g.height / 2)))
         n -= 1
