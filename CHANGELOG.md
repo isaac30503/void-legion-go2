@@ -9,7 +9,9 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
 - **A tour, with screenshots** ([docs/tour.md](docs/tour.md); two of them in the README): power-on, the Xfce
   desktop and its window snapping, Game Mode with SteamOS's interface, Decky, the controller seen as a Steam Deck's,
   and a light and a heavy game. Seven screenshots of the real machine in `docs/images/` (WebP, 736 KB; the Steam avatar
-  and the controller's id blurred); their third-party content credited in `THIRD_PARTY.md`.
+  and the controller's id blurred); their third-party content credited in `THIRD_PARTY.md`. The repository's Xfce
+  configuration now has the wallpaper the machine uses (`xfce-mouserace.svg`, not `xfce-x.svg`), so the screenshots,
+  the configuration and a reinstall agree; the windows screenshot taken again.
 
 ## 2026-10-17
 

@@ -10,7 +10,7 @@ redo it.
 | Font (UI, monospace, titles) | **JetBrainsMono NFM Blocks** Bold 10 (titles Bold 9); `hintfull`, no subpixel, 96 DPI |
 | Cursor | **Volantes** (`volantes_cursors`, dark), size 24 |
 | Terminal | **xterm**, everywhere |
-| Wallpaper | xfdesktop's default (`xfce-x.svg`), no desktop icons |
+| Wallpaper | Xfce's `xfce-mouserace.svg` (from xfdesktop, in `/usr/share/backgrounds/xfce/`), zoomed to fill; no desktop icons |
 
 ## Fonts
 

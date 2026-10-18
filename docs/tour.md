@@ -1,7 +1,8 @@
 # A tour
 
 What the Legion Go 2 is like to use with this setup, from power-on to playing. Every picture is a screenshot of the
-real machine (1920×1200, October 2026; the two games run at 16:9, shown without their black bars). The pages linked under each one explain how it is done.
+real machine (1920×1200, October 2026; the two games run at 16:9, shown without their black bars). The interface is in
+Spanish, the machine's language; the scripts follow the system's language too ([i18n](i18n.md)). The pages linked under each one explain how it is done.
 
 ## Power-on
 
