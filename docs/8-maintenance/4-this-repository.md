@@ -86,7 +86,7 @@ installer changed), not to this one.
 2. A private value → `@NAME@`, and the key in `local.env` and `local.env.example`.
 3. `bash install/verify.sh`: syntax, ShellCheck (no errors or warnings), catalogs (a msgid no script uses fails),
    links between the documents, the paths the docs cite, binaries, private values (also in the git history) and the
-   encrypted copy of `local.env`. And `bash tests/run.sh` (under a second; a changed helper → its test).
+   encrypted copy of `local.env`. And `bash tests/run.sh` (a few seconds; as your user, not root; a changed helper → its test).
 4. Update the topic's page in `docs/` (its install, check and problems), its line in `install/pieces.tsv` (a new
    piece: a new line, and its installer in `install/install.sh` and `docs/reinstall.md`), and add a line to
    [CHANGELOG.md](../../CHANGELOG.md). The long story (diagnosis, attempts) goes to the private repository's archive.
@@ -106,8 +106,13 @@ without `local.env` and without the binaries:
 - **`bash tests/run.sh`:** `render.sh` on a copy of the clone with `local.env.example` (no placeholder left, values
   and `$HOME` filled in, modes kept, `--check` with a missing value fails; as root with a user that does not exist, a message and not a silent exit,
   when the system allows user namespaces); `void-update`'s helpers (pending list from
-  `xbps-install -Mun`, version coloring, the configuration reader: bad values ignored and never run as code); and
-  `t` (Spanish, English, unknown language, message not in the catalog). No root, network or Void needed.
+  `xbps-install -Mun`, version coloring, the configuration reader: bad values ignored and never run as code);
+  `install/pieces.py` (a file without owner or with two, an installer missing from the reinstall, a piece without
+  proof); systemd-compat (systemd's answers and exit codes, runit through a fake `sv`, real session units, `journalctl`);
+  `ssh-find` (`tests/ssh_find_test.py`: candidates, the neighbour table, simultaneous connections to the loopback, the
+  order of the ways, a remembered address that is another machine's today, discovery rounds and the deadline, the MACs
+  it learns, `--list`); and `t` (Spanish, English, unknown language, message not in the catalog). No root, network or
+  Void needed.
 
 The actions are pinned by commit (`@<sha>  # vX.Y.Z`); to update one, take the commit of its new tag
 (`gh api repos/actions/checkout/git/ref/tags/vX.Y.Z --jq .object.sha`). A red CI on `main` is fixed before anything

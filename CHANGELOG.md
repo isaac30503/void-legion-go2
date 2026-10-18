@@ -6,6 +6,13 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
 
 ## 2026-10-17
 
+- **Tests for `ssh-find`** (`tests/ssh_find_test.py`, 31 checks, run by `tests/run.sh`; 106 in all): without a network,
+  with real TCP connections to the loopback and the home network's parts faked — candidates (IPv4, IPv6, link-local
+  on every interface), the neighbour table, simultaneous connections (the first that answers wins, a silent address
+  costs one round), the order of the ways (last address, MAC in the table, names), a remembered address that is
+  another machine's today, discovery rounds only when there are MACs to look for, the deadline, the MACs it learns,
+  the state file and `--list`. (After the tag `v2026.10.17.1`.)
+
 - **Rules for the inventory, as for a Void package** ([adding or changing a piece](docs/8-maintenance/4-this-repository.md#adding-or-changing-a-piece)):
   one piece per function; every file with exactly one owner (`verify.sh` now fails on two); `installs` only the paths
   that prove it is there; a new column **`undo`** (like `xbps-remove`: `--remove`, checked against the installer, `rm`,

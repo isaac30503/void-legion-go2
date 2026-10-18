@@ -235,8 +235,16 @@ test_pieces() {
     out=$(python3 -I "$W/install/pieces.py"); check "pieces: an installer missing from install.sh" yes "$(grep -q 'install-systemd-compat.sh is not in install/install.sh' <<< "$out" && echo yes)"
 }
 
+# ---- ssh-find: candidates, the order of the ways, rounds and deadline, what it learns (tests/ssh_find_test.py) -----
+test_ssh_find() {
+    local n e a out
+    out=$(python3 -I "$REPO/tests/ssh_find_test.py" 2>&1) || { check "ssh-find: the test ran" 0 1; printf '%s\n' "$out" | tail -5; return; }
+    while IFS=$'\t' read -r n e a; do check "$n" "$e" "$a"; done <<< "$out"
+}
+
 test_render
 test_pieces
+test_ssh_find
 test_catalog
 test_void_update
 read -r p f < "$TMP/vu-result"; pass=$((pass + p)); failed=$((failed + f))
