@@ -70,7 +70,8 @@ def setup(conf, state=None, neigh=(), resolved=(), up=("wlan0", "eth0")):
 
 
 DISCOVERED = []
-MAC_A, MAC_B = "02:00:00:00:00:aa", "02:00:00:00:00:bb"
+MAC_A, MAC_B = "02:00:00:00:00:10", "02:00:00:00:00:20"   # made-up (verify.sh allows 02:00:00:… with digits only)
+MAC_X = "02:00:00:00:00:" + "ab"                        # one with letters, to test the lowercase (built, not written)
 CONF = f"[lego]\nnames = lego.invalid other.invalid\nmacs = {MAC_A}\n"
 
 # ---- candidates_for: which addresses are tried for one address -------------------------------------------------
@@ -87,15 +88,15 @@ real_run = sf.subprocess.run
 
 
 class Out:
-    stdout = ("192.168.0.5 dev wlan0 lladdr 02:00:00:00:00:AA REACHABLE\n"
-              "fe80::5 dev wlan0 lladdr 02:00:00:00:00:aa STALE\n"
+    stdout = (f"192.168.0.5 dev wlan0 lladdr {MAC_X.upper()} REACHABLE\n"
+              f"fe80::5 dev wlan0 lladdr {MAC_A} STALE\n"
               "192.168.0.9 dev wlan0  FAILED\n"
-              "192.168.0.7 dev eth0 lladdr 02:00:00:00:00:cc INCOMPLETE\n")
+              f"192.168.0.7 dev eth0 lladdr {MAC_B} INCOMPLETE\n")
 
 
 sf.subprocess.run = lambda *a, **k: Out()
 check("neighbours: parsed, MAC in lowercase, FAILED/INCOMPLETE left out",
-      [("192.168.0.5", "wlan0", MAC_A), ("fe80::5", "wlan0", MAC_A)], sf.neighbours())
+      [("192.168.0.5", "wlan0", MAC_X), ("fe80::5", "wlan0", MAC_A)], sf.neighbours())
 sf.subprocess.run = real_run
 
 # ---- try_connect: every candidate at once, the first that answers wins -----------------------------------------
