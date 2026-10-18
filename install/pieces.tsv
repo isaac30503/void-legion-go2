@@ -15,7 +15,10 @@
 #   installer the repository path that installs it (a script, or the file the stage copies)
 #   doc       its page in docs/
 #   sources   repository paths that belong to it (a folder ends in /), space-separated
-#   installs  paths that prove it is installed (~ = home; * = pattern; no spaces), space-separated
+#   installs  what proves it is installed, space-separated: paths (~ = home; * = pattern; no spaces),
+#             grep:<file>:<regex> (a line of that file; for a setting written into a shared file) or
+#             xbps-local:<package> (installed from a local repository: our patched build, not Void's). "-" only for a
+#             manual setting nothing on disk proves (Steam's own settings)
 #   undo      how it is undone, like xbps-remove: --remove (its installer takes it), rm (delete the paths of installs,
 #             copies in ~), via (the other piece's undo), a command, or what it is ("base system: not undone")
 # How to decide each column (what a piece is, which paths, how to undo, settings made by hand, removing a piece):
@@ -46,7 +49,7 @@ xfce-config	L	9	user	legion/xfce/gtk.css	docs/5-desktop/1-xfce.md	legion/xfce/	~
 window-scripts	LI	9	user	common/xfce/window-snap	docs/5-desktop/3-windows-and-shortcuts.md	common/xfce/window-snap common/xfce/window-focus common/xfce/new-windows common/xfce/new-windows.desktop	~/.local/bin/window-snap ~/.local/bin/window-focus ~/.local/bin/new-windows ~/.config/autostart/new-windows.desktop	rm
 claude-code	L	10	user	-	docs/8-maintenance/3-claude-code.md	-	~/Work/CLAUDE.md ~/Work/.claude/agents/void-maintainer.md	rm
 grub	L	11	root	legion/grub-root.sh	docs/1-platform/3-boot.md	legion/grub-root.sh	/boot/grub/custom.cfg	sudo rm /boot/grub/custom.cfg && sudo update-grub (the theme and the silent boot: their own --remove)
-grub-hidden	L	11	root	legion/grub-hidden.sh	docs/1-platform/3-boot.md	legion/grub-hidden.sh	-	--remove
+grub-hidden	L	11	root	legion/grub-hidden.sh	docs/1-platform/3-boot.md	legion/grub-hidden.sh	grep:/etc/default/grub:^GRUB_TIMEOUT=0 grep:/etc/default/grub:^GRUB_TIMEOUT_STYLE=hidden	--remove
 grub-theme	LI	11	via:grub	common/grub-theme/install-theme.sh	docs/1-platform/3-boot.md	common/grub-theme/	/boot/grub/themes/void-xterm /etc/kernel.d/post-install/60-grub-theme /usr/local/share/grub-theme/install-theme.sh	--remove
 silent-boot	LI	11	via:grub	common/boot/silent-boot.sh	docs/1-platform/3-boot.md	common/boot/silent-boot.sh common/boot/remove-loading.py	/etc/rc.conf	--remove
 plymouth	LI	11	root	common/boot/install-plymouth.sh	docs/1-platform/3-boot.md	common/boot/install-plymouth.sh common/boot/plymouth-void/	/usr/share/plymouth/themes/void-simbolo /etc/runit/shutdown.d/07-plymouth.sh /usr/local/share/steam-loading	--remove
@@ -54,11 +57,11 @@ steam	LI	12	root	common/steam/install-steam.sh	docs/6-game-mode/1-steam.md	commo
 steam-desktop	L	12	user	legion/steam/steam-extest.desktop	docs/6-game-mode/1-steam.md	legion/steam/steam-extest.desktop legion/steam/steam.desktop legion/steam/extest/	~/.local/share/applications/steam.desktop ~/.local/lib/extest/libextest.so	rm
 game-mode	LI	14	root	common/steam/install-game-mode.sh	docs/6-game-mode/2-game-mode.md	common/steam/install-game-mode.sh	/usr/local/bin/steam-game-mode /usr/local/bin/steamos-session-select /usr/local/lib/steam-game-mode/bin/sudo	--remove
 power-button	L	14	root	common/power-button/install-power-button.sh	docs/3-hardware-support/2-power.md	common/power-button/	/usr/local/bin/power-button /etc/elogind/logind.conf.d/50-power-button.conf /etc/udev/rules.d/70-power-button.rules /etc/xdg/autostart/power-button.desktop	--remove
-direct-session	L	14	root	common/steam/test-direct-session.sh	docs/4-sessions/1-login-and-modes.md	common/steam/test-direct-session.sh	-	--remove
+direct-session	L	14	root	common/steam/test-direct-session.sh	docs/4-sessions/1-login-and-modes.md	common/steam/test-direct-session.sh	/usr/share/wayland-sessions/steam-game-mode-direct.desktop /usr/local/bin/lightdm-greeter-wrapper	--remove
 passwordless-switch	LI	14	root	common/steam/install-passwordless-switch.sh	docs/4-sessions/1-login-and-modes.md	common/steam/install-passwordless-switch.sh	/etc/sudoers.d/zz-switch-mode /etc/sv/mode-switch/run /usr/local/bin/switch-mode-root /usr/local/bin/xfce4-session /etc/runit/shutdown.d/05-close-steam.sh /etc/xdg/lightdm/lightdm.conf.d/60-steam-mode.conf	--remove
 xfce-wayland	LI	14	root	common/xfce-wayland/install-xfce-wayland.sh	docs/5-desktop/1-xfce.md	common/xfce-wayland/install-xfce-wayland.sh common/xfce-wayland/labwc/ common/xfce-wayland/brightness common/xfce-wayland/labwc-theme.sh common/xfce-wayland/wallpaper-watcher	~/.config/xfce4/labwc/rc.xml ~/.local/bin/wallpaper-watcher ~/.local/bin/brightness	--remove
-xfdesktop-wallpaper	LI	14	root	common/xfce-wayland/xfdesktop-wallpaper/install-xfdesktop-wallpaper.sh	docs/5-desktop/4-wallpaper.md	common/xfce-wayland/xfdesktop-wallpaper/	-	sudo xbps-install -Sf xfdesktop
-thunar-wallpaper	LI	14	root	common/xfce-wayland/thunar-wallpaper/install-thunar-wallpaper.sh	docs/5-desktop/4-wallpaper.md	common/xfce-wayland/thunar-wallpaper/	/usr/lib/thunarx-3/thunar-wallpaper-plugin.so	sudo xbps-install -Sf Thunar && thunar -q
+xfdesktop-wallpaper	LI	14	root	common/xfce-wayland/xfdesktop-wallpaper/install-xfdesktop-wallpaper.sh	docs/5-desktop/4-wallpaper.md	common/xfce-wayland/xfdesktop-wallpaper/	xbps-local:xfdesktop	sudo xbps-install -Sf xfdesktop
+thunar-wallpaper	LI	14	root	common/xfce-wayland/thunar-wallpaper/install-thunar-wallpaper.sh	docs/5-desktop/4-wallpaper.md	common/xfce-wayland/thunar-wallpaper/	xbps-local:Thunar /usr/lib/thunarx-3/thunar-wallpaper-plugin.so	sudo xbps-install -Sf Thunar && thunar -q
 inputplumber	L	15	root	legion/install-inputplumber.sh	docs/3-hardware-support/1-controllers.md	legion/install-inputplumber.sh legion/inputplumber-udevadm	/usr/bin/inputplumber /etc/sv/inputplumber/run /etc/inputplumber/devices.d/50-legion_go_2.yaml /usr/local/lib/inputplumber-void/bin	--remove
 tdp	L	15	root	legion/tdp/install-tdp.sh	docs/3-hardware-support/2-power.md	legion/tdp/	/usr/src/lenovo-wmi-tdp-*	--remove
 steamos-manager	L	15	root	common/steam/steamos-manager/install-steamos-manager.sh	docs/6-game-mode/3-steamos-manager.md	common/steam/steamos-manager/build-steamos-manager.sh common/steam/steamos-manager/install-steamos-manager.sh common/steam/steamos-manager/0001-gpu-set_clocks-only-in-manual.patch	/usr/lib/steamos-manager /etc/sv/steamos-manager/run /usr/local/share/steamos-manager-void/sha256	--remove
@@ -71,10 +74,10 @@ decky	L	17	manual	common/steam/install-decky.sh	docs/6-game-mode/5-decky.md	comm
 steam-shortcuts	L	17	manual	common/steam/xterm-steam	docs/6-game-mode/1-steam.md	common/steam/xterm-steam common/steam/firefox-steam	~/.local/bin/xterm-steam ~/.local/bin/firefox-steam	rm
 library-art	L	17	manual	common/steam/art-xterm/generate.py	docs/6-game-mode/6-library-art.md	common/steam/art-xterm/ common/steam/art-vesktop/	-	in Steam: Properties → Customization, back to the default art
 controller-on-desktop	L	17	manual	legion/steam/steam-background.desktop	docs/6-game-mode/8-controller-on-desktop.md	legion/steam/steam-background.desktop legion/steam/desktop-layout-controller_steamos_handheld.vdf legion/steam/web-browser-layout-controller_steamos_handheld.vdf	~/.config/autostart/steam-background.desktop	rm (the layouts: in Steam, the controller settings of each shortcut)
-portal-wlr-patch	L	17	manual	legion/portal-wlr-patch/build-portal-wlr.sh	docs/7-apps/1-screen-sharing.md	legion/portal-wlr-patch/	-	sudo xbps-install -Sf xdg-desktop-portal-wlr
+portal-wlr-patch	L	17	manual	legion/portal-wlr-patch/build-portal-wlr.sh	docs/7-apps/1-screen-sharing.md	legion/portal-wlr-patch/	xbps-local:xdg-desktop-portal-wlr	sudo xbps-install -Sf xdg-desktop-portal-wlr
 screen-share	L	17	manual	legion/screen-share/install.sh	docs/7-apps/1-screen-sharing.md	legion/screen-share/ legion/fuzzel.ini	~/.local/bin/screen-share ~/.config/xdg-desktop-portal-wlr/config ~/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.wlr.service ~/.config/fuzzel/fuzzel.ini	--remove
 portal-gamescope	L	17	manual	common/steam/portal-gamescope/install-portal-gamescope.sh	docs/7-apps/1-screen-sharing.md	common/steam/portal-gamescope/	/usr/local/lib/xdg-desktop-portal-gamescope /usr/local/share/xdg-desktop-portal/gamescope-portals	--remove
-gamescope-patch	L	17	manual	common/steam/gamescope-patch/build-gamescope.sh	docs/7-apps/1-screen-sharing.md	common/steam/gamescope-patch/	-	sudo xbps-install -Sf gamescope && sudo setcap cap_sys_nice=eip /usr/bin/gamescope
+gamescope-patch	L	17	manual	common/steam/gamescope-patch/build-gamescope.sh	docs/7-apps/1-screen-sharing.md	common/steam/gamescope-patch/	xbps-local:gamescope	sudo xbps-install -Sf gamescope && sudo setcap cap_sys_nice=eip /usr/bin/gamescope
 audio-priority	L	17	manual	legion/wireplumber/51-audio-priority.conf	docs/3-hardware-support/3-audio-bluetooth.md	legion/wireplumber/	~/.config/wireplumber/wireplumber.conf.d/51-audio-priority.conf	rm
 steam-settings	L	17	manual	-	docs/6-game-mode/1-steam.md	-	-	by hand in Steam
 firefox-settings	L	17	manual	-	docs/7-apps/3-firefox.md	-	-	by hand in Firefox

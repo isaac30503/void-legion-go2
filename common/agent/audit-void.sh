@@ -214,7 +214,7 @@ if [ -z "$INDEX" ] || [ ! -s "$INDEX" ]; then
     echo "   $(t "(without the repository's index: --repo DIR or --index FILE)")"
 else
 { printf '%s' "$PY_I18N"; cat <<'PY'
-import os, sys, glob, plistlib, hashlib
+import os, sys, glob, plistlib, hashlib, re, subprocess
 md5c, refs, pieces = {}, set(), []
 for l in open(sys.argv[1], encoding="utf-8", errors="replace"):
     t = l.rstrip("\n").split(" ", 2)
@@ -290,7 +290,20 @@ mine = [p[:8] for p in pieces if len(p) >= 8 and me in p[1] and p[3] != "tool"]
 print("   " + _("pieces of this machine (install/pieces.tsv): %d") % len(mine))
 gone = 0
 for pid, mach, stage, how, inst, doc, srcs, installs in mine:
-    lost = [q for q in installs.split() if q != "-" and not glob.glob(os.path.expanduser(q))]
+    lost = []
+    for q in installs.split():
+        if q == "-": continue
+        if q.startswith("xbps-local:"):     # installed, and from a local repository (our patched build)
+            r = subprocess.run(["xbps-query", "-p", "repository", q[11:]], capture_output=True, text=True).stdout.strip()
+            if not r or r.startswith(("http://", "https://", "ftp://")): lost.append(q)
+        elif q.startswith("grep:"):          # a line of a shared file
+            f, rx = q[5:].split(":", 1)
+            try:
+                with open(f) as h:
+                    if not any(re.search(rx, line) for line in h): lost.append(q)
+            except PermissionError: pass
+            except OSError: lost.append(q)
+        elif not glob.glob(os.path.expanduser(q)): lost.append(q)
     if lost:
         gone += 1
         print("!! " + _("%s: missing %s (installer: %s; %s)") % (pid, " ".join(lost), inst, doc))

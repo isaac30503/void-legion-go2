@@ -50,7 +50,11 @@ installed and removed as a unit, whose files nobody else owns, and that says wha
    program it puts in the `PATH` (`/usr/local/bin/…`, `~/.local/bin/…`), its runit service (`/etc/sv/<name>/run`, and
    `/var/service/<name>` when it is enabled), its own configuration (`/etc/…/conf.d/…`, `/etc/sudoers.d/…`, `~/.config/…`)
    and links it creates in `/usr/bin`. Not shared folders, logs, caches or state (they come and go). A pattern with `*`
-   for versioned names; no spaces (`~/homebrew/plugins/Panel*`). The audit checks each path on its machines.
+   for versioned names; no spaces (`~/homebrew/plugins/Panel*`). When no file of its own proves it: **`grep:<file>:<regex>`**
+   for a setting written into a shared file (`grep:/etc/default/grub:^GRUB_TIMEOUT=0`), and **`xbps-local:<package>`** for
+   our patched builds (installed, and from a local repository rather than Void's: a version would change with every
+   rebuild). Every installed piece has at least one, except a `manual` setting nothing on disk proves. The audit checks
+   each on its machines; `verify.sh` checks the forms.
 4. **Every installed piece says how it is undone (`undo`)**, as every package can be removed: `--remove` if its installer
    takes it (preferred for scripts; `verify.sh` checks that it does), `rm` for plain copies in `~`, the command when undoing
    means going back to Void's package (`sudo xbps-install -Sf <package>`, for the patched ones), or, for the base system,

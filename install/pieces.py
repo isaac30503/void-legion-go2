@@ -5,7 +5,7 @@ each piece's installer, page and sources exist; its "undo" is possible (--remove
 a "root"/"user" piece is in install/install.sh and in docs/reinstall.md or its page; a "manual" one is named in its page;
 a "via:<id>" one is named by that piece's installer. Prints one line per problem; exit 1 if any.
    python3 install/pieces.py [--list]     (--list: the pieces, for people and the audit's index)"""
-import os, subprocess, sys
+import os, re, subprocess, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 COLS = ["id", "machines", "stage", "how", "installer", "doc", "sources", "installs", "undo"]
@@ -13,8 +13,9 @@ COLS = ["id", "machines", "stage", "how", "installer", "doc", "sources", "instal
 
 def load(path=os.path.join(ROOT, "install", "pieces.tsv")):
     rows, bad = [], []
-    for n, line in enumerate(open(path, encoding="utf-8"), 1):
-        line = line.rstrip("\n")
+    with open(path, encoding="utf-8") as f:
+        text = f.read().splitlines()
+    for n, line in enumerate(text, 1):
         if not line or line.startswith("#") or line.startswith("id\t"):
             continue
         f = line.split("\t")
@@ -27,9 +28,18 @@ def load(path=os.path.join(ROOT, "install", "pieces.tsv")):
 
 def read(p):
     try:
-        return open(os.path.join(ROOT, p), encoding="utf-8", errors="replace").read()
+        with open(os.path.join(ROOT, p), encoding="utf-8", errors="replace") as f:
+            return f.read()
     except OSError:
         return ""
+
+
+def named(text, name):
+    """Whether text names that file: as a word of its own, not inside a longer name (install-x.sh ≠ re-install-x.sh)."""
+    return re.search(r"(?<![\w.-])" + re.escape(name) + r"(?![\w.-])", text) is not None
+
+
+INSTALLS = re.compile(r"^(/|~/|grep:/[^:]+:.+$|xbps-local:[\w.+-]+$)")
 
 
 def check():
@@ -47,8 +57,14 @@ def check():
         how = r["how"]
         if how not in ("root", "user", "manual", "tool") and not how.startswith("via:"):
             bad.append("%s: how must be root, user, manual, via:<id> or tool" % where)
-        if how != "tool" and (r["machines"] == "-" or r["installs"] == ""):
-            bad.append("%s: an installed piece needs machines" % where)
+        if how != "tool":
+            if r["machines"] == "-":
+                bad.append("%s: an installed piece says on which machines (L, I, LI)" % where)
+            if r["installs"] in ("", "-") and how != "manual":
+                bad.append("%s: an installed piece says what proves it is there (installs)" % where)
+            for q in r["installs"].split():
+                if q != "-" and not INSTALLS.match(q):
+                    bad.append("%s: installs %r: a path, grep:<file>:<regex> or xbps-local:<package>" % (where, q))
         undo = r["undo"]
         if how == "tool":
             if undo != "-":
@@ -56,7 +72,7 @@ def check():
         elif undo in ("", "-"):
             bad.append("%s: every installed piece says how it is undone (undo)" % where)
         elif undo == "--remove":
-            if not __import__("re").search(r"is_remove|--remove|--undo", read(r["installer"]) if r["installer"] != "-" else ""):
+            if not re.search(r"is_remove|--remove|--undo", read(r["installer"]) if r["installer"] != "-" else ""):
                 bad.append("%s: undo --remove, but %s does not take --remove" % (where, r["installer"]))
         elif undo == "rm":
             if r["installs"] == "-" or not all(q.startswith("~/") for q in r["installs"].split()):
@@ -78,24 +94,23 @@ def check():
         # a folder (common/fish/functions/) is named by its last two parts ("fish/functions")
         base = "/".join(inst.rstrip("/").split("/")[-2:]) if inst.endswith("/") else os.path.basename(inst)
         if how in ("root", "user"):
-            if base not in install_sh:
+            if not named(install_sh, base):
                 bad.append("%s: %s is not in install/install.sh (stage %s)" % (where, base, r["stage"]))
-            if base not in reinstall and base not in read(r["doc"]):
+            if not named(reinstall, base) and not named(read(r["doc"]), base):
                 bad.append("%s: %s is in neither docs/reinstall.md nor %s" % (where, base, r["doc"]))
         elif how == "manual":
-            if base not in read(r["doc"]):
+            if not named(read(r["doc"]), base):
                 bad.append("%s: %s is not named in its page %s" % (where, base, r["doc"]))
         elif how.startswith("via:"):
             parent = ids.get(how[4:])
             if not parent:
                 bad.append("%s: %s: no piece with that id" % (where, how))
-            elif base not in read(parent["installer"]) and not any(
-                    base in read(s) for s in parent["sources"].split() if os.path.isfile(os.path.join(ROOT, s))):
+            elif not named(read(parent["installer"]), base) and not any(
+                    named(read(s), base) for s in parent["sources"].split() if os.path.isfile(os.path.join(ROOT, s))):
                 bad.append("%s: %s does not name %s" % (where, parent["installer"], base))
     # every tracked file belongs to a piece
     files = subprocess.run(["git", "-C", ROOT, "ls-files", "common", "legion", "lib", "install"],
                            capture_output=True, text=True).stdout.split()
-    srcs = [s for r in rows for s in r["sources"].split() if s != "-"]
     for f in files:
         owners = [r["id"] for r in rows for s in r["sources"].split()
                   if s != "-" and (f == s or (s.endswith("/") and f.startswith(s)))]

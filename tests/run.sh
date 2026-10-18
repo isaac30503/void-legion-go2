@@ -226,6 +226,9 @@ test_pieces() {
     printf 'dup\tL\t15\troot\tlegion/udev-net.sh\tdocs/reinstall.md\tlegion/udev-net.sh\t/x\t--remove\n' >> "$W/install/pieces.tsv"
     out=$(python3 -I "$W/install/pieces.py"); check "pieces: a file with two owners" yes "$(grep -q 'legion/udev-net.sh: belongs to several pieces (dup, udev-net)' <<< "$out" && echo yes)"
     sed -i '$d' "$W/install/pieces.tsv"
+    sed -i 's#^\(grub-hidden\t\([^\t]*\t\)\{6\}\)[^\t]*#\1-#' "$W/install/pieces.tsv"
+    out=$(python3 -I "$W/install/pieces.py"); check "pieces: an installed piece without installs" yes "$(grep -q '(grub-hidden): an installed piece says what proves it is there' <<< "$out" && echo yes)"
+    git -C "$W" checkout -q -- install/pieces.tsv
     sed -i '/install-systemd-compat.sh/d' "$W/install/install.sh"
     out=$(python3 -I "$W/install/pieces.py"); check "pieces: an installer missing from install.sh" yes "$(grep -q 'install-systemd-compat.sh is not in install/install.sh' <<< "$out" && echo yes)"
 }

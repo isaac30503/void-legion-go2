@@ -10,7 +10,10 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
   one piece per function; every file with exactly one owner (`verify.sh` now fails on two); `installs` only the paths
   that prove it is there; a new column **`undo`** (like `xbps-remove`: `--remove`, checked against the installer, `rm`,
   or the command); settings made by hand are pieces too (Steam's and Firefox's settings, Decky's plugins, Bluetooth
-  pairings, Vesktop). 60 pieces. (After the tag `v2026.10.17`.)
+  pairings, Vesktop). 60 pieces. (After the tag `v2026.10.17`.) From a third outside review: every installed piece
+  now needs its proof (the rule compared with "" and the table writes "-": `grub-hidden`, `direct-session` and the
+  wallpaper patch had none), with two new forms, `grep:<file>:<regex>` and `xbps-local:<package>`; an installer is
+  matched as a whole name in `install.sh` and the docs, not as a substring.
 
 - **The inventory, `install/pieces.tsv`** ([this repository](docs/8-maintenance/4-this-repository.md#the-inventory-installpiecestsv)):
   every piece the repository installs, one per line, enforced by `verify.sh` (every file has its piece, every installer
