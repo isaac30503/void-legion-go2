@@ -122,6 +122,9 @@ git tag -a v2026.10.14 -m "$(sed -n '/^## 2026-10-14/,/^## /p' CHANGELOG.md | se
 git push origin v2026.10.14
 ```
 
+**A published tag is never moved** (whoever fetched it would have two different versions with one name): changes after
+it, the same day, get **`vYYYY.MM.DD.N`** (`.1`, `.2`…), whose message is what the entry gained since the previous tag.
+
 Two kinds of tags, not to be mixed: `vYYYY.MM.DD` (the system and its docs) and `assets-YYYY-MM-DD` (the Release of
 binaries, read by `fetch-assets.sh`). `recipe-single-file` marks the last commit with the old single-file recipe.
 
