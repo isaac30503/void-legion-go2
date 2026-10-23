@@ -10,7 +10,9 @@ It writes in ~/.local/share/Steam/userdata/<user>/config/grid/ the 5 art files +
 ~/.local/share/icons/steam-shortcuts/xterm-color-256.png, which goes in the "icon" field of
 shortcuts.vdf: that field is only written with Steam CLOSED (otherwise, Steam overwrites it on exit).
 Previous (Spanish) name: arte-xterm/generar.py. Its messages follow the system's language.
-Usage: python3 common/steam/art-xterm/generate.py      (without root; the system's Pillow: python3-Pillow)
+Also the void-update shortcut (2026-10-22; docs/6-game-mode/1-steam.md, "void-update as a game"): the same style,
+with void-update's own icon (Void's symbol with the "updates available" arrow) and the label "VOID-UPDATE".
+Usage: python3 common/steam/art-xterm/generate.py [--void-update]   (without root; the system's Pillow: python3-Pillow)
 """
 import os, struct, subprocess, sys, tempfile, json, shutil
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "lib"))
@@ -22,7 +24,15 @@ except ImportError:
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 BG_DARK, BG, GREEN, LIGHT = "#0D2A1A", "#214130", "#88A827", "#D4F060"
-SVG = "/usr/share/icons/Papirus/64x64/apps/utilities-x-terminal.svg"
+HERE = os.path.dirname(os.path.abspath(__file__))
+# Each shortcut: the icon, the label, a word of its target (Exe), and the quick menu icon's file name
+PROFILES = {
+    "xterm": ("/usr/share/icons/Papirus/64x64/apps/utilities-x-terminal.svg", "XTERM", "xterm-steam", "xterm-color-256.png"),
+    "void-update": (os.path.join(os.path.dirname(HERE), "..", "void-update", "icons", "void-update-available-light.svg"),
+                    "VOID-UPDATE", "void-update-steam", "void-update-256.png"),
+}
+NAME = "void-update" if "--void-update" in sys.argv[1:] else "xterm"
+SVG, LABEL, EXE_WORD, ICO_NAME = PROFILES[NAME]
 STEAM = os.path.expanduser("~/.local/share/Steam")
 ICONS = os.path.expanduser("~/.local/share/icons/steam-shortcuts")
 
@@ -55,6 +65,8 @@ def with_icon(im, icon, side, cx, cy):
     return im
 
 def label(im, text, size, cx, cy):
+    # a longer label (VOID-UPDATE) gets smaller, so that it fits in 90 % of the width (monospace: ~0.6 em per letter)
+    size = min(size, int(im.width * 0.9 / (0.6 * len(text))))
     d = ImageDraw.Draw(im); f = ImageFont.truetype(FONT, size)
     d.text((cx, cy), text, font=f, fill=LIGHT, anchor="mm", stroke_width=max(2, size // 22), stroke_fill=BG_DARK)
     return im
@@ -88,7 +100,7 @@ def main():
     tmp = tempfile.mkdtemp()
     icon = raster(1024, f"{tmp}/papirus-1024.png")
     os.makedirs(ICONS, exist_ok=True)
-    ico256 = f"{ICONS}/xterm-color-256.png"
+    ico256 = f"{ICONS}/{ICO_NAME}"
     raster(256, ico256)
     for u in users:
         vdf = f"{STEAM}/userdata/{u}/config/shortcuts.vdf"
@@ -98,15 +110,15 @@ def main():
         for _t, _k, s in shortcuts:
             fields = {k: v for t, k, v in s}
             exe = fields.get(b"Exe", b"").decode()
-            if "xterm" not in exe: continue
+            if EXE_WORD not in exe: continue
             appid = struct.unpack("<i", fields[b"appid"])[0] & 0xFFFFFFFF
             grid = f"{STEAM}/userdata/{u}/config/grid"; os.makedirs(grid, exist_ok=True)
-            p = with_icon(background(600, 900, cy=0.42), icon, 360, 300, 380); label(p, "XTERM", 120, 300, 720)
+            p = with_icon(background(600, 900, cy=0.42), icon, 360, 300, 380); label(p, LABEL, 120, 300, 720)
             p.convert("RGB").save(f"{grid}/{appid}p.png")
-            c = with_icon(background(920, 430, cy=0.4), icon, 230, 460, 170); label(c, "XTERM", 80, 460, 360)
+            c = with_icon(background(920, 430, cy=0.4), icon, 230, 460, 170); label(c, LABEL, 80, 460, 360)
             c.convert("RGB").save(f"{grid}/{appid}.png")
             with_icon(background(1920, 620), icon, 380, 960, 310).convert("RGB").save(f"{grid}/{appid}_hero.png")
-            label(Image.new("RGBA", (1200, 400), (0, 0, 0, 0)), "XTERM", 230, 600, 200).save(f"{grid}/{appid}_logo.png")
+            label(Image.new("RGBA", (1200, 400), (0, 0, 0, 0)), LABEL, 230, 600, 200).save(f"{grid}/{appid}_logo.png")
             icon.resize((512, 512), Image.LANCZOS).save(f"{grid}/{appid}_icon.png")
             json.dump({"nVersion": 1, "logoPosition": {"pinnedPosition": "BottomLeft", "nWidthPct": 50, "nHeightPct": 50}},
                       open(f"{grid}/{appid}.json", "w"))
