@@ -67,11 +67,11 @@ layout): pointer with the right trackpad or stick, triggers = clicks, **left sti
 forward, X = on-screen keyboard. xterm and Vesktop use **the same layout, copied**: by default xterm got the gamepad
 template, and Steam's layout browser does not offer the Web Browser one for these shortcuts. The repository keeps it
 in `legion/steam/web-browser-layout-controller_steamos_handheld.vdf`. With **Steam closed** (it rewrites the files on
-exit), for each shortcut (its name in lowercase: `xterm`, `vesktop`):
+exit), for each shortcut (its name in lowercase: `xterm`, `vesktop`, `void-update`):
 
 ```bash
 C="$HOME/.local/share/Steam/steamapps/common/Steam Controller Configs/@STEAM_ACCOUNT_ID@/config"
-for app in xterm vesktop; do
+for app in xterm vesktop void-update; do
     mkdir -p "$C/$app"
     sed "s#__SHORTCUT__#$app#g" "$B/legion/steam/web-browser-layout-controller_steamos_handheld.vdf" \
         > "$C/$app/controller_steamos_handheld.vdf"
@@ -91,6 +91,24 @@ writes Firefox's by itself):
 The per-device file (`configset_28de-12fb-<serial>.vdf` for the Legion's controller through InputPlumber) must not
 name these shortcuts: it wins over the general one (it is empty here). **Check:** in Steam, the shortcut's controller
 layout is shown as the Web Browser one, and the left stick scrolls in xterm.
+
+## void-update as a game
+
+Updating from Game Mode, without going to the desktop: a shortcut that opens [void-update](../8-maintenance/1-void-update.md)
+in a full-screen terminal, exactly as on the desktop (Void's news, the list, the confirmation, the password with Steam's
+keyboard, the summary; it waits for Enter before closing).
+
+```bash
+install -m 755 "$B/common/steam/void-update-steam" ~/.local/bin/      # it uses xterm-steam (above)
+```
+
+In Steam, add a "juego que no es de Steam" with *Destino* (*Target*) `/home/<user>/.local/bin/void-update-steam` and name
+it **`void-update`**; give it the same controller layout as xterm (above: `void-update` in the loop and in
+`configset_controller_steamos_handheld.vdf`), so that X opens the keyboard for the password. Besides launching it from the
+library, **Steam's "apply" button** (Settings → System, after "check for updates" found some) opens it:
+`steamos-update` looks for the shortcut whose target is `void-update-steam` in Steam's `shortcuts.vdf` and runs
+`steam://rungameid/<its id>` ([Game Mode](2-game-mode.md)). **Check:** "check for updates" shows `N-updates`; "apply"
+opens the terminal with void-update.
 
 ## Problems
 

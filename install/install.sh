@@ -138,7 +138,7 @@ stage "16. microSD (docs/2-base-system/3-storage.md) — with Steam CLOSED" run 
 t "-> in Steam, add /mnt/microsd as a library"'
 stage "17. By hand in Steam and on the desktop (docs/reinstall.md, stage 17: Steam settings, xterm and Firefox as games, Decky, art, controller layout, Bluetooth, Vesktop and screen sharing, audio order)" manual \
 '# Follow stage 17 of docs/reinstall.md, item by item (1–8); each item links to its page. The scripted parts of it (the art one with Steam closed):
-#   install -m 755 "$B/common/steam/xterm-steam" "$B/common/steam/firefox-steam" ~/.local/bin/
+#   install -m 755 "$B/common/steam/xterm-steam" "$B/common/steam/firefox-steam" "$B/common/steam/void-update-steam" ~/.local/bin/
 #   sudo sh "$B/common/steam/install-decky.sh"
 #   python3 "$B/common/steam/art-xterm/generate.py"
 #   cp "$B/legion/steam/steam-background.desktop" ~/.config/autostart/

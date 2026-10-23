@@ -56,12 +56,14 @@ it enters Game Mode by itself.
 - **`/usr/local/bin/steamos-update`**: Steam's "check for updates" (Settings → System). It **only checks**, with
   [void-update](../8-maintenance/1-void-update.md)'s check without root (`void-update -l`, ~5 s; the panel icon shares the
   list): exit 0 with **`N-updates`** as the last word (Steam shows the last word of the output as the version: "2-updates") or "No update available" (exit 7); 1 if the
-  check failed (no network). Steam's "apply" updates nothing (exit 7): the system is updated with `void-update` on the
-  desktop, where it asks for the password and shows what changes (2026-10-22, the user's decision). Steam calls it as
+  check failed (no network). Steam's "apply" opens the **`void-update` shortcut** of the library (void-update in a
+  terminal, which asks for the password and shows what changes: [Steam](1-steam.md#void-update-as-a-game)) and answers 7
+  itself; without the shortcut it says how to add it (2026-10-22, the user's decision: nothing is updated without the
+  password). Steam calls it as
   **`/usr/bin/steamos-polkit-helpers/steamos-update`** (SteamOS's path, seen in its `systemmanager.txt`): the installer
   links it there, with **`jupiter-biosupdate`** (Steam's Steam Deck BIOS check: always "no update"); without them every
-  check ended in "error" (code 127). Pressing "apply" makes Steam show a progress bar that stops (the update is not
-  done from Game Mode, on purpose) and the check button comes back. Steam's own rules, read in that log: it calls `steamos-update
+  check ended in "error" (code 127). After "apply", Steam's own progress bar stops at once (the update runs in the
+  void-update terminal, not through Steam) and the check button comes back. Steam's own rules, read in that log: it calls `steamos-update
   --enable-duplicate-detection check`; for the system 7 is "up to date", while for `jupiter-biosupdate` 7 is "update
   available" and its output the version, so "up to date" there is 0 with no output.
 - **Brightness:** Steam changes it with `echo N | sudo -n tee /sys/class/backlight/<x>/brightness`, which here would

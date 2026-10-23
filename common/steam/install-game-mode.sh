@@ -372,8 +372,9 @@ cat > "$UPD" <<'EOF'
 # Here it only CHECKS, with void-update's check without root (2026-10-22, the user's decision):
 #   steamos-update check   0 and "N-updates" as the last word when there are some (Steam shows it as the version),
 #                          7 and "No update available" when there are none, 1 if the check failed (no network)
-#   steamos-update         (Steam's "apply") updates nothing: the system is updated with void-update on the desktop,
-#                          where it asks for the password and shows what changes; answers 7
+#   steamos-update         (Steam's "apply") opens the "void-update" shortcut of the library (the non-Steam game whose
+#                          target is void-update-steam): void-update in a terminal, which asks for the password and shows
+#                          what changes; it answers 7 itself (Steam's own progress bar has nothing to show)
 # The count is void-update's list (packages + Flatpak, ~/.local/state/void-update/all), which the panel icon shares.
 # Installed by common/steam/install-game-mode.sh (docs/6-game-mode/2-game-mode.md).
 VU="$HOME/.local/bin/void-update"
@@ -392,7 +393,22 @@ case "${1:-}" in
         if [ "$n" -gt 0 ]; then echo "Pending: run void-update on the desktop"; echo "$n-updates"; exit 0; fi
         echo "No update available"; exit 7 ;;
     *)
-        echo "Nothing is applied from here: $(count) updates pending; run void-update on the desktop" >&2
+        # The shortcut's id in Steam's shortcuts.vdf (binary): the entry whose Exe is void-update-steam
+        id=$(python3 -I -c '
+import re, sys
+for f in sys.argv[1:]:
+    try: d = open(f, "rb").read()
+    except OSError: continue
+    for m in re.finditer(rb"\x02appid\x00(....)", d, re.I):
+        if b"void-update-steam" in d[m.end():m.end() + 600].split(b"\x02appid\x00")[0]:
+            print((int.from_bytes(m.group(1), "little") << 32) | 0x02000000); sys.exit(0)
+' "$HOME"/.local/share/Steam/userdata/*/config/shortcuts.vdf 2>/dev/null)
+        if [ -n "$id" ]; then
+            echo "Opening the void-update shortcut ($(count) updates pending)" >&2
+            setsid -f /usr/bin/steam "steam://rungameid/$id" >/dev/null 2>&1
+        else
+            echo "Add the void-update shortcut (docs/6-game-mode/1-steam.md), or run void-update on the desktop" >&2
+        fi
         exit 7 ;;
 esac
 EOF

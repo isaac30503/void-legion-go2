@@ -1,0 +1,8 @@
+#!/bin/sh
+# void-update-steam — void-update as a "non-Steam game" in Game Mode (Steam → Add a non-Steam game → Target:
+# ~/.local/bin/void-update-steam with the full path; name it "void-update"). It opens void-update in a full-screen
+# xterm (through xterm-steam, which fixes Steam's environment and the size in gamescope), exactly as on the desktop:
+# Void's news, the list, the confirmation, the password (Steam's keyboard: X with the Web Browser controller template),
+# the update and the summary; it waits for Enter before closing. Steam's "apply" button (steamos-update) opens it too.
+# Installed by hand with xterm-steam (docs/6-game-mode/1-steam.md, "void-update as a game").
+exec "$HOME/.local/bin/xterm-steam" -T void-update -e "$HOME/.local/bin/void-update" --wait

@@ -11,7 +11,10 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
   it never applies them (that stays on the desktop, with `void-update`). Steam calls it from SteamOS's
   `/usr/bin/steamos-polkit-helpers/`, which did not exist, so every check had ended in "error": the installer now links
   `steamos-update` and a `jupiter-biosupdate` ("no BIOS update") there. Steam's rules, read in its log: the check comes as
-  `--enable-duplicate-detection check`, and for the BIOS 7 means "update available", so "up to date" is 0.
+  `--enable-duplicate-detection check`, and for the BIOS 7 means "update available", so "up to date" is 0. The count shows
+  as the update's version (`38-updates`). **"Apply" opens a `void-update` shortcut** of the library
+  (`common/steam/void-update-steam`, [Steam](docs/6-game-mode/1-steam.md#void-update-as-a-game)): void-update in a
+  full-screen terminal, with the password typed on Steam's keyboard; nothing is updated without it.
 
 ## 2026-10-18
 

@@ -124,7 +124,7 @@ With Steam closed: `sudo sh "$B/legion/microsd-at-boot.sh"`; then, in Steam, add
 ## 17. By hand, in Steam and on the desktop
 
 1. Steam's settings: developer mode → Wi-Fi power management off, keyboard, VRR ([Steam](6-game-mode/1-steam.md)).
-2. xterm as a game, with the "Web Browser" controller template ([Steam](6-game-mode/1-steam.md#xterm-as-a-game)), and its art ([library art](6-game-mode/6-library-art.md)).
+2. xterm and void-update as games, with the "Web Browser" controller template ([Steam](6-game-mode/1-steam.md#xterm-as-a-game)), and its art ([library art](6-game-mode/6-library-art.md)).
 3. Decky and its plugins, with `hidapi` ([Decky](6-game-mode/5-decky.md)); then `void-update --systemd` and, once reviewed, `--ack` ([systemd-compat](2-base-system/4-systemd-compat.md)).
 4. The controller on the desktop: Steam in the background and the desktop layout ([controller on the desktop](6-game-mode/8-controller-on-desktop.md)).
 5. Firefox: "Title Bar" unchecked; as a game with `firefox-steam` ([Firefox](7-apps/3-firefox.md)).
