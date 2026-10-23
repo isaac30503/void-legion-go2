@@ -107,7 +107,9 @@ it **`void-update`**; give it the same controller layout as xterm (above: `void-
 `configset_controller_steamos_handheld.vdf`), so that X opens the keyboard for the password. Besides launching it from the
 library, **Steam's "apply" button** (Settings → System, after "check for updates" found some) opens it:
 `steamos-update` looks for the shortcut whose target is `void-update-steam` in Steam's `shortcuts.vdf` and runs
-`steam://rungameid/<its id>` ([Game Mode](2-game-mode.md)). **Check:** "check for updates" shows `N-updates`; "apply"
+`steam://rungameid/<its id>` ([Game Mode](2-game-mode.md)). Its art, in xterm's style with void-update's icon:
+`python3 "$B/common/steam/art-xterm/generate.py" --void-update` (with Steam closed it also sets the quick menu icon;
+[library art](6-library-art.md)). **Check:** "check for updates" shows `N-updates`; "apply"
 opens the terminal with void-update.
 
 ## Problems
