@@ -52,6 +52,10 @@ BIN=/usr/local/bin/steam-game-mode
 SES=/usr/share/xsessions/steam-game-mode.desktop
 SEL=/usr/local/bin/steamos-session-select
 UPD=/usr/local/bin/steamos-update
+BIOSUPD=/usr/local/bin/jupiter-biosupdate
+# Where Steam really calls them (as on SteamOS, through its polkit helpers; seen in Steam's console_log.txt and
+# systemmanager.txt, 2026-10-22: without them every check said "error", code 127): links to ours.
+HELPERS=/usr/bin/steamos-polkit-helpers
 LAN=/usr/share/applications/game-mode.desktop
 CAR=/usr/local/bin/steam-loading
 BRI=/usr/local/lib/steam-game-mode/bin/sudo
@@ -66,7 +70,9 @@ remove_old() {
 }
 
 if is_remove "${1:-}"; then
-    rm -f "$BIN" "$SES" "$SEL" "$UPD" "$LAN" "$CAR" "$BRI"
+    rm -f "$BIN" "$SES" "$SEL" "$UPD" "$BIOSUPD" "$LAN" "$CAR" "$BRI"
+    for h in steamos-update jupiter-biosupdate; do [ -L "$HELPERS/$h" ] && rm -f "$HELPERS/$h"; done
+    rmdir "$HELPERS" 2>/dev/null || true
     rmdir -p "${BRI%/*}" 2>/dev/null || true
     remove_old
     setcap -r /usr/bin/gamescope 2>/dev/null || true
@@ -387,6 +393,25 @@ case "${1:-}" in
         exit 7 ;;
 esac
 EOF
+# jupiter-biosupdate — Steam also checks the Steam Deck's BIOS; the Legion's firmware is updated another way (Lenovo):
+# "no update", so that the check does not end in "error"
+cat > "$BIOSUPD" <<'EOF'
+#!/bin/sh
+# jupiter-biosupdate — Steam's BIOS check (the Steam Deck's); the Legion's BIOS is Lenovo's: never an update here.
+# Installed by common/steam/install-game-mode.sh (docs/6-game-mode/2-game-mode.md).
+echo "No BIOS update available"
+exit 7
+EOF
+chmod 755 "$BIOSUPD"
+# Steam calls them from SteamOS's polkit helpers folder: links there, only on a free path or one already ours
+mkdir -p "$HELPERS"
+for h in steamos-update jupiter-biosupdate; do
+    if [ -e "$HELPERS/$h" ] && [ ! -L "$HELPERS/$h" ]; then
+        t "!! %s exists and is not ours: not touched" "$HELPERS/$h"
+    else
+        ln -sfn "/usr/local/bin/$h" "$HELPERS/$h"
+    fi
+done
 chmod 755 "$UPD"
 
 cat > "$LAN" <<EOF

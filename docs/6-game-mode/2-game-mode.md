@@ -57,7 +57,10 @@ it enters Game Mode by itself.
   [void-update](../8-maintenance/1-void-update.md)'s check without root (`void-update -l`, ~5 s; the panel icon shares the
   list): "N updates pending" (exit 0: Steam shows that there are updates) or "No update available" (exit 7); 1 if the
   check failed (no network). Steam's "apply" updates nothing (exit 7): the system is updated with `void-update` on the
-  desktop, where it asks for the password and shows what changes (2026-10-22, the user's decision).
+  desktop, where it asks for the password and shows what changes (2026-10-22, the user's decision). Steam calls it as
+  **`/usr/bin/steamos-polkit-helpers/steamos-update`** (SteamOS's path, seen in its `systemmanager.txt`): the installer
+  links it there, with **`jupiter-biosupdate`** (Steam's Steam Deck BIOS check: always "no update"); without them every
+  check ended in "error" (code 127).
 - **Brightness:** Steam changes it with `echo N | sudo -n tee /sys/class/backlight/<x>/brightness`, which here would
   ask for a password. **`/usr/local/lib/steam-game-mode/bin/sudo`**, first in the `PATH` only inside Game Mode,
   turns **only that exact command** into **elogind's `SetBrightness`** (what GNOME and KDE use: the session on screen

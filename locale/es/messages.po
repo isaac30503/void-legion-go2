@@ -4089,3 +4089,7 @@ msgstr "%s: no verificable sin root"
 #: legion/like-steamos.sh
 msgid "!! preempt=full is not in grub.cfg"
 msgstr "!! preempt=full no está en grub.cfg"
+
+#: common/steam/install-game-mode.sh
+msgid "!! %s exists and is not ours: not touched"
+msgstr "!! %s existe y no es nuestro: no se toca"

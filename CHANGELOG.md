@@ -8,7 +8,9 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
 
 - **Steam's "check for updates" asks void-update** (`/usr/local/bin/steamos-update`, [Game Mode](docs/6-game-mode/2-game-mode.md)):
   it says how many updates are pending (packages and Flatpak, the same list as the panel icon) or that there are none;
-  it never applies them (that stays on the desktop, with `void-update`). Before, it always answered "No update available".
+  it never applies them (that stays on the desktop, with `void-update`). Steam calls it from SteamOS's
+  `/usr/bin/steamos-polkit-helpers/`, which did not exist, so every check had ended in "error": the installer now links
+  `steamos-update` and a `jupiter-biosupdate` ("no BIOS update") there.
 
 ## 2026-10-18
 
