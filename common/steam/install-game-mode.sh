@@ -379,8 +379,10 @@ cat > "$UPD" <<'EOF'
 VU="$HOME/.local/bin/void-update"
 LIST="${XDG_STATE_HOME:-$HOME/.local/state}/void-update/all"
 count() { [ -s "$LIST" ] && grep -c . "$LIST" || echo 0; }
+[ "${1:-}" = --supports-duplicate-detection ] && exit 0
+# Steam then calls "steamos-update --enable-duplicate-detection check" (seen in its systemmanager.txt): flags first
+while [ "${1:-}" = --enable-duplicate-detection ]; do shift; done
 case "${1:-}" in
-    --supports-duplicate-detection) exit 0 ;;
     check)
         [ -x "$VU" ] || { echo "No update available (void-update is not installed)"; exit 7; }
         "$VU" -l >/dev/null 2>&1; rc=$?
@@ -398,9 +400,10 @@ EOF
 cat > "$BIOSUPD" <<'EOF'
 #!/bin/sh
 # jupiter-biosupdate — Steam's BIOS check (the Steam Deck's); the Legion's BIOS is Lenovo's: never an update here.
+# For this one Steam reads 7 as "update available" and the output as its version (systemmanager.txt, 2026-10-22):
+# "up to date" is 0, without output.
 # Installed by common/steam/install-game-mode.sh (docs/6-game-mode/2-game-mode.md).
-echo "No BIOS update available"
-exit 7
+exit 0
 EOF
 chmod 755 "$BIOSUPD"
 # Steam calls them from SteamOS's polkit helpers folder: links there, only on a free path or one already ours

@@ -60,7 +60,9 @@ it enters Game Mode by itself.
   desktop, where it asks for the password and shows what changes (2026-10-22, the user's decision). Steam calls it as
   **`/usr/bin/steamos-polkit-helpers/steamos-update`** (SteamOS's path, seen in its `systemmanager.txt`): the installer
   links it there, with **`jupiter-biosupdate`** (Steam's Steam Deck BIOS check: always "no update"); without them every
-  check ended in "error" (code 127).
+  check ended in "error" (code 127). Steam's own rules, read in that log: it calls `steamos-update
+  --enable-duplicate-detection check`; for the system 7 is "up to date", while for `jupiter-biosupdate` 7 is "update
+  available" and its output the version, so "up to date" there is 0 with no output.
 - **Brightness:** Steam changes it with `echo N | sudo -n tee /sys/class/backlight/<x>/brightness`, which here would
   ask for a password. **`/usr/local/lib/steam-game-mode/bin/sudo`**, first in the `PATH` only inside Game Mode,
   turns **only that exact command** into **elogind's `SetBrightness`** (what GNOME and KDE use: the session on screen
