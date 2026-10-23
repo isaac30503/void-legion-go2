@@ -362,12 +362,30 @@ chmod 755 "$SEL"
 
 cat > "$UPD" <<'EOF'
 #!/bin/sh
-# steamos-update — with -steamos3, Steam asks for system updates (in SteamOS it is
-# /usr/bin/steamos-update; code 7 = "No update available"). Here the system is updated with
-# void-update, so it always answers that there are none. Installed by common/steam/install-game-mode.sh (docs/6-game-mode/2-game-mode.md).
-[ "$1" = "--supports-duplicate-detection" ] && exit 0
-echo "No update available" >&2
-exit 7
+# steamos-update — with -steamos3, Steam asks for system updates (in SteamOS it is /usr/bin/steamos-update).
+# Here it only CHECKS, with void-update's check without root (2026-10-22, the user's decision):
+#   steamos-update check   0 and "N updates pending" when there are some (Steam shows that there are updates),
+#                          7 and "No update available" when there are none, 1 if the check failed (no network)
+#   steamos-update         (Steam's "apply") updates nothing: the system is updated with void-update on the desktop,
+#                          where it asks for the password and shows what changes; answers 7
+# The count is void-update's list (packages + Flatpak, ~/.local/state/void-update/all), which the panel icon shares.
+# Installed by common/steam/install-game-mode.sh (docs/6-game-mode/2-game-mode.md).
+VU="$HOME/.local/bin/void-update"
+LIST="${XDG_STATE_HOME:-$HOME/.local/state}/void-update/all"
+count() { [ -s "$LIST" ] && grep -c . "$LIST" || echo 0; }
+case "${1:-}" in
+    --supports-duplicate-detection) exit 0 ;;
+    check)
+        [ -x "$VU" ] || { echo "No update available (void-update is not installed)"; exit 7; }
+        "$VU" -l >/dev/null 2>&1; rc=$?
+        [ $rc = 2 ] && { echo "The check failed (no network?): void-update -c on the desktop"; exit 1; }
+        n=$(count)
+        if [ "$n" -gt 0 ]; then echo "$n updates pending (run void-update on the desktop)"; exit 0; fi
+        echo "No update available"; exit 7 ;;
+    *)
+        echo "Nothing is applied from here: $(count) updates pending; run void-update on the desktop" >&2
+        exit 7 ;;
+esac
 EOF
 chmod 755 "$UPD"
 

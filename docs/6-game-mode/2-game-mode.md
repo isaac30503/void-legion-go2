@@ -53,8 +53,11 @@ it enters Game Mode by itself.
   closes Steam; the launcher switches when gamescope ends. From the desktop ("Modo Juego" launcher,
   `/usr/share/applications/game-mode.desktop`) it closes the desktop's Steam cleanly and switches. Log
   `~/.local/state/steamos-session-select.log`.
-- **`/usr/local/bin/steamos-update`**: with `-steamos3` Steam asks for system updates; it answers "No update
-  available" (exit 7), like SteamOS. The system is updated with [void-update](../8-maintenance/1-void-update.md).
+- **`/usr/local/bin/steamos-update`**: Steam's "check for updates" (Settings → System). It **only checks**, with
+  [void-update](../8-maintenance/1-void-update.md)'s check without root (`void-update -l`, ~5 s; the panel icon shares the
+  list): "N updates pending" (exit 0: Steam shows that there are updates) or "No update available" (exit 7); 1 if the
+  check failed (no network). Steam's "apply" updates nothing (exit 7): the system is updated with `void-update` on the
+  desktop, where it asks for the password and shows what changes (2026-10-22, the user's decision).
 - **Brightness:** Steam changes it with `echo N | sudo -n tee /sys/class/backlight/<x>/brightness`, which here would
   ask for a password. **`/usr/local/lib/steam-game-mode/bin/sudo`**, first in the `PATH` only inside Game Mode,
   turns **only that exact command** into **elogind's `SetBrightness`** (what GNOME and KDE use: the session on screen

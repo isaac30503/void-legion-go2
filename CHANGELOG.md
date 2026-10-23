@@ -4,6 +4,12 @@ The notable changes of the system and this repository, newest first. The full ac
 attempts, measurements) is in the private repository's archive and, until 2026-10-14, in the tag
 `recipe-single-file` (*History*).
 
+## 2026-10-22
+
+- **Steam's "check for updates" asks void-update** (`/usr/local/bin/steamos-update`, [Game Mode](docs/6-game-mode/2-game-mode.md)):
+  it says how many updates are pending (packages and Flatpak, the same list as the panel icon) or that there are none;
+  it never applies them (that stays on the desktop, with `void-update`). Before, it always answered "No update available".
+
 ## 2026-10-18
 
 - **A tour, with screenshots** ([docs/tour.md](docs/tour.md); two of them in the README): power-on, the Xfce
