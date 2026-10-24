@@ -1,14 +1,18 @@
 # ~/.ssh/config of the Legion (docs/2-base-system/2-network.md).
+# ssh-find (common/ssh-find/) adds a block at the top with ProxyCommand for these hosts: it finds each machine
+# by every way at once from its alias and does not use HostName. The HostName lines are the fallback without it:
+# after install-ssh-find.sh --remove (which leaves these blocks) and for "ssh -o ProxyCommand=none <alias>".
+# By mDNS name where there is one (nss-mdns in nsswitch.conf), not by IP: the router changes the addresses.
+
 # IdeaPad 100 (Void Linux + Xfce) — the network's debugging station.
-# By mDNS name and not by IP: the router changes its address. It resolves because
-# this console has nss-mdns in nsswitch.conf (docs/2-base-system/2-network.md).
 Host ideapad
     HostName ideapad-100.local
     User @TARGET_USER@
     IdentityFile ~/.ssh/id_ed25519
 
 # MSI Thin 15. Careful: its sshd is disabled by default, it has to be started
-# there before this works.
+# there before this works. Its HostName is an IP that the router may change: its mDNS name, still to be seen
+# with the MSI on (ssh-find finds it by its MAC once learned).
 Host msi
     HostName 192.168.0.115
     User @TARGET_USER@
