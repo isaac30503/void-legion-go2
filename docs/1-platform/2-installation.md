@@ -24,7 +24,10 @@ suspend is `s2idle`, which drains the battery).
 
 3. **When it finishes:** the installer leaves `NetworkManager`, `lightdm`, `dbus`, `polkitd`, `chronyd`, `udevd`,
    the `agetty` and `sshd` enabled, and writes its own firmware entry. **From here on, nothing writes to the
-   firmware.** If something was mounted under `/mnt` in the live (e.g. the old `/home`), the installer copied those
+   firmware.** Take `polkitd` out of runit at the first boot, `sudo rm /var/service/polkitd`: D-Bus starts it on demand
+   (`org.freedesktop.PolicyKit1.service`), and with both, whichever loses the race at boot is relaunched by `runsv`
+   once a second (seen on the IdeaPad on 2026-10-23; on both machines since 2026-10-24, as `rtkit` since 2026-10-08).
+   **Check:** `ps -o pid,ppid,args -C polkitd` → one `polkitd`, PPID 1. If something was mounted under `/mnt` in the live (e.g. the old `/home`), the installer copied those
    empty folders: check that they are empty and not mounted, then remove them:
 
    ```bash

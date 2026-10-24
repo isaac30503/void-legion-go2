@@ -27,6 +27,9 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
   mechanical disk (`common/disk/ideapad-bfq.sh`, [storage](docs/2-base-system/3-storage.md)). Until now they lived
   only in the IdeaPad's recipe and the audit reported their files as explained by no piece. The silent-boot piece
   also lists `/etc/modules-load.d/dm-raid.conf.disabled`.
+- **`polkitd` out of runit on both machines** ([installation](docs/1-platform/2-installation.md)): D-Bus starts it on
+  demand. With both, the loser of the boot race was relaunched once a second (the IdeaPad, 2026-10-23); verified
+  after rebooting on both.
 
 ## 2026-10-22
 
