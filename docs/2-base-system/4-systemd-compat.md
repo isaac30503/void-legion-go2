@@ -61,6 +61,8 @@ filter-chain    user    exec   pipewire -c filter-chain.conf
 - **deny:** the unit does not exist even if a runit service has that name, and asking for it is not logged (it is
   absent on purpose). Used for HHD (`hhd`, `hhd@*`, `hhd_local@*`): Panel de Control asks for it on every start to
   choose between HHD and InputPlumber; without `deny` those questions came back as "to review" after every boot.
+  Also for `mango-session.target` (user): mangowc asks to start it on every login (built into its binary); there is
+  no such target under runit, and without `deny` it came back as "to review" after every login.
 
 Your own lines go in another file (`90-local.conf`, read later: the last match wins); the installer only replaces
 `50-void-legion.conf`. Changes apply on the next call (`daemon-reload` is a no-op on purpose).
