@@ -4523,8 +4523,8 @@ msgid "find out why it went before reinstalling it with %s"
 msgstr "averiguar por qué se perdió antes de reinstalarla con %s"
 
 #: common/agent/audit-void.sh
-msgid "for each one: a piece to add (install/pieces.tsv, with its installer) or something to remove; on the IdeaPad, first look for it in its Common recipe (what only the IdeaPad has lives there)"
-msgstr "para cada uno: una pieza que añadir (install/pieces.tsv, con su instalador) o algo que quitar; en la IdeaPad, buscarlo antes en su receta de Common (lo que solo tiene la IdeaPad está ahí)"
+msgid "for each one: find what put it there (on the IdeaPad, its Common recipe first; then docs/) and add it as a piece (install/pieces.tsv) or a recipe line; delete none: a file with no piece is usually one the inventory forgot, not one too many"
+msgstr "para cada uno: buscar qué lo puso ahí (en la IdeaPad, primero su receta de Common; luego docs/) y añadirlo como pieza (install/pieces.tsv) o como línea de la receta; no borrar ninguno: un fichero sin pieza suele ser uno que el inventario olvidó, no uno que sobra"
 
 #: common/agent/audit-void.sh
 msgid "gamescope: WITHOUT cap_sys_nice (lost when gamescope is updated)"
@@ -4577,3 +4577,43 @@ msgstr "sudo sv status %s; luego su registro (/var/log/%s, si tiene log/) o lanz
 #: common/agent/audit-void.sh
 msgid "sudo xbps-remove %s  (by name; never -o, which also takes the backup kernel; first check that nothing outside xbps uses them)"
 msgstr "sudo xbps-remove %s  (por nombre; nunca -o, que también se lleva el kernel de respaldo; antes, comprobar que nada fuera de xbps los usa)"
+
+#: common/agent/audit-void.sh
+msgid "%s: Void now publishes %s, the patch was tested against %s (%s)"
+msgstr "%s: Void publica ahora %s, el parche se probó contra %s (%s)"
+
+#: common/agent/audit-void.sh
+msgid "%s: Void's %s already brings the patch (tested on %s)"
+msgstr "%s: el %s de Void ya trae el parche (probado el %s)"
+
+#: common/agent/audit-void.sh
+msgid "%s: own build, its patch was never tested against Void's code"
+msgstr "%s: compilado aquí, su parche nunca se probó contra el código de Void"
+
+#: common/agent/audit-void.sh
+msgid "own patches STILL NEEDED (tested against the version Void publishes now): %s"
+msgstr "parches propios que SIGUEN HACIENDO FALTA (probados contra la versión que publica Void ahora): %s"
+
+#: common/agent/audit-void.sh
+msgid "%s: patch test %s on %s against %s"
+msgstr "%s: prueba del parche %s el %s contra %s"
+
+#: common/agent/audit-void.sh
+msgid "%s: patch test of %s against Void's %s: %s"
+msgstr "%s: prueba del parche del %s contra el %s de Void: %s"
+
+#: common/agent/audit-void.sh
+msgid "nothing: keep our packages (Void's would bring back what the patches fix)"
+msgstr "nada: conservar nuestros paquetes (los de Void traerían de vuelta lo que arreglan los parches)"
+
+#: common/agent/audit-void.sh
+msgid "review the patch by hand (docs/8-maintenance/2-own-patches.md)"
+msgstr "revisar el parche a mano (docs/8-maintenance/2-own-patches.md)"
+
+#: common/agent/audit-void.sh
+msgid "sudo xbps-install -Sf %s  (back to Void's package)"
+msgstr "sudo xbps-install -Sf %s  (volver al paquete de Void)"
+
+#: common/agent/audit-void.sh
+msgid "void-update --summary  (tests the patch again; until then, do not go back to Void's package)"
+msgstr "void-update --summary  (vuelve a probar el parche; hasta entonces, no volver al paquete de Void)"

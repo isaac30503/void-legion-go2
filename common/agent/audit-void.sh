@@ -211,6 +211,41 @@ print("   " + _("installed: %d; by hand: %d") % (sum(1 for v in pk.values() if i
 print("   " + _("held (hold): %s") % (' '.join(hold) or none))
 print("   " + _("from local repositories (built here; void-update warns if Void replaces them):"))
 for l in local: print("      " + l)
+# Is each own patch still needed? void-update tests it against Void's code (patch-still-needed) and caches the
+# answer: the last one per package, against which version of Void, and whether Void publishes that one now.
+import time
+tests = {}
+for f in glob.glob(os.path.expanduser("~/.cache/void-update/patches/*.txt")):
+    for l in open(f, errors="replace"):
+        w = l.split(None, 4)
+        if len(w) >= 4 and w[0] == "RESULT" and os.path.getmtime(f) > tests.get(w[1], (0,))[0]:
+            tests[w[1]] = (os.path.getmtime(f), w[2], w[3])
+needed = []
+for n, v in sorted(pk.items()):
+    if not (isinstance(v, dict) and "repository" in v and not v["repository"].startswith("http")): continue
+    pub = subprocess.run(["xbps-query", "-R", "-p", "pkgver", n], capture_output=True, text=True).stdout.strip()
+    pub = pub[len(n) + 1:] if pub.startswith(n + "-") else ""
+    if n not in tests:
+        finding("INFO", _("%s: own build, its patch was never tested against Void's code") % n, "void-update --summary")
+        continue
+    when, tested, state = tests[n][0], tests[n][1], tests[n][2]
+    day = time.strftime("%Y-%m-%d", time.localtime(when))
+    print("      " + _("%s: patch test of %s against Void's %s: %s") % (n, day, tested, state))
+    if pub and pub != tested:
+        finding("WARN", _("%s: Void now publishes %s, the patch was tested against %s (%s)") % (n, pub, tested, day),
+                _("void-update --summary  (tests the patch again; until then, do not go back to Void's package)"), show=False)
+    elif state == "STILL_NEEDED":
+        needed.append(f"{n} ({day}, {tested})")
+    elif state == "ALREADY_INCLUDED":
+        finding("INFO", _("%s: Void's %s already brings the patch (tested on %s)") % (n, tested, day),
+                _("sudo xbps-install -Sf %s  (back to Void's package)") % n, show=False)
+    else:
+        finding("WARN", _("%s: patch test %s on %s against %s") % (n, state, day, tested),
+                _("review the patch by hand (docs/8-maintenance/2-own-patches.md)"), show=False)
+if needed:
+    # One line for all of them: the version Void publishes is the one tested, and the patch is still needed
+    finding("INFO", _("own patches STILL NEEDED (tested against the version Void publishes now): %s") % ", ".join(needed),
+            _("nothing: keep our packages (Void's would bring back what the patches fix)"), show=False)
 o = subprocess.run(["xbps-query", "-O"], capture_output=True, text=True).stdout.split()
 print("   " + _("orphans: %s  (a backup linuxX.Y is on purpose)") % (' '.join(o) or none))
 # The backup kernel is an orphan on purpose (void-update keeps it); the rest, by name: never "xbps-remove -o", which takes it too
@@ -317,7 +352,7 @@ for u in usr:
 print("   " + _("(%d files looked at; with no trace: %d. 'Generated' = the agent must confirm which script writes it)") % (n, missing))
 if untraced:
     finding("WARN", _("%d files that no piece explains: %s") % (len(untraced), " ".join(untraced)),
-            _("for each one: a piece to add (install/pieces.tsv, with its installer) or something to remove; on the IdeaPad, first look for it in its Common recipe (what only the IdeaPad has lives there)"), show=False)
+            _("for each one: find what put it there (on the IdeaPad, its Common recipe first; then docs/) and add it as a piece (install/pieces.tsv) or a recipe line; delete none: a file with no piece is usually one the inventory forgot, not one too many"), show=False)
 # The pieces of this machine (install/pieces.tsv): is each path they install here? Paths with * are patterns.
 hn = open("/etc/hostname").read().strip().lower()
 me = "L" if "legion" in hn else "I" if "ideapad" in hn else "?"

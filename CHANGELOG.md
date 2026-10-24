@@ -17,6 +17,11 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
 - **The maintenance agent has one source** (private repository, `agents/`): a short core with hard limits, a fixed
   procedure, an answer template and a worked example, plus reference notes read only when needed; `build.sh` writes
   Claude Code's and Antigravity's copies, and `agents/evals/` measures each change against real cases.
+- **The audit reports the own patches** (section 2 and 5): each patched package's last patch test (STILL NEEDED,
+  ALREADY INCLUDED…) against the version Void publishes now; a WARN when Void publishes a newer version than the one
+  tested (`void-update --summary` tests it again). Files that no piece explains now come with "find what put it there
+  and add it as a piece or a recipe line; delete none": the old "or something to remove" made agents propose
+  `sudo rm` of files like `/etc/xbps.d/00-repository-main.conf` (3 of 20 answers; 0 of 20 with the new text).
 
 ## 2026-10-22
 
