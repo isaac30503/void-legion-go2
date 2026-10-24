@@ -236,6 +236,13 @@ crashed the session and was removed.
 - **Wallpaper of a second screen** (the Legion's monitor): it did not change until `wallpaper-watcher` learned two
   things for mango (2026-10-23; [wallpaper](4-wallpaper.md)): the single-workspace mode when it is missing (mango has
   one group of workspaces per screen) and an `xfdesktop --reload` after every wallpaper change.
+- **The living room's 4K TV** (the Legion, by the dock; checked 2026-10-23 by plugging it in with the session open):
+  Xfce applies its "Sala 4K" profile through mango (`wlr-output-management`: 3840×2160 at scale 2, right of the
+  Legion's screen), `wallpaper-watcher` moves the panels to it and restarts `xfdesktop` for the new scale, as with
+  labwc. xterm looks a bit blurry on it, also as with labwc: Xwayland draws at scale 1 and mango stretches it. Unlike
+  labwc, mango could avoid it (`xwayland_ignore_scale=1`, in 0.17.5: X11 programs draw at the real pixels; checked
+  nested at scale 2, the X screen went from 640×360 to 1280×720), but they would then be half size on the TV, and
+  `Xft.dpi` (the fix in mango's docs) is one value for every screen. Left off: the blur does not bother the user.
 
 ## Remove
 
