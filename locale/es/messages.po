@@ -47,26 +47,6 @@ msgid "%s: there is no 'runsv %s' (link just created or runsvdir down?)"
 msgstr "%s: no hay 'runsv %s' (¿enlace recién creado o runsvdir caído?)"
 
 #: common/agent/audit-void.sh
-msgid "%s: DOWN or RELAUNCHING IN A LOOP (runsv without the service's process in both looks)"
-msgstr "%s: CAÍDO o RELANZÁNDOSE EN BUCLE (runsv sin proceso del servicio en las dos miradas)"
-
-#: common/agent/audit-void.sh
-msgid "%s: its process disappeared between the two looks (loop?)"
-msgstr "%s: su proceso desapareció entre las dos miradas (¿bucle?)"
-
-#: common/agent/audit-void.sh
-msgid "%s: the process changed PID in 2 s (%s → %s): RELAUNCHING"
-msgstr "%s: el proceso cambió de PID en 2 s (%s → %s): RELANZÁNDOSE"
-
-#: common/agent/audit-void.sh
-msgid "%s: %s is also started by D-Bus (%s)"
-msgstr "%s: %s también lo arranca D-Bus (%s)"
-
-#: common/agent/audit-void.sh
-msgid "%s: there is %s running OUTSIDE runsv (PID %s, started by D-Bus) → clash with runit"
-msgstr "%s: hay %s corriendo FUERA de runsv (PID %s, lo arrancó D-Bus) → choque con runit"
-
-#: common/agent/audit-void.sh
 msgid "(%d services; warnings: %d)"
 msgstr "(%d servicios; avisos: %d)"
 
@@ -105,10 +85,6 @@ msgstr "lista de los instalados a mano (para cruzar con docs/):"
 #: common/agent/audit-void.sh
 msgid ".new-* in /etc: %s (do not apply them: the good one is the current one)"
 msgstr ".new-* en /etc: %s (no aplicarlos: el bueno es el actual)"
-
-#: common/agent/audit-void.sh
-msgid "WITHOUT cap_sys_nice"
-msgstr "SIN cap_sys_nice"
 
 #: common/agent/audit-void.sh
 msgid "%s: libraries missing: %s"
@@ -169,14 +145,6 @@ msgstr "todo en reposo"
 #: common/agent/audit-void.sh
 msgid "memory (MiB):  %s"
 msgstr "memoria (MiB):  %s"
-
-#: common/agent/audit-void.sh
-msgid "processes created in %.0f s: %d"
-msgstr "procesos creados en %.0f s: %d"
-
-#: common/agent/audit-void.sh
-msgid "~1 per second or more: check whether something relaunches in a loop (idle, the IdeaPad creates ~1 every 5 s)"
-msgstr "~1 por segundo o más: mirar si algo se relanza en bucle (en reposo, la IdeaPad crea ~1 cada 5 s)"
 
 #: common/agent/audit-void.sh
 msgid "end"
@@ -4501,3 +4469,111 @@ msgstr "rueda abajo"
 #: common/xfce-wayland/mango/mango-keys
 msgid "wheel up"
 msgstr "rueda arriba"
+
+#: common/agent/audit-void.sh
+msgid "%d by %s (%s), %.1f/s"
+msgstr "%d por %s (%s), %.1f/s"
+
+#: common/agent/audit-void.sh
+msgid "%d files that no piece explains: %s"
+msgstr "%d ficheros que ninguna pieza explica: %s"
+
+#: common/agent/audit-void.sh
+msgid "%s relaunches %s %.1f times/s"
+msgstr "%s relanza %s %.1f veces/s"
+
+#: common/agent/audit-void.sh
+msgid "%s: %s can be started by both runit and D-Bus (%s); runit won this boot, D-Bus may win the next one and then runsv relaunches it in a loop"
+msgstr "%s: %s lo pueden arrancar runit y D-Bus (%s); en este arranque ganó runit, en otro puede ganar D-Bus y entonces runsv lo relanza en bucle"
+
+#: common/agent/audit-void.sh
+msgid "%s: DOWN (no process of the service in 3 s)"
+msgstr "%s: CAÍDO (ningún proceso del servicio en 3 s)"
+
+#: common/agent/audit-void.sh
+msgid "%s: RELAUNCHING IN A LOOP, %.1f times/s"
+msgstr "%s: SE RELANZA EN BUCLE, %.1f veces/s"
+
+#: common/agent/audit-void.sh
+msgid "%s: runit AND D-Bus both start %s; the copy that works is PID %s (outside runsv, started by D-Bus); runsv relaunches its own %.1f times/s, which fails at once"
+msgstr "%s: runit Y D-Bus arrancan %s; la copia que funciona es el PID %s (fuera de runsv, la arrancó D-Bus); runsv relanza la suya %.1f veces/s, que falla al instante"
+
+#: common/agent/audit-void.sh
+msgid ".new-* in /etc: %s"
+msgstr ".new-* en /etc: %s"
+
+#: common/agent/audit-void.sh
+msgid "5. Findings (CRITICAL = network, login, boot or remote access lost, or data at risk; WARN = to fix, the machine works; INFO = routine)"
+msgstr "5. Hallazgos (CRÍTICO = se pierde la red, el login, el arranque o el acceso remoto, o hay datos en peligro; AVISO = hay que arreglarlo, la máquina funciona; INFO = rutina)"
+
+#: common/agent/audit-void.sh
+msgid "CRITICAL"
+msgstr "CRÍTICO"
+
+#: common/agent/audit-void.sh
+msgid "INFO"
+msgstr "INFO"
+
+#: common/agent/audit-void.sh
+msgid "WARN"
+msgstr "AVISO"
+
+#: common/agent/audit-void.sh
+msgid "find out why it went before reinstalling it with %s"
+msgstr "averiguar por qué se perdió antes de reinstalarla con %s"
+
+#: common/agent/audit-void.sh
+msgid "for each one: a piece to add (install/pieces.tsv, with its installer) or something to remove; on the IdeaPad, first look for it in its Common recipe (what only the IdeaPad has lives there)"
+msgstr "para cada uno: una pieza que añadir (install/pieces.tsv, con su instalador) o algo que quitar; en la IdeaPad, buscarlo antes en su receta de Common (lo que solo tiene la IdeaPad está ahí)"
+
+#: common/agent/audit-void.sh
+msgid "gamescope: WITHOUT cap_sys_nice (lost when gamescope is updated)"
+msgstr "gamescope: SIN cap_sys_nice (se pierde al actualizar gamescope)"
+
+#: common/agent/audit-void.sh
+msgid "its summary repairs it"
+msgstr "su resumen lo repara"
+
+#: common/agent/audit-void.sh
+msgid "no CRITICAL findings"
+msgstr "ningún hallazgo CRÍTICO"
+
+#: common/agent/audit-void.sh
+msgid "nothing to fix"
+msgstr "nada que arreglar"
+
+#: common/agent/audit-void.sh
+msgid "nothing: they are the package's templates; the current file is the good one"
+msgstr "nada: son las plantillas del paquete; el fichero actual es el bueno"
+
+#: common/agent/audit-void.sh
+msgid "orphans that nothing depends on: %s"
+msgstr "huérfanos de los que nada depende: %s"
+
+#: common/agent/audit-void.sh
+msgid "pending updates: %d"
+msgstr "actualizaciones pendientes: %d"
+
+#: common/agent/audit-void.sh
+msgid "processes created in %.0f s, not counting this audit's: %d"
+msgstr "procesos creados en %.0f s, sin contar los de esta auditoría: %d"
+
+#: common/agent/audit-void.sh
+msgid "rebuild or reinstall the piece that installs it (install/pieces.tsv)"
+msgstr "recompilar o reinstalar la pieza que lo instala (install/pieces.tsv)"
+
+#: common/agent/audit-void.sh
+msgid "see section 1 for that service"
+msgstr "ver la sección 1 para ese servicio"
+
+#: common/agent/audit-void.sh
+msgid "sudo rm /var/service/%s  (D-Bus starts it on demand, as with rtkit since 2026-10-08; first check that nothing needs it before D-Bus is asked)"
+msgstr "sudo rm /var/service/%s  (D-Bus lo arranca cuando hace falta, como con rtkit desde el 2026-10-08; antes, comprobar que nada lo necesita antes de que se le pida a D-Bus)"
+
+#: common/agent/audit-void.sh
+msgid "sudo sv status %s; then its log (/var/log/%s, if it has log/) or run its ./run by hand to see why"
+msgstr "sudo sv status %s; luego su registro (/var/log/%s, si tiene log/) o lanzar su ./run a mano para ver por qué"
+
+#: common/agent/audit-void.sh
+msgid "sudo xbps-remove %s  (by name; never -o, which also takes the backup kernel; first check that nothing outside xbps uses them)"
+msgstr "sudo xbps-remove %s  (por nombre; nunca -o, que también se lleva el kernel de respaldo; antes, comprobar que nada fuera de xbps los usa)"

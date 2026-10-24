@@ -4,6 +4,20 @@ The notable changes of the system and this repository, newest first. The full ac
 attempts, measurements) is in the private repository's archive and, until 2026-10-14, in the tag
 `recipe-single-file` (*History*).
 
+## 2026-10-24
+
+- **The audit ends with its findings** ([Claude Code](docs/8-maintenance/3-claude-code.md)): `common/agent/audit-void.sh`
+  gains section 5, every problem once with its severity (CRITICAL only for network, login, boot or remote access lost,
+  or data at risk), the figure that proves it and the default fix. A daemon started by both runit and D-Bus is one
+  finding with its measured relaunch rate (and, when runit won this boot, a warning that the next boot may lose the
+  race); a service of the network, login or remote access that is down is CRITICAL; stray orphans come with
+  `xbps-remove` by name (never `-o`: the backup kernel is an orphan on purpose). New processes are counted by parent,
+  without the audit's own: the global count, and its "relaunches in a loop?" hint, had made an agent blame 116 of the
+  audit's own processes on a 1/s `polkitd` loop.
+- **The maintenance agent has one source** (private repository, `agents/`): a short core with hard limits, a fixed
+  procedure, an answer template and a worked example, plus reference notes read only when needed; `build.sh` writes
+  Claude Code's and Antigravity's copies, and `agents/evals/` measures each change against real cases.
+
 ## 2026-10-22
 
 - **Steam's "check for updates" asks void-update** (`/usr/local/bin/steamos-update`, [Game Mode](docs/6-game-mode/2-game-mode.md)):
