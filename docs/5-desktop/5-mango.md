@@ -243,6 +243,12 @@ crashed the session and was removed.
   labwc, mango could avoid it (`xwayland_ignore_scale=1`, in 0.17.5: X11 programs draw at the real pixels; checked
   nested at scale 2, the X screen went from 640×360 to 1280×720), but they would then be half size on the TV, and
   `Xft.dpi` (the fix in mango's docs) is one value for every screen. Left off: the blur does not bother the user.
+- **Steam's on-screen keyboard** (Legion, 2026-10-23): it works, but Steam places it for a 1200 px tall screen, so
+  on the 1080 px monitor it came out at y=830 with 110 px out of the screen. A window rule (by `appid` and its title
+  in Spanish or English) puts it at the bottom of the screen it opens on, centred and inside it (`offsety:100`), and
+  without a border as in labwc: checked, y=712–1072 with the usual 8 px gap.
+- **The screen-share chooser** (Legion): sharing works in mango (Vesktop, 2026-10-23); it floats on top without a
+  border, so focus does not light it up (the user's choice).
 
 ## Remove
 
