@@ -18,12 +18,24 @@
 # Without an internal panel (a desktop machine) the panels are left alone. PANELS_ON_EXTERNAL=0 turns it off.
 # After every change of screens it also starts xfce4-panel if it is not running (it closed once when the TV was
 # unplugged, and nothing started it again).
+# In "Xfce (mango)" (MANGO_INSTANCE_SIGNATURE set, 2026-10-23, the Legion with its monitor) two more things:
+#   - mango gives each screen its own group of workspaces, so per-workspace wallpapers looked for the external
+#     screen's under another workspace number (workspace9…), never set: the external screen never changed. The
+#     single-workspace mode (one wallpaper for all workspaces, the dialog's "Apply to all workspaces") is set when
+#     it is missing (a choice already made, true or false, is left alone);
+#   - xfdesktop then applied a new wallpaper on the internal screen at once but on the external one only after
+#     "xfdesktop --reload": every change under /backdrop/ (dialog, Thunar, xfconf-query) is followed by a reload,
+#     half a second after the last one.
 # Log (English; the checks of docs/ read it): ~/.local/state/wallpaper-watcher.log (redone every session).
 # Previous (Spanish) name: fondo-vigilante (log fondo-vigilante.log).
 import glob, os, subprocess, time
 import gi
 gi.require_version("Gdk", "3.0")
 from gi.repository import Gdk, GLib
+MANGO = bool(os.environ.get("MANGO_INSTANCE_SIGNATURE"))
+if MANGO:
+    gi.require_version("Xfconf", "0")
+    from gi.repository import Xfconf
 
 LOG = os.path.expanduser("~/.local/state/wallpaper-watcher.log")
 os.makedirs(os.path.dirname(LOG), exist_ok=True)
@@ -116,6 +128,34 @@ def place_panels():
             subprocess.run(["xfconf-query", "-c", "xfce4-panel", "-p", prop, "-n", "-t", "string", "-s", want])
             note(f"panel-{pid}: on the external screen ({want})")
 
+wallpaper_pending = None
+
+def wallpaper_reload():
+    global wallpaper_pending
+    wallpaper_pending = None
+    if subprocess.run(["pgrep", "-x", "xfdesktop"], capture_output=True).returncode == 0:
+        r = subprocess.run(["xfdesktop", "--reload"], capture_output=True, text=True)
+        note(f"wallpaper changed: xfdesktop --reload (rc={r.returncode})")
+    return False
+
+def wallpaper_changed(_channel, prop, _value):
+    global wallpaper_pending
+    if not prop.startswith("/backdrop/"):
+        return
+    if wallpaper_pending:
+        GLib.source_remove(wallpaper_pending)
+    wallpaper_pending = GLib.timeout_add(500, wallpaper_reload)
+
+def mango_wallpapers():
+    Xfconf.init()
+    ch = Xfconf.Channel.get("xfce4-desktop")
+    if not ch.has_property("/backdrop/single-workspace-mode"):
+        ch.set_int("/backdrop/single-workspace-number", 0)
+        ch.set_bool("/backdrop/single-workspace-mode", True)
+        note("mango: single-workspace mode was not set: set (one wallpaper for all workspaces)")
+    ch.connect("property-changed", wallpaper_changed)
+    return ch
+
 def notice(reason):
     global pending
     note(reason)
@@ -138,6 +178,8 @@ for i in range(d.get_n_monitors()):
 d.connect("monitor-added", lambda _d, m: (watch(m), notice(f"added: {m.get_model()}")))
 d.connect("monitor-removed", lambda _d, m: notice(f"removed: {m.get_model()}"))
 note(f"watching {d.get_n_monitors()} screens")
+if MANGO:
+    desktop_channel = mango_wallpapers()                     # kept: its signal lives as long as the object
 last_layout = layout()
 GLib.timeout_add(1500, lambda: (place_panels(), False)[1])   # at login, once xfce4-panel is up
 GLib.MainLoop().run()

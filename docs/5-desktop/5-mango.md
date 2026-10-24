@@ -232,6 +232,9 @@ mango 0.17.5 cannot show one by id (`toggle_scratchpad client,<id>` ignores the 
 crashed the session and was removed.
 - Monitor shortcuts (`focusmon`, `tagmon`) checked only nested with two outputs (`WLR_WL_OUTPUTS=2`).
 - No screen lock (as with labwc: `xfce4-screensaver` is X11).
+- **Wallpaper of a second screen** (the Legion's monitor): it did not change until `wallpaper-watcher` learned two
+  things for mango (2026-10-23; [wallpaper](4-wallpaper.md)): the single-workspace mode when it is missing (mango has
+  one group of workspaces per screen) and an `xfdesktop --reload` after every wallpaper change.
 
 ## Remove
 

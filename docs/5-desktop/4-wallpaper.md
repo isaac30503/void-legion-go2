@@ -20,6 +20,19 @@ watcher picks the first screen that is not the built-in one (its physical size i
 sets `monitor-N-Unknown` on every panel, or removes `output-name` (Automatic) when the Legion's screen is alone.
 `PANELS_ON_EXTERNAL=0` turns that part off.
 
+**In "Xfce (mango)" ([mango](5-mango.md)), two more** (2026-10-23, the Legion with its monitor; the watcher knows
+it by `MANGO_INSTANCE_SIGNATURE`): the dialog and Thunar wrote the external screen's wallpaper right
+(`monitorDP-1/workspace0`), yet it never changed.
+- mango gives **each screen its own group of workspaces** (9 each), so with per-workspace wallpapers `xfdesktop`
+  looked for the external screen's under another workspace number, never set. The Legion lacked
+  `/backdrop/single-workspace-mode` (the dialog's "Apply to all workspaces"; the IdeaPad had it): the watcher sets it
+  to `true` (and the number to 0) **only when it is missing**.
+- Even then `xfdesktop` applied a new wallpaper on the internal screen at once but on the external one **only after
+  `xfdesktop --reload`**: the watcher follows `xfce4-desktop` through xfconf (event-driven, GObject's `Xfconf`) and
+  reloads half a second after the last change under `/backdrop/` (log: `wallpaper changed: xfdesktop --reload`).
+Checked on the Legion by colour in captures of the external screen's edges: before, a fixed colour whatever was set;
+after, each new wallpaper at once. With a single screen (the IdeaPad) it already worked.
+
 **Screenshots lie about a scaled screen:** `xfce4-screenshooter -f` on labwc showed the panels of the TV at scale 2 at
 twice their length and offset (the top bar's right half off screen, a centred panel at the right edge), while the TV
 itself showed them right. A "fix" made from those captures broke the real panels (2026-10-16, undone): on a scaled
