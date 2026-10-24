@@ -29,7 +29,7 @@ it by `MANGO_INSTANCE_SIGNATURE`): the dialog and Thunar wrote the external scre
   to `true` (and the number to 0) **only when it is missing**.
 - Even then `xfdesktop` applied a new wallpaper on the internal screen at once but on the external one **only after
   `xfdesktop --reload`**: the watcher follows `xfce4-desktop` through xfconf (event-driven, GObject's `Xfconf`) and
-  reloads half a second after the last change under `/backdrop/` (log: `wallpaper changed: xfdesktop --reload`).
+  reloads 0.1 s after the last change under `/backdrop/` (0.5 s at first: the external screen changed visibly later) (log: `wallpaper changed: xfdesktop --reload`).
 Checked on the Legion by colour in captures of the external screen's edges: before, a fixed colour whatever was set;
 after, each new wallpaper at once. With a single screen (the IdeaPad) it already worked.
 

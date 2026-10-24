@@ -25,7 +25,7 @@
 #     it is missing (a choice already made, true or false, is left alone);
 #   - xfdesktop then applied a new wallpaper on the internal screen at once but on the external one only after
 #     "xfdesktop --reload": every change under /backdrop/ (dialog, Thunar, xfconf-query) is followed by a reload,
-#     half a second after the last one.
+#     0.1 s after the last one (0.5 s at first: the external screen changed visibly later than the internal one).
 # Log (English; the checks of docs/ read it): ~/.local/state/wallpaper-watcher.log (redone every session).
 # Previous (Spanish) name: fondo-vigilante (log fondo-vigilante.log).
 import glob, os, subprocess, time
@@ -144,7 +144,7 @@ def wallpaper_changed(_channel, prop, _value):
         return
     if wallpaper_pending:
         GLib.source_remove(wallpaper_pending)
-    wallpaper_pending = GLib.timeout_add(500, wallpaper_reload)
+    wallpaper_pending = GLib.timeout_add(100, wallpaper_reload)   # Thunar writes two keys in a row
 
 def mango_wallpapers():
     Xfconf.init()
