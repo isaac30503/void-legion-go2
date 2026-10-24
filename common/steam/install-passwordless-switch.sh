@@ -3,10 +3,12 @@
 # password, like SteamOS: its "Switch to Desktop" changes the session manager's autologin session
 # and restarts it, which logs back into the new one by itself. Here:
 #   - /etc/xdg/lightdm/lightdm.conf.d/60-steam-mode.conf: autologin of the user in the chosen
-#     mode (steam-game-mode-direct or xfce-wayland/xfce). lightdm reads that folder BEFORE lightdm.conf, so
+#     mode (steam-game-mode-direct or xfce-wayland/xfce-mango/xfce). lightdm reads that folder BEFORE lightdm.conf, so
 #     the autologin-user/autologin-session lines that the ISO brought are commented out in lightdm.conf;
-#   - /usr/local/bin/switch-mode-root game|desktop|desktop-x11 (root): changes that session
-#     and restarts lightdm (desktop = Xfce on Wayland/labwc, docs/5-desktop/1-xfce.md; desktop-x11 = Xfce X11);
+#   - /usr/local/bin/switch-mode-root game|desktop|desktop-mango|desktop-labwc|desktop-x11 (root): changes that
+#     session and restarts lightdm (desktop = Xfce with mangowc where it is installed, docs/5-desktop/5-mango.md,
+#     otherwise Xfce on Wayland/labwc, docs/5-desktop/1-xfce.md; desktop-mango and desktop-labwc = each of them;
+#     desktop-x11 = Xfce X11);
 #   - /etc/sudoers.d/zz-switch-mode: the user can run ONLY that script without password (the script
 #     only accepts those arguments); it is validated with visudo before being put in place. The name starts
 #     with "zz" on purpose: sudoers.d is read in alphabetical order and the LAST matching rule wins;
@@ -93,7 +95,7 @@ rm -f "$OLD_DROP"
 t "== 3. %s" "$HELP"
 cat > "$HELP" <<EOF
 #!/bin/sh
-# switch-mode-root game|desktop|desktop-x11 — changes lightdm's autologin session and
+# switch-mode-root game|desktop|desktop-mango|desktop-labwc|desktop-x11 — changes lightdm's autologin session and
 # restarts it, which logs into it by itself (like SteamOS's "Switch to Desktop"). It runs as root:
 # $U can run it without password (/etc/sudoers.d/zz-switch-mode), and that is why it only accepts these
 # arguments. "--check" only checks that it is installed. docs/4-sessions/1-login-and-modes.md.
@@ -105,15 +107,18 @@ D=$DROP
 case "\$1" in
     --check)            [ -f "\$D" ]; exit \$? ;;
     game)               s=steam-game-mode-direct ;;
-    # The desktop is Xfce on Wayland (labwc, docs/5-desktop/1-xfce.md) since 2026-10-03; X11 stays as the
-    # fallback.
-    desktop)            s=xfce-wayland ;;
+    # The desktop: Xfce with mangowc where its session is installed (the user's choice on 2026-10-23,
+    # docs/5-desktop/5-mango.md), otherwise Xfce on Wayland with labwc (the desktop since 2026-10-03,
+    # docs/5-desktop/1-xfce.md). X11 stays as the fallback.
+    desktop)            if [ -f /usr/share/wayland-sessions/xfce-mango.desktop ]; then s=xfce-mango; else s=xfce-wayland; fi ;;
+    desktop-mango)      s=xfce-mango ;;
+    desktop-labwc)      s=xfce-wayland ;;
     desktop-x11)        s=xfce ;;
-    *) echo "usage: switch-mode-root game|desktop|desktop-x11" >&2; exit 2 ;;
+    *) echo "usage: switch-mode-root game|desktop|desktop-mango|desktop-labwc|desktop-x11" >&2; exit 2 ;;
 esac
 [ -f "\$D" ] || exit 1
 sed -i "s/^autologin-session=.*/autologin-session=\$s/" "\$D"
-# Steam open ("X11 Desktop"/"Wayland Desktop" launchers from the desktop): restarting
+# Steam open ("X11 Desktop"/"labwc Desktop"/"mango Desktop" launchers from the desktop): restarting
 # lightdm takes the session with Steam inside and on start it did the full verification. It is
 # closed cleanly first, as in 05-close-steam.sh (steam -shutdown as its user, with the process's
 # own environment; event-driven wait, 20 s cap). From Game Mode Steam has already ended
@@ -255,6 +260,9 @@ grep -n 'autologin' "$DROP"
 case "$SESSION" in
     steam-game-mode*) t "== Reboot: it enters Game Mode by itself. 'Switch to Desktop' → Xfce without password;" ;;
     xfce-wayland)     t "== Reboot: it enters the desktop (Xfce on Wayland) by itself, the chosen mode. 'Switch to Desktop' → Xfce without password;" ;;
+    xfce-mango)       t "== Reboot: it enters the desktop (Xfce with mangowc) by itself, the chosen mode. 'Switch to Desktop' → Xfce without password;" ;;
+    # niri's trial (2026-10-23), replaced by mangowc's: install-xfce-mango.sh moves the chosen mode to it.
+    xfce-niri)        t "!! the chosen mode is Xfce (niri), which is gone: run install-xfce-mango.sh before rebooting" ;;
     *)                t "== Reboot: it enters the desktop (Xfce X11) by itself, the chosen mode. 'Switch to Desktop' → Xfce without password;" ;;
 esac
 t "   from Xfce, the 'Game Mode' launcher → Game Mode without password."

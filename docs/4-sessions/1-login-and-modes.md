@@ -2,7 +2,8 @@
 
 Like SteamOS: **no login screen and no password**. At power-on lightdm logs `isaac` in automatically into **the
 last mode used**: **Game Mode** (gamescope + Steam, [game mode](../6-game-mode/2-game-mode.md)), the **desktop**
-(Xfce on Wayland, the normal one) or the **X11 desktop** (backup). Switching restarts lightdm into the other
+(Xfce on Wayland: with mangowc where it is installed, otherwise labwc; [mango](../5-desktop/5-mango.md)), the
+**labwc desktop** or the **X11 desktop** (backup). Switching restarts lightdm into the other
 session. **Administration still asks for the password** (`sudo`, packages, `void-update`): the only thing that
 runs without it is `switch-mode-root`.
 
@@ -10,7 +11,7 @@ runs without it is `switch-mode-root`.
 |---|---|---|
 | Game Mode | Desktop | Steam's power menu → "Cambiar a escritorio" ("Switch to Desktop") |
 | Desktop | Game Mode | applications menu → **"Modo Juego"** ("Game Mode") (it closes the desktop at once: save first) |
-| Desktop | Wayland ↔ X11 | the launchers "Escritorio Wayland" / "Escritorio X11" |
+| Desktop | mango ↔ labwc ↔ X11 | the launchers "Escritorio mango" / "Escritorio labwc" / "Escritorio X11" |
 
 **Never log in from lightdm's login screen** (it only shows after logging out): its greeter does not die on
 lightdm's `SIGTERM`, and ~20 s later it takes the console from gamescope or labwc and lightdm locks the session.

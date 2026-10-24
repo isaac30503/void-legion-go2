@@ -1,8 +1,8 @@
 #!/bin/sh
 # install-xfce-wayland.sh — the session "Xfce (Wayland)": the same Xfce, with labwc handling the
-# windows instead of xfwm4 (Xfce 4.20: startxfce4 --wayland uses labwc). Since 2026-10-03 it is
-# THE desktop: Game Mode's "Switch to Desktop" enters it (switch-mode-root desktop)
-# and Xfce X11 stays as the fallback. You enter and leave without password with the launchers below.
+# windows instead of xfwm4 (Xfce 4.20: startxfce4 --wayland uses labwc). From 2026-10-03 it was
+# THE desktop; since 2026-10-23, where "Xfce (mango)" is installed (install-xfce-mango.sh), that one is, and labwc
+# stays one more mode (switch-mode-root desktop-labwc). Xfce X11 stays as the fallback. You enter and leave without password with the launchers below.
 #   - package labwc (Xwayland and gtk-layer-shell are already there, from Steam and from Xfce);
 #   - ~/.config/xfce4/labwc/{rc.xml,environment,autostart,lock}: Omarchy-style shortcuts, focus that
 #     follows the mouse, 8 px gap, new windows almost maximized (dialogs centered), rule
@@ -12,7 +12,7 @@
 #   - ~/.local/bin/wallpaper-watcher: asks xfdesktop for the wallpaper again when the screens change
 #     (event-driven; without it, when coming from Game Mode the internal screen was left without wallpaper);
 #   - ~/.local/share/themes/Orchis-Teal-Dark-Compact/labwc: Orchis for labwc (labwc-theme.sh);
-#   - launchers "Wayland Desktop" and "X11 Desktop" (finder, Super+Space; Spanish names in Name[es]).
+#   - launchers "labwc Desktop" and "X11 Desktop" (finder, Super+Space; Spanish names in Name[es]).
 # Needs install-passwordless-switch.sh with desktop = Wayland and desktop-x11 (docs/5-desktop/1-xfce.md).
 # What does NOT work on Wayland (X11 only): window-focus and window-snap (xdotool; here
 # labwc redoes them: Super+arrows by direction only between snapped ones), the Docklike's per-workspace
@@ -41,13 +41,13 @@ if is_remove "${1:-}"; then
     rm -f "$LW" "$LX" "$H/.local/bin/brightness" "$H/.local/bin/wallpaper-watcher" $OLD
     rm -rf "${CFG:?}" "${H:?}/.local/share/themes/Orchis-Teal-Dark-Compact/labwc"
     t "== removed the launchers, %s and ~/.local/bin/brightness (labwc stays installed:" "$CFG"
-    t "   sudo xbps-remove labwc). CAREFUL: \"desktop\" is still Wayland in switch-mode-root;"
+    t "   sudo xbps-remove labwc). CAREFUL: without mango, \"desktop\" is still labwc in switch-mode-root;"
     t "   to go back to X11: sudo /usr/local/bin/switch-mode-root desktop-x11"
     exit 0
 fi
 
-grep -q 'desktop-x11' /usr/local/bin/switch-mode-root 2>/dev/null || {
-    t "!! switch-mode-root is missing or old (without desktop-x11): first, install-passwordless-switch.sh"
+grep -q 'desktop-labwc' /usr/local/bin/switch-mode-root 2>/dev/null || {
+    t "!! switch-mode-root is missing or old (without desktop-labwc): first, install-passwordless-switch.sh"
     exit 1; }
 
 t "== 1. labwc"
@@ -82,11 +82,11 @@ sudo -u "$U" env HOME="$H" sh "$D/labwc-theme.sh"
 t "== 3. launchers"
 cat > "$LW" <<'EOF'
 [Desktop Entry]
-Name=Wayland Desktop
-Name[es]=Escritorio Wayland
-Comment=Switch to Xfce on Wayland (labwc), the normal desktop, without password
-Comment[es]=Pasar a Xfce sobre Wayland (labwc), el escritorio normal, sin contraseña
-Exec=sudo -n /usr/local/bin/switch-mode-root desktop
+Name=labwc Desktop
+Name[es]=Escritorio labwc
+Comment=Switch to Xfce on Wayland with labwc, without password
+Comment[es]=Pasar a Xfce sobre Wayland con labwc, sin contraseña
+Exec=sudo -n /usr/local/bin/switch-mode-root desktop-labwc
 Icon=preferences-desktop-display
 Terminal=false
 Type=Application
@@ -108,5 +108,5 @@ ls -la "$LW" "$LX"
 
 t "== check"
 sudo -n -u "$U" sudo -n /usr/local/bin/switch-mode-root --check && t "   %s can switch mode without password" "$U"
-t "== Done. Finder (Super+Space) → 'Wayland Desktop' (it closes the current session: save"
-t "   first). X11, as the fallback: 'X11 Desktop'. Game Mode's 'Switch to Desktop' → Wayland."
+t "== Done. Finder (Super+Space) → 'labwc Desktop' (it closes the current session: save"
+t "   first). X11, as the fallback: 'X11 Desktop'. Game Mode's 'Switch to Desktop' → mango, or labwc without it."

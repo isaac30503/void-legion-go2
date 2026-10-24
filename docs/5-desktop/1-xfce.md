@@ -91,7 +91,12 @@ It installs **`labwc`** and **`~/.config/xfce4/labwc/`** (the folder `startxfce4
 **`~/.local/bin/brightness +N|-N`** (brightness keys through elogind's `SetBrightness`, without root, never below
 5 %: on Wayland xfce4-power-manager cannot catch them), **`~/.local/bin/wallpaper-watcher`**
 ([wallpaper](4-wallpaper.md)), the Orchis theme for labwc (`labwc-theme.sh`) and the launchers "Escritorio
-Wayland" / "Escritorio X11". After editing `rc.xml`: `labwc --reconfigure` (or `kill -HUP $(pgrep -x labwc)`).
+labwc" / "Escritorio X11". After editing `rc.xml`: `labwc --reconfigure` (or `kill -HUP $(pgrep -x labwc)`).
+
+**Since 2026-10-23 the desktop is Xfce with mangowc** where it is installed (Omarchy's dwindle and scroller layouts;
+`switch-mode-root desktop` and Game Mode's "Switch to Desktop" go there): [Xfce with mangowc](5-mango.md). labwc stays
+one more mode (`switch-mode-root desktop-labwc`, launcher "Escritorio labwc"), and the desktop where mango is not
+installed.
 
 ## Notes
 

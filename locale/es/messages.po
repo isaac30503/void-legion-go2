@@ -2043,16 +2043,16 @@ msgid "== removed the launchers, %s and ~/.local/bin/brightness (labwc stays ins
 msgstr "== quitados los lanzadores, %s y ~/.local/bin/brightness (labwc sigue instalado:"
 
 #: common/xfce-wayland/install-xfce-wayland.sh
-msgid "   sudo xbps-remove labwc). CAREFUL: \"desktop\" is still Wayland in switch-mode-root;"
-msgstr "   sudo xbps-remove labwc). OJO: \"desktop\" (escritorio) sigue siendo Wayland en switch-mode-root;"
+msgid "   sudo xbps-remove labwc). CAREFUL: without mango, \"desktop\" is still labwc in switch-mode-root;"
+msgstr "   sudo xbps-remove labwc). OJO: sin mango, \"desktop\" (escritorio) sigue siendo labwc en switch-mode-root;"
 
 #: common/xfce-wayland/install-xfce-wayland.sh
 msgid "   to go back to X11: sudo /usr/local/bin/switch-mode-root desktop-x11"
 msgstr "   para volver a X11: sudo /usr/local/bin/switch-mode-root desktop-x11"
 
 #: common/xfce-wayland/install-xfce-wayland.sh
-msgid "!! switch-mode-root is missing or old (without desktop-x11): first, install-passwordless-switch.sh"
-msgstr "!! switch-mode-root falta o es de antes (sin desktop-x11): antes, install-passwordless-switch.sh"
+msgid "!! switch-mode-root is missing or old (without desktop-labwc): first, install-passwordless-switch.sh"
+msgstr "!! switch-mode-root falta o es de antes (sin desktop-labwc): antes, install-passwordless-switch.sh"
 
 #: common/xfce-wayland/install-xfce-wayland.sh
 msgid "== 1. labwc"
@@ -2075,12 +2075,12 @@ msgid "   %s can switch mode without password"
 msgstr "   %s puede cambiar de modo sin contraseña"
 
 #: common/xfce-wayland/install-xfce-wayland.sh
-msgid "== Done. Finder (Super+Space) → 'Wayland Desktop' (it closes the current session: save"
-msgstr "== Listo. Buscador (Super+Espacio) → 'Escritorio Wayland' (cierra la sesión actual: guardar"
+msgid "== Done. Finder (Super+Space) → 'labwc Desktop' (it closes the current session: save"
+msgstr "== Listo. Buscador (Super+Espacio) → 'Escritorio labwc' (cierra la sesión actual: guardar"
 
 #: common/xfce-wayland/install-xfce-wayland.sh
-msgid "   first). X11, as the fallback: 'X11 Desktop'. Game Mode's 'Switch to Desktop' → Wayland."
-msgstr "   antes). X11, de respaldo: 'Escritorio X11'. 'Cambiar a escritorio' del Modo Juego → Wayland."
+msgid "   first). X11, as the fallback: 'X11 Desktop'. Game Mode's 'Switch to Desktop' → mango, or labwc without it."
+msgstr "   antes). X11, de respaldo: 'Escritorio X11'. 'Cambiar a escritorio' del Modo Juego → mango, o labwc sin él."
 
 #: legion/desktop-1-root.sh legion/desktop-2-root.sh
 msgid "=== %s DONE OK"
@@ -4093,3 +4093,83 @@ msgstr "!! preempt=full no está en grub.cfg"
 #: common/steam/install-game-mode.sh
 msgid "!! %s exists and is not ours: not touched"
 msgstr "!! %s existe y no es nuestro: no se toca"
+
+#: common/xfce-wayland/install-xfce-mango.sh
+msgid "!! the current mode is Xfce (mango): first switch to another one (sudo /usr/local/bin/switch-mode-root desktop-labwc)"
+msgstr "!! el modo actual es Xfce (mango): antes, cambiar a otro (sudo /usr/local/bin/switch-mode-root desktop-labwc)"
+
+#: common/xfce-wayland/install-xfce-mango.sh
+msgid "== removed the session, the launcher and %s (mangowc stays installed: sudo xbps-remove mangowc)"
+msgstr "== quitados la sesión, el lanzador y %s (mangowc sigue instalado: sudo xbps-remove mangowc)"
+
+#: common/xfce-wayland/install-xfce-mango.sh
+msgid "!! switch-mode-root is missing or old (without desktop-mango): first, install-passwordless-switch.sh"
+msgstr "!! switch-mode-root falta o es de antes (sin desktop-mango): antes, install-passwordless-switch.sh"
+
+#: common/xfce-wayland/install-xfce-mango.sh
+msgid "!! wallpaper-watcher or brightness are missing: first, install-xfce-wayland.sh"
+msgstr "!! faltan wallpaper-watcher o brightness: antes, install-xfce-wayland.sh"
+
+#: common/xfce-wayland/install-xfce-mango.sh
+msgid "!! %s belongs to a package (%s): nothing was installed"
+msgstr "!! %s es de un paquete (%s): no se instaló nada"
+
+#: common/xfce-wayland/install-xfce-mango.sh
+msgid "== 1. mangowc"
+msgstr "== 1. mangowc"
+
+#: common/xfce-wayland/install-xfce-mango.sh
+msgid "== 2. mango's configuration for Xfce (%s)"
+msgstr "== 2. configuración de mango para Xfce (%s)"
+
+#: common/xfce-wayland/install-xfce-mango.sh
+msgid "!! mango does not accept the configuration: nothing was changed"
+msgstr "!! mango no acepta la configuración: no se cambió nada"
+
+#: common/xfce-wayland/install-xfce-mango.sh
+msgid "== 3. the session (%s)"
+msgstr "== 3. la sesión (%s)"
+
+#: common/xfce-wayland/install-xfce-mango.sh
+msgid "== 4. launcher"
+msgstr "== 4. lanzador"
+
+#: common/xfce-wayland/install-xfce-mango.sh
+msgid "== 5. niri's trial, replaced"
+msgstr "== 5. la prueba de niri, sustituida"
+
+#: common/xfce-wayland/install-xfce-mango.sh
+msgid "   niri's files removed; its packages stay until you leave its session:"
+msgstr "   quitados los ficheros de niri; sus paquetes quedan hasta salir de su sesión:"
+
+#: common/xfce-wayland/install-xfce-mango.sh
+msgid "   sudo xbps-remove niri xwayland-satellite"
+msgstr "   sudo xbps-remove niri xwayland-satellite"
+
+#: common/xfce-wayland/install-xfce-mango.sh
+msgid "== Done. Finder (Super+Space) → 'mango Desktop' (it closes the current session: save first)."
+msgstr "== Listo. Buscador (Super+Espacio) → 'Escritorio mango' (cierra la sesión actual: guardar antes)."
+
+#: common/xfce-wayland/install-xfce-mango.sh
+msgid "   It is now the desktop: Game Mode's 'Switch to Desktop' comes here. labwc: 'labwc Desktop'."
+msgstr "   Ya es el escritorio: 'Cambiar a escritorio' del Modo Juego viene aquí. labwc: 'Escritorio labwc'."
+
+#: common/xfce-wayland/install-xfce-mango.sh
+msgid "   Shortcuts: docs/5-desktop/5-mango.md."
+msgstr "   Atajos: docs/5-desktop/5-mango.md."
+
+#: common/steam/install-passwordless-switch.sh
+msgid "== Reboot: it enters the desktop (Xfce with mangowc) by itself, the chosen mode. 'Switch to Desktop' → Xfce without password;"
+msgstr "== Reiniciar: entra solo en el escritorio (Xfce con mangowc), el modo elegido. 'Cambiar a escritorio' → Xfce sin contraseña;"
+
+#: common/xfce-wayland/mango/mango-scratchpad
+msgid "scratchpad> "
+msgstr "scratchpad> "
+
+#: common/xfce-wayland/mango/mango-scratchpad
+msgid "The scratchpad is empty (Super+Alt+S sends a window there)"
+msgstr "El scratchpad está vacío (Super+Alt+S manda una ventana allí)"
+
+#: common/steam/install-passwordless-switch.sh
+msgid "!! the chosen mode is Xfce (niri), which is gone: run install-xfce-mango.sh before rebooting"
+msgstr "!! el modo elegido es Xfce (niri), que ya no existe: correr install-xfce-mango.sh antes de reiniciar"

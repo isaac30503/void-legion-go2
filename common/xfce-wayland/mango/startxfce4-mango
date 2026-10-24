@@ -1,0 +1,18 @@
+#!/bin/sh
+# startxfce4-mango — the session "Xfce (mango)" (/usr/share/wayland-sessions/xfce-mango.desktop runs it; installed in
+# /usr/local/bin by common/xfce-wayland/install-xfce-mango.sh; docs/5-desktop/5-mango.md). The same startxfce4 --wayland
+# as "Xfce (Wayland)", with mangowc instead of labwc: startxfce4 sets the Wayland environment (GDK_BACKEND,
+# XDG_SESSION_TYPE…) and the D-Bus session (dbus-run-session), and runs the compositor given as argument.
+#   -s   what mango starts: this same script, which then runs xfce4-session and mango's quit. mango does not end when
+#        that command ends, and lightdm would never see the session end. It is this script, and recognises itself by
+#        MANGO_INSTANCE_SIGNATURE (mango's socket, in what it starts), because startxfce4 and xinitrc split the
+#        compositor's command on spaces, without quotes (no sh -c '…', no "$0 --inside" after -s).
+if [ -n "${MANGO_INSTANCE_SIGNATURE:-}" ]; then
+    # mango does not tell D-Bus's activation environment about the screen (labwc and niri do): what D-Bus starts
+    # (portals, notifications) would not find it, and would hide Xfce's .desktop files (OnlyShowIn=XFCE).
+    dbus-update-activation-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP=XFCE 2>/dev/null || true
+    xfce4-session
+    exec mmsg dispatch quit
+fi
+CFG="${XDG_CONFIG_HOME:-$HOME/.config}/xfce4/mango/config.conf"
+exec startxfce4 --wayland mango -c "$CFG" -s "$0"

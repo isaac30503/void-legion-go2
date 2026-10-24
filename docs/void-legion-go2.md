@@ -45,6 +45,7 @@ To see first what it is like to use, with screenshots: **[the tour](tour.md)**.
 - [Look and feel](5-desktop/2-look-and-feel.md)
 - [Windows and shortcuts](5-desktop/3-windows-and-shortcuts.md)
 - [Wallpaper on Wayland](5-desktop/4-wallpaper.md)
+- [Xfce with mangowc (the desktop)](5-desktop/5-mango.md)
 
 ## 6. Game Mode
 

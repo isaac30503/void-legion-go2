@@ -1,0 +1,107 @@
+#!/usr/bin/python3 -I
+# mango-scratchpad — Super+S in "Xfce (mango)" (~/.local/bin; installed by common/xfce-wayland/install-xfce-mango.sh;
+# docs/5-desktop/5-mango.md). mango's scratchpad is its minimized windows (Super+Alt+S, Super+M), and its own
+# toggle_scratchpad shows them one at a time, in its order: with several, you had to go through them to reach the
+# one you wanted. This shows the right one:
+#   - the focused window is a scratchpad one → back to the scratchpad;
+#   - one window there → it comes;
+#   - several → a list (fzf in a small floating xterm with the usual theme, as install-pkg); only one list at a time:
+#     while it is open, Super+S goes back to it: type to filter, Enter brings it, Esc nothing.
+# mango 0.17.5 cannot show one by id (toggle_scratchpad ignores "client,<id>", checked nested on 2026-10-23): it
+# goes round toggle_scratchpad until the chosen one is the one shown, a few dispatches without animations.
+#   mango-scratchpad          what Super+S runs
+#   mango-scratchpad --pick   the list (what the xterm runs)
+import fcntl
+import json
+import os
+import subprocess
+import sys
+
+for _d in (os.path.expanduser("~/.local/share/void-legion/lib"), "/usr/local/share/void-legion/lib"):
+    if os.path.isfile(os.path.join(_d, "void_legion_i18n.py")):
+        sys.path.insert(0, _d)
+        break
+try:
+    from void_legion_i18n import _
+except ImportError:
+    def _(s):
+        return s
+
+# The list's xterm keeps the XTerm class (~/.Xresources goes by class: XTerm*); config.conf floats it by title.
+PICK_TITLE = "mango-scratchpad"
+
+
+def mmsg(*args):
+    return subprocess.run(["mmsg", *args], capture_output=True, text=True, timeout=5).stdout
+
+
+def clients():
+    try:
+        return json.loads(mmsg("get", "all-clients")).get("clients", [])
+    except (ValueError, OSError, subprocess.SubprocessError):
+        return []
+
+
+def hidden(cs):
+    return [c for c in cs if c.get("is_minimized") and c.get("title") != PICK_TITLE]
+
+
+def notify(msg):
+    subprocess.run(["notify-send", "-a", "mango", "-t", "3000", "Scratchpad", msg], check=False)
+
+
+def bring(cid):
+    # Each toggle_scratchpad hides the shown one or shows the next: at most two per window to get round.
+    for _i in range(2 * len(clients()) + 2):
+        c = next((c for c in clients() if c.get("id") == cid), None)
+        if c is None:
+            return
+        if c.get("is_visible") and not c.get("is_minimized"):
+            return
+        mmsg("dispatch", "toggle_scratchpad")
+
+
+def pick():
+    cs = hidden(clients())
+    if not cs:
+        return
+    lines = "".join("%d\t%s  (%s)\n" % (c["id"], c.get("title") or "?", c.get("appid") or "?") for c in cs)
+    r = subprocess.run(["fzf", "--delimiter=\t", "--with-nth=2..", "--reverse", "--no-info",
+                        "--prompt=" + _("scratchpad> ")], input=lines,
+                       stdout=subprocess.PIPE, text=True)
+    sel = r.stdout.strip()
+    if sel:
+        bring(int(sel.split("\t", 1)[0]))
+
+
+def main():
+    if sys.argv[1:] == ["--pick"]:
+        return pick()
+    # One list at a time: its xterm inherits this lock and holds it until it closes (also while it is still opening,
+    # where looking for its window would miss it).
+    lock = open(os.path.join(os.environ.get("XDG_RUNTIME_DIR", "/tmp"), "mango-scratchpad.lock"), "w")
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        c = next((c for c in clients() if c.get("title") == PICK_TITLE), None)
+        if c:
+            mmsg("dispatch", "focusid", "client,%d" % c["id"])
+        return
+    cs = clients()
+    focused = next((c for c in cs if c.get("is_focused")), None)
+    if focused and focused.get("is_scratchpad") and not focused.get("is_minimized"):
+        mmsg("dispatch", "minimized")
+        return
+    hs = hidden(cs)
+    if not hs:
+        notify(_("The scratchpad is empty (Super+Alt+S sends a window there)"))
+    elif len(hs) == 1:
+        bring(hs[0]["id"])
+    else:
+        subprocess.Popen(["xterm", "-T", PICK_TITLE, "-geometry", "70x12",
+                          "-e", os.path.realpath(__file__), "--pick"], start_new_session=True,
+                         pass_fds=(lock.fileno(),))
+
+
+if __name__ == "__main__":
+    main()
