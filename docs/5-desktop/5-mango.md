@@ -230,7 +230,8 @@ mango 0.17.5 cannot show one by id (`toggle_scratchpad client,<id>` ignores the 
   `exec-once`, `mmsg dispatch quit`); in use the same day. Fixed after the first try: Super+J (it used
   `dwindle_toggle_split_direction`, which only acts with `dwindle_manual_split=1`) and Super+S; Super+0 (overview)
 crashed the session and was removed.
-- Monitor shortcuts (`focusmon`, `tagmon`) checked only nested with two outputs (`WLR_WL_OUTPUTS=2`).
+- Monitor shortcuts (`focusmon`, `tagmon`): checked nested with two outputs (`WLR_WL_OUTPUTS=2`), and on the Legion with
+  its monitor by the user on 2026-10-23 (moving windows between the screens works).
 - No screen lock (as with labwc: `xfce4-screensaver` is X11).
 - **Wallpaper of a second screen** (the Legion's monitor): it did not change until `wallpaper-watcher` learned two
   things for mango (2026-10-23; [wallpaper](4-wallpaper.md)): the single-workspace mode when it is missing (mango has
