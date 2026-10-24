@@ -1,0 +1,221 @@
+#!/usr/bin/python3 -I
+# mango-keys — Super+K in "Xfce (mango)": the table of shortcuts, as Omarchy's Super+K (~/.local/bin; installed by
+# common/xfce-wayland/install-xfce-mango.sh; docs/5-desktop/5-mango.md). It is read from the installed configuration
+# (~/.config/xfce4/mango/config.conf), so it never drifts from it: each bind gets its description from the table
+# below (a bind it does not know shows mango's action), the keys that do the same go in one row (Super+1…9,
+# Super+←/→/↑/↓) and the two keys right of 0 are named by the configured layout (latam ' ¿, us - =).
+# In a small floating xterm with the usual theme (as mango-scratchpad's list), with fzf: type to filter, Esc or
+# Enter closes it; Super+K again closes it too.
+#   mango-keys          what Super+K runs
+#   mango-keys --show   the table (what the xterm runs)
+import fcntl
+import json
+import os
+import re
+import signal
+import subprocess
+import sys
+
+for _d in (os.path.expanduser("~/.local/share/void-legion/lib"), "/usr/local/share/void-legion/lib"):
+    if os.path.isfile(os.path.join(_d, "void_legion_i18n.py")):
+        sys.path.insert(0, _d)
+        break
+try:
+    from void_legion_i18n import _
+except ImportError:
+    def _(s):
+        return s
+
+CONFIG = os.path.join(os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config"), "xfce4/mango/config.conf")
+# The xterm keeps the XTerm class (~/.Xresources goes by class: XTerm*); config.conf floats it by title.
+TITLE = "mango-keys"
+
+WINDOWS, SIZE, WORKSPACES, SCRATCHPAD, MOUSE, PROGRAMS, KEYS, OTHER = range(8)
+SECTIONS = {WINDOWS: _("Windows"), SIZE: _("Size"), WORKSPACES: _("Workspaces and monitors"),
+            SCRATCHPAD: _("Scratchpad"), MOUSE: _("Mouse"), PROGRAMS: _("Programs"),
+            KEYS: _("Volume and brightness"), OTHER: _("Other")}
+
+# (pattern on "function,arguments", section, description); the first that matches. %s = the workspace number.
+ACTIONS = [
+    (r"killclient", WINDOWS, _("Close the window")),
+    (r"focusdir,", WINDOWS, _("Focus the window on that side")),
+    (r"exchange_client,", WINDOWS, _("Swap the window with the one on that side")),
+    (r"focusstack,next", WINDOWS, _("Next window")),
+    (r"focusstack,prev", WINDOWS, _("Previous window")),
+    (r"dwindle_toggle_current_split", WINDOWS, _("Dwindle: turn the split (side by side ↔ stacked)")),
+    (r"togglefloating", WINDOWS, _("Floating ↔ tiled")),
+    (r"togglefullscreen", WINDOWS, _("Full screen")),
+    (r"togglefakefullscreen", WINDOWS, _("\"Fake\" full screen: the window stays in its place")),
+    (r"togglemaximizescreen", WINDOWS, _("Maximize (without covering the panel)")),
+    (r"toggleglobal", WINDOWS, _("Pin the window to every workspace (again to unpin)")),
+    (r"set_proportion,1(\.0)?$", SIZE, _("Columns: full width")),
+    (r"switch_proportion_preset", SIZE, _("Columns: width 50 % → 80 % → 100 %")),
+    (r"switch_layout", WORKSPACES, _("This workspace's layout: dwindle ↔ columns")),
+    (r"view,\d", WORKSPACES, _("Go to that workspace")),
+    (r"tag,\d", WORKSPACES, _("Take the window to that workspace and follow it")),
+    (r"tagsilent,\d", WORKSPACES, _("Send the window to that workspace and stay")),
+    (r"viewtoright", WORKSPACES, _("Next workspace")),
+    (r"viewtoleft", WORKSPACES, _("Previous workspace")),
+    (r"focusmon,", WORKSPACES, _("Focus to the other monitor")),
+    (r"tagmon,", WORKSPACES, _("Take the window to the monitor on that side")),
+    (r"minimized$", SCRATCHPAD, _("Send the window to the scratchpad (minimize it)")),
+    (r"restore_minimized", SCRATCHPAD, _("Bring back the last minimized window")),
+    (r"spawn_shell,.*mango-scratchpad", SCRATCHPAD, _("Bring a scratchpad window (a list when there are several)")),
+    (r"spawn_shell,.*mango-keys", PROGRAMS, _("This table of shortcuts")),
+    (r"moveresize,curmove", MOUSE, _("Move the window (a tiled one floats)")),
+    (r"moveresize,curresize", MOUSE, _("Resize the window")),
+    (r"spawn,exo-open --launch TerminalEmulator btop", PROGRAMS, _("btop")),
+    (r"spawn,exo-open --launch TerminalEmulator", PROGRAMS, _("Terminal (xterm)")),
+    (r"spawn,exo-open --launch WebBrowser", PROGRAMS, _("Web browser")),
+    (r"spawn,firefox --private-window", PROGRAMS, _("Firefox, private window")),
+    (r"spawn,thunar", PROGRAMS, _("Thunar")),
+    (r"spawn,exo-open --launch FileManager", PROGRAMS, _("Default file manager")),
+    (r"spawn,mousepad", PROGRAMS, _("Mousepad")),
+    (r"spawn,xfce4-appfinder (-c|--collapsed)", PROGRAMS, _("Application finder, \"run\" mode")),
+    (r"spawn,xfce4-appfinder", PROGRAMS, _("Application finder")),
+    (r"spawn,xfce4-popup-applicationsmenu", PROGRAMS, _("Applications menu")),
+    (r"spawn,pavucontrol", PROGRAMS, _("Volume (pavucontrol)")),
+    (r"spawn,blueman-manager", PROGRAMS, _("Bluetooth")),
+    (r"spawn,xfce4-display-settings --minimal", PROGRAMS, _("Displays, quick")),
+    (r"spawn,xfce4-display-settings", PROGRAMS, _("Displays")),
+    (r"spawn,xfce4-power-manager-settings", PROGRAMS, _("Power")),
+    (r"spawn,xfce4-popup-clipman", PROGRAMS, _("Clipboard history (Clipman)")),
+    (r"spawn,nm-connection-editor", PROGRAMS, _("Network connections")),
+    (r"spawn,xfce4-taskmanager", PROGRAMS, _("Task manager")),
+    (r"spawn,xfce4-session-logout", PROGRAMS, _("Log out / shut down / reboot (it asks first)")),
+    (r"spawn,xfce4-screenshooter -r", PROGRAMS, _("Screenshot of a region")),
+    (r"spawn,xfce4-screenshooter -w", PROGRAMS, _("Screenshot of the window")),
+    (r"spawn,xfce4-screenshooter", PROGRAMS, _("Screenshot of the whole screen")),
+    (r"spawn,wpctl set-volume .*\+$", KEYS, _("Volume up")),
+    (r"spawn,wpctl set-volume .*-$", KEYS, _("Volume down")),
+    (r"spawn,wpctl set-mute @DEFAULT_AUDIO_SINK@", KEYS, _("Mute")),
+    (r"spawn,wpctl set-mute @DEFAULT_AUDIO_SOURCE@", KEYS, _("Microphone mute")),
+    (r"spawn_shell,.*brightness\"? \+", KEYS, _("Brightness up")),
+    (r"spawn_shell,.*brightness\"? -", KEYS, _("Brightness down")),
+]
+RESIZE = re.compile(r"resizewin,([+-]?\d+),([+-]?\d+)$")
+
+MODS = {"SUPER": "Super", "SHIFT": "Shift", "CTRL": "Ctrl", "ALT": "Alt"}
+KEYNAMES = {"Return": "Enter", "space": _("Space"), "Escape": "Esc", "Delete": _("Delete"), "Print": _("Print"),
+            "Left": "←", "Right": "→", "Up": "↑", "Down": "↓",
+            "XF86AudioRaiseVolume": _("Volume+ key"), "XF86AudioLowerVolume": _("Volume- key"),
+            "XF86AudioMute": _("Mute key"), "XF86AudioMicMute": _("Microphone key"),
+            "XF86MonBrightnessUp": _("Brightness+ key"), "XF86MonBrightnessDown": _("Brightness- key"),
+            "btn_left": _("left drag"), "btn_right": _("right drag")}
+WHEEL = {"UP": _("wheel up"), "DOWN": _("wheel down")}
+# The two keys right of 0 (Omarchy's resize keys), by layout.
+RIGHT_OF_0 = {"latam": ("'", "¿"), "es": ("'", "¡"), "us": ("-", "=")}
+
+
+def mmsg(*args):
+    return subprocess.run(["mmsg", *args], capture_output=True, text=True, timeout=5).stdout
+
+
+def clients():
+    try:
+        return json.loads(mmsg("get", "all-clients")).get("clients", [])
+    except (ValueError, OSError, subprocess.SubprocessError):
+        return []
+
+
+def describe(action):
+    m = RESIZE.match(action)
+    if m:
+        w, h = int(m.group(1)), int(m.group(2))
+        if w:
+            return SIZE, (_("Narrower (%d px)") if w < 0 else _("Wider (%d px)")) % abs(w)
+        return SIZE, (_("Shorter (%d px)") if h < 0 else _("Taller (%d px)")) % abs(h)
+    for pat, sec, desc in ACTIONS:
+        if re.match(pat, action):
+            return sec, desc
+    return OTHER, action
+
+
+def key_name(key, layout):
+    m = re.fullmatch(r"code:(\d+)", key)
+    if m:
+        code = int(m.group(1))
+        if 10 <= code <= 19:
+            return str((code - 9) % 10)
+        if code in (20, 21) and layout in RIGHT_OF_0:
+            return RIGHT_OF_0[layout][code - 20]
+        return key
+    if len(key) == 1:
+        return key.upper()
+    return KEYNAMES.get(key, key)
+
+
+def read_binds():
+    layout, binds = "", []
+    with open(CONFIG) as f:
+        for line in f:
+            line = line.strip()
+            kind, _sep, value = line.partition("=")
+            if kind == "xkb_rules_layout":
+                layout = value.split(",")[0].strip()
+            elif kind in ("bind", "mousebind", "axisbind"):
+                parts = value.split(",", 2)
+                if len(parts) == 3:
+                    binds.append((kind, parts[0], parts[1], parts[2]))
+    rows = {}                                     # (section, description) → [(mods, key)], in the file's order
+    for kind, mods, key, action in binds:
+        mods = tuple(MODS.get(m, m) for m in mods.split("+") if m and m != "NONE")
+        name = WHEEL.get(key, key) if kind == "axisbind" else key_name(key, layout)
+        sec, desc = describe(action)
+        if kind == "axisbind":                    # the wheel goes with the mouse, not mixed with Tab
+            sec = MOUSE
+        rows.setdefault((sec, desc), []).append((mods, name))
+    return rows
+
+
+def label(keys):
+    """Super+W · Super+Q · Alt+F4; Super+←/→/↑/↓; Super+1…9."""
+    groups = {}
+    for mods, name in keys:
+        groups.setdefault(mods, []).append(name)
+    out = []
+    for mods, names in groups.items():
+        if len(names) > 2 and all(n.isdigit() for n in names) and \
+                [int(n) for n in names] == list(range(int(names[0]), int(names[0]) + len(names))):
+            names = ["%s…%s" % (names[0], names[-1])]
+        out.append("+".join(mods + ("/".join(names),)))
+    return " · ".join(out)
+
+
+def show():
+    try:
+        rows = read_binds()
+    except OSError as e:
+        print(e)
+        input()
+        return
+    lines, width = [], max((len(label(k)) for k in rows.values()), default=0)
+    for sec in sorted(SECTIONS):
+        items = [(desc, keys) for (s, desc), keys in rows.items() if s == sec]
+        if not items:
+            continue
+        lines.append("\033[1;36m── %s\033[0m" % SECTIONS[sec])
+        lines += ["  %-*s  %s" % (width, label(keys), desc) for desc, keys in items]
+    subprocess.run(["fzf", "--ansi", "--no-sort", "--reverse", "--no-info", "--no-multi", "--prompt=" + _("shortcuts> "),
+                    "--header=" + _("Type to filter · Esc closes")], input="\n".join(lines) + "\n",
+                   stdout=subprocess.DEVNULL, text=True)
+
+
+def main():
+    if sys.argv[1:] == ["--show"]:
+        return show()
+    # One table at a time: its xterm inherits this lock and holds it until it closes; Super+K meanwhile closes it.
+    lock = open(os.path.join(os.environ.get("XDG_RUNTIME_DIR", "/tmp"), "mango-keys.lock"), "w")
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        c = next((c for c in clients() if c.get("title") == TITLE), None)
+        if c and c.get("pid"):
+            os.kill(c["pid"], signal.SIGTERM)
+        return
+    subprocess.Popen(["xterm", "-T", TITLE, "-geometry", "110x36", "-e", os.path.realpath(__file__), "--show"],
+                     start_new_session=True, pass_fds=(lock.fileno(),))
+
+
+if __name__ == "__main__":
+    main()

@@ -182,6 +182,7 @@ The window comes floating and centered; Super+T puts it back in the tiling.
 | Super+Ctrl+V | Clipboard history (Clipman) |
 | Super+Ctrl+W | Network connections |
 | Ctrl+Shift+Escape | Task manager |
+| Super+K | This table of shortcuts (again to close it; see below) |
 | Super+Escape · Ctrl+Alt+Delete | Xfce's log out / shut down / reboot (it asks first) |
 | Print · Shift+Print · Alt+Print | Screenshot: whole screen / region / window |
 | Volume, mute and microphone keys | `wpctl` |
@@ -210,7 +211,7 @@ again: the installer replaces `~/.config/xfce4/mango/config.conf`.
 
 ### Compared with Omarchy
 
-Not there: the groups (Super+G, tabs), Super+K (list of shortcuts) and Super+0 (workspace 10: mango has nine,
+Not there: the groups (Super+G, tabs) and Super+0 (workspace 10: mango has nine,
 `tag_num=10` is refused). Ctrl+Alt+Delete is Xfce's log out (Omarchy: close all windows), as in labwc; Super+O pins
 the window to every workspace (Omarchy also floats it). **Do not bind mango's overview (`toggleoverview`)**: tried on
 Super+0 on 2026-10-23, it crashed mango 0.17.5 in the session (segmentation fault in `~/.xsession-errors`), and every
@@ -223,6 +224,16 @@ instead. Its list is `fzf` in a small floating xterm titled `mango-scratchpad` (
 xterm holds a lock (`$XDG_RUNTIME_DIR/mango-scratchpad.lock`) until it closes, and Super+S meanwhile focuses it.
 mango 0.17.5 cannot show one by id (`toggle_scratchpad client,<id>` ignores the id, checked nested), so it goes round
 `toggle_scratchpad` until the chosen one is shown.
+
+**How the table of shortcuts works (`~/.local/bin/mango-keys`, Super+K, as Omarchy's).** It reads the installed
+`~/.config/xfce4/mango/config.conf`, so it never drifts from it: each `bind`, `mousebind` and `axisbind` gets its
+description from a table in the script (in Spanish through the catalog; a bind it does not know shows mango's
+action, under "Other"), the keys that do the same go in one row (Super+1…9, Super+←/→/↑/↓), and the two keys right
+of 0 are named by the configured layout (`latam` ' ¿, `us` - =). It is `fzf` in a floating xterm titled `mango-keys`
+(110×36, the usual theme, as the scratchpad's list): type to filter, Esc or Enter closes it, and Super+K while it is
+open closes it too (a lock in `$XDG_RUNTIME_DIR/mango-keys.lock`, as the scratchpad's). A new bind in
+`config.conf` gets its description by adding a line to `ACTIONS` in `common/xfce-wayland/mango/mango-keys` (and its
+Spanish in `locale/es/messages.po`).
 
 ## Known limits
 

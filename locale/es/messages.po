@@ -4173,3 +4173,331 @@ msgstr "El scratchpad está vacío (Super+Alt+S manda una ventana allí)"
 #: common/steam/install-passwordless-switch.sh
 msgid "!! the chosen mode is Xfce (niri), which is gone: run install-xfce-mango.sh before rebooting"
 msgstr "!! el modo elegido es Xfce (niri), que ya no existe: correr install-xfce-mango.sh antes de reiniciar"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "\"Fake\" full screen: the window stays in its place"
+msgstr "Pantalla completa \"falsa\": la ventana se queda en su sitio"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Application finder"
+msgstr "Buscador de aplicaciones"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Application finder, \"run\" mode"
+msgstr "Buscador de aplicaciones, modo \"ejecutar\""
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Applications menu"
+msgstr "Menú de aplicaciones"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Bluetooth"
+msgstr "Bluetooth"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Brightness down"
+msgstr "Bajar el brillo"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Brightness up"
+msgstr "Subir el brillo"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Brightness+ key"
+msgstr "Tecla Brillo+"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Brightness- key"
+msgstr "Tecla Brillo-"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Bring a scratchpad window (a list when there are several)"
+msgstr "Traer una ventana del scratchpad (una lista si hay varias)"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Bring back the last minimized window"
+msgstr "Recuperar la última ventana minimizada"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Clipboard history (Clipman)"
+msgstr "Historial del portapapeles (Clipman)"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Close the window"
+msgstr "Cerrar la ventana"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Columns: full width"
+msgstr "Columnas: ancho completo"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Columns: width 50 % → 80 % → 100 %"
+msgstr "Columnas: ancho 50 % → 80 % → 100 %"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Default file manager"
+msgstr "Gestor de archivos predeterminado"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Delete"
+msgstr "Supr"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Displays"
+msgstr "Pantallas"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Displays, quick"
+msgstr "Pantallas, rápido"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Dwindle: turn the split (side by side ↔ stacked)"
+msgstr "Dwindle: girar la división (lado a lado ↔ una sobre otra)"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Firefox, private window"
+msgstr "Firefox, ventana privada"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Floating ↔ tiled"
+msgstr "Flotante ↔ en mosaico"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Focus the window on that side"
+msgstr "Foco a la ventana de ese lado"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Focus to the other monitor"
+msgstr "Foco al otro monitor"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Full screen"
+msgstr "Pantalla completa"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Go to that workspace"
+msgstr "Ir a ese escritorio"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Log out / shut down / reboot (it asks first)"
+msgstr "Cerrar sesión / apagar / reiniciar (pregunta antes)"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Maximize (without covering the panel)"
+msgstr "Maximizar (sin tapar el panel)"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Microphone key"
+msgstr "Tecla de micrófono"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Microphone mute"
+msgstr "Silenciar el micrófono"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Mouse"
+msgstr "Ratón"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Mousepad"
+msgstr "Mousepad"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Move the window (a tiled one floats)"
+msgstr "Mover la ventana (si está en mosaico, pasa a flotar)"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Mute"
+msgstr "Silenciar"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Mute key"
+msgstr "Tecla de silencio"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Narrower (%d px)"
+msgstr "Más estrecha (%d px)"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Network connections"
+msgstr "Conexiones de red"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Next window"
+msgstr "Ventana siguiente"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Next workspace"
+msgstr "Escritorio siguiente"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Other"
+msgstr "Otros"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Pin the window to every workspace (again to unpin)"
+msgstr "Fijar la ventana en todos los escritorios (otra vez para soltarla)"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Power"
+msgstr "Energía"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Previous window"
+msgstr "Ventana anterior"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Previous workspace"
+msgstr "Escritorio anterior"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Print"
+msgstr "ImprPant"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Programs"
+msgstr "Programas"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Resize the window"
+msgstr "Cambiar el tamaño de la ventana"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Scratchpad"
+msgstr "Scratchpad"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Screenshot of a region"
+msgstr "Captura de una región"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Screenshot of the whole screen"
+msgstr "Captura de toda la pantalla"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Screenshot of the window"
+msgstr "Captura de la ventana"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Send the window to that workspace and stay"
+msgstr "Mandar la ventana a ese escritorio y quedarse"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Send the window to the scratchpad (minimize it)"
+msgstr "Mandar la ventana al scratchpad (minimizarla)"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Shorter (%d px)"
+msgstr "Más baja (%d px)"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Size"
+msgstr "Tamaño"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Space"
+msgstr "Espacio"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Swap the window with the one on that side"
+msgstr "Intercambiar la ventana con la de ese lado"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Take the window to that workspace and follow it"
+msgstr "Llevar la ventana a ese escritorio e irse con ella"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Take the window to the monitor on that side"
+msgstr "Llevar la ventana al monitor de ese lado"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Taller (%d px)"
+msgstr "Más alta (%d px)"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Task manager"
+msgstr "Administrador de tareas"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Terminal (xterm)"
+msgstr "Terminal (xterm)"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "This table of shortcuts"
+msgstr "Esta tabla de atajos"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "This workspace's layout: dwindle ↔ columns"
+msgstr "Disposición de este escritorio: dwindle ↔ columnas"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Thunar"
+msgstr "Thunar"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Type to filter · Esc closes"
+msgstr "Escribe para filtrar · Esc cierra"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Volume (pavucontrol)"
+msgstr "Volumen (pavucontrol)"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Volume and brightness"
+msgstr "Volumen y brillo"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Volume down"
+msgstr "Bajar el volumen"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Volume up"
+msgstr "Subir el volumen"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Volume+ key"
+msgstr "Tecla Volumen+"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Volume- key"
+msgstr "Tecla Volumen-"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Web browser"
+msgstr "Navegador web"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Wider (%d px)"
+msgstr "Más ancha (%d px)"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Windows"
+msgstr "Ventanas"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "Workspaces and monitors"
+msgstr "Escritorios y monitores"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "btop"
+msgstr "btop"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "left drag"
+msgstr "arrastrar con el izquierdo"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "right drag"
+msgstr "arrastrar con el derecho"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "shortcuts> "
+msgstr "atajos> "
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "wheel down"
+msgstr "rueda abajo"
+
+#: common/xfce-wayland/mango/mango-keys
+msgid "wheel up"
+msgstr "rueda arriba"

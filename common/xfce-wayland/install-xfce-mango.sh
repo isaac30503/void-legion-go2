@@ -10,6 +10,7 @@
 #     follows the mouse, Omarchy's keybindings (tiling.lua) and labwc's programs, keyboard from 00-keyboard.conf,
 #     Volantes cursor, ~/.Xresources in Xwayland and wallpaper-watcher (from install-xfce-wayland.sh);
 #   - ~/.local/bin/mango-scratchpad: Super+S brings the scratchpad window you choose (a list when there are several);
+#   - ~/.local/bin/mango-keys: Super+K shows the table of shortcuts, read from the configuration (as Omarchy's);
 #   - /usr/local/bin/startxfce4-mango and /usr/share/wayland-sessions/xfce-mango.desktop: the session;
 #   - launcher "mango Desktop" (finder, Super+Space; Spanish name in Name[es]).
 # Needs install-xfce-wayland.sh (brightness, wallpaper-watcher) and install-passwordless-switch.sh with desktop-mango.
@@ -34,7 +35,7 @@ if is_remove "${1:-}"; then
         t "!! the current mode is Xfce (mango): first switch to another one (sudo /usr/local/bin/switch-mode-root desktop-labwc)"
         exit 1
     fi
-    rm -f "$BIN" "$SES" "$LN" "$H/.local/bin/mango-scratchpad"
+    rm -f "$BIN" "$SES" "$LN" "$H/.local/bin/mango-scratchpad" "$H/.local/bin/mango-keys"
     rm -rf "${CFG:?}"
     t "== removed the session, the launcher and %s (mangowc stays installed: sudo xbps-remove mangowc)" "$CFG"
     exit 0
@@ -58,6 +59,10 @@ mango -v 2>&1 | head -1
 t "== 2. mango's configuration for Xfce (%s)" "$CFG"
 sudo -u "$U" mkdir -p "$CFG" "$H/.local/bin"
 sudo -u "$U" install -m 755 "$D/mango/mango-scratchpad" "$H/.local/bin/mango-scratchpad"
+sudo -u "$U" install -m 755 "$D/mango/mango-keys" "$H/.local/bin/mango-keys"
+# Their Spanish: the user's copy of the catalogs (install_i18n_user, but for the target user: this runs as root).
+_copy_i18n "$H/.local/share/void-legion" "$H/.local/share/void-legion/lib"
+chown -R "$U:" "$H/.local/share/void-legion"
 sudo -u "$U" install -m 644 "$D/mango/config.conf" "$CFG/config.conf.new"
 # Keyboard: X's (00-keyboard.conf, docs/2-base-system/1-system.md), as labwc's environment: latam on the IdeaPad,
 # us + intl on the Legion.
