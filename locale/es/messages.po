@@ -470,7 +470,7 @@ msgstr "con Plymouth"
 msgid "without Plymouth"
 msgstr "sin Plymouth"
 
-#: common/bluetooth/bluetooth-at-boot.sh
+#: common/bluetooth/bluetooth-at-boot.sh common/disk/ideapad-bfq.sh common/network/ideapad-wifi-iwd.sh
 msgid "== state:"
 msgstr "== estado:"
 
@@ -4617,3 +4617,23 @@ msgstr "sudo xbps-install -Sf %s  (volver al paquete de Void)"
 #: common/agent/audit-void.sh
 msgid "void-update --summary  (tests the patch again; until then, do not go back to Void's package)"
 msgstr "void-update --summary  (vuelve a probar el parche; hasta entonces, no volver al paquete de Void)"
+
+#: common/network/ideapad-wifi-iwd.sh
+msgid "== %s written"
+msgstr "== %s escrito"
+
+#: common/network/ideapad-wifi-iwd.sh
+msgid "iwd did not appear on D-Bus in 20 s: sudo sv status iwd"
+msgstr "iwd no apareció en D-Bus en 20 s: sudo sv status iwd"
+
+#: common/network/ideapad-wifi-iwd.sh
+msgid "iwd is not installed: sudo xbps-install -S iwd"
+msgstr "iwd no está instalado: sudo xbps-install -S iwd"
+
+#: common/network/ideapad-wifi-iwd.sh
+msgid "removed: NetworkManager starts wpa_supplicant again (iwd stays installed: sudo xbps-remove iwd)"
+msgstr "quitado: NetworkManager vuelve a arrancar wpa_supplicant (iwd sigue instalado: sudo xbps-remove iwd)"
+
+#: common/disk/ideapad-bfq.sh
+msgid "removed: the disks use mq-deadline"
+msgstr "quitado: los discos usan mq-deadline"

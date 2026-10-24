@@ -70,6 +70,23 @@ and `git`. `ssh-find --list` shows what is known; `ssh-find --where lego` the ad
 The Wi-Fi engine stays wpa_supplicant (no continuous scans here, unlike the IdeaPad's RTL8723BE, which needed
 iwd); switch to iwd only if those symptoms appear.
 
+### IdeaPad only: Wi-Fi with iwd
+
+```bash
+sudo sh "$B/common/network/ideapad-wifi-iwd.sh"            # --remove: back to wpa_supplicant
+iwctl station wlp3s0 connect <network>                    # once: iwd asks the password and keeps it
+```
+
+With wpa_supplicant the IdeaPad's RTL8723BE scanned without pause (a 3.7 s scan every ~4 s; pings of 100–300 ms)
+unless the BSSID was pinned, which lost roaming between the mesh nodes; with iwd there are no scans and roaming
+works (2026-10-02). The script writes `/etc/NetworkManager/conf.d/wifi-backend.conf` (`[device]`
+`wifi.backend=iwd`) and `/etc/iwd/main.conf` (`DefaultInterface=*`: without it iwd deletes `wlp3s0` and creates
+`wlan0`; `DisableMacAddressRandomization=true`, not essential), enables the `iwd` service and starts
+NetworkManager once iwd is on D-Bus. NetworkManager still sets the IP and the DNS. Without the `iwctl` step,
+`nmcli c up` fails "for no reason" (iwd does not know the network). What else the IdeaPad's Wi-Fi needs (the
+driver's `fwlps=0 ips=0`, `wifi-vigilante`, `wifi-reparar`, which repairs these same two files) is in its recipe
+in Common, step 4. **Check:** `iwctl station wlp3s0 show` → `connected`; `pgrep -x wpa_supplicant` → nothing.
+
 ## Check
 
 ```bash

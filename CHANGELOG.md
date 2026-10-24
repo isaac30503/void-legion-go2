@@ -22,6 +22,11 @@ attempts, measurements) is in the private repository's archive and, until 2026-1
   tested (`void-update --summary` tests it again). Files that no piece explains now come with "find what put it there
   and add it as a piece or a recipe line; delete none": the old "or something to remove" made agents propose
   `sudo rm` of files like `/etc/xbps.d/00-repository-main.conf` (3 of 20 answers; 0 of 20 with the new text).
+- **Two IdeaPad-only pieces move into the repository** (`I` in `install/pieces.tsv`, `manual`): the Wi-Fi with iwd
+  (`common/network/ideapad-wifi-iwd.sh`, [network](docs/2-base-system/2-network.md)) and BFQ on its internal
+  mechanical disk (`common/disk/ideapad-bfq.sh`, [storage](docs/2-base-system/3-storage.md)). Until now they lived
+  only in the IdeaPad's recipe and the audit reported their files as explained by no piece. The silent-boot piece
+  also lists `/etc/modules-load.d/dm-raid.conf.disabled`.
 
 ## 2026-10-22
 

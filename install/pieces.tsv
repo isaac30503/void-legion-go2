@@ -31,6 +31,8 @@ diagnostics	-	-	tool	-	docs/3-hardware-support/1-controllers.md	legion/diag/ com
 system-base	L	3	root	legion/steps-1-to-3.sh	docs/2-base-system/1-system.md	legion/steps-1-to-3.sh legion/00-keyboard.conf	/etc/X11/xorg.conf.d/00-keyboard.conf	base system: not undone (the installation's own setup)
 avahi-wifi-only	L	4	root	legion/avahi-wifi-only.sh	docs/2-base-system/2-network.md	legion/avahi-wifi-only.sh	/etc/avahi/avahi-daemon.conf	--remove
 wifi-no-powersave	L	4	root	legion/wifi-no-powersave.sh	docs/2-base-system/2-network.md	legion/wifi-no-powersave.sh	/etc/NetworkManager/conf.d/wifi-no-powersave.conf	--remove
+ideapad-wifi-iwd	I	-	manual	common/network/ideapad-wifi-iwd.sh	docs/2-base-system/2-network.md	common/network/	/etc/NetworkManager/conf.d/wifi-backend.conf /etc/iwd/main.conf /var/service/iwd	--remove
+ideapad-bfq	I	-	manual	common/disk/ideapad-bfq.sh	docs/2-base-system/3-storage.md	common/disk/	/etc/udev/rules.d/60-ideapad-ioscheduler.rules	--remove
 udev-net	LI	4	root	legion/udev-net.sh	docs/2-base-system/2-network.md	legion/udev-net.sh	/etc/sv/udev-net/run /var/service/udev-net	--remove
 ssh-config	L	5	user	legion/ssh-config	docs/2-base-system/2-network.md	legion/ssh-config	~/.ssh/config	rm
 ssh-find	LI	5	user	common/ssh-find/install-ssh-find.sh	docs/2-base-system/2-network.md	common/ssh-find/	~/.local/bin/ssh-find ~/.config/ssh-find/hosts.conf	--remove

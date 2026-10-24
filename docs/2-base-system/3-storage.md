@@ -7,6 +7,20 @@ The internal disk is the installation's ([installation](../1-platform/2-installa
 - **External Kingston XS1000 SSD:** an NTFS partition (`/dev/sda4`) and a Windows that boots from the firmware
   ([boot](../1-platform/3-boot.md)). Mounted only by hand, from the graphical session.
 
+## IdeaPad only: BFQ on the internal disk
+
+```bash
+sudo sh "$B/common/disk/ideapad-bfq.sh"     # --remove: back to mq-deadline
+```
+
+The IdeaPad's internal disk is mechanical (WD10JPCX). BFQ shares it between processes and favours the interactive
+ones; with `mq-deadline` a big read or write could stall the desktop. The rule
+(`/etc/udev/rules.d/60-ideapad-ioscheduler.rules`) asks for `rotational=1` **and** `DRIVERS=="ahci"` (the internal
+SATA controller): the XS1000 by USB also says `rotational=1` and BFQ only costs CPU on an SSD (corrected on
+2026-10-09). Not `ENV{ID_BUS}`: `60-persistent-storage.rules` sets it, after this file. **Check:**
+`cat /sys/block/sda/queue/scheduler` → `[bfq]`; the XS1000 → `[mq-deadline]`. `noatime` and the other tweaks of
+that day are in the IdeaPad's recipe in Common, step 16.
+
 ## microSD
 
 With **Steam closed** (it rewrites its library list on exit; the script refuses if it is open):
