@@ -129,6 +129,11 @@ The two keys right of 0: **'** and **¿** on `latam`, **-** and **=** on `us`.
 
 ### Workspaces and monitors
 
+**Workspaces are shared by all monitors**, as in xfwm4 (2026-10-24): every key that changes workspace passes mango's
+`synctag` (the last `1` of `view,N,1`, `tag,N,1`, `viewtoleft,1`, `viewtoright,1`), so Super+3 on either screen
+switches both to their workspace 3. mango still keeps nine workspaces per monitor and a window belongs to one
+monitor; they just move together. Super+Shift+Alt+N (`tagsilent`) has no `synctag` and changes no view.
+
 | Keys | What it does |
 |---|---|
 | Super+1…9 | Go to that workspace |
