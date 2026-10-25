@@ -100,8 +100,8 @@ cat > "$LN" <<'EOF'
 [Desktop Entry]
 Name=mango Desktop
 Name[es]=Escritorio mango
-Comment=Switch to Xfce on Wayland with mangowc (trial), without password
-Comment[es]=Pasar a Xfce sobre Wayland con mangowc (prueba), sin contraseña
+Comment=Switch to Xfce on Wayland with mangowc, the desktop, without password
+Comment[es]=Pasar a Xfce sobre Wayland con mangowc, el escritorio, sin contraseña
 Exec=sudo -n /usr/local/bin/switch-mode-root desktop-mango
 Icon=preferences-desktop-display
 Terminal=false
