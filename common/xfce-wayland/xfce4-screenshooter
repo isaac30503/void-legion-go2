@@ -1,11 +1,12 @@
 #!/bin/sh
 # xfce4-screenshooter — transparent wrapper for Xfce Screenshooter under Wayland.
-# 1. Always sends captured screenshots to the Wayland clipboard via wl-copy.
+# 1. Always copies captured screenshots to the Wayland clipboard via wl-copy.
 # 2. Handles active-window capture (-w / --window) under mangowc by querying
 #    window geometry via mango IPC (mmsg) and cropping the capture.
 # 3. Handles full-screen capture (-f / --fullscreen or default Print) by capturing
-#    the ACTIVE MONITOR (where the focused window / cursor is) instead of stitching
-#    all connected monitors into a single image.
+#    the ACTIVE MONITOR (where the focused window / cursor is).
+# 4. Presents the standard action dialog (Save / Open With / Only Clipboard)
+#    with image preview whenever an action wasn't explicitly silenced via CLI.
 # Installed in ~/.local/bin/xfce4-screenshooter by common/xfce-wayland/install-xfce-wayland.sh (docs/5-desktop/1-xfce.md).
 set -u
 
@@ -46,31 +47,175 @@ for arg in "$@"; do
     prev="$arg"
 done
 
-# Default screenshot directory from Xfce Screenshooter config
-CONF_DIR=""
-if [ -f "$HOME/.config/xfce4/xfce4-screenshooter" ]; then
-    URI=$(grep "^screenshot_dir=" "$HOME/.config/xfce4/xfce4-screenshooter" 2>/dev/null | cut -d= -f2- || true)
-    case "$URI" in
-        file://*) CONF_DIR="${URI#file://}" ;;
-        file:*)   CONF_DIR="${URI#file:}" ;;
-    esac
-fi
-if [ -z "$CONF_DIR" ] || [ ! -d "$CONF_DIR" ]; then
-    CONF_DIR="$HOME/Imágenes"
-    [ -d "$CONF_DIR" ] || CONF_DIR="$HOME"
-fi
+# Python helper to display the action dialog (Save / Open with / Clipboard) with thumbnail
+show_action_dialog() {
+    IMG="$1"
+    python3 - "$IMG" "$CUSTOM_TARGET" << 'PYEOF'
+import sys, os, gi, subprocess, urllib.parse, datetime
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, GdkPixbuf, Gio
 
-# --- Helper to resolve target filename ---
-resolve_target() {
-    if [ -n "$CUSTOM_TARGET" ]; then
-        if [ -d "$CUSTOM_TARGET" ]; then
-            echo "$CUSTOM_TARGET/Captura de pantalla_$(date +%Y-%m-%d_%H-%M-%S).png"
-        else
-            echo "$CUSTOM_TARGET"
-        fi
-    else
-        echo "$CONF_DIR/Captura de pantalla_$(date +%Y-%m-%d_%H-%M-%S).png"
-    fi
+def run():
+    tmp_img = sys.argv[1]
+    custom_target = sys.argv[2] if len(sys.argv) > 2 else ""
+
+    # If an explicit destination file/dir was given on CLI, save directly
+    if custom_target:
+        if os.path.isdir(custom_target):
+            dest = os.path.join(custom_target, f"Captura de pantalla_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png")
+        else:
+            dest = custom_target
+        os.replace(tmp_img, dest)
+        return
+
+    # Read config for default dir
+    conf_file = os.path.expanduser("~/.config/xfce4/xfce4-screenshooter")
+    save_dir = os.path.expanduser("~/Imágenes")
+    if os.path.exists(conf_file):
+        try:
+            with open(conf_file, "r") as f:
+                for line in f:
+                    if line.startswith("screenshot_dir="):
+                        uri = line.strip().split("=", 1)[1]
+                        if uri.startswith("file://"):
+                            save_dir = urllib.parse.unquote(uri[7:])
+                        elif uri.startswith("file:"):
+                            save_dir = urllib.parse.unquote(uri[5:])
+        except Exception:
+            pass
+
+    dlg = Gtk.Dialog(title="Captura de pantalla", flags=0)
+    dlg.add_buttons("Cancelar", Gtk.ResponseType.CANCEL, "Aceptar", Gtk.ResponseType.OK)
+    dlg.set_default_response(Gtk.ResponseType.OK)
+    dlg.set_resizable(False)
+    dlg.set_position(Gtk.WindowPosition.CENTER)
+
+    box = dlg.get_content_area()
+    grid = Gtk.Grid(column_spacing=24, row_spacing=12, margin=16)
+    box.add(grid)
+
+    # Actions column
+    vbox_actions = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+    lbl_action = Gtk.Label(xalign=0)
+    lbl_action.set_markup("<b>Acción</b>")
+    vbox_actions.pack_start(lbl_action, False, False, 0)
+
+    r_save = Gtk.RadioButton.new_with_label(None, "Guardar")
+    r_open = Gtk.RadioButton.new_with_label_from_widget(r_save, "Abrir con...")
+    r_clip = Gtk.RadioButton.new_with_label_from_widget(r_save, "Solo copiar al portapapeles")
+
+    vbox_actions.pack_start(r_save, False, False, 0)
+
+    # Save details
+    hbox_dir = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6, margin_start=20)
+    lbl_dest = Gtk.Label(label="Carpeta:", xalign=0)
+    btn_dir = Gtk.FileChooserButton(title="Seleccionar carpeta de destino", action=Gtk.FileChooserAction.SELECT_FOLDER)
+    btn_dir.set_current_folder(save_dir if os.path.isdir(save_dir) else os.path.expanduser("~"))
+    hbox_dir.pack_start(lbl_dest, False, False, 0)
+    hbox_dir.pack_start(btn_dir, True, True, 0)
+    vbox_actions.pack_start(hbox_dir, False, False, 0)
+
+    vbox_actions.pack_start(r_open, False, False, 0)
+
+    # Open with combo
+    app_store = Gtk.ListStore(str, object)
+    apps = Gio.AppInfo.get_all_for_type("image/png")
+    for app in apps:
+        app_store.append([app.get_display_name(), app])
+
+    combo_open = Gtk.ComboBox.new_with_model(app_store)
+    renderer = Gtk.CellRendererText()
+    combo_open.pack_start(renderer, True)
+    combo_open.add_attribute(renderer, "text", 0)
+    if len(app_store) > 0:
+        combo_open.set_active(0)
+    combo_open.set_margin_start(20)
+    combo_open.set_sensitive(False)
+    vbox_actions.pack_start(combo_open, False, False, 0)
+
+    vbox_actions.pack_start(r_clip, False, False, 0)
+
+    def on_toggle(b):
+        hbox_dir.set_sensitive(r_save.get_active())
+        combo_open.set_sensitive(r_open.get_active())
+
+    r_save.connect("toggled", on_toggle)
+    r_open.connect("toggled", on_toggle)
+    r_clip.connect("toggled", on_toggle)
+
+    grid.attach(vbox_actions, 0, 0, 1, 1)
+
+    # Preview column
+    vbox_prev = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+    lbl_prev = Gtk.Label(xalign=0)
+    lbl_prev.set_markup("<b>Vista previa</b>")
+    vbox_prev.pack_start(lbl_prev, False, False, 0)
+
+    try:
+        pix = GdkPixbuf.Pixbuf.new_from_file(tmp_img)
+        scale = 220.0 / max(pix.get_width(), pix.get_height())
+        w = max(1, int(pix.get_width() * min(1.0, scale)))
+        h = max(1, int(pix.get_height() * min(1.0, scale)))
+        thumb = pix.scale_simple(w, h, GdkPixbuf.InterpType.BILINEAR)
+        img_widget = Gtk.Image.new_from_pixbuf(thumb)
+        vbox_prev.pack_start(img_widget, True, True, 0)
+    except Exception:
+        pass
+
+    grid.attach(vbox_prev, 1, 0, 1, 1)
+
+    dlg.show_all()
+    resp = dlg.run()
+
+    chosen_action = "cancel"
+    target_folder = btn_dir.get_filename() or save_dir
+    selected_app = None
+    if resp == Gtk.ResponseType.OK:
+        if r_save.get_active():
+            chosen_action = "save"
+        elif r_open.get_active():
+            chosen_action = "open"
+            tree_iter = combo_open.get_active_iter()
+            if tree_iter:
+                selected_app = app_store.get_value(tree_iter, 1)
+        else:
+            chosen_action = "clip"
+
+    dlg.destroy()
+
+    if chosen_action == "cancel":
+        if os.path.exists(tmp_img): os.remove(tmp_img)
+        sys.exit(0)
+
+    now_str = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    final_file = os.path.join(target_folder, f"Captura de pantalla_{now_str}.png")
+
+    if chosen_action == "save":
+        os.replace(tmp_img, final_file)
+        if os.path.exists(conf_file):
+            try:
+                lines = []
+                with open(conf_file, "r") as f:
+                    for l in f:
+                        if l.startswith("screenshot_dir="):
+                            lines.append(f"screenshot_dir=file://{target_folder}\n")
+                        else:
+                            lines.append(l)
+                with open(conf_file, "w") as f:
+                    f.writelines(lines)
+            except Exception:
+                pass
+    elif chosen_action == "open":
+        os.replace(tmp_img, final_file)
+        if selected_app:
+            files = [Gio.File.new_for_path(final_file)]
+            selected_app.launch(files, None)
+    elif chosen_action == "clip":
+        if os.path.exists(tmp_img): os.remove(tmp_img)
+
+if __name__ == "__main__":
+    run()
+PYEOF
 }
 
 # --- Mode 1: Active Window Capture under mango ---
@@ -88,12 +233,17 @@ except Exception:
     if [ -n "$GEOM" ]; then
         TMP_FULL=$(mktemp /tmp/.screenshot-full.XXXXXX.png)
         if /usr/bin/xfce4-screenshooter -f -s "$TMP_FULL" >/dev/null 2>&1; then
-            OUT_FILE=$(resolve_target)
-            convert "$TMP_FULL" -crop "$GEOM" +repage "$OUT_FILE"
+            TMP_WIN=$(mktemp /tmp/.screenshot-win.XXXXXX.png)
+            convert "$TMP_FULL" -crop "$GEOM" +repage "$TMP_WIN"
             rm -f "$TMP_FULL"
+
+            # Always copy to Wayland clipboard
             if command -v wl-copy >/dev/null 2>&1; then
-                wl-copy -t image/png < "$OUT_FILE" 2>/dev/null || true
+                wl-copy -t image/png < "$TMP_WIN" 2>/dev/null || true
             fi
+
+            # Show Action Dialog (Save / Open with / Only clipboard)
+            show_action_dialog "$TMP_WIN"
             exit 0
         fi
         rm -f "$TMP_FULL"
@@ -117,12 +267,17 @@ except Exception:
     if [ -n "$MON_GEOM" ]; then
         TMP_FULL=$(mktemp /tmp/.screenshot-full.XXXXXX.png)
         if /usr/bin/xfce4-screenshooter -f -s "$TMP_FULL" >/dev/null 2>&1; then
-            OUT_FILE=$(resolve_target)
-            convert "$TMP_FULL" -crop "$MON_GEOM" +repage "$OUT_FILE"
+            TMP_MON=$(mktemp /tmp/.screenshot-mon.XXXXXX.png)
+            convert "$TMP_FULL" -crop "$MON_GEOM" +repage "$TMP_MON"
             rm -f "$TMP_FULL"
+
+            # Always copy to Wayland clipboard
             if command -v wl-copy >/dev/null 2>&1; then
-                wl-copy -t image/png < "$OUT_FILE" 2>/dev/null || true
+                wl-copy -t image/png < "$TMP_MON" 2>/dev/null || true
             fi
+
+            # Show Action Dialog (Save / Open with / Only clipboard)
+            show_action_dialog "$TMP_MON"
             exit 0
         fi
         rm -f "$TMP_FULL"
@@ -130,7 +285,6 @@ except Exception:
 fi
 
 # --- Mode 3: Standard execution with transparent clipboard capture (e.g. -r region) ---
-# If invoked with no args and mango IPC was not available, default to -f
 if [ $# -eq 0 ]; then
     set -- -f
 fi
@@ -154,8 +308,17 @@ if [ -n "$CUSTOM_TARGET" ]; then
     fi
 fi
 
+CONF_DIR_SEARCH="$HOME/Imágenes"
+if [ -f "$HOME/.config/xfce4/xfce4-screenshooter" ]; then
+    URI=$(grep "^screenshot_dir=" "$HOME/.config/xfce4/xfce4-screenshooter" 2>/dev/null | cut -d= -f2- || true)
+    case "$URI" in
+        file://*) CONF_DIR_SEARCH="${URI#file://}" ;;
+        file:*)   CONF_DIR_SEARCH="${URI#file:}" ;;
+    esac
+fi
+
 CANDIDATE=""
-for d in "$CUSTOM_DIR" "$CONF_DIR" "$HOME/Imágenes" "$HOME/Pictures" /tmp; do
+for d in "$CUSTOM_DIR" "$CONF_DIR_SEARCH" "$HOME/Imágenes" "$HOME/Pictures" /tmp; do
     [ -n "$d" ] && [ -d "$d" ] || continue
     FOUND=$(find "$d" -maxdepth 1 -type f -newer "$REF" \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.webp" \) -printf "%T@ %p\n" 2>/dev/null | sort -nr | head -n 1 | cut -d' ' -f2-)
     if [ -n "$FOUND" ]; then
