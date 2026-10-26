@@ -4,8 +4,15 @@
 # 2. Handles active-window capture (-w / --window) under mangowc by querying
 #    window geometry via mango IPC (mmsg) and cropping the full-screen capture,
 #    bypassing Xfce's "mode not supported in Wayland" error.
+# 3. Defaults to full-screen capture (-f) when invoked without flags (e.g. standard Print key),
+#    avoiding the mode-selection dialog.
 # Installed in ~/.local/bin/xfce4-screenshooter by common/xfce-wayland/install-xfce-wayland.sh (docs/5-desktop/1-xfce.md).
 set -u
+
+# If invoked without arguments (Print key shortcut), default to direct fullscreen (-f)
+if [ $# -eq 0 ]; then
+    set -- -f
+fi
 
 # Ensure Wayland environment variables if missing from spawn environment
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
