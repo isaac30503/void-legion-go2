@@ -29,7 +29,7 @@ CachyOS's cachy-update: panel icon, rootless checks, notifications, Void's news,
 
 | The desktop (Xfce on Wayland) | Game Mode (SteamOS's interface) |
 |---|---|
-| ![Windows tiled with mangowc in dwindle layout on the Xfce desktop](docs/images/desktop-windows.webp) | ![Steam's Game Mode library](docs/images/game-mode-library.webp) |
+| ![Windows tiled with mangowc in dwindle layout on the Xfce desktop](docs/images/Comfortable_windows_managing_and_using_Desktop_demo.png) | ![Steam's Game Mode library](docs/images/game-mode-library.webp) |
 
 More in **[the tour](docs/tour.md)**: power-on, the desktop and its window snapping, Game Mode with Decky, the controller as
 a Steam Deck's, and a light and a heavy game.

@@ -20,7 +20,7 @@ Xfce on Wayland (mangowc), with a single bar at the top: workspaces on the left,
 the right. The launcher dock stays hidden until the pointer reaches the bottom edge. Dark theme (Orchis), Papirus
 icons with teal folders, one font everywhere (JetBrains Mono): still Xfce underneath, with a current look. [Xfce](5-desktop/1-xfce.md), [look and feel](5-desktop/2-look-and-feel.md)
 
-![Windows tiled with mangowc in dwindle layout: 8 px gaps and Super Game Bro border colors](images/desktop-windows.webp)
+![Windows tiled with mangowc in dwindle layout: 8 px gaps and Super Game Bro border colors](images/Comfortable_windows_managing_and_using_Desktop_demo.png)
 
 Windows are tiled automatically by mangowc. In *dwindle* mode, each new window splits the focused one along its
 longer side (here: the left half hosts the primary window, and the right half splits into two). Super+L toggles between
