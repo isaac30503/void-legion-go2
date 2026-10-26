@@ -189,7 +189,7 @@ The window comes floating and centered; Super+T puts it back in the tiling.
 | Ctrl+Shift+Escape | Task manager |
 | Super+K | This table of shortcuts (again to close it; see below) |
 | Super+Escape · Ctrl+Alt+Delete | Xfce's log out / shut down / reboot (it asks first) |
-| Print · Shift+Print · Alt+Print | Screenshot: whole screen / region / window |
+| Print · Shift+Print · Ctrl+Print | Screenshot: whole screen / region / window |
 | Volume, mute and microphone keys | `wpctl` |
 | Brightness keys | `brightness`, 10 at a time |
 

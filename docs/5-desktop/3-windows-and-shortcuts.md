@@ -26,7 +26,7 @@ maximized** (8 px gap) and keyboard snapping to halves and quarters, **per monit
 | **Super+Shift+Space** | back to the home position (almost maximized; dialogs, fixed-size windows and the finder to the center) |
 | Super+drag (left / right) | move / resize |
 | Alt+Tab | window switcher with thumbnails |
-| Print / Shift+Print / Alt+Print | screenshot (`xfce4-screenshooter`) |
+| Print / Shift+Print / Ctrl+Print | screenshot (`xfce4-screenshooter`) |
 | volume and brightness keys | `wpctl` and `brightness` on Wayland; Xfce's on X11 |
 
 There are 5 workspaces (named "1"…"5"); Super+6…0 do nothing. Xfce's own shortcuts (Ctrl+Alt+T, Super+E…) keep
