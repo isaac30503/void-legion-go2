@@ -4637,3 +4637,43 @@ msgstr "quitado: NetworkManager vuelve a arrancar wpa_supplicant (iwd sigue inst
 #: common/disk/ideapad-bfq.sh
 msgid "removed: the disks use mq-deadline"
 msgstr "quitado: los discos usan mq-deadline"
+
+#: common/xfce-wayland/xfce4-screenshooter
+msgid "Screenshot"
+msgstr "Captura de pantalla"
+
+#: common/xfce-wayland/xfce4-screenshooter
+msgid "Action"
+msgstr "Acción"
+
+#: common/xfce-wayland/xfce4-screenshooter
+msgid "Only copy to clipboard"
+msgstr "Solo copiar al portapapeles"
+
+#: common/xfce-wayland/xfce4-screenshooter
+msgid "Save"
+msgstr "Guardar"
+
+#: common/xfce-wayland/xfce4-screenshooter
+msgid "Open with..."
+msgstr "Abrir con..."
+
+#: common/xfce-wayland/xfce4-screenshooter
+msgid "Folder:"
+msgstr "Carpeta:"
+
+#: common/xfce-wayland/xfce4-screenshooter
+msgid "Select destination folder"
+msgstr "Seleccionar carpeta de destino"
+
+#: common/xfce-wayland/xfce4-screenshooter
+msgid "Preview"
+msgstr "Vista previa"
+
+#: common/xfce-wayland/xfce4-screenshooter
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: common/xfce-wayland/xfce4-screenshooter
+msgid "OK"
+msgstr "Aceptar"

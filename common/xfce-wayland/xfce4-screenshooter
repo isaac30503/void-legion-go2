@@ -5,7 +5,8 @@
 # 2. Window (Ctrl+Print / -w): captures focused window geometry via mango IPC (mmsg).
 # 3. Region (Shift+Print / -r): interactive region selection via xfce4-screenshooter.
 # 4. Immediate clipboard copy (wl-copy) upon capture.
-# 5. Native GTK dialog with preview for ALL modes, defaulting to "Solo copiar al portapapeles".
+# 5. Native GTK dialog with preview for ALL modes, defaulting to "Only copy to clipboard",
+#    fully translated via void-legion-go2's i18n catalog (messages.po).
 # Installed in ~/.local/bin/xfce4-screenshooter by common/xfce-wayland/install-xfce-wayland.sh (docs/5-desktop/1-xfce.md).
 set -u
 
@@ -54,6 +55,17 @@ import sys, os, gi, subprocess, urllib.parse, datetime
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gio
 
+# Internationalization via void-legion i18n catalog
+_ = lambda s: s
+for p in [os.path.expanduser("~/.local/share/void-legion/lib"), "/usr/local/share/void-legion/lib"]:
+    if os.path.isdir(p):
+        sys.path.insert(0, p)
+        try:
+            from void_legion_i18n import _
+            break
+        except ImportError:
+            pass
+
 def run():
     tmp_img = sys.argv[1]
     custom_target = sys.argv[2] if len(sys.argv) > 2 else ""
@@ -61,7 +73,7 @@ def run():
     # If an explicit destination file/dir was given on CLI, save directly
     if custom_target:
         if os.path.isdir(custom_target):
-            dest = os.path.join(custom_target, f"Captura de pantalla_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png")
+            dest = os.path.join(custom_target, f"{_('Screenshot')}_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png")
         else:
             dest = custom_target
         os.replace(tmp_img, dest)
@@ -83,8 +95,8 @@ def run():
         except Exception:
             pass
 
-    dlg = Gtk.Dialog(title="Captura de pantalla", flags=0)
-    dlg.add_buttons("Cancelar", Gtk.ResponseType.CANCEL, "Aceptar", Gtk.ResponseType.OK)
+    dlg = Gtk.Dialog(title=_("Screenshot"), flags=0)
+    dlg.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL, _("OK"), Gtk.ResponseType.OK)
     dlg.set_default_response(Gtk.ResponseType.OK)
     dlg.set_resizable(False)
     dlg.set_position(Gtk.WindowPosition.CENTER)
@@ -96,21 +108,21 @@ def run():
     # Actions column
     vbox_actions = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
     lbl_action = Gtk.Label(xalign=0)
-    lbl_action.set_markup("<b>Acción</b>")
+    lbl_action.set_markup(f"<b>{_('Action')}</b>")
     vbox_actions.pack_start(lbl_action, False, False, 0)
 
-    # Solo portapapeles selected by default
-    r_clip = Gtk.RadioButton.new_with_label(None, "Solo copiar al portapapeles")
-    r_save = Gtk.RadioButton.new_with_label_from_widget(r_clip, "Guardar")
-    r_open = Gtk.RadioButton.new_with_label_from_widget(r_clip, "Abrir con...")
+    # Only copy to clipboard selected by default
+    r_clip = Gtk.RadioButton.new_with_label(None, _("Only copy to clipboard"))
+    r_save = Gtk.RadioButton.new_with_label_from_widget(r_clip, _("Save"))
+    r_open = Gtk.RadioButton.new_with_label_from_widget(r_clip, _("Open with..."))
 
     vbox_actions.pack_start(r_clip, False, False, 0)
     vbox_actions.pack_start(r_save, False, False, 0)
 
     # Save details
     hbox_dir = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6, margin_start=20)
-    lbl_dest = Gtk.Label(label="Carpeta:", xalign=0)
-    btn_dir = Gtk.FileChooserButton(title="Seleccionar carpeta de destino", action=Gtk.FileChooserAction.SELECT_FOLDER)
+    lbl_dest = Gtk.Label(label=_("Folder:"), xalign=0)
+    btn_dir = Gtk.FileChooserButton(title=_("Select destination folder"), action=Gtk.FileChooserAction.SELECT_FOLDER)
     btn_dir.set_current_folder(save_dir if os.path.isdir(save_dir) else os.path.expanduser("~"))
     hbox_dir.pack_start(lbl_dest, False, False, 0)
     hbox_dir.pack_start(btn_dir, True, True, 0)
@@ -148,7 +160,7 @@ def run():
     # Preview column
     vbox_prev = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
     lbl_prev = Gtk.Label(xalign=0)
-    lbl_prev.set_markup("<b>Vista previa</b>")
+    lbl_prev.set_markup(f"<b>{_('Preview')}</b>")
     vbox_prev.pack_start(lbl_prev, False, False, 0)
 
     try:
@@ -188,7 +200,7 @@ def run():
         sys.exit(0)
 
     now_str = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    final_file = os.path.join(target_folder, f"Captura de pantalla_{now_str}.png")
+    final_file = os.path.join(target_folder, f"{_('Screenshot')}_{now_str}.png")
 
     if chosen_action == "save":
         os.replace(tmp_img, final_file)
