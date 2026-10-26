@@ -24,9 +24,9 @@ right, then down, **following the focus** — on a compositor as light as labwc 
   (blur, shadows, rounded corners, animations) come from scenefx and cost only when on: **all off here**.
 - swayfx: sway with the same scenefx effects; with them off it draws like sway. Hyprland and COSMIC are not in Void.
 
-Void: `mangowc` 0.17.5 (pulls `scenefx` and `cJSON`; `wlroots0.20` was already there). Xwayland is built in, as in
+Void: `mangowc` 0.18.3 (pulls `scenefx` and `cJSON`; `wlroots0.20` was already there). Xwayland is built in, as in
 labwc (no `xwayland-satellite`). **Its keywords are those of the config it brings (`/etc/mango/config.conf`)**, not
-always those of the online wiki, which is newer (e.g. `tagrule=`, not `tag_rule=`).
+always those of the online wiki, which is newer (e.g. `tag_rule=`, not `tagrule=`).
 
 ## Install
 
@@ -72,10 +72,10 @@ files with `OnlyShowIn=XFCE` vanished from the finder and the menu — seen with
 ## Two layouts per workspace
 
 mango's workspaces are **tags 1–9**, fixed (Xfce's pager shows them in order). Each starts in **dwindle**
-(`tagrule=id:N,layout_name:dwindle`); **Super+L** (`switch_layout`) cycles the focused one through
+(`tag_rule=id:N,layout_name:dwindle`); **Super+L** (`switch_layout`) cycles the focused one through
 `circle_layout=dwindle,scroller`.
 
-- ***dwindle***: the new window splits the **focused** one along its longer side (`dwindle_hsplit=1`,
+- ***dwindle***: the new window splits the **focused** one along its longer side (`dwindle_horizontal_split=1`,
   `dwindle_vsplit=1`, no smart split): on a wide screen right, then down, then right… Super+J
   (`dwindle_toggle_split_direction`) turns the focused split, and stays (`dwindle_preserve_split=1`).
 - ***scroller***: every column at full width (it was 80 % until the user asked for the largest, 2026-10-23); Super+Shift+R cycles 50/80/100 %.
