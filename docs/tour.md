@@ -16,16 +16,17 @@ Steam's large circle while Steam loads (top, center: **Steam B**). The other fou
 
 ![A clean Xfce desktop: one black bar at the top with workspaces, the clock and the tray](images/desktop-xfce.webp)
 
-Xfce on Wayland (labwc), with a single bar at the top: workspaces on the left, the clock in the middle, the tray on
+Xfce on Wayland (mangowc), with a single bar at the top: workspaces on the left, the clock in the middle, the tray on
 the right. The launcher dock stays hidden until the pointer reaches the bottom edge. Dark theme (Orchis), Papirus
 icons with teal folders, one font everywhere (JetBrains Mono): still Xfce underneath, with a current look. [Xfce](5-desktop/1-xfce.md), [look and feel](5-desktop/2-look-and-feel.md)
 
-![Three windows snapped with even gaps: Firefox and Thunar on the left, a terminal with fastfetch on the right](images/desktop-windows.webp)
+![Windows tiled with mangowc in dwindle layout: 8 px gaps and Super Game Bro border colors](images/desktop-windows.webp)
 
-Windows are placed from the keyboard, like a tiling desktop but without forcing it. Super+Shift+arrows snaps a window
-to a half; a second arrow takes it to a corner. Every gap is the same 8 px. Super+arrows moves the focus to the
-window on that side. New windows open almost maximized. Here: Firefox and Thunar in the left quarters, a terminal on
-the right half. [Windows and shortcuts](5-desktop/3-windows-and-shortcuts.md)
+Windows are tiled automatically by mangowc. In *dwindle* mode, each new window splits the focused one along its
+longer side (here: the left half hosts the primary window, and the right half splits into two). Super+L toggles between
+*dwindle* and *scroller* (columns) per workspace. Every gap is the same 8 px, with 2 px borders using the Super Game
+Bro palette. Super+arrows moves focus; Super+Shift+arrows exchanges window positions.
+[mangowc](5-desktop/5-mango.md), [windows and shortcuts](5-desktop/3-windows-and-shortcuts.md)
 
 ## Game Mode: SteamOS's interface
 
