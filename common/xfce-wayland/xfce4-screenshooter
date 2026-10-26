@@ -1,11 +1,11 @@
 #!/bin/sh
 # xfce4-screenshooter — transparent wrapper for Xfce Screenshooter under Wayland.
-# Highly optimized for instantaneous capture:
-# 1. Direct hardware screencopy via grim when available (~25ms capture) or
-#    fallback to xfce4-screenshooter + convert.
-# 2. Geometry queried directly via mango IPC (mmsg) and parsed with fast sed builtins.
-# 3. Captured image piped immediately to Wayland clipboard (wl-copy) with zero delay.
-# 4. Interactive GTK action dialog (Save / Open with / Only clipboard) with live preview.
+# Unified experience across all capture modes:
+# 1. Fullscreen / Active Monitor (Print / -f): captures active monitor via grim or xfce4.
+# 2. Window (Ctrl+Print / -w): captures focused window geometry via mango IPC (mmsg).
+# 3. Region (Shift+Print / -r): interactive region selection via xfce4-screenshooter.
+# 4. Immediate clipboard copy (wl-copy) upon capture.
+# 5. Native GTK dialog with preview for ALL modes, defaulting to "Solo copiar al portapapeles".
 # Installed in ~/.local/bin/xfce4-screenshooter by common/xfce-wayland/install-xfce-wayland.sh (docs/5-desktop/1-xfce.md).
 set -u
 
@@ -23,7 +23,7 @@ if [ -z "$MANGO_SOCK" ]; then
     done
 fi
 
-# Parse arguments: track custom save path, window capture (-w), fullscreen (-f), or region (-r)
+# Parse arguments
 CUSTOM_TARGET=""
 IS_WINDOW=false
 IS_REGION=false
@@ -46,7 +46,7 @@ for arg in "$@"; do
     prev="$arg"
 done
 
-# Python helper to display the action dialog (Save / Open with / Only clipboard) with thumbnail
+# Python helper to display the unified action dialog with preview
 show_action_dialog() {
     IMG="$1"
     python3 - "$IMG" "$CUSTOM_TARGET" << 'PYEOF'
@@ -99,10 +99,12 @@ def run():
     lbl_action.set_markup("<b>Acción</b>")
     vbox_actions.pack_start(lbl_action, False, False, 0)
 
-    r_save = Gtk.RadioButton.new_with_label(None, "Guardar")
-    r_open = Gtk.RadioButton.new_with_label_from_widget(r_save, "Abrir con...")
-    r_clip = Gtk.RadioButton.new_with_label_from_widget(r_save, "Solo copiar al portapapeles")
+    # Solo portapapeles selected by default
+    r_clip = Gtk.RadioButton.new_with_label(None, "Solo copiar al portapapeles")
+    r_save = Gtk.RadioButton.new_with_label_from_widget(r_clip, "Guardar")
+    r_open = Gtk.RadioButton.new_with_label_from_widget(r_clip, "Abrir con...")
 
+    vbox_actions.pack_start(r_clip, False, False, 0)
     vbox_actions.pack_start(r_save, False, False, 0)
 
     # Save details
@@ -112,6 +114,7 @@ def run():
     btn_dir.set_current_folder(save_dir if os.path.isdir(save_dir) else os.path.expanduser("~"))
     hbox_dir.pack_start(lbl_dest, False, False, 0)
     hbox_dir.pack_start(btn_dir, True, True, 0)
+    hbox_dir.set_sensitive(False)
     vbox_actions.pack_start(hbox_dir, False, False, 0)
 
     vbox_actions.pack_start(r_open, False, False, 0)
@@ -131,8 +134,6 @@ def run():
     combo_open.set_margin_start(20)
     combo_open.set_sensitive(False)
     vbox_actions.pack_start(combo_open, False, False, 0)
-
-    vbox_actions.pack_start(r_clip, False, False, 0)
 
     def on_toggle(b):
         hbox_dir.set_sensitive(r_save.get_active())
@@ -226,12 +227,10 @@ if [ "$IS_WINDOW" = "true" ] && [ -n "$MANGO_SOCK" ] && command -v mmsg >/dev/nu
     if [ -n "$GW" ] && [ "$GW" -gt 0 ] && [ "$GH" -gt 0 ]; then
         TMP_WIN=$(mktemp /tmp/.screenshot-win.XXXXXX.png)
 
-        # Ultra-fast path: grim captures window geometry in ~25ms
         if command -v grim >/dev/null 2>&1; then
             grim -g "${GX},${GY} ${GW}x${GH}" "$TMP_WIN" >/dev/null 2>&1 || rm -f "$TMP_WIN"
         fi
 
-        # Fallback path if grim not available
         if [ ! -s "$TMP_WIN" ] && command -v convert >/dev/null 2>&1; then
             TMP_FULL=$(mktemp /tmp/.screenshot-full.XXXXXX.png)
             if /usr/bin/xfce4-screenshooter -f -s "$TMP_FULL" >/dev/null 2>&1; then
@@ -241,7 +240,6 @@ if [ "$IS_WINDOW" = "true" ] && [ -n "$MANGO_SOCK" ] && command -v mmsg >/dev/nu
         fi
 
         if [ -s "$TMP_WIN" ]; then
-            # Copy to clipboard instantly before showing dialog
             if command -v wl-copy >/dev/null 2>&1; then
                 wl-copy -t image/png < "$TMP_WIN" 2>/dev/null || true
             fi
@@ -258,7 +256,6 @@ if [ "$IS_FULLSCREEN" = "true" ] && [ "$IS_REGION" = "false" ] && [ "$IS_WINDOW"
     MNAME=""; MW=""; MH=""; MX=""; MY=""
     eval $(echo "$RAW_MON" | sed -n 's/.*"name":"\([^"]*\)","active":true[^}]*"x":\([0-9]*\),"y":\([0-9]*\),"width":\([0-9]*\),"height":\([0-9]*\).*/MNAME=\1 MW=\4 MH=\5 MX=\2 MY=\3/p' 2>/dev/null || true)
 
-    # Fallback to first monitor if no active monitor explicitly flagged
     if [ -z "$MW" ]; then
         eval $(echo "$RAW_MON" | sed -n 's/.*"name":"\([^"]*\)"[^}]*"x":\([0-9]*\),"y":\([0-9]*\),"width":\([0-9]*\),"height":\([0-9]*\).*/MNAME=\1 MW=\4 MH=\5 MX=\2 MY=\3/p' 2>/dev/null || true)
     fi
@@ -266,12 +263,10 @@ if [ "$IS_FULLSCREEN" = "true" ] && [ "$IS_REGION" = "false" ] && [ "$IS_WINDOW"
     if [ -n "$MW" ] && [ "$MW" -gt 0 ] && [ "$MH" -gt 0 ]; then
         TMP_MON=$(mktemp /tmp/.screenshot-mon.XXXXXX.png)
 
-        # Ultra-fast path: grim captures active monitor in ~25ms
         if command -v grim >/dev/null 2>&1 && [ -n "$MNAME" ]; then
             grim -o "$MNAME" "$TMP_MON" >/dev/null 2>&1 || rm -f "$TMP_MON"
         fi
 
-        # Fallback path if grim not available
         if [ ! -s "$TMP_MON" ] && command -v convert >/dev/null 2>&1; then
             TMP_FULL=$(mktemp /tmp/.screenshot-full.XXXXXX.png)
             if /usr/bin/xfce4-screenshooter -f -s "$TMP_FULL" >/dev/null 2>&1; then
@@ -281,7 +276,6 @@ if [ "$IS_FULLSCREEN" = "true" ] && [ "$IS_REGION" = "false" ] && [ "$IS_WINDOW"
         fi
 
         if [ -s "$TMP_MON" ]; then
-            # Copy to clipboard instantly before showing dialog
             if command -v wl-copy >/dev/null 2>&1; then
                 wl-copy -t image/png < "$TMP_MON" 2>/dev/null || true
             fi
@@ -292,58 +286,33 @@ if [ "$IS_FULLSCREEN" = "true" ] && [ "$IS_REGION" = "false" ] && [ "$IS_WINDOW"
     fi
 fi
 
-# --- Mode 3: Standard execution with transparent clipboard capture (e.g. -r region) ---
+# --- Mode 3: Region Selection (-r) ---
+if [ "$IS_REGION" = "true" ]; then
+    TMP_REG=$(mktemp /tmp/.screenshot-reg.XXXXXX.png)
+    if /usr/bin/xfce4-screenshooter -r -s "$TMP_REG" >/dev/null 2>&1 && [ -s "$TMP_REG" ]; then
+        if command -v wl-copy >/dev/null 2>&1; then
+            wl-copy -t image/png < "$TMP_REG" 2>/dev/null || true
+        fi
+        show_action_dialog "$TMP_REG"
+        exit 0
+    fi
+    rm -f "$TMP_REG"
+    exit 0
+fi
+
+# --- Mode 4: Fallback execution if neither of above triggered ---
 if [ $# -eq 0 ]; then
     set -- -f
 fi
 
-REF=$(mktemp /tmp/.screenshooter-ref.XXXXXX)
-
-/usr/bin/xfce4-screenshooter "$@"
-RET=$?
-
-if [ $RET -ne 0 ]; then
-    rm -f "$REF"
-    exit $RET
-fi
-
-CUSTOM_DIR=""
-if [ -n "$CUSTOM_TARGET" ]; then
-    if [ -d "$CUSTOM_TARGET" ]; then
-        CUSTOM_DIR="$CUSTOM_TARGET"
-    else
-        CUSTOM_DIR="$(dirname "$CUSTOM_TARGET")"
+TMP_DEF=$(mktemp /tmp/.screenshot-def.XXXXXX.png)
+if /usr/bin/xfce4-screenshooter -s "$TMP_DEF" "$@" >/dev/null 2>&1 && [ -s "$TMP_DEF" ]; then
+    if command -v wl-copy >/dev/null 2>&1; then
+        wl-copy -t image/png < "$TMP_DEF" 2>/dev/null || true
     fi
+    show_action_dialog "$TMP_DEF"
+    exit 0
 fi
+rm -f "$TMP_DEF"
 
-CONF_DIR_SEARCH="$HOME/Imágenes"
-if [ -f "$HOME/.config/xfce4/xfce4-screenshooter" ]; then
-    URI=$(grep "^screenshot_dir=" "$HOME/.config/xfce4/xfce4-screenshooter" 2>/dev/null | cut -d= -f2- || true)
-    case "$URI" in
-        file://*) CONF_DIR_SEARCH="${URI#file://}" ;;
-        file:*)   CONF_DIR_SEARCH="${URI#file:}" ;;
-    esac
-fi
-
-CANDIDATE=""
-for d in "$CUSTOM_DIR" "$CONF_DIR_SEARCH" "$HOME/Imágenes" "$HOME/Pictures" /tmp; do
-    [ -n "$d" ] && [ -d "$d" ] || continue
-    FOUND=$(find "$d" -maxdepth 1 -type f -newer "$REF" \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.webp" \) -printf "%T@ %p\n" 2>/dev/null | sort -nr | head -n 1 | cut -d' ' -f2-)
-    if [ -n "$FOUND" ]; then
-        CANDIDATE="$FOUND"
-        break
-    fi
-done
-
-rm -f "$REF"
-
-if [ -n "$CANDIDATE" ] && [ -f "$CANDIDATE" ] && command -v wl-copy >/dev/null 2>&1; then
-    MIME="image/png"
-    case "$CANDIDATE" in
-        *.jpg|*.jpeg) MIME="image/jpeg" ;;
-        *.webp)       MIME="image/webp" ;;
-    esac
-    wl-copy -t "$MIME" < "$CANDIDATE" 2>/dev/null || true
-fi
-
-exit $RET
+exit 0
