@@ -2,17 +2,12 @@
 # xfce4-screenshooter — transparent wrapper for Xfce Screenshooter under Wayland.
 # 1. Always sends captured screenshots to the Wayland clipboard via wl-copy.
 # 2. Handles active-window capture (-w / --window) under mangowc by querying
-#    window geometry via mango IPC (mmsg) and cropping the full-screen capture,
-#    bypassing Xfce's "mode not supported in Wayland" error.
-# 3. Defaults to full-screen capture (-f) when invoked without flags (e.g. standard Print key),
-#    avoiding the mode-selection dialog.
+#    window geometry via mango IPC (mmsg) and cropping the capture.
+# 3. Handles full-screen capture (-f / --fullscreen or default Print) by capturing
+#    the ACTIVE MONITOR (where the focused window / cursor is) instead of stitching
+#    all connected monitors into a single image.
 # Installed in ~/.local/bin/xfce4-screenshooter by common/xfce-wayland/install-xfce-wayland.sh (docs/5-desktop/1-xfce.md).
 set -u
-
-# If invoked without arguments (Print key shortcut), default to direct fullscreen (-f)
-if [ $# -eq 0 ]; then
-    set -- -f
-fi
 
 # Ensure Wayland environment variables if missing from spawn environment
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
@@ -28,17 +23,26 @@ if [ -z "$MANGO_SOCK" ]; then
     done
 fi
 
-# Parse arguments: track custom save path and whether window capture (-w) was requested
+# Parse arguments: track custom save path, window capture (-w), fullscreen (-f), or region (-r)
 CUSTOM_TARGET=""
 IS_WINDOW=false
+IS_REGION=false
+IS_FULLSCREEN=false
 prev=""
+
+if [ $# -eq 0 ]; then
+    IS_FULLSCREEN=true
+fi
+
 for arg in "$@"; do
     if [ "$prev" = "-s" ] || [ "$prev" = "--save" ]; then
         CUSTOM_TARGET="$arg"
     fi
-    if [ "$arg" = "-w" ] || [ "$arg" = "--window" ]; then
-        IS_WINDOW=true
-    fi
+    case "$arg" in
+        -w|--window)     IS_WINDOW=true ;;
+        -r|--region)     IS_REGION=true ;;
+        -f|--fullscreen) IS_FULLSCREEN=true ;;
+    esac
     prev="$arg"
 done
 
@@ -56,6 +60,19 @@ if [ -z "$CONF_DIR" ] || [ ! -d "$CONF_DIR" ]; then
     [ -d "$CONF_DIR" ] || CONF_DIR="$HOME"
 fi
 
+# --- Helper to resolve target filename ---
+resolve_target() {
+    if [ -n "$CUSTOM_TARGET" ]; then
+        if [ -d "$CUSTOM_TARGET" ]; then
+            echo "$CUSTOM_TARGET/Captura de pantalla_$(date +%Y-%m-%d_%H-%M-%S).png"
+        else
+            echo "$CUSTOM_TARGET"
+        fi
+    else
+        echo "$CONF_DIR/Captura de pantalla_$(date +%Y-%m-%d_%H-%M-%S).png"
+    fi
+}
+
 # --- Mode 1: Active Window Capture under mango ---
 if [ "$IS_WINDOW" = "true" ] && [ -n "$MANGO_SOCK" ] && command -v mmsg >/dev/null 2>&1 && command -v convert >/dev/null 2>&1; then
     GEOM=$(MANGO_INSTANCE_SIGNATURE="$MANGO_SOCK" mmsg get focusing-client 2>/dev/null | python3 -c '
@@ -70,24 +87,10 @@ except Exception:
 
     if [ -n "$GEOM" ]; then
         TMP_FULL=$(mktemp /tmp/.screenshot-full.XXXXXX.png)
-        # Take full screen capture silently to temporary file
         if /usr/bin/xfce4-screenshooter -f -s "$TMP_FULL" >/dev/null 2>&1; then
-            # Determine destination file
-            if [ -n "$CUSTOM_TARGET" ]; then
-                if [ -d "$CUSTOM_TARGET" ]; then
-                    OUT_FILE="$CUSTOM_TARGET/Captura de pantalla_$(date +%Y-%m-%d_%H-%M-%S).png"
-                else
-                    OUT_FILE="$CUSTOM_TARGET"
-                fi
-            else
-                OUT_FILE="$CONF_DIR/Captura de pantalla_$(date +%Y-%m-%d_%H-%M-%S).png"
-            fi
-
-            # Crop to active window geometry
+            OUT_FILE=$(resolve_target)
             convert "$TMP_FULL" -crop "$GEOM" +repage "$OUT_FILE"
             rm -f "$TMP_FULL"
-
-            # Always copy to Wayland clipboard
             if command -v wl-copy >/dev/null 2>&1; then
                 wl-copy -t image/png < "$OUT_FILE" 2>/dev/null || true
             fi
@@ -97,7 +100,41 @@ except Exception:
     fi
 fi
 
-# --- Mode 2: Standard execution with transparent clipboard capture ---
+# --- Mode 2: Active Monitor Capture (Print key / -f) under mango ---
+if [ "$IS_FULLSCREEN" = "true" ] && [ "$IS_REGION" = "false" ] && [ "$IS_WINDOW" = "false" ] && [ -n "$MANGO_SOCK" ] && command -v mmsg >/dev/null 2>&1 && command -v convert >/dev/null 2>&1; then
+    MON_GEOM=$(MANGO_INSTANCE_SIGNATURE="$MANGO_SOCK" mmsg get all-monitors 2>/dev/null | python3 -c '
+import sys, json
+try:
+    data = json.load(sys.stdin)
+    mons = data.get("monitors", [])
+    active = next((m for m in mons if m.get("active")), mons[0] if mons else None)
+    if active and active.get("width", 0) > 0 and active.get("height", 0) > 0:
+        print("%dx%d+%d+%d" % (active["width"], active["height"], active["x"], active["y"]))
+except Exception:
+    pass
+' 2>/dev/null || true)
+
+    if [ -n "$MON_GEOM" ]; then
+        TMP_FULL=$(mktemp /tmp/.screenshot-full.XXXXXX.png)
+        if /usr/bin/xfce4-screenshooter -f -s "$TMP_FULL" >/dev/null 2>&1; then
+            OUT_FILE=$(resolve_target)
+            convert "$TMP_FULL" -crop "$MON_GEOM" +repage "$OUT_FILE"
+            rm -f "$TMP_FULL"
+            if command -v wl-copy >/dev/null 2>&1; then
+                wl-copy -t image/png < "$OUT_FILE" 2>/dev/null || true
+            fi
+            exit 0
+        fi
+        rm -f "$TMP_FULL"
+    fi
+fi
+
+# --- Mode 3: Standard execution with transparent clipboard capture (e.g. -r region) ---
+# If invoked with no args and mango IPC was not available, default to -f
+if [ $# -eq 0 ]; then
+    set -- -f
+fi
+
 REF=$(mktemp /tmp/.screenshooter-ref.XXXXXX)
 
 /usr/bin/xfce4-screenshooter "$@"
