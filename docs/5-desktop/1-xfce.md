@@ -16,7 +16,7 @@ sudo bash "$B/legion/desktop-1-root.sh"     # log ~/desktop-1-root.log
 It deletes the `.new-*` of `/etc`, installs `fish-shell fzf ntfs-3g curl git ripgrep xdg-utils xrandr` and the
 desktop software (`xterm xrdb xprop xdotool librsvg-utils ImageMagick fastfetch xfce4-docklike-plugin
 xfce4-clipman-plugin papirus-icon-theme papirus-folders sassc gtk-engine-murrine xfce4-screensaver
-xfce4-screenshooter btop blueman adwaita-fonts twemoji noto-fonts-ttf libspa-bluetooth`), sets the teal Papirus
+xfce4-screenshooter btop blueman adwaita-fonts twemoji noto-fonts-ttf libspa-bluetooth wl-clipboard`), sets the teal Papirus
 folders and enables `bluetoothd`.
 
 Then, as the user ([look and feel](2-look-and-feel.md) explains each piece):

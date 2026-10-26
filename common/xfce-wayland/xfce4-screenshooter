@@ -1,0 +1,74 @@
+#!/bin/sh
+# xfce4-screenshooter — transparent wrapper for Xfce Screenshooter under Wayland.
+# Always sends the captured screenshot to the Wayland clipboard via wl-copy,
+# regardless of whether the user chooses to Save, Open With, or uses direct CLI options.
+# Installed in ~/.local/bin/xfce4-screenshooter by common/xfce-wayland/install-xfce-wayland.sh (docs/5-desktop/1-xfce.md).
+set -u
+
+# Ensure Wayland environment variables if missing from spawn environment
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+if [ -z "${WAYLAND_DISPLAY:-}" ] && [ -S "${XDG_RUNTIME_DIR}/wayland-0" ]; then
+    export WAYLAND_DISPLAY="wayland-0"
+fi
+
+# Track custom save directory if -s / --save was passed on CLI
+CUSTOM_DIR=""
+prev=""
+for arg in "$@"; do
+    if [ "$prev" = "-s" ] || [ "$prev" = "--save" ]; then
+        if [ -d "$arg" ]; then
+            CUSTOM_DIR="$arg"
+        else
+            CUSTOM_DIR="$(dirname "$arg")"
+        fi
+        break
+    fi
+    prev="$arg"
+done
+
+# Reference timestamp before taking screenshot
+REF=$(mktemp /tmp/.screenshooter-ref.XXXXXX)
+
+# Run the real binary from /usr/bin
+/usr/bin/xfce4-screenshooter "$@"
+RET=$?
+
+if [ $RET -ne 0 ]; then
+    rm -f "$REF"
+    exit $RET
+fi
+
+# Default screenshot directory from Xfce Screenshooter config
+CONF_DIR=""
+if [ -f "$HOME/.config/xfce4/xfce4-screenshooter" ]; then
+    URI=$(grep "^screenshot_dir=" "$HOME/.config/xfce4/xfce4-screenshooter" 2>/dev/null | cut -d= -f2- || true)
+    case "$URI" in
+        file://*) CONF_DIR="${URI#file://}" ;;
+        file:*)   CONF_DIR="${URI#file:}" ;;
+    esac
+fi
+
+# Search for the newest screenshot created during this run
+CANDIDATE=""
+for d in "$CUSTOM_DIR" "$CONF_DIR" "$HOME/Imágenes" "$HOME/Pictures" /tmp; do
+    [ -n "$d" ] && [ -d "$d" ] || continue
+    FOUND=$(find "$d" -maxdepth 1 -type f -newer "$REF" \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.webp" \) -printf "%T@ %p\n" 2>/dev/null | sort -nr | head -n 1 | cut -d' ' -f2-)
+    if [ -n "$FOUND" ]; then
+        CANDIDATE="$FOUND"
+        break
+    fi
+done
+
+rm -f "$REF"
+
+# Copy the captured image to the Wayland clipboard
+if [ -n "$CANDIDATE" ] && [ -f "$CANDIDATE" ] && command -v wl-copy >/dev/null 2>&1; then
+    MIME="image/png"
+    case "$CANDIDATE" in
+        *.jpg|*.jpeg) MIME="image/jpeg" ;;
+        *.webp)       MIME="image/webp" ;;
+    esac
+    wl-copy -t "$MIME" < "$CANDIDATE" 2>/dev/null || true
+fi
+
+exit $RET

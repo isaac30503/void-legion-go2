@@ -15,7 +15,7 @@ xbps-install -Sy fish-shell fzf ntfs-3g curl git ripgrep xdg-utils \
   xterm xrdb xprop xdotool librsvg-utils ImageMagick fastfetch \
   xfce4-docklike-plugin xfce4-clipman-plugin papirus-icon-theme papirus-folders \
   sassc gtk-engine-murrine xfce4-screensaver xfce4-screenshooter btop blueman \
-  adwaita-fonts twemoji noto-fonts-ttf libspa-bluetooth \
+  adwaita-fonts twemoji noto-fonts-ttf libspa-bluetooth wl-clipboard \
   xrandr     # per-monitor windows (docs/5-desktop/3-windows-and-shortcuts.md); added after the installation of 2026-10-03
 t "--- Papirus-Dark with teal folders"
 papirus-folders -C teal --theme Papirus-Dark

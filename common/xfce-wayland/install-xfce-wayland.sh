@@ -11,6 +11,7 @@
 #   - ~/.local/bin/brightness: brightness keys through elogind (SetBrightness, without root);
 #   - ~/.local/bin/wallpaper-watcher: asks xfdesktop for the wallpaper again when the screens change
 #     (event-driven; without it, when coming from Game Mode the internal screen was left without wallpaper);
+#   - ~/.local/bin/xfce4-screenshooter: transparent wrapper that always sends screenshots to wl-copy;
 #   - ~/.local/share/themes/Orchis-Teal-Dark-Compact/labwc: Orchis for labwc (labwc-theme.sh);
 #   - launchers "labwc Desktop" and "X11 Desktop" (finder, Super+Space; Spanish names in Name[es]).
 # Needs install-passwordless-switch.sh with desktop = Wayland and desktop-x11 (docs/5-desktop/1-xfce.md).
@@ -38,7 +39,7 @@ OLD="/usr/share/applications/escritorio-wayland.desktop /usr/share/applications/
 
 if is_remove "${1:-}"; then
     # shellcheck disable=SC2086  # OLD: a list of old paths, without spaces
-    rm -f "$LW" "$LX" "$H/.local/bin/brightness" "$H/.local/bin/wallpaper-watcher" $OLD
+    rm -f "$LW" "$LX" "$H/.local/bin/brightness" "$H/.local/bin/wallpaper-watcher" "$H/.local/bin/xfce4-screenshooter" $OLD
     rm -rf "${CFG:?}" "${H:?}/.local/share/themes/Orchis-Teal-Dark-Compact/labwc"
     t "== removed the launchers, %s and ~/.local/bin/brightness (labwc stays installed:" "$CFG"
     t "   sudo xbps-remove labwc). CAREFUL: without mango, \"desktop\" is still labwc in switch-mode-root;"
@@ -72,9 +73,10 @@ grep '^XKB_' "$CFG/environment" | sed 's/^/   /'
 sudo -u "$U" touch "$CFG/lock"
 sudo -u "$U" install -m 755 "$D/brightness" "$H/.local/bin/brightness"
 sudo -u "$U" install -m 755 "$D/wallpaper-watcher" "$H/.local/bin/wallpaper-watcher"
+sudo -u "$U" install -m 755 "$D/xfce4-screenshooter" "$H/.local/bin/xfce4-screenshooter"
 # shellcheck disable=SC2086  # a list of old paths, without spaces
 rm -f $OLD
-ls -la "$CFG" "$H/.local/bin/brightness" "$H/.local/bin/wallpaper-watcher"
+ls -la "$CFG" "$H/.local/bin/brightness" "$H/.local/bin/wallpaper-watcher" "$H/.local/bin/xfce4-screenshooter"
 
 t "== 2b. Orchis theme for labwc's borders (labwc-theme.sh, from the xfwm4 one)"
 sudo -u "$U" env HOME="$H" sh "$D/labwc-theme.sh"
