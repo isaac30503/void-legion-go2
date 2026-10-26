@@ -85,7 +85,7 @@ ACTIONS = [
     (r"spawn,xfce4-session-logout", PROGRAMS, _("Log out / shut down / reboot (it asks first)")),
     (r"spawn,xfce4-screenshooter -r", PROGRAMS, _("Screenshot of a region")),
     (r"spawn,xfce4-screenshooter -w", PROGRAMS, _("Screenshot of the window")),
-    (r"spawn,xfce4-screenshooter", PROGRAMS, _("Screenshot of the whole screen")),
+    (r"spawn,xfce4-screenshooter -f", PROGRAMS, _("Screenshot of the whole screen")),
     (r"spawn,wpctl set-volume .*\+$", KEYS, _("Volume up")),
     (r"spawn,wpctl set-volume .*-$", KEYS, _("Volume down")),
     (r"spawn,wpctl set-mute @DEFAULT_AUDIO_SINK@", KEYS, _("Mute")),

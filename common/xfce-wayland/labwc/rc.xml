@@ -100,7 +100,7 @@
     <keybind key="C-S-Escape"><action name="Execute" command="xfce4-taskmanager"/></keybind>
     <keybind key="W-Escape"><action name="Execute" command="xfce4-session-logout"/></keybind>
     <keybind key="C-A-Delete"><action name="Execute" command="xfce4-session-logout"/></keybind>
-    <keybind key="Print"><action name="Execute" command="xfce4-screenshooter"/></keybind>
+    <keybind key="Print"><action name="Execute" command="xfce4-screenshooter -f"/></keybind>
     <keybind key="S-Print"><action name="Execute" command="xfce4-screenshooter -r"/></keybind>
     <keybind key="A-Print"><action name="Execute" command="xfce4-screenshooter -w"/></keybind>
 

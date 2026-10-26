@@ -1,7 +1,9 @@
 #!/bin/sh
 # xfce4-screenshooter — transparent wrapper for Xfce Screenshooter under Wayland.
-# Always sends the captured screenshot to the Wayland clipboard via wl-copy,
-# regardless of whether the user chooses to Save, Open With, or uses direct CLI options.
+# 1. Always sends captured screenshots to the Wayland clipboard via wl-copy.
+# 2. Handles active-window capture (-w / --window) under mangowc by querying
+#    window geometry via mango IPC (mmsg) and cropping the full-screen capture,
+#    bypassing Xfce's "mode not supported in Wayland" error.
 # Installed in ~/.local/bin/xfce4-screenshooter by common/xfce-wayland/install-xfce-wayland.sh (docs/5-desktop/1-xfce.md).
 set -u
 
@@ -11,32 +13,27 @@ if [ -z "${WAYLAND_DISPLAY:-}" ] && [ -S "${XDG_RUNTIME_DIR}/wayland-0" ]; then
     export WAYLAND_DISPLAY="wayland-0"
 fi
 
-# Track custom save directory if -s / --save was passed on CLI
-CUSTOM_DIR=""
+# Locate mango IPC socket if available
+MANGO_SOCK="${MANGO_INSTANCE_SIGNATURE:-}"
+if [ -z "$MANGO_SOCK" ]; then
+    for s in "${XDG_RUNTIME_DIR}"/mango-*.sock; do
+        if [ -S "$s" ]; then MANGO_SOCK="$s"; break; fi
+    done
+fi
+
+# Parse arguments: track custom save path and whether window capture (-w) was requested
+CUSTOM_TARGET=""
+IS_WINDOW=false
 prev=""
 for arg in "$@"; do
     if [ "$prev" = "-s" ] || [ "$prev" = "--save" ]; then
-        if [ -d "$arg" ]; then
-            CUSTOM_DIR="$arg"
-        else
-            CUSTOM_DIR="$(dirname "$arg")"
-        fi
-        break
+        CUSTOM_TARGET="$arg"
+    fi
+    if [ "$arg" = "-w" ] || [ "$arg" = "--window" ]; then
+        IS_WINDOW=true
     fi
     prev="$arg"
 done
-
-# Reference timestamp before taking screenshot
-REF=$(mktemp /tmp/.screenshooter-ref.XXXXXX)
-
-# Run the real binary from /usr/bin
-/usr/bin/xfce4-screenshooter "$@"
-RET=$?
-
-if [ $RET -ne 0 ]; then
-    rm -f "$REF"
-    exit $RET
-fi
 
 # Default screenshot directory from Xfce Screenshooter config
 CONF_DIR=""
@@ -47,8 +44,72 @@ if [ -f "$HOME/.config/xfce4/xfce4-screenshooter" ]; then
         file:*)   CONF_DIR="${URI#file:}" ;;
     esac
 fi
+if [ -z "$CONF_DIR" ] || [ ! -d "$CONF_DIR" ]; then
+    CONF_DIR="$HOME/Imágenes"
+    [ -d "$CONF_DIR" ] || CONF_DIR="$HOME"
+fi
 
-# Search for the newest screenshot created during this run
+# --- Mode 1: Active Window Capture under mango ---
+if [ "$IS_WINDOW" = "true" ] && [ -n "$MANGO_SOCK" ] && command -v mmsg >/dev/null 2>&1 && command -v convert >/dev/null 2>&1; then
+    GEOM=$(MANGO_INSTANCE_SIGNATURE="$MANGO_SOCK" mmsg get focusing-client 2>/dev/null | python3 -c '
+import sys, json
+try:
+    d = json.load(sys.stdin)
+    if d.get("width", 0) > 0 and d.get("height", 0) > 0:
+        print("%dx%d+%d+%d" % (d["width"], d["height"], d["x"], d["y"]))
+except Exception:
+    pass
+' 2>/dev/null || true)
+
+    if [ -n "$GEOM" ]; then
+        TMP_FULL=$(mktemp /tmp/.screenshot-full.XXXXXX.png)
+        # Take full screen capture silently to temporary file
+        if /usr/bin/xfce4-screenshooter -f -s "$TMP_FULL" >/dev/null 2>&1; then
+            # Determine destination file
+            if [ -n "$CUSTOM_TARGET" ]; then
+                if [ -d "$CUSTOM_TARGET" ]; then
+                    OUT_FILE="$CUSTOM_TARGET/Captura de pantalla_$(date +%Y-%m-%d_%H-%M-%S).png"
+                else
+                    OUT_FILE="$CUSTOM_TARGET"
+                fi
+            else
+                OUT_FILE="$CONF_DIR/Captura de pantalla_$(date +%Y-%m-%d_%H-%M-%S).png"
+            fi
+
+            # Crop to active window geometry
+            convert "$TMP_FULL" -crop "$GEOM" +repage "$OUT_FILE"
+            rm -f "$TMP_FULL"
+
+            # Always copy to Wayland clipboard
+            if command -v wl-copy >/dev/null 2>&1; then
+                wl-copy -t image/png < "$OUT_FILE" 2>/dev/null || true
+            fi
+            exit 0
+        fi
+        rm -f "$TMP_FULL"
+    fi
+fi
+
+# --- Mode 2: Standard execution with transparent clipboard capture ---
+REF=$(mktemp /tmp/.screenshooter-ref.XXXXXX)
+
+/usr/bin/xfce4-screenshooter "$@"
+RET=$?
+
+if [ $RET -ne 0 ]; then
+    rm -f "$REF"
+    exit $RET
+fi
+
+CUSTOM_DIR=""
+if [ -n "$CUSTOM_TARGET" ]; then
+    if [ -d "$CUSTOM_TARGET" ]; then
+        CUSTOM_DIR="$CUSTOM_TARGET"
+    else
+        CUSTOM_DIR="$(dirname "$CUSTOM_TARGET")"
+    fi
+fi
+
 CANDIDATE=""
 for d in "$CUSTOM_DIR" "$CONF_DIR" "$HOME/Imágenes" "$HOME/Pictures" /tmp; do
     [ -n "$d" ] && [ -d "$d" ] || continue
@@ -61,7 +122,6 @@ done
 
 rm -f "$REF"
 
-# Copy the captured image to the Wayland clipboard
 if [ -n "$CANDIDATE" ] && [ -f "$CANDIDATE" ] && command -v wl-copy >/dev/null 2>&1; then
     MIME="image/png"
     case "$CANDIDATE" in
