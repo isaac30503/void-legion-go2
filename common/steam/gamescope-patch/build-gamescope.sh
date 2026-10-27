@@ -39,6 +39,9 @@ t "Void template: %s_%s → built with revision=%s" "$(sed -n 's/^version=//p' "
 cp "$PATCH" srcpkgs/gamescope/patches/
 sed -i "s/^revision=$REV\$/revision=$((REV+1))/" "$T"
 printf '%s\n' "XBPS_MAKEJOBS=$(nproc)" "XBPS_DEBUG_PKGS=yes" > etc/conf
+# Use the system's mirror if configured in /etc/xbps.d/
+M="$(sed -n 's/^repository=\(https\?:\/\/[^ ]*\/\)current.*/\1current/p' /etc/xbps.d/*.conf 2>/dev/null | head -1)"
+[ -n "$M" ] && echo "XBPS_MIRROR=$M" >> etc/conf
 [ -d masterdir-x86_64 ] || [ -d masterdir ] || ./xbps-src binary-bootstrap
 ./xbps-src pkg gamescope
 ls -l hostdir/binpkgs/gamescope-*.xbps hostdir/binpkgs/debug/gamescope-dbg-*.xbps

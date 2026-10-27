@@ -1,11 +1,11 @@
 # Binaries of the GitHub Release (they are not in git). install/fetch-assets.sh downloads them and checks the sha256.
-# release: assets-2026-10-09
+# release: assets-2026-10-26
 # asset	sha256	destination
 inputplumber-x86_64.tar.gz	bb167707964777751ad15f2da0ac99eb16a926a3997098e884f749b2e06f777b	legion/inputplumber-x86_64.tar.gz
 xdg-desktop-portal-wlr-0.8.4_2.x86_64.xbps	845a8b54c5e9106ac125dc77a52349dcda421f312de30b827c774b255524b8bd	legion/portal-wlr-patch/xdg-desktop-portal-wlr-0.8.4_2.x86_64.xbps
 libextest.so	5f5059fa156f431ab015699265d07c7925643e147b05e4acbf072981adf14ae2	legion/steam/extest/libextest.so
-gamescope-3.16.30_2.x86_64.xbps	53c89d77baa433d4be3948c79978679615eb89dc6cac79ae4b17ceac243100f1	common/steam/gamescope-patch/gamescope-3.16.30_2.x86_64.xbps
-gamescope-dbg-3.16.30_2.x86_64.xbps	0100f0e1e2545203fbcbd6f845384e61585d4107e80a2f7bdb98027700918722	common/steam/gamescope-patch/gamescope-dbg-3.16.30_2.x86_64.xbps
+gamescope-3.17.0_2.x86_64.xbps	b216ceff8585aaa91a70e6383c82c8934080b919af796d24524d047d056c10b1	common/steam/gamescope-patch/gamescope-3.17.0_2.x86_64.xbps
+gamescope-dbg-3.17.0_2.x86_64.xbps	52a21fc82c23559229941bad0d60191a2a826a063774e9307ecefadf21b6f910	common/steam/gamescope-patch/gamescope-dbg-3.17.0_2.x86_64.xbps
 xdg-desktop-portal-gamescope-0.1.33.412a4bf-2-x86_64.pkg.tar.zst	3929455f2e0e810327d879afef6ed449eeb66fd88448a86ffae184e113627ac5	common/steam/portal-gamescope/xdg-desktop-portal-gamescope-0.1.33.412a4bf-2-x86_64.pkg.tar.zst
 steamos-manager-v26.4.1-void-2.tar.gz	1c8214cbdd5e72026f7b7bf75e9424bcd86467d347ccd60249942f3686da3c97	common/steam/steamos-manager/steamos-manager-v26.4.1-void-2.tar.gz
 steamos-manager-v26.4.1-void.tar.gz	9dbc4566eec83d56ea9088c4d1c42d1b82f4bc247276917d526383ed14443b77	common/steam/steamos-manager/steamos-manager-v26.4.1-void.tar.gz

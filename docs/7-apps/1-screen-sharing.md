@@ -82,8 +82,8 @@ sudo setcap cap_sys_nice=eip /usr/bin/gamescope && getcap /usr/bin/gamescope
 rm -rf ~/src/void-packages                                              # 1.1 GB
 ```
 
-If Void's template is still at 3.16.30_1, the Release's `.xbps` works too, with an index next to it:
-`mkdir -p /tmp/gs && cp "$B/common/steam/gamescope-patch/gamescope-3.16.30_2.x86_64.xbps" /tmp/gs/ && xbps-rindex -a /tmp/gs/*.xbps && sudo xbps-install -R /tmp/gs gamescope`
+If Void's template is still at 3.17.0_1, the Release's `.xbps` works too, with an index next to it:
+`mkdir -p /tmp/gs && cp "$B/common/steam/gamescope-patch/gamescope-3.17.0_2.x86_64.xbps" /tmp/gs/ && xbps-rindex -a /tmp/gs/*.xbps && sudo xbps-install -R /tmp/gs gamescope`
 (and the `setcap`). `install-game-mode.sh` already carries the portal's hook.
 
 - **`xdg-desktop-portal-gamescope`** (Valve's package from SteamOS `holo-3.8`, BSD-3-Clause, unchanged; sha256 of the
@@ -114,6 +114,6 @@ If Void's template is still at 3.16.30_1, the Release's `.xbps` works too, with 
    `cat ~/.local/state/portal-gamescope.log`; if it crashed on entry, leave Game Mode and come back (the main portal
    looks for it only on start). And the launch options above.
 2. **gamescope crashes back to the desktop:** is it still the patched one? `xbps-query -p pkgver,repository gamescope`
-   → `3.16.30_2` and `hostdir/binpkgs` (`void-update` warns when Void replaces it); otherwise rebuild, install and
+   → `3.17.0_2` and `hostdir/binpkgs` (`void-update` warns when Void replaces it); otherwise rebuild, install and
    `setcap`.
 3. **Only Steam's menu is heard:** "Todo el sistema" ("Entire system") as the audio source.

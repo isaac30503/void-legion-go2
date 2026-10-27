@@ -6,7 +6,7 @@ Five pieces run with a patch, because the fix is not in Void (or upstream) yet:
 |---|---|---|---|
 | `xfdesktop` 4.20.2_2 | upstream commit `ed26b06a` | `common/xfce-wayland/xfdesktop-wallpaper/build-xfdesktop.sh` | [wallpaper](../5-desktop/4-wallpaper.md) |
 | `Thunar` 4.20.10_2 | ours: the monitor's connector name | `common/xfce-wayland/thunar-wallpaper/build-thunar.sh` | [wallpaper](../5-desktop/4-wallpaper.md) |
-| `gamescope` 3.16.30_2 | ours: PipeWire use-after-free | `common/steam/gamescope-patch/build-gamescope.sh` | [screen sharing](../7-apps/1-screen-sharing.md#in-game-mode) |
+| `gamescope` 3.17.0_2 | ours: PipeWire use-after-free | `common/steam/gamescope-patch/build-gamescope.sh` | [screen sharing](../7-apps/1-screen-sharing.md#in-game-mode) |
 | `xdg-desktop-portal-wlr` 0.8.4_2 | ours: 3, session restore for windows | `legion/portal-wlr-patch/build-portal-wlr.sh` | [screen sharing](../7-apps/1-screen-sharing.md) |
 | `steamos-manager` v26.4.1-void-2 | ours: `set_clocks` only in `manual` | `common/steam/steamos-manager/build-steamos-manager.sh` | [steamos-manager](../6-game-mode/3-steamos-manager.md) |
 
