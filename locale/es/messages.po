@@ -2678,7 +2678,7 @@ msgstr "Pantallas"
 msgid "There is nothing to share."
 msgstr "No hay nada que compartir."
 
-#: legion/screen-share/screen-share
+#: common/xfce-wayland/xfce4-screenshooter legion/screen-share/screen-share
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -4670,9 +4670,6 @@ msgstr "Seleccionar carpeta de destino"
 msgid "Preview"
 msgstr "Vista previa"
 
-#: common/xfce-wayland/xfce4-screenshooter
-msgid "Cancel"
-msgstr "Cancelar"
 
 #: common/xfce-wayland/xfce4-screenshooter
 msgid "OK"
