@@ -14,7 +14,7 @@ Void Linux from its live ISO onto the whole internal disk. Everything else in th
 | Source | **Local** (copies the live: Xfce + lightdm) |
 | Hostname | **`Legion-Go-Gen-2`** (`ssh lego` and mDNS use it) |
 | Locale / Timezone | `es_MX.UTF-8` / `America/Mexico_City` |
-| User | `isaac` (in `wheel`; the installer adds `audio video kvm floppy cdrom optical users xbuilder`) |
+| User | `isaac` (in `wheel`; the installer adds `audio video kvm floppy cdrom optical users xbuilder`). Add to `network` (`sudo usermod -aG network isaac`) so gamescope/Steam can manage Wi-Fi connections via polkit without an interactive desktop agent. |
 | Bootloader | **`/dev/nvme0n1`** |
 | Partitions (`cfdisk`, `gpt`) | delete all the old ones and create: `p1` 500M *EFI System* · `p2` **32G** *Linux swap* · `p3` the rest (921.4G) *Linux filesystem* |
 | Filesystems | `p1` vfat → `/boot/efi` · `p2` swap · `p3` **btrfs** → `/` (no subvolumes; `/home` is a folder) |

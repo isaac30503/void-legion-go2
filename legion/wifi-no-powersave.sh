@@ -22,3 +22,11 @@ rm -f "$OLD"                     # same content under the old name: only one cop
 for i in /sys/class/net/*/wireless; do
     IF=$(basename "$(dirname "$i")"); iw dev "$IF" set power_save off; iw dev "$IF" get power_save
 done
+
+# Ensure the target user is in the 'network' group so Steam/gamescope can add Wi-Fi connections via polkit:
+if [ -n "$TARGET_USER" ] && getent group network >/dev/null 2>&1; then
+    if ! id -nG "$TARGET_USER" | grep -qw "network"; then
+        usermod -aG network "$TARGET_USER"
+        t "Added %s to the 'network' group for NetworkManager polkit permissions" "$TARGET_USER"
+    fi
+fi

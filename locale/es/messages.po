@@ -4674,3 +4674,7 @@ msgstr "Vista previa"
 #: common/xfce-wayland/xfce4-screenshooter
 msgid "OK"
 msgstr "Aceptar"
+
+#: legion/wifi-no-powersave.sh
+msgid "Added %s to the 'network' group for NetworkManager polkit permissions"
+msgstr "Añadido %s al grupo 'network' para permisos de polkit en NetworkManager"
