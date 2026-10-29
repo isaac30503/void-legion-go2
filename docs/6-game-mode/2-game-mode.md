@@ -71,6 +71,20 @@ it enters Game Mode by itself.
   turns **only that exact command** into **elogind's `SetBrightness`** (what GNOME and KDE use: the session on screen
   may change its brightness without root) and passes everything else to the real `sudo`. Each value goes to the log
   (`brightness N (amdgpu_bl0)`).
+- **Wi-Fi connection fix (`/usr/local/lib/steam-game-mode/libsteam-wifi-fix.so`):** A lightweight 32-bit shim
+  loaded into Steam via `LD_PRELOAD`. It resolves a race condition and GLib property bug in `steamclient.so`'s
+  NetworkManager backend:
+  1. In `UpdateOrCreateConnection`, Valve called `g_object_set(conn, "autoconnect", 0)` on `NMSimpleConnection`
+     instead of `NMSettingConnection`. Because `NMSimpleConnection` has no such property, GLib logged a warning
+     and `autoconnect` remained `TRUE`. The shim redirects `"autoconnect"` to `NMSettingConnection` and ensures
+     `autoconnect=FALSE` during `nm_client_add_connection_async`.
+  2. When NetworkManager connects quickly (e.g. MediaTek MT7922 Wi-Fi 6E), the profile activates before Steam's
+     `ActivateConnection` registers its listener on `"notify::state"`. Because GLib `"notify"` only fires on
+     property changes, a connection that is already `ACTIVATED` (state 2) never triggers the signal, causing Steam
+     to wait forever in an event loop while holding the network mutex (infinite connection spinner). The shim checks
+     the state upon signal registration and immediately triggers the callback if already connected or failed (state >= 2),
+     allowing live Wi-Fi connection in Game Mode without hanging or rebooting. Source:
+     `"$B/common/steam/steam-wifi-fix/steam-wifi-fix.c"`.
 - **`cap_sys_nice`** on `/usr/bin/gamescope` (without it: "No CAP_SYS_NICE … Performance will be affected"). **An
   update of gamescope removes it**; [void-update](../8-maintenance/1-void-update.md) puts it back.
 
