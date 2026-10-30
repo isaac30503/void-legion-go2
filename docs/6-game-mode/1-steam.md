@@ -14,7 +14,8 @@ It enables the `nonfree` and `multilib` repositories and installs Steam, gamesco
 `MangoHud-mangoapp` and `MangoHud-32bit`), the 32-bit pieces of Void's `README.voidlinux`, Vulkan **according to
 the GPU** (`/sys/class/drm/card0/device/vendor` `0x1002` → `mesa-vulkan-radeon` and its `-32bit`; here "AMD Radeon
 890M Graphics (RADV STRIX1)", Vulkan 1.4), `pipewire-32bit` and `libspa-videoconvert-32bit` (for
-[Remote Play](7-remote-play.md)), with an AMD GPU `mesa-vaapi` and `mesa-vaapi-32bit` (hardware video), and the
+[Remote Play](7-remote-play.md)), `libnm-32bit` (for Steam in Game Mode to connect to Wi-Fi via NetworkManager),
+with an AMD GPU `mesa-vaapi` and `mesa-vaapi-32bit` (hardware video), and the
 limits SteamOS has (`nofile 524288`, `vm.max_map_count`).
 
 **Log out and back in** (the `nofile` limit), then **before opening Steam the first time**, the desktop launcher with

@@ -5,7 +5,8 @@
 #   2. Steam, gamescope, MangoHud (with mangoapp, the performance overlay of the quick menu, and
 #      the 32-bit one), Mesa's Vulkan for whatever GPU there is (Intel or AMD; 64 and 32 bits) and vulkaninfo;
 #      complete 32-bit PipeWire (pipewire-32bit + libspa-videoconvert-32bit: Steam's client is
-#      32-bit and without them Remote Play in Game Mode does not capture gamescope's image) and, with
+#      32-bit and without them Remote Play in Game Mode does not capture gamescope's image), libnm-32bit
+#      (for Game Mode to manage Wi-Fi via NetworkManager; without it, bundled 2017 libnm 1.6.2 fails to connect) and, with
 #      an AMD GPU, Mesa's VA-API (64 and 32 bits: Remote Play's hardware encoding; 2026-10-07)
 #   3. records what it installed by hand in the list of installed packages, for --remove
 #      (STEAM_PACKAGES_LIST; by default installed-packages.txt next to this script; on the Legion,
@@ -62,7 +63,7 @@ t "   Vulkan: %s (GPU %s)" "$VK" "$(cat /sys/class/drm/card0/device/vendor 2>/de
 PKGS="steam gamescope gamescope-32bit MangoHud MangoHud-mangoapp MangoHud-32bit $VK Vulkan-Tools
       libgcc-32bit libstdc++-32bit libdrm-32bit libglvnd-32bit mesa-dri-32bit
       $VK-32bit vulkan-loader-32bit
-      libva-32bit libpulseaudio-32bit alsa-pipewire-32bit
+      libva-32bit libpulseaudio-32bit alsa-pipewire-32bit libnm-32bit
       pipewire-32bit libspa-videoconvert-32bit $VA"
 OK=""
 for p in $PKGS; do
