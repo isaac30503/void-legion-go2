@@ -35,8 +35,6 @@
 #   /usr/share/applications/game-mode.desktop          "Game Mode" launcher for Xfce
 #   /usr/local/lib/steam-game-mode/bin/sudo             brightness from Steam: its "sudo -n tee …/brightness"
 #                                                       → elogind's SetBrightness (without privileges)
-#   /usr/local/lib/steam-game-mode/libsteam-wifi-fix.so 32-bit shim: fixes Valve's race condition and
-#                                                       GLib property bug in steamclient.so when connecting to Wi-Fi
 #   /usr/local/bin/steam-loading                        loading screen while Steam starts
 #                                                       (the Plymouth theme's frames, like at
 #                                                       power-on); it closes event-driven
@@ -61,7 +59,6 @@ HELPERS=/usr/bin/steamos-polkit-helpers
 LAN=/usr/share/applications/game-mode.desktop
 CAR=/usr/local/bin/steam-loading
 BRI=/usr/local/lib/steam-game-mode/bin/sudo
-FIX=/usr/local/lib/steam-game-mode/libsteam-wifi-fix.so
 # Old names: the Spanish ones (and the old Wayland session of an earlier version).
 OLD="/usr/local/bin/steam-modo-juego /usr/share/xsessions/steam-modo-juego.desktop
      /usr/share/wayland-sessions/steam-modo-juego.desktop /usr/share/applications/modo-juego.desktop
@@ -73,7 +70,7 @@ remove_old() {
 }
 
 if is_remove "${1:-}"; then
-    rm -f "$BIN" "$SES" "$SEL" "$UPD" "$BIOSUPD" "$LAN" "$CAR" "$BRI" "$FIX"
+    rm -f "$BIN" "$SES" "$SEL" "$UPD" "$BIOSUPD" "$LAN" "$CAR" "$BRI"
     for h in steamos-update jupiter-biosupdate; do [ -L "$HELPERS/$h" ] && rm -f "$HELPERS/$h"; done
     rmdir "$HELPERS" 2>/dev/null || true
     rmdir -p "${BRI%/*}" 2>/dev/null || true
@@ -252,14 +249,10 @@ P=; [ -n "$C$M" ] && P="( $C${C:+${M:+; }}$M ) & "
 # they are passed from inside gamescope, before Steam (SteamOS does it with systemd).
 U=; [ -n "$XDG_DESKTOP_PORTAL_DIR" ] && U='dbus-update-activation-environment XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP GAMESCOPE_WAYLAND_DISPLAY XDG_DESKTOP_PORTAL_DIR; '
 [ -n "$U" ] && echo "== gamescope portal: $XDG_DESKTOP_PORTAL_DIR"
-# steam-wifi-fix (32-bit shim): fixes Valve's race condition and property bug in steamclient.so
-WF=/usr/local/lib/steam-game-mode/libsteam-wifi-fix.so
-W=; [ -f "$WF" ] && W="env LD_PRELOAD=$WF "
-[ -f "$WF" ] && echo "== wifi fix: $WF"
 # -pipewire: like SteamOS (/usr/bin/steam-jupiter always adds it): Steam captures through PipeWire
 # to record games and Remote Play.
 echo "== $(date '+%F %T'): launching gamescope"
-( gamescope -e $WINDOW ${SCREEN:+-O "$SCREEN"} -- sh -c "${U}${P}${W}steam -steamos3 -steampal -steamdeck -gamepadui -pipewire; echo steam > '$FIFO'"
+( gamescope -e $WINDOW ${SCREEN:+-O "$SCREEN"} -- sh -c "${U}${P}steam -steamos3 -steampal -steamdeck -gamepadui -pipewire; echo steam > '$FIFO'"
   echo gamescope > "$FIFO" ) &
 sub=$!
 read -r who <&3
@@ -642,19 +635,7 @@ exec /usr/bin/sudo "$@"
 EOF
 chmod 755 "$BRI"
 
-FIX_SRC="$R/common/steam/steam-wifi-fix/steam-wifi-fix.c"
-if [ -f "$FIX_SRC" ]; then
-    mkdir -p "${FIX%/*}"
-    if command -v gcc >/dev/null && gcc -m32 -v >/dev/null 2>&1; then
-        gcc -m32 -shared -fPIC -O2 -Wall -Wextra "$FIX_SRC" -o "$FIX" -ldl
-        strip -s "$FIX" 2>/dev/null || true
-        chmod 755 "$FIX"
-    elif [ -f "${FIX_SRC%/*}/libsteam-wifi-fix.so" ]; then
-        install -m 755 "${FIX_SRC%/*}/libsteam-wifi-fix.so" "$FIX"
-    fi
-fi
-
 setcap cap_sys_nice=eip /usr/bin/gamescope
-t "== installed:"; ls -la "$BIN" "$SES" "$SEL" "$UPD" "$LAN" "$BRI"; [ -f "$FIX" ] && ls -la "$FIX"; ls -la "$CAR" 2>/dev/null || t "   (without loading screen)"; getcap /usr/bin/gamescope
+t "== installed:"; ls -la "$BIN" "$SES" "$SEL" "$UPD" "$LAN" "$BRI"; ls -la "$CAR" 2>/dev/null || t "   (without loading screen)"; getcap /usr/bin/gamescope
 t "   keyboard in gamescope: %s" "$(sed -n 's/.*"XkbLayout"[[:space:]]*"\([^"]*\)".*/\1/p' /etc/X11/xorg.conf.d/00-keyboard.conf)"
 t "== From Xfce: 'Game Mode' launcher (with install-passwordless-switch.sh, without password)."
