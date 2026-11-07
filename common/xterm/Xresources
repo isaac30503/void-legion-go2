@@ -59,6 +59,12 @@ XTerm*disallowedWindowOps: GetChecksum,GetIconTitle,GetSelection,GetWinTitle,Set
 ! they wrote "^H" instead of erasing -- also over SSH, which inherits the local erase.
 XTerm*backarrowKey: false
 
+! Alt / Meta sends ESC prefix instead of 8-bit characters (ê, ë...).
+! Needed for fzf (alt-j/k/p), fish (Alt+f/b/d/backspace) and readline.
+XTerm*metaSendsEscape: true
+XTerm*altSendsEscape: true
+XTerm*eightBitInput: false
+
 ! Window icon (title bar, alt-tab): Papirus's, the same one the menu and the dock
 ! use (xterm-color -> utilities-x-terminal.svg). xterm only reads it
 ! in XPM (iconHint); xfwm4, unlike Plasma, does not take it from the .desktop.
