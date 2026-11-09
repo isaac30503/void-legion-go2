@@ -11,10 +11,10 @@
 # scale (the Legion's screen at 2x, zoomed in, next to a 4K TV at scale 2) and ignored new wallpapers for it until
 # restarted; --reload did not help (2026-10-16).
 # It also puts Xfce's panels on the EXTERNAL screen when there is one, and back on the internal one when it goes
-# (2026-10-16): xfce4-panel 4.20 names the screens with GTK's model, which is "Unknown" for all of them on labwc
-# (wlroots no longer sends it), so "DP-1" never matches; it also takes "monitor-<index>-<model>", but a fixed one
-# HIDES the panel when that screen is unplugged. The internal screen is the one whose physical size is the eDP/LVDS
-# panel's (its EDID, within 4 mm): the panels go to the first other screen, or to Automatic when it is alone.
+# (2026-10-16): xfce4-panel 4.20 on Wayland matches outputs by connector name (e.g. "DP-1" via Libxfce4windowing);
+# "monitor-<index>-Unknown" was rejected by xfce4-panel and hid the panels. The internal screen is the one whose
+# physical size is the eDP/LVDS panel's (its EDID, within 4 mm): the panels go to the first other screen connector,
+# or to Automatic (removed output-name) when it is alone.
 # Without an internal panel (a desktop machine) the panels are left alone. PANELS_ON_EXTERNAL=0 turns it off.
 # After every change of screens it also starts xfce4-panel if it is not running (it closed once when the TV was
 # unplugged, and nothing started it again).
@@ -32,6 +32,11 @@ import glob, os, subprocess, time
 import gi
 gi.require_version("Gdk", "3.0")
 from gi.repository import Gdk, GLib
+try:
+    gi.require_version("Libxfce4windowing", "0.0")
+    from gi.repository import Libxfce4windowing as xfw
+except (ValueError, ImportError):
+    xfw = None
 MANGO = bool(os.environ.get("MANGO_INSTANCE_SIGNATURE"))
 if MANGO:
     gi.require_version("Xfconf", "0")
@@ -94,16 +99,19 @@ def internal_mm():
     return None
 
 def panels_output():
-    """The output-name the panels should have: the first external screen, or None (Automatic)."""
+    """The output-name the panels should have: the first external screen connector, or None (Automatic)."""
     mm = internal_mm()
     if mm is None:
         return False                                   # no built-in panel: do not touch the panels
-    d = Gdk.Display.get_default()
-    for i in range(d.get_n_monitors()):
-        m = d.get_monitor(i)
-        if abs(m.get_width_mm() - mm[0]) <= 4 and abs(m.get_height_mm() - mm[1]) <= 4:
-            continue                                   # the internal screen
-        return f"monitor-{i}-{m.get_model()}"           # xfce4-panel's name for a screen without a usable model
+    if xfw:
+        screen = xfw.Screen.get_default()
+        for m in screen.get_monitors():
+            gdk_m = m.get_gdk_monitor()
+            if gdk_m and abs(gdk_m.get_width_mm() - mm[0]) <= 4 and abs(gdk_m.get_height_mm() - mm[1]) <= 4:
+                continue                               # the internal screen
+            conn = m.get_connector()
+            if conn:
+                return conn                            # connector name (e.g. DP-1, HDMI-A-1)
     return None
 
 def place_panels():
