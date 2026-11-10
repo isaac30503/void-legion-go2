@@ -17,7 +17,7 @@ install -D -m 644 "$B/legion/fuzzel.ini" ~/.config/fuzzel/fuzzel.ini
 sudo reboot                                                        # a new session was not enough the first time
 ```
 
-The patched `xdg-desktop-portal-wlr-0.8.4_2` is also a Release asset (sha256 `845a8b54…`). Void's
+The patched `xdg-desktop-portal-wlr-0.8.5_2` is also a Release asset (sha256 `2d10763f…`). Void's
 `/usr/share/xdg-desktop-portal/xfce-portals.conf` routes `ScreenCast` to `wlr` (labwc's capture protocol, through
 PipeWire) and the rest to `gtk`: nothing to configure. Without the portals Vesktop chats and calls but cannot open
 links, attach files or share the screen.
@@ -48,7 +48,7 @@ links, attach files or share the screen.
 ```bash
 cat ~/.config/xdg-desktop-portal-wlr/config
 tr '\0' '\n' < /proc/$(pgrep -n -f '^/usr/libexec/xdg-desktop-portal-wlr')/environ | grep XDPW   # XDPW_PERSIST_MODE=permanent
-xbps-query -p pkgver,repository xdg-desktop-portal-wlr                                            # 0.8.4_2 … hostdir/binpkgs
+xbps-query -p pkgver,repository xdg-desktop-portal-wlr                                            # 0.8.5_2 … hostdir/binpkgs
 tail ~/.cache/screen-share.log                                                                    # pide: dev.vencord.Vesktop
 ```
 

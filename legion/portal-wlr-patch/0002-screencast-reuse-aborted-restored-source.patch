@@ -17,6 +17,7 @@ Forget it when a started session of that app is closed (the stream ended) or
 when the app sends its own restore_data. No timing involved.
 ---
 diff --git a/include/screencast.h b/include/screencast.h
+index 99b7411..c7734aa 100644
 --- a/include/screencast.h
 +++ b/include/screencast.h
 @@ -3,7 +3,10 @@
@@ -31,9 +32,10 @@ diff --git a/include/screencast.h b/include/screencast.h
  
  #endif
 diff --git a/include/screencast_common.h b/include/screencast_common.h
+index f96c294..aee84d0 100644
 --- a/include/screencast_common.h
 +++ b/include/screencast_common.h
-@@ -222,6 +222,9 @@
+@@ -222,6 +222,9 @@ struct xdpw_screencast_session_data {
  	struct xdpw_screencast_instance *screencast_instance;
  	uint32_t cursor_mode;
  	uint32_t persist_mode;
@@ -44,9 +46,10 @@ diff --git a/include/screencast_common.h b/include/screencast_common.h
  
  struct xdpw_wlr_output {
 diff --git a/src/core/session.c b/src/core/session.c
+index a62215f..5c69b2d 100644
 --- a/src/core/session.c
 +++ b/src/core/session.c
-@@ -63,6 +63,8 @@
+@@ -63,6 +63,8 @@ void xdpw_session_destroy(struct xdpw_session *sess) {
  		return;
  	}
  
@@ -56,9 +59,10 @@ diff --git a/src/core/session.c b/src/core/session.c
  		sd_bus_emit_signal(sd_bus_slot_get_bus(sess->slot), sess->session_handle,
  			"org.freedesktop.impl.portal.Session", "Closed", "");
 diff --git a/src/screencast/screencast.c b/src/screencast/screencast.c
+index b9142f6..2b3cd0a 100644
 --- a/src/screencast/screencast.c
 +++ b/src/screencast/screencast.c
-@@ -129,6 +129,56 @@
+@@ -129,6 +129,56 @@ void xdpw_screencast_instance_destroy(struct xdpw_screencast_instance *cast) {
  	free(cast);
  }
  
@@ -115,7 +119,7 @@ diff --git a/src/screencast/screencast.c b/src/screencast/screencast.c
  bool setup_target(struct xdpw_screencast_context *ctx, struct xdpw_session *sess, struct xdpw_screencast_restore_data *data, uint32_t type_mask) {
  	bool target_initialized = false;
  
-@@ -161,6 +211,7 @@
+@@ -161,6 +211,7 @@ bool setup_target(struct xdpw_screencast_context *ctx, struct xdpw_session *sess
  	target->with_cursor = sess->screencast_data.cursor_mode == EMBEDDED;
  	if (data) {
  		target_initialized = xdpw_wlr_target_from_data(ctx, target, data);
@@ -123,7 +127,7 @@ diff --git a/src/screencast/screencast.c b/src/screencast/screencast.c
  	}
  	if (!target_initialized) {
  		target_initialized = xdpw_wlr_target_chooser(ctx, target, type_mask);
-@@ -494,7 +545,29 @@
+@@ -496,7 +547,29 @@ static int method_screencast_select_sources(sd_bus_message *msg, void *data,
  		return ret;
  	}
  
@@ -153,11 +157,11 @@ diff --git a/src/screencast/screencast.c b/src/screencast/screencast.c
  
  	ret = sd_bus_message_new_method_return(msg, &reply);
  	if (ret < 0) {
-@@ -587,6 +660,7 @@
+@@ -589,6 +662,7 @@ static int method_screencast_start(sd_bus_message *msg, void *data,
  		if (strcmp(sess->session_handle, session_handle) == 0) {
  				logprint(DEBUG, "dbus: start: found matching session %s", sess->session_handle);
  				cast = sess->screencast_data.screencast_instance;
 +				sess->screencast_data.started = true;
+ 				break;
  		}
  	}
- 	if (!cast) {

@@ -84,7 +84,7 @@ grep -E "Shutdown|Verifying" ~/.local/share/Steam/logs/bootstrap_log.txt | tail 
 grep chooser_cmd ~/.config/xdg-desktop-portal-wlr/config; command -v grim fuzzel   # the screen-share chooser
 grep -c XDPW_PERSIST_MODE ~/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.wlr.service   # 2
 grep '^RULES' ~/.local/bin/screen-share    # {"steam": "screen"}
-xbps-query -p pkgver,repository xdg-desktop-portal-wlr   # 0.8.4_2 … hostdir/binpkgs
+xbps-query -p pkgver,repository xdg-desktop-portal-wlr   # 0.8.5_2 … hostdir/binpkgs
 xbps-query -p pkgver,repository gamescope   # 3.17.0_2 … hostdir/binpkgs
 ls /usr/local/lib/xdg-desktop-portal-gamescope*   # the portal and its wrapper
 grep Exec /usr/local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.gamescope.service   # …-gamescope-void
