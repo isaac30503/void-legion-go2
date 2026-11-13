@@ -33,6 +33,7 @@ restart_decky() {
 
 if is_remove "${1:-}"; then
     for n in $CMDS systemd-inhibit; do ours "/usr/bin/$n" && rm -f "/usr/bin/$n"; done
+    ours /etc/elogind/system-sleep/systemd-compat && rm -f /etc/elogind/system-sleep/systemd-compat
     rm -rf "${LIB:?}"
     rm -f "$ETC/units.d/50-void-legion.conf"
     rmdir "$ETC/units.d" "$ETC" 2>/dev/null || true
@@ -72,7 +73,7 @@ fi
 t "== 3. the commands (%s)" "$LIB"
 mkdir -p "$LIB"
 # One by one, each with a rename: a call that comes in the middle finds the old or the new file, never half of one
-for f in compat.sh systemctl journalctl systemd-run requires; do
+for f in compat.sh systemctl journalctl systemd-run system-sleep requires; do
     case $f in compat.sh|requires) m=644 ;; *) m=755 ;; esac
     install -m "$m" "$HERE/$f" "$LIB/.$f.new" && mv -f "$LIB/.$f.new" "$LIB/$f"
 done
@@ -80,7 +81,7 @@ done
     echo "# systemd-compat, installed $(date '+%Y-%m-%d %H:%M') from $REPO_ROOT"
     echo "repo=$REPO_ROOT"
     echo "commit=$(git -C "$REPO_ROOT" rev-parse --short HEAD 2>/dev/null || echo unknown)"
-    (cd "$LIB" && sha256sum compat.sh systemctl journalctl systemd-run requires)
+    (cd "$LIB" && sha256sum compat.sh systemctl journalctl systemd-run system-sleep requires)
     (cd "$HERE/units.d" && sha256sum 50-void-legion.conf | sed "s|  |  $ETC/units.d/|")
 } > "$LIB/MANIFEST.new" && mv -f "$LIB/MANIFEST.new" "$LIB/MANIFEST"
 
@@ -93,7 +94,9 @@ for f in "$ETC"/units.d/*.conf; do [ "$f" = "$ETC/units.d/50-void-legion.conf" ]
 t "== 5. links"
 for n in $CMDS; do ln -sfn "$LIB/$n" "/usr/bin/$n"; done
 ln -sfn elogind-inhibit /usr/bin/systemd-inhibit
-ls -l /usr/bin/systemctl /usr/bin/journalctl /usr/bin/systemd-run /usr/bin/systemd-inhibit | sed 's/^/   /'
+mkdir -p /etc/elogind/system-sleep
+ln -sfn "$LIB/system-sleep" /etc/elogind/system-sleep/systemd-compat
+ls -l /usr/bin/systemctl /usr/bin/journalctl /usr/bin/systemd-run /usr/bin/systemd-inhibit /etc/elogind/system-sleep/systemd-compat | sed 's/^/   /'
 
 t "== 6. Decky's log (journalctl -u plugin_loader)"
 if [ -f /etc/sv/decky/log/run ] && ! grep -q svlogd /etc/sv/decky/log/run; then

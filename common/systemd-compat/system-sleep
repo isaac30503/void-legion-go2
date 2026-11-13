@@ -1,0 +1,14 @@
+#!/bin/sh
+# system-sleep — systemd-compat (/etc/elogind/system-sleep/systemd-compat;
+# docs/2-base-system/4-systemd-compat.md). Runs before sleeping the sleep.target
+# units collected by "systemctl daemon-reload" into /run/systemd-compat/sleep-pre/
+# (e.g. Panel de Control's panel-de-control-sleep-cores.service).
+# elogind calls it with $1 = pre|post, $2 = suspend|hibernate|…
+case "${1:-}" in
+    pre)
+        rm -rf "${SYSTEMD_COMPAT_SYSTEMD_RUN:-/run/systemd/system}" 2>/dev/null || true
+        for u in "${SYSTEMD_COMPAT_RUN:-/run/systemd-compat}"/sleep-pre/*; do
+            [ -x "$u" ] && "$u"
+        done ;;
+esac
+exit 0

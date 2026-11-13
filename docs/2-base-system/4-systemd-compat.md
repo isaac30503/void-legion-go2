@@ -12,6 +12,7 @@ never restarts it. Reading their code turned up more:
 | `systemctl is-active inputplumber.service` (Panel: which controller manager runs) | "none": **its controller section stays hidden**, although InputPlumber runs (runit) |
 | `systemctl --user restart filter-chain.service` + `show -p InvocationID,MainPID` (Panel's equalizer) | the EQ never applies |
 | `systemd-inhibit --what=sleep --mode=delay` (Colores: lights off before suspending) | "native suspend monitor failed" |
+| Runtime `sleep.target.wants` unit + `systemctl daemon-reload` (Panel's `panel-de-control-sleep-cores.service`) | creates `/run/systemd/system` and never runs before sleep |
 | `systemd-run --user --unit=pdc-kiosk …`, `journalctl --user …` (Panel's second screen, other hardware) | fails |
 | `journalctl -b -u plugin_loader`, `-k`, `-t …` (both, for their bug reports) | those sections empty |
 
@@ -72,7 +73,10 @@ Your own lines go in another file (`90-local.conf`, read later: the last match w
 - **`systemctl`:** `start stop restart try-restart reload reload-or-restart is-active is-failed is-enabled status show
   cat kill reset-failed list-units list-unit-files daemon-reload`, patterns (`hhd@*.service`), `--user`, `--quiet`,
   `--value`, `-p`, `--no-block`, `--state`, `--type`; `poweroff reboot suspend hibernate hybrid-sleep halt` →
-  `loginctl` (elogind, with the same polkit rules). `is-system-running` = `offline`, what systemctl says on a machine
+  `loginctl` (elogind, with the same polkit rules). `daemon-reload` collects runtime `sleep.target.wants` oneshot units
+  (e.g. Panel de Control's `panel-de-control-sleep-cores.service`) into `/run/systemd-compat/sleep-pre/` and removes
+  `/run/systemd/system` immediately so nothing sees systemd as running; `/etc/elogind/system-sleep/systemd-compat` runs
+  them on `pre` before sleep. `is-system-running` = `offline`, what systemctl says on a machine
   not booted with systemd. `enable/disable/mask` are refused: runit services are enabled by hand.
 - **`systemd-run`:** `--user`, `--unit`, `--description`, `--collect`, `--quiet`, `--nice`, `--setenv`, `--property`
   (`Nice=`, `Environment=`, `WorkingDirectory=`; resource limits like `CPUWeight=` are accepted but not applied — no

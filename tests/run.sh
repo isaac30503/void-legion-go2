@@ -143,7 +143,7 @@ EOF
     printf '#!/bin/sh\necho "sv $*" >> %s/sv-calls\n' "$S" > "$S/sv-fake"; chmod +x "$S/sv-fake"
     printf '2001-01-01_00:00:00.00001 before this boot\n%s Decky Started\n' "$(date -u +%Y-%m-%d_%H:%M:%S.00001)" > "$S/log/decky/current"
     sc() { c=$1; shift; env SYSTEMD_COMPAT_LIB="$C" SYSTEMD_COMPAT_ETC="$S/etc" SYSTEMD_COMPAT_SV_DIR="$S/sv" SYSTEMD_COMPAT_SERVICE_DIR="$S/service" \
-              SYSTEMD_COMPAT_RUN="$S/run" SYSTEMD_COMPAT_SV="$S/sv-fake" XDG_RUNTIME_DIR="$S/xdg" sh "$C/$c" "$@"; }
+              SYSTEMD_COMPAT_RUN="$S/run" SYSTEMD_COMPAT_SYSTEMD_RUN="$S/run-systemd-system" SYSTEMD_COMPAT_SV="$S/sv-fake" XDG_RUNTIME_DIR="$S/xdg" sh "$C/$c" "$@"; }
 
     # system units: a runit service by its name, an alias of units.d, deny, a unit that does not exist
     out=$(sc systemctl is-active inputplumber.service); check "sc: runit service by name" "active 0" "$out $?"
@@ -213,6 +213,21 @@ EOF
     out=$(sc journalctl -u plugin_loader -o cat --grep 'decky'); check "sc: --grep lowercase = case-insensitive" "Decky Started" "$out"
     out=$(sc journalctl -u plugin_loader -o cat --grep 'DECKY'); check "sc: --grep with a capital = case-sensitive" "-- No entries --" "$out"
     sc journalctl -b -1 -k >/dev/null 2>&1; check "sc: journalctl -b -1 (previous boots are not kept)" 1 $?
+
+    # runtime sleep.target.wants unit (Panel de Control's SleepCoreGuard): daemon-reload collects ExecStart into
+    # sleep-pre/, removes /run/systemd/system, and system-sleep runs it on "pre"
+    mkdir -p "$S/run-systemd-system/sleep.target.wants"
+    cat > "$S/run-systemd-system/panel-de-control-sleep-cores.service" <<EOF
+[Unit]
+Before=sleep.target
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'echo 1 > "$S/cpu-online"; [ "\$\$(cat "$S/cpu-online")" = 1 ] && echo ok > "$S/sleep-ran"'
+EOF
+    ln -s ../panel-de-control-sleep-cores.service "$S/run-systemd-system/sleep.target.wants/panel-de-control-sleep-cores.service"
+    sc systemctl daemon-reload; check "sc: daemon-reload collects sleep unit" "0|no|yes" "$?|$([ -e "$S/run-systemd-system" ] && echo yes || echo no)|$([ -x "$S/run/sleep-pre/panel-de-control-sleep-cores" ] && echo yes || echo no)"
+    SYSTEMD_COMPAT_RUN="$S/run" SYSTEMD_COMPAT_SYSTEMD_RUN="$S/run-systemd-system" sh "$C/system-sleep" pre suspend
+    check "sc: system-sleep pre runs collected unit" "ok" "$(cat "$S/sleep-ran" 2>/dev/null)"
 }
 
 # ---- install/pieces.py: a file without piece and an installer missing from the reinstall are both caught ----------

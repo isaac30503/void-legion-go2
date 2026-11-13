@@ -298,6 +298,29 @@ pattern_verb() {   # VERB PATTERN
     fi
 }
 
+# A program that writes a oneshot unit into /run/systemd/system/sleep.target.wants/ and calls
+# daemon-reload (Panel de Control's SleepCoreGuard): collect its ExecStart= into
+# $SC_RUN/sleep-pre/<unit> (run by /etc/elogind/system-sleep/systemd-compat on "pre") and
+# remove /run/systemd/system at once so nothing sees systemd as running.
+reload_runtime_units() {
+    local f u cmd
+    [ "$scope" = system ] && [ -d "$SC_SYSTEMD_RUN" ] || return 0
+    is_root || [ -n "${SYSTEMD_COMPAT_SYSTEMD_RUN:-}" ] || return 0
+    sc_glob_on
+    for f in "$SC_SYSTEMD_RUN"/sleep.target.wants/*.service; do
+        [ -r "$f" ] || continue
+        u=${f##*/}; u=${u%.service}; sc_valid "$u" || continue
+        cmd=$(sed -n 's/^ExecStart=[-@]*//p' "$f" | sed 's/\$\$/$/g')
+        [ -n "$cmd" ] || continue
+        mkdir -p "$SC_RUN/sleep-pre"
+        printf '#!/bin/sh\n%s\n' "$cmd" > "$SC_RUN/sleep-pre/.$u.new"
+        chmod 755 "$SC_RUN/sleep-pre/.$u.new"
+        mv -f "$SC_RUN/sleep-pre/.$u.new" "$SC_RUN/sleep-pre/$u"
+    done
+    sc_glob_restore
+    rm -rf "${SC_SYSTEMD_RUN:?}"
+}
+
 case $verb in
     is-active|is-failed|is-enabled|show|status|cat|reset-failed|kill|start|stop|restart|try-restart|condrestart|reload|reload-or-restart|try-reload-or-restart)
         if [ "$verb" = show ] && [ $# -eq 0 ]; then unsupported "show without a unit (the manager's properties)"; fi
@@ -305,7 +328,7 @@ case $verb in
         each "$verb" "$@"; exit $rc ;;
     list-units) list_units "$@"; exit 0 ;;
     list-unit-files) list_unit_files "$@"; exit 0 ;;
-    daemon-reload|daemon-reexec) exit 0 ;;   # units.d and /etc/sv are read on every call: nothing to reload
+    daemon-reload|daemon-reexec) reload_runtime_units; exit 0 ;;
     is-system-running) [ $quiet = 1 ] || echo offline; exit 1 ;;   # what systemctl answers without systemd as PID 1
     poweroff|reboot|halt|suspend|hibernate|hybrid-sleep|suspend-then-hibernate)
         [ "$scope" = system ] || unsupported "$verb --user"

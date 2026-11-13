@@ -4,6 +4,16 @@ The notable changes of the system and this repository, newest first. The full ac
 attempts, measurements) is in the private repository's archive and, until 2026-10-14, in the tag
 `recipe-single-file` (*History*).
 
+## 2026-11-13
+
+- **Runtime `sleep.target.wants` units in `systemd-compat`** ([systemd-compat](docs/2-base-system/4-systemd-compat.md)):
+  Panel de Control 0.89.0's `SleepCoreGuard` writes a oneshot unit (`panel-de-control-sleep-cores.service`) under
+  `/run/systemd/system/sleep.target.wants/` and runs `systemctl daemon-reload` to bring offline CPU cores back online
+  before sleep. On Void, `systemctl daemon-reload` now collects those units into `/run/systemd-compat/sleep-pre/` and
+  removes `/run/systemd/system` immediately (so `dracut`, `e2scrub_all`, and `install-systemd-compat.sh` still see no
+  running systemd), and `/etc/elogind/system-sleep/systemd-compat` runs them on `pre` before sleep. `void-update`
+  (`--systemd`) also watches `/?run/systemd` paths and verifies the `elogind` hook.
+
 ## 2026-10-24
 
 - **The audit ends with its findings** ([Claude Code](docs/8-maintenance/3-claude-code.md)): `common/agent/audit-void.sh`

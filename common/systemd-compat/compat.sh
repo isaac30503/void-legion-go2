@@ -26,6 +26,7 @@ SC_ETC=${SYSTEMD_COMPAT_ETC:-/etc/systemd-compat}
 SC_SV_DIR=${SYSTEMD_COMPAT_SV_DIR:-/etc/sv}
 SC_SERVICE_DIR=${SYSTEMD_COMPAT_SERVICE_DIR:-/var/service}
 SC_RUN=${SYSTEMD_COMPAT_RUN:-/run/systemd-compat}
+SC_SYSTEMD_RUN=${SYSTEMD_COMPAT_SYSTEMD_RUN:-/run/systemd/system}
 SC_SV=${SYSTEMD_COMPAT_SV:-sv}
 SC_KILL=${SYSTEMD_COMPAT_KILL:-/usr/bin/kill}   # util-linux: dash's kill cannot signal a process group
 SC_DEFAULT_PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin

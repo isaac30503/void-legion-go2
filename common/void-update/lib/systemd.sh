@@ -24,7 +24,7 @@ VU_SC_STATE="$VU_STATE/systemd-compat"
 VU_SC_DETECT_DIRS=${VU_SC_DETECT_DIRS:-/etc /usr/local /usr/bin /usr/sbin /usr/libexec /usr/lib /usr/share $HOME/.local/bin $HOME/.config/fish}
 VU_SC_DETECT='(command -[vq]|which|type( -[pPq])?|hash)[[:space:]]+["'"'"']?(/usr)?(/s?bin/)?systemctl|systemctl[[:space:]]+--version|-[xfe][[:space:]]+["'"'"']?/(usr/)?s?bin/systemctl|(shutil\.which|os\.path\.exists|os\.access)\(["'"'"'](/usr/s?bin/)?systemctl'
 # What counts as calling systemd. busctl and loginctl are left out: elogind provides them.
-VU_SC_PATTERN='systemctl|journalctl|systemd-run|systemd-inhibit|systemd-analyze|org\.freedesktop\.systemd1|/run/systemd|NOTIFY_SOCKET|sd_notify'
+VU_SC_PATTERN='systemctl|journalctl|systemd-run|systemd-inhibit|systemd-analyze|org\.freedesktop\.systemd1|/?run/systemd|NOTIFY_SOCKET|sd_notify'
 
 # The consumers: each subfolder of each folder of systemd_compat_scan ("~" allowed), one per line: NAME<TAB>PATH
 vu_sc_consumers() {
@@ -124,11 +124,13 @@ vu_sc_problems() {
     [ "$(readlink /usr/bin/systemd-inhibit 2>/dev/null)" = elogind-inhibit ] || t "/usr/bin/systemd-inhibit does not point to elogind-inhibit"
     if [ -r "$VU_SC_LIB/MANIFEST" ]; then
         # what is installed against what was installed, and against the repository it came from
-        (cd "$VU_SC_LIB" && grep -E '^[0-9a-f]{64}  ' MANIFEST | sha256sum -c --quiet - >/dev/null 2>&1) \
-            || t "files of %s or units.d changed since they were installed (repeat the installer)" "$VU_SC_LIB"
+        if ! (cd "$VU_SC_LIB" && grep -E '^[0-9a-f]{64}  ' MANIFEST | sha256sum -c --quiet - >/dev/null 2>&1) \
+            || [ "$(readlink /etc/elogind/system-sleep/systemd-compat 2>/dev/null)" != "$VU_SC_LIB/system-sleep" ]; then
+            t "files of %s or units.d changed since they were installed (repeat the installer)" "$VU_SC_LIB"
+        fi
         repo=$(sed -n 's/^repo=//p' "$VU_SC_LIB/MANIFEST")
         if [ -d "$repo/common/systemd-compat" ]; then
-            for f in compat.sh systemctl journalctl systemd-run requires units.d/50-void-legion.conf; do
+            for f in compat.sh systemctl journalctl systemd-run system-sleep requires units.d/50-void-legion.conf; do
                 want=$(sha256sum < "$repo/common/systemd-compat/$f" 2>/dev/null | cut -c1-64)
                 have=$(grep -E "  (.*/)?${f##*/}\$" "$VU_SC_LIB/MANIFEST" | cut -c1-64)
                 [ "$want" = "$have" ] || { t "the repository has a newer systemd-compat: %s" "sudo sh $repo/common/systemd-compat/install-systemd-compat.sh"; break; }
