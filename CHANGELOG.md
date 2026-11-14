@@ -4,6 +4,17 @@ The notable changes of the system and this repository, newest first. The full ac
 attempts, measurements) is in the private repository's archive and, until 2026-10-14, in the tag
 `recipe-single-file` (*History*).
 
+## 2026-11-14
+
+- **Mako frame generation: `MAILBOX` presentation and Adaptive FPS target**
+  ([Decky](docs/6-game-mode/5-decky.md#mako-and-fps-limiting), [SteamOS parity](docs/6-game-mode/4-steamos-parity.md#fps-limit-and-vrr)):
+  `mako-launch` disables `VkLayer_FROG_gamescope_wsi` (`DISABLE_GAMESCOPE_WSI=1`) to avoid frame-pacing collapse, so
+  FIFO swapchains under Xwayland/VKD3D add heavy input lag and Steam's QAM FPS limiter (`GAMESCOPE_LIMITER_FILE`) has no
+  effect under Mako. Documented enabling `mailbox_presentation_compatibility = true` and
+  `swapchain_image_count_compatibility = true` in Panel de Control's `mako.py` to eliminate input lag, and using Mako's
+  **Adaptive** mode (`target_fps` in Panel de Control) to cap and pace FPS cleanly without editing `conf.toml` externally
+  (which triggers `mako_conflict`).
+
 ## 2026-11-13
 
 - **Runtime `sleep.target.wants` units in `systemd-compat`** ([systemd-compat](docs/2-base-system/4-systemd-compat.md)):

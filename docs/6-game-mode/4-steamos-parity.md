@@ -44,7 +44,9 @@ flicker or brightness change with VRR on this OLED. Without VRR, use limits that
 **Game's limiter or Steam's?** The same power use. Steam's is very regular and one control for all games, but may add
 some input latency; a game's good limiter can respond better. Default: Steam's, with VRR; in shooters or fighting
 games, if the controls feel heavy, the game's with Steam's off. **Never both with different values** (they fight and
-stutter).
+stutter). **With Mako frame generation active**, Steam's QAM FPS limiter has no effect because `mako-launch` disables
+`VkLayer_FROG_gamescope_wsi` and `MAILBOX` does not block on Xwayland: use Mako's **Adaptive** mode target in Panel de
+Control instead ([Decky](5-decky.md#mako-and-fps-limiting)).
 
 ## Problems
 
