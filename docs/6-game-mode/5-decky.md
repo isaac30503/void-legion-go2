@@ -35,20 +35,27 @@ for Colores, `Found Legion Go device: PID=0x61EB …` and `Successfully set Legi
 
 When **MAKO - Frame Generation** is enabled through **Panel de Control**:
 
-- **`DISABLE_GAMESCOPE_WSI=1` is mandatory:** `mako-launch` (`~/.local/share/panel-de-control/mako/4.6.0/bin/mako-launch`)
+- **`DISABLE_GAMESCOPE_WSI=1` is mandatory:** `mako-launch` (`~/.local/share/panel-de-control/mako/4.6.0/bin/mako-launch` or,
+  since Panel de Control `0.94.1` with native MAKO 5.0.0, `~/.local/share/panel-de-control/mako/5/bin/mako-launch`)
   exports it because keeping `VkLayer_FROG_gamescope_wsi` active above Mako's generated/original frame sequence serializes
   presents and collapses frame pacing (~13 FPS).
 - **Avoid X11 FIFO input lag (`MAILBOX`):** with Xwayland/VKD3D and `DISABLE_GAMESCOPE_WSI=1`, FIFO swapchains introduce
   noticeable input lag. Enabling `adaptive_stable_cadence = false`, `swapchain_image_count_compatibility = true`, and
   `mailbox_presentation_compatibility = true` in the generated `conf.toml` (patched in
   `~/homebrew/plugins/Panel de Control/py_modules/upscalers/mako.py`, with `version=1` in `launcher.conf`; `.bak` kept
-  alongside it) switches presentation to `VK_PRESENT_MODE_MAILBOX_KHR` and removes the lag. Note that updating Panel de
-  Control later overwrites `mako.py`, so check that diff if latency returns.
+  alongside it) switches presentation to `VK_PRESENT_MODE_MAILBOX_KHR` and removes the lag. This patch is still needed
+  with official MAKO 5.0.0 (`libmako-render.so` defaults remain `false`/`false`/`true` and `mako-launch` still requires
+  `version=1`), and updating Panel de Control overwrites `mako.py` (observed on `0.90.0` and `0.94.1`), so re-apply
+  after plugin updates.
 - **Steam's Quick Access Menu FPS limiter has no effect under Mako:** Steam's limiter inside the game process relies on
   `VkLayer_FROG_gamescope_wsi` (`GAMESCOPE_LIMITER_FILE`), which `mako-launch` disables, and `MAILBOX` never blocks on
-  Wayland/Xwayland frame callbacks. Leaving `base_fps_cap = 0` runs the game and frame generator uncapped.
-- **Recommended limiting mode (verified 2026-11-14 with Borderlands 3 at 1920×1080@200 Hz):** switch the game's Mako
-  profile in **Panel de Control** to **Adaptive** mode with the desired `target_fps` (for example `adaptive = true`,
-  `target_fps = 60`, `adaptive_max_multiplier = 2`). Mako paces frame generation to that target cleanly without
-  reintroducing input lag. Do **not** edit `~/.config/panel-de-control/mako/<appid>/conf.toml` outside Panel de Control:
+  Wayland/Xwayland frame callbacks. Because Panel de Control also leaves `base_fps_cap = 0` (not exposed in its UI),
+  both the game and Mako's ceiling remain uncapped by Steam's QAM.
+- **How Adaptive mode interacts with an upper FPS cap (verified 2026-11-20 with Borderlands 3):** Mako's **Adaptive**
+  mode `target_fps` (for example `adaptive = true`, `target_fps = 60`, `adaptive_max_multiplier = 2`) only paces
+  interpolation when the game drops *below* `target_fps`; it is **not** an upper FPS cap. If the game already exceeds
+  `target_fps` on its own, Mako drops to `1×` and lets it run uncapped above `target_fps`. To cap the ceiling under
+  Mako, set the **in-game FPS limiter** (for example `60` in the game's graphics menu) alongside Adaptive `target_fps =
+  60` so Mako only fills dips below 60, or turn Mako off on games that already clear your target FPS so Steam's QAM
+  limiter works again. Do **not** edit `~/.config/panel-de-control/mako/<appid>/conf.toml` outside Panel de Control:
   `mako.py` verifies its SHA-256 and raises `mako_conflict` on mismatch.

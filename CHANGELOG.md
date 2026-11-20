@@ -4,6 +4,18 @@ The notable changes of the system and this repository, newest first. The full ac
 attempts, measurements) is in the private repository's archive and, until 2026-10-14, in the tag
 `recipe-single-file` (*History*).
 
+## 2026-11-20
+
+- **Mako 5.0.0 and Adaptive `target_fps` ceiling behavior**
+  ([Decky](docs/6-game-mode/5-decky.md#mako-and-fps-limiting), [SteamOS parity](docs/6-game-mode/4-steamos-parity.md#fps-limit-and-vrr)):
+  verified with Panel de Control `0.94.1` (which adds native MAKO 5.0.0 under `~/.local/share/panel-de-control/mako/5`)
+  and Borderlands 3 that official `mako/5` still defaults to `mailbox_presentation_compatibility = false` /
+  `swapchain_image_count_compatibility = false` / `adaptive_stable_cadence = true` and requires `version=1` in
+  `launcher.conf`, so the `mako.py` patch remains needed after plugin updates. Clarified that Mako **Adaptive**
+  `target_fps` only fills frames *below* the target (`base_fps_cap = 0`, not exposed in Panel de Control) and does not
+  cap games already running above it: pair Adaptive with the **in-game FPS limiter** to cap the ceiling, or disable
+  Mako so Steam's QAM limiter works.
+
 ## 2026-11-14
 
 - **Mako frame generation: `MAILBOX` presentation and Adaptive FPS target**
