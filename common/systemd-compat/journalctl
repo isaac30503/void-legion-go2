@@ -8,8 +8,8 @@
 #   -t IDENT                        the svlogd log of the runit service IDENT, or socklog's (if it is installed)
 #   nothing selected                socklog's "everything" if it is installed; if not, the kernel's
 # Filters: -b (this boot), --since/--until, -p (kernel only: the other logs have no priority), -g (PCRE,
-# smart case like journalctl), -n, -r, -o cat, -f. Previous boots are not kept: -b -1 answers like a journal
-# without that boot. What it cannot give leaves a line in requests.log ("void-update --systemd").
+# smart case like journalctl), -n, -r, -o cat/json, --output-fields, -f. Previous boots are not kept: -b -1
+# answers like a journal without that boot. What it cannot give leaves a line in requests.log ("void-update --systemd").
 # shellcheck disable=SC2034  # read by compat.sh
 SC_TOOL=journalctl
 # shellcheck source=common/systemd-compat/compat.sh
@@ -56,6 +56,8 @@ while [ $# -gt 0 ]; do
         --until=*) until=${1#--until=} ;;
         -o|--output) shift; output=${1:-short} ;;
         --output=*) output=${1#--output=} ;;
+        --output-fields) shift ;;
+        --output-fields=*) ;;
         -f|--follow) follow=1 ;;
         -r|--reverse) reverse=1 ;;
         -q|--quiet) quiet=1 ;;
@@ -73,7 +75,7 @@ while [ $# -gt 0 ]; do
     esac
     shift
 done
-case $output in short*|cat|with-unit|verbose) ;; *) sc_log partial "output $output given as short"; output=short ;; esac
+case $output in short*|cat|with-unit|verbose|json) ;; *) sc_log partial "output $output given as short"; output=short ;; esac
 
 # The boot: only the current one is known (its start = btime of /proc/stat)
 btime=0; while read -r k v; do [ "$k" = btime ] && { btime=$v; break; }; done < /proc/stat
@@ -156,47 +158,106 @@ levels() {
     echo "$out"
 }
 
-# One source → its lines, already filtered by time
+# One source → its lines, already filtered by time (for -o json: "TS_US\tMESSAGE")
 emit() {   # TYPE ARG
     local s t
     case $1 in
         kernel)
             set -- dmesg
-            if [ "$output" = cat ]; then set -- "$@" -t; else set -- "$@" -T; fi
+            if [ "$output" = cat ]; then set -- "$@" -t
+            elif [ "$output" != json ]; then set -- "$@" -T; fi
             [ -n "$prio" ] && set -- "$@" --level="$(levels "$prio")"
             [ -n "$from" ] && set -- "$@" --since "@$from"
             [ -n "$to" ] && set -- "$@" --until "@$to"
             [ $follow = 1 ] && set -- "$@" -w
-            "$@" 2>/dev/null || missing "kernel: dmesg not readable (root only)" ;;
+            if [ "$output" = json ]; then
+                "$@" 2>/dev/null | awk -v btime="$btime" '
+                    match($0, /^\[ *([0-9]+)\.([0-9]+)\] (.*)$/, m) {
+                        printf "%d%s\t%s\n", btime + m[1], substr(m[2] "000000", 1, 6), m[3]; next
+                    }
+                    { printf "%d000000\t%s\n", btime, $0 }' || missing "kernel: dmesg not readable (root only)"
+            else
+                "$@" 2>/dev/null || missing "kernel: dmesg not readable (root only)"
+            fi ;;
         svlogd|socklog)
             s=; t=
             [ -n "$lfrom" ] && s=$(utc "$lfrom"); [ -n "$to" ] && t=$(utc "$to")
             if [ "$1" = socklog ]; then f=$SOCKLOG; else f=$2; fi
             if [ $follow = 1 ]; then tail -n "${lines:-10}" -F "$f" 2>/dev/null; return; fi
-            awk -v s="$s" -v t="$t" -v cat="$( [ "$output" = cat ] && echo 1)" -v id="$( [ "$1" = socklog ] && printf '%s' "$2")" '
+            awk -v s="$s" -v t="$t" -v cat="$( [ "$output" = cat ] && echo 1)" \
+                -v json="$( [ "$output" = json ] && echo 1)" -v id="$( [ "$1" = socklog ] && printf '%s' "$2")" '
                 { ts = substr($1, 1, 19) }
                 ts ~ /^[0-9]{4}-[0-9]{2}-[0-9]{2}_/ { if (s != "" && ts < s) next; if (t != "" && ts > t) next }
                 id != "" && index($0, " " id "[") == 0 && index($0, " " id ":") == 0 { next }
+                json {
+                    if (ts ~ /^[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}:[0-9]{2}:[0-9]{2}$/) {
+                        d = ts; gsub(/[-_:]/, " ", d)
+                        sec = mktime(d, 1)
+                        us = "000000"
+                        dot = index($1, ".")
+                        if (dot > 0) us = substr(substr($1, dot + 1) "000000", 1, 6)
+                        last_ts = sprintf("%d%s", sec, us)
+                        sub(/^[^ ]+ /, "")
+                    }
+                    printf "%s\t%s\n", (last_ts != "" ? last_ts : "0"), $0
+                    next
+                }
                 { if (cat && ts ~ /^[0-9]{4}-/) { sub(/^[^ ]+ /, "") } print }' "$f" ;;
         proc)
             if [ $follow = 1 ]; then tail -n "${lines:-10}" -F "$2" 2>/dev/null | grep --line-buffered -v '^-- start '; return; fi
             # each start of the unit leaves "-- start EPOCH INVOCATION": keep what was written after the time asked
-            awk -v s="${from:-0}" -v t="${to:-}" '
-                /^-- start / { split($0, a, " "); keep = (a[3] >= s) && (t == "" || a[3] <= t); next }
-                keep { print }' "$2" ;;
+            awk -v s="${from:-0}" -v t="${to:-}" -v json="$( [ "$output" = json ] && echo 1)" '
+                /^-- start / { split($0, a, " "); ep = a[3]; keep = (ep >= s) && (t == "" || ep <= t); next }
+                keep { if (json) printf "%s000000\t%s\n", ep, $0; else print }' "$2" ;;
     esac
 }
 
 run() {
     printf '%s' "$sources" | while read -r type arg; do [ -n "$type" ] && emit "$type" "$arg"; done
 }
+grep_pat() {
+    # journalctl's smart case: case-insensitive unless the pattern has a capital letter
+    case $pat in *[A-Z]*) grep -P "$@" -- "$pat" ;; *) grep -P -i "$@" -- "$pat" ;; esac
+}
 filter() {
-    if [ -n "$pat" ]; then
-        # journalctl's smart case: case-insensitive unless the pattern has a capital letter
-        case $pat in *[A-Z]*) grep -P --line-buffered -- "$pat" ;; *) grep -P -i --line-buffered -- "$pat" ;; esac
-    else cat; fi
+    if [ -n "$pat" ]; then grep_pat --line-buffered; else cat; fi
+}
+json_fmt() {
+    awk '
+        function esc(s) {
+            gsub(/\\/, "\\\\", s); gsub(/"/, "\\\"", s); gsub(/\r/, "\\r", s); gsub(/\t/, "\\t", s)
+            return s
+        }
+        {
+            tab = index($0, "\t")
+            if (tab > 0) { ts = substr($0, 1, tab - 1); msg = substr($0, tab + 1) }
+            else { ts = "0"; msg = $0 }
+            printf "{\"__REALTIME_TIMESTAMP\":\"%s\",\"MESSAGE\":\"%s\"}\n", ts, esc(msg)
+        }'
 }
 if [ $follow = 1 ]; then run | filter; exit 0; fi
+if [ "$output" = json ]; then
+    raw=$(run)
+    out=
+    if [ -n "$raw" ]; then
+        tab=$(printf '\t')
+        raw=$(printf '%s\n' "$raw" | LC_ALL=C sort -t "$tab" -k1,1n -s)
+        if [ -n "$pat" ]; then
+            nums=$(printf '%s\n' "$raw" | cut -f2- | grep_pat -n | cut -d: -f1)
+            [ -n "$nums" ] && out=$(printf '%s\n' "$raw" | awk -v nums="$nums" '
+                BEGIN { n = split(nums, a, /\n/); for (i = 1; i <= n; i++) if (a[i] != "") want[a[i]] = 1 }
+                want[NR]')
+        else
+            out=$raw
+        fi
+    fi
+    if [ -n "$out" ]; then
+        [ -n "$lines" ] && out=$(printf '%s\n' "$out" | tail -n "$lines")
+        [ $reverse = 1 ] && out=$(printf '%s\n' "$out" | tac)
+        printf '%s\n' "$out" | json_fmt
+    elif [ $quiet = 0 ]; then echo "-- No entries --"; fi
+    exit 0
+fi
 out=$(run | filter)
 if [ -n "$lines" ]; then out=$(printf '%s\n' "$out" | tail -n "$lines"); fi
 [ $reverse = 1 ] && out=$(printf '%s\n' "$out" | tac)
