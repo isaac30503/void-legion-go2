@@ -5,7 +5,7 @@
 #   -k / --dmesg                    the kernel's buffer (dmesg; root)
 #   -u UNIT (system)                the runit service's svlogd log: log= of units.d, or /var/log/<service>/current
 #   --user -u UNIT, --user-unit     the output of an exec or transient unit of systemd-compat
-#   -t IDENT                        the svlogd log of the runit service IDENT, or socklog's (if it is installed)
+#   -t IDENT                        the svlogd log of the runit service IDENT, dmesg for kernel, or socklog's (if it is installed)
 #   nothing selected                socklog's "everything" if it is installed; if not, the kernel's
 # Filters: -b (this boot), --since/--until, -p (kernel only: the other logs have no priority), -g (PCRE,
 # smart case like journalctl), -n, -r, -o cat/json, --output-fields, -f. Previous boots are not kept: -b -1
@@ -135,6 +135,7 @@ for u in $uunits; do
     if [ "$SC_TYPE" = proc ]; then [ -r "$SC_DIR/log" ] && add proc "$SC_DIR/log"; else missing "user unit $SC_U: not found"; fi
 done
 for i in $idents; do
+    if [ "$i" = kernel ]; then kernel=1; continue; fi
     sc_resolve system "$i"
     if [ "$SC_TYPE" = runit ] && [ -r "$SC_LOGFILE" ]; then add svlogd "$SC_LOGFILE"
     elif [ -r "$SOCKLOG" ]; then add socklog "$i"

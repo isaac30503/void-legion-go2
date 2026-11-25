@@ -82,7 +82,7 @@ Your own lines go in another file (`90-local.conf`, read later: the last match w
   (`Nice=`, `Environment=`, `WorkingDirectory=`; resource limits like `CPUWeight=` are accepted but not applied — no
   cgroups — and noted), `--same-dir`, `--working-directory`, `--uid/--gid` (root), and in the foreground `--pipe`,
   `--wait`, `--pty`, `--scope`.
-- **`journalctl`:** `-k` (dmesg, root), `-u` (svlogd log of the runit service), `--user -u` / `--user-unit` /
+- **`journalctl`:** `-k` / `-t kernel` (dmesg, root), `-u` (svlogd log of the runit service), `--user -u` / `--user-unit` /
   `_SYSTEMD_USER_UNIT=` (output of an exec or transient unit), `-t` (that runit service's log, or socklog's if it is
   ever installed); `-b` (this boot), `--since/--until`, `-p` (kernel only), `-g` (PCRE, smart case), `-n`, `-r`,
   `-o cat` / `-o json` (`--output-fields`), `-f`. **Previous boots are not kept:** `-b -1` answers like a journal without that boot. Services that
